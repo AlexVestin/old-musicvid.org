@@ -1,3 +1,4 @@
 node_modules/
 src/assets/
 src/webassembly/build
+src/webassembly/ctest/movies
