@@ -30,6 +30,7 @@ git -C libvpx pull 2> /dev/null || git clone --depth 1 https://chromium.googleso
 wget -O lame-3.100.tar.gz http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
 tar xzvf lame-3.100.tar.gz
 rm -rf lame-3.100.tar.gz
+mv ./lame-3.100 ./lame
 
 git -C opus pull 2> /dev/null || git clone --depth 1 https://github.com/xiph/opus.git
 
