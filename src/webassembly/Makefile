@@ -173,13 +173,18 @@ build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
 # Compile bitcode to JavaScript.
 # NOTE(Kagami): Bump heap size to 64M, default 16M is not enough even
 # for simple tests and 32M tends to run slower than 64M.
+
+FILES = ./ctest/encode.c ./ctest/maintest.c
+
 EMCC_COMMON_ARGS = \
 	-s TOTAL_MEMORY=67108864 \
 	-s OUTLINING_LIMIT=20000 \
 	-O3 --memory-init-file 0 \
 	-o $@ \
-	-s WASM=1
+	-s WASM=1 \
+	-I./build/include\
+	
 
 ffmpeg.js: $(FFMPEG_MP4_BC)
-	emcc $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) $(EMCC_COMMON_ARGS)
+	emcc $(FILES) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) $(EMCC_COMMON_ARGS)
 
