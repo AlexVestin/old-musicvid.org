@@ -10,6 +10,11 @@ FILE* file = NULL;
 
 void init(unsigned width, unsigned height, unsigned channels, unsigned bitRate, unsigned fps, const char* filename) {
     file = fopen(filename, "wb");
+
+}
+
+int fos() {
+    return !file;
 }
 
 FILE* closeStream(){
@@ -22,8 +27,5 @@ void invertColor(uint8_t* in, unsigned width, unsigned height, unsigned channels
     for(int i = 0; i < width*height*channels; i++){
         out[i] = 121;
     }
-
-    if(frameIdx % 20 == 0)
-        fwrite(out, 1, sizeof(out), file);
 }
 
