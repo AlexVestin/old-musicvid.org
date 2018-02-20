@@ -11,7 +11,7 @@ COMMON_DECODERS = \
 
 MP4_MUXERS = mp4 mp3 null
 MP4_ENCODERS = libx264 libmp3lame aac
-FFMPEG_MP4_BC = build/ffmpeg-mp4/ffmpeg.bc
+FFMPEG_MP4_BC = build/ffmpeg/ffmpeg.bc
 FFMPEG_MP4_PC_PATH = ../x264/dist/lib/pkgconfig
 MP4_SHARED_DEPS = \
 	build/lame/dist/lib/libmp3lame.so \
@@ -22,7 +22,7 @@ all: ffmpeg.js
 clean: clean-js \
 	clean-freetype \
 	clean-opus \
-	clean-lame clean-x264 clean-ffmpeg-mp4
+	clean-lame clean-x264 clean-ffmpeg
 clean-js:
 	rm -f -- ffmpeg*.js
 clean-opus:
@@ -34,8 +34,8 @@ clean-lame:
 clean-x264:
 	-cd build/x264 && rm -rf dist && make clean
 
-clean-ffmpeg-mp4:
-	-cd build/ffmpeg-mp4 && rm -f ffmpeg.bc && make clean
+clean-ffmpeg:
+	-cd build/ffmpeg && rm -f ffmpeg.bc && make clean
 
 build/opus/configure:
 	cd build/opus && ./autogen.sh
@@ -66,8 +66,6 @@ build/freetype/dist/lib/libfreetype.so: build/freetype/builds/unix/configure
 	emconfigure ./configure \
 		CFLAGS="-O3" \
 		--prefix="$$(pwd)/dist" \
-		--host=x86-none-linux \
-		--build=x86_64 \
 		--disable-static \
 		\
 		--without-zlib \
@@ -83,7 +81,6 @@ build/lame/dist/lib/libmp3lame.so:
 	cd build/lame && \
 	emconfigure ./configure \
 		--prefix="$$(pwd)/dist" \
-		--host=x86-none-linux \
 		--disable-static \
 		\
 		--disable-gtktest \
@@ -96,15 +93,16 @@ build/lame/dist/lib/libmp3lame.so:
 
 build/x264/dist/lib/libx264.so:
 	cd build/x264 && \
+	patch -p1 < ../../x264.patch && \
 	emconfigure ./configure \
 		--prefix="$$(pwd)/dist" \
 		--extra-cflags="-Wno-unknown-warning-option" \
-		--host=x86-none-linux \
-		--disable-cli \
 		--enable-shared \
+		--disable-cli \
 		--disable-opencl \
 		--disable-thread \
 		--disable-asm \
+		--disable-thread \
 		\
 		--disable-avs \
 		--disable-swscale \
@@ -120,7 +118,6 @@ FFMPEG_COMMON_ARGS = \
 	--cc=emcc \
 	--enable-cross-compile \
 	--target-os=none \
-	--arch=x86 \
 	--disable-runtime-cpudetect \
 	--disable-asm \
 	--disable-fast-unaligned \
@@ -142,7 +139,6 @@ FFMPEG_COMMON_ARGS = \
 	--disable-d3d11va \
 	--disable-dxva2 \
 	--disable-vaapi \
-	--disable-vda \
 	--disable-vdpau \
 	$(addprefix --enable-decoder=,$(COMMON_DECODERS)) \
 	$(addprefix --enable-demuxer=,$(COMMON_DEMUXERS)) \
@@ -152,14 +148,15 @@ FFMPEG_COMMON_ARGS = \
 	--disable-iconv \
 	--disable-libxcb \
 	--disable-lzma \
-	--disable-sdl \
+	--disable-sdl2 \
 	--disable-securetransport \
 	--disable-xlib \
 	--disable-zlib
 
-build/ffmpeg-mp4/ffmpeg.bc: $(MP4_SHARED_DEPS)
-	cd build/ffmpeg-mp4 && \
+build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
+	cd build/ffmpeg && \
 	EM_PKG_CONFIG_PATH=$(FFMPEG_MP4_PC_PATH) emconfigure ./configure \
+		--prefix="../" \
 		$(FFMPEG_COMMON_ARGS) \
 		$(addprefix --enable-encoder=,$(MP4_ENCODERS)) \
 		$(addprefix --enable-muxer=,$(MP4_MUXERS)) \
@@ -170,6 +167,7 @@ build/ffmpeg-mp4/ffmpeg.bc: $(MP4_SHARED_DEPS)
 		--extra-ldflags="-L../lame/dist/lib" \
 		&& \
 	emmake make -j8 && \
+	emmake make install && \
 	cp ffmpeg ffmpeg.bc
 
 # Compile bitcode to JavaScript.

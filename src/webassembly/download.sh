@@ -21,7 +21,7 @@ apt-get -y install \
   wget \
   zlib1g-dev
 
-mkdir -p ./build
+mkdir -p ./build ./build/lib ./build/bin
 cd ./build
 
 git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264
