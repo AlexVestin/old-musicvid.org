@@ -27,8 +27,18 @@
  * @example encode_video.c
  */
 #include "encode.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+#include <libavcodec/avcodec.h>
+#include <libavutil/opt.h>
+#include <libavutil/imgutils.h>
+#include <libavutil/imgutils.h>
+#include <libavutil/opt.h>
+#include <libswscale/swscale.h>
 
+static struct SwsContext *sws_context = NULL;
 const char *filename, *codec_name;
 const AVCodec *codec;
 AVCodecContext *c= NULL;
@@ -37,6 +47,9 @@ FILE *f;
 AVFrame *frame;
 AVPacket *pkt;
 uint8_t endcode[] = { 0, 0, 1, 0xb7 };
+
+
+
 
 static void encode(AVFrame *frame)
 {
@@ -70,7 +83,7 @@ static void encode(AVFrame *frame)
 void openStream(unsigned w, unsigned h, unsigned fps, unsigned bit_rate)
 {
 
-    filename = "file.mp4";
+    filename = "file2.mp4";
     codec_name = "libx264";
 
     codec = avcodec_find_encoder_by_name(codec_name);
@@ -140,7 +153,20 @@ void openStream(unsigned w, unsigned h, unsigned fps, unsigned bit_rate)
     }
 }
 
-void addFrame(){
+void set_frame_yuv_from_rgb(uint8_t *rgb) {
+    const int in_linesize[1] = { 4 * c->width };
+    sws_context = sws_getCachedContext(sws_context,
+            c->width, c->height, 
+            AV_PIX_FMT_RGB32,
+            c->width, c->height, 
+            AV_PIX_FMT_YUV420P,
+            0, NULL, NULL, NULL);
+    sws_scale(sws_context, (const uint8_t * const *)&rgb, in_linesize, 0,
+    c->height, frame->data, frame->linesize);
+}
+
+
+void addFrame(uint8_t* buffer){
     fflush(stdout);
 
     /* make sure the frame data is writable */
@@ -148,21 +174,7 @@ void addFrame(){
     if (ret < 0)
         exit(1);
 
-    /* prepare a dummy image */
-    /* Y */
-    for (y = 0; y < c->height; y++) {
-        for (x = 0; x < c->width; x++) {
-            frame->data[0][y * frame->linesize[0] + x] = x + y + frameIdx * 3;
-        }
-    }
-
-    /* Cb and Cr */
-    for (y = 0; y < c->height/2; y++) {
-        for (x = 0; x < c->width/2; x++) {
-            frame->data[1][y * frame->linesize[1] + x] = 128 + y + frameIdx * 2;
-            frame->data[2][y * frame->linesize[2] + x] = 64 + x + frameIdx * 5;
-        }
-    }
+    set_frame_yuv_from_rgb(buffer);
 
     frame->pts = frameIdx;
     encode(frame);
@@ -178,3 +190,4 @@ void closeStream(){
     av_frame_free(&frame);
     av_packet_free(&pkt);
 }
+
