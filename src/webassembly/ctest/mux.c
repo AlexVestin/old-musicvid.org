@@ -463,8 +463,7 @@ static AVFrame *get_video_frame(OutputStream *ost)
     AVCodecContext *c = ost->enc;
 
     /* check if we want to generate more frames */
-    if (av_compare_ts(ost->next_pts, c->time_base,
-                      STREAM_DURATION, (AVRational){ 1, 1 }) >= 0)
+    if (av_compare_ts(ost->next_pts, c->time_base, STREAM_DURATION, (AVRational){ 1, 1 }) >= 0)
         return NULL;
 
     /* when we pass a frame to the encoder, it may keep a reference to it
@@ -511,7 +510,6 @@ static int write_video_frame(AVFormatContext *oc, OutputStream *ost)
     AVFrame *frame;
     int got_packet = 0;
     AVPacket pkt = { 0 };
-
     c = ost->enc;
 
     frame = get_video_frame(ost);
