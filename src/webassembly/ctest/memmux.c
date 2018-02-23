@@ -30,7 +30,6 @@ void open_stream(int w, int h, int fps, int br) {
     size_t buffer_size = 1024*64;
     out->buf = (uint8_t*)av_malloc(buffer_size);
 
-   
     AVOutputFormat *of = av_guess_format( "mp4", 0, 0 );
     fc = avformat_alloc_context();
     AVStream *pst = avformat_new_stream( fc, 0 );

@@ -36,8 +36,26 @@ static struct SwsContext *sws_context = NULL;
 AVCodecContext *c;
 
 static int64_t seek (void *opaque, int64_t offset, int whence) {
-    printf("#-----\n");
-    return 0;
+    struct buffer_data *bd = (struct buffer_data *)opaque;
+    switch(whence){
+        case SEEK_SET:
+            bd->ptr = bd->buf + offset;
+            return bd->ptr;
+            break;
+        case SEEK_CUR:
+            bd->ptr += offset;
+            break;
+        case SEEK_END:
+            bd->ptr = (bd->buf + bd->size) + offset;
+            return bd->ptr;
+            break;
+        case AVSEEK_SIZE:
+            return bd->size;
+            break;
+        default:
+            printf("none of the above: %d\n", whence);
+    }
+    return 1;
 }
 
 static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, const char *tag)
@@ -62,7 +80,7 @@ static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
         bd->ptr = bd->buf + offset;
         bd->room = bd->size - offset;
     }
-    printf("write packet pkt_size:%d used_buf_size:%zu buf_size:%zu buf_room:%zu\n", buf_size, bd->ptr-bd->buf, bd->size, bd->room);
+    //printf("write packet pkt_size:%d used_buf_size:%zu buf_size:%zu buf_room:%zu\n", buf_size, bd->ptr-bd->buf, bd->size, bd->room);
 
     memcpy(bd->ptr, buf, buf_size);
     bd->ptr  += buf_size;
@@ -87,8 +105,8 @@ static void encode(AVFrame *frame) {
             fprintf(stderr, "Error during encoding\n");
             exit(1);
         }
- 
-        pkt->stream_index = out_stream->index;       
+        pkt->stream_index = out_stream->index;      
+        av_packet_rescale_ts(pkt, c->time_base, out_stream->time_base);
         av_interleaved_write_frame(ofmt_ctx, pkt);
         av_packet_unref(pkt);
     }
@@ -116,7 +134,6 @@ void open_stream(int w, int h, int fps, int br){
         ret = AVERROR(ENOMEM);
     }
     bd.size = bd.room = bd_buf_size;
-    printf("%d\n", bd.size);
 
     avio_ctx_buffer = av_malloc(avio_ctx_buffer_size);
     if (!avio_ctx_buffer) {
@@ -173,14 +190,12 @@ void open_stream(int w, int h, int fps, int br){
         printf(stderr, "error making stream\n");
 
     
-    if(!of){
-        printf("not of\n-----------------------------------------");
-    }
     ofmt_ctx->pb = avio_ctx;
     ofmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;
     ofmt_ctx->oformat = of;
     out_stream->codec->codec_tag = 0;
 
+    out_stream->time_base = c->time_base;
     ret = avcodec_parameters_from_context(out_stream->codecpar, c);
     
     av_dump_format(ofmt_ctx, 0, "Memory", 1);
@@ -194,7 +209,7 @@ void open_stream(int w, int h, int fps, int br){
     sws_context = sws_getCachedContext(
             sws_context,
             c->width, c->height, 
-            AV_PIX_FMT_RGB32,
+            AV_PIX_FMT_RGB8,
             c->width, c->height, 
             AV_PIX_FMT_YUV420P,
             0, NULL, NULL, NULL
@@ -208,9 +223,10 @@ void close_stream(){
     avformat_free_context(ofmt_ctx);
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
+
+    //uint8_t endcode[] = {0,0,1,0xb7};
+    //memcpy()
     
-
-
     FILE* out_file = fopen("file.mp4", "w");
     printf("%d\n", bd.size);
     fwrite(bd.buf, bd.size, 1, out_file);
@@ -221,3 +237,4 @@ void close_stream(){
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
     }
 }
+
