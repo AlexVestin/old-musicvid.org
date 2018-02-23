@@ -12,23 +12,20 @@ const int BIT_RATE = 8000000;
 const int NR_COLORS = 4;
 
 //DUMMY AUDIO
-const int SAMPLE_RATE = 48000;
+const int SAMPLE_RATE = 44100;
 const int CHANNELS = 2;
 
-
-
 int main(int argc, char** argv) {
-    /*
+    open_stream(WIDTH,HEIGHT,FPS,BIT_RATE);
+    
     int nr_samples = SAMPLE_RATE*CHANNELS*SECONDS;
-    uint16_t* soundbuffer* = malloc(nr_samples);
-    int j;
-    for(j = 0; j < nr_samples; j++){
-        soundbuffer[j] = j % 32000;
+    int16_t *soundbuffer = malloc(nr_samples * sizeof(int16_t));
+    int t;
+    for(t = 0; t < nr_samples -1; t++){
+        soundbuffer[t] = 0;
     }
     set_audio(soundbuffer, CHANNELS, SAMPLE_RATE, nr_samples);
-    */
 
-    open_stream(WIDTH,HEIGHT,FPS,BIT_RATE);
     uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_COLORS);
     int i, j, int_max = 2147483647;
 
