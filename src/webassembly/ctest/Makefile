@@ -1,8 +1,8 @@
 
-FLAGS = `pkg-config --libs libavcodec libavformat libswscale`
+FLAGS = `pkg-config --libs libavcodec libavformat libswscale` \
 
-FILES = maintest.c encode.h encode.c \
+FILES = maintest.c avio_write.c avio_write.h \
 	-I/home/alex/reg/ffmpeg_build/include \
 
 all:
-	gcc $(FILES) $(FLAGS) 
+	gcc -g $(FILES) $(FLAGS) 
