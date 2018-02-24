@@ -44,7 +44,7 @@ export default class Canvas extends Component {
   
       window.Module["onRuntimeInitialized"] = () => {
           this.moduleLoaded = true;
-          widnow.Module._open_stream(400, 400, 4, 60, 400000)
+          window.Module._open_stream(400, 400, 30, 400000)
         };
 
       this.gl = renderer.getContext();
@@ -53,16 +53,14 @@ export default class Canvas extends Component {
 
      encode = (buffer) =>{
         const Module = window.Module
+        var encodedBuffer_p, decodedBuffer_p;
         try {
           Module.HEAPU8.set(buffer, encodedBuffer_p)
           Module._add_frame(encodedBuffer_p)
         }finally {
           Module._free(encodedBuffer_p)
         }
-        var encodedBuffer_p, decodedBuffer_p;
     }
-
-    
   
     componentWillUnmount() {
       this.stop()
@@ -89,7 +87,7 @@ export default class Canvas extends Component {
 
     
     renderScene() {
-        const {gl } = this;
+        const { gl } = this;
         let pixels  = new Uint8Array( 400 * 400 * 4)
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,400,400, gl.RGBA, gl.UNSIGNED_BYTE, pixels)

@@ -1,4 +1,3 @@
-COMMON_FILTERS = aresample scale crop overlay
 COMMON_DEMUXERS = matroska ogg avi mov flv mpegps image2 mp3 concat
 COMMON_DECODERS = \
 	vp8 vp9 theora \
@@ -134,16 +133,12 @@ FFMPEG_COMMON_ARGS = \
 	--enable-avutil \
 	--enable-swresample \
 	--enable-swscale \
-	--enable-avfilter \
+	--disable-avfilter \
 	--disable-network \
 	--disable-d3d11va \
 	--disable-dxva2 \
 	--disable-vaapi \
 	--disable-vdpau \
-	$(addprefix --enable-decoder=,$(COMMON_DECODERS)) \
-	$(addprefix --enable-demuxer=,$(COMMON_DEMUXERS)) \
-	--enable-protocol=file \
-	$(addprefix --enable-filter=,$(COMMON_FILTERS)) \
 	--disable-bzlib \
 	--disable-iconv \
 	--disable-libxcb \
@@ -180,12 +175,12 @@ EXPORTED_FUNCTIONS = "['_add_frame', '_open_stream', '_close_stream', '_free_buf
 
 EMCC_COMMON_ARGS = \
 	-O3 --memory-init-file 0 \
-	-o $@ \
+	-o  ../../public/ffmpeg.js\
 	-s WASM=1 \
 	-I./build/include \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) \
-	-s SIDE_MODULE=1 
+	-s ASSERTIONS=2 \
 
 ffmpeg.js: $(FFMPEG_MP4_BC)
 	emcc $(FILES) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) $(EMCC_COMMON_ARGS)

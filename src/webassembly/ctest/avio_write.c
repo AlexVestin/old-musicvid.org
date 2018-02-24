@@ -31,7 +31,8 @@ const char* codec_name = "libx264";
 //VIDEO
 AVFrame *video_frame, *audio_frame;
 int frameIdx = 0;
-AVStream* video_stream, *audio_stream;
+AVStream *video_stream = NULL;
+AVStream *audio_stream;
 AVPacket *pkt;
 static struct SwsContext *sws_context = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
@@ -134,6 +135,8 @@ void add_frame(uint8_t* buffer, int len){
 void open_stream(int w, int h, int fps, int br){
     AVOutputFormat* of = av_guess_format("mp4", 0, 0);
 
+    printf("w: %d h: %d fps: %d br: %d \n", w, h, fps, br);
+    printf("---------------------------------------\n");
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
     if (!bd.buf) {
         ret = AVERROR(ENOMEM);
@@ -164,16 +167,16 @@ void open_stream(int w, int h, int fps, int br){
     }
 
     video_ctx = avcodec_alloc_context3(video_codec);
-    video_ctx->width = 1080;
-    video_ctx->height = 720;
+    video_ctx->width = w;
+    video_ctx->height = h;
     video_ctx->time_base.num = 1;
-    video_ctx->time_base.den = 30;
-    video_ctx->bit_rate = 400000; 
+    video_ctx->time_base.den = fps;
+    video_ctx->bit_rate = br; 
     
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    //av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
+    av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         printf("couldnt open codec\n");
         exit(1);
@@ -185,9 +188,12 @@ void open_stream(int w, int h, int fps, int br){
     video_frame->width  = w;
     video_frame->height = h;
     ret = av_frame_get_buffer(video_frame, 32);
-
+    if(ret < 0)
+        fprintf(stderr, "Error occurred: frame_getbuffer: %s\n", av_err2str(ret));
     //Packet init
     pkt = av_packet_alloc();
+    if(!pkt)
+        printf("errror packer\n");
     video_stream = avformat_new_stream(ofmt_ctx, video_ctx);  
     if(!video_stream)
         printf(stderr, "error making stream\n");
@@ -196,14 +202,19 @@ void open_stream(int w, int h, int fps, int br){
     ofmt_ctx->pb = avio_ctx;
     ofmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;
     ofmt_ctx->oformat = of;
+    //hack 
+    ofmt_ctx->nb_streams = 1;
     video_stream->codec->codec_tag = 0;
 
     video_stream->time_base = video_ctx->time_base;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
-    
-    //av_dump_format(ofmt_ctx, 0, "Memory", 1);
+    if(ret < 0)
+        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+    av_dump_format(ofmt_ctx, 0, "Memory", 1);
+    printf("nr streams: %d\n", ofmt_ctx->nb_streams);
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
+        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
         fprintf(stderr, "Error occurred when opening output file\n");
         exit(1);
     }
@@ -227,7 +238,6 @@ void close_stream(uint8_t** out, int* size){
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
 
-    printf("buf: %p size: %d\n", bd.buf, bd.size);
     *out = bd.buf;
     *size = bd.size;
 }
