@@ -188,8 +188,6 @@ void open_stream(int w, int h, int fps, int br){
 
     //Packet init
     pkt = av_packet_alloc();
-
-
     video_stream = avformat_new_stream(ofmt_ctx, video_ctx);  
     if(!video_stream)
         printf(stderr, "error making stream\n");
@@ -203,7 +201,7 @@ void open_stream(int w, int h, int fps, int br){
     video_stream->time_base = video_ctx->time_base;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
     
-    av_dump_format(ofmt_ctx, 0, "Memory", 1);
+    //av_dump_format(ofmt_ctx, 0, "Memory", 1);
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
         fprintf(stderr, "Error occurred when opening output file\n");
