@@ -133,7 +133,7 @@ void add_frame(uint8_t* buffer, int len){
 
 void open_stream(int w, int h, int fps, int br){
     AVOutputFormat* of = av_guess_format("mp4", 0, 0);
-
+    printf("w: %d h: %d fps: %d br: %d");
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
     if (!bd.buf) {
         ret = AVERROR(ENOMEM);
@@ -148,12 +148,13 @@ void open_stream(int w, int h, int fps, int br){
     avio_ctx = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 1, &bd, NULL, &write_packet, &seek);
     if (!avio_ctx) {
         ret = AVERROR(ENOMEM);
+        printf("Error allocating avio vontext\n");
         exit(1);
     }
 
     ret = avformat_alloc_output_context2(&ofmt_ctx, of, NULL, NULL);
     if (ret < 0) {
-        fprintf(stderr, "Could not create output context\n");
+        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
         exit(1);
     }
     
@@ -185,10 +186,12 @@ void open_stream(int w, int h, int fps, int br){
     video_frame->width  = w;
     video_frame->height = h;
     ret = av_frame_get_buffer(video_frame, 32);
-
+    if(ret < 0)
+        printf("Error allocating frame\n");
     //Packet init
     pkt = av_packet_alloc();
-
+    if(!pkt)
+        printf("Error allocating packet vontext\n");
 
     video_stream = avformat_new_stream(ofmt_ctx, video_ctx);  
     if(!video_stream)
@@ -202,11 +205,14 @@ void open_stream(int w, int h, int fps, int br){
 
     video_stream->time_base = video_ctx->time_base;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
-    
-    av_dump_format(ofmt_ctx, 0, "Memory", 1);
+    if(ret < 0)
+        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+
+    printf("before avformat_writre_headers\n");
+    //av_dump_format(ofmt_ctx, 0, "Memory", 1);
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
-        fprintf(stderr, "Error occurred when opening output file\n");
+        fprintf(stderr, "Error occurred---: %s\n", av_err2str(ret));
         exit(1);
     }
 
