@@ -44,7 +44,7 @@ export default class Canvas extends Component {
   
       window.Module["onRuntimeInitialized"] = () => {
           this.moduleLoaded = true;
-          window.Module._open_stream(400, 400, 60, 400000)
+          widnow.Module._open_stream(400, 400, 4, 60, 400000)
         };
 
       this.gl = renderer.getContext();
