@@ -44,35 +44,22 @@ export default class Canvas extends Component {
   
       window.Module["onRuntimeInitialized"] = () => {
           this.moduleLoaded = true;
-          window.Module._init(400, 400, 4, 500000, 60, "f");
-          console.log(window.Module)
+          widnow.Module._open_stream(400, 400, 4, 60, 400000)
         };
-      /*
-      initModule( (Module) => {
-        this.Module = Module;
-        this.moduleLoaded = true;
-      })  
-      */
+
       this.gl = renderer.getContext();
       this.renderTarget = new THREE.WebGLRenderTarget(400,400);    
     }
 
      encode = (buffer) =>{
-        console.log("encoding")
         const Module = window.Module
-        var encodedBuffer_p, decodedBuffer_p;
-        try{
-            encodedBuffer_p = Module._malloc(buffer.length)
-            decodedBuffer_p = Module._malloc(buffer.length)
-    
-            Module.HEAPU8.set(buffer, encodedBuffer_p)
-            Module._invertColor(encodedBuffer_p, 400, 400, 4, decodedBuffer_p)
-            var buf = Buffer.from(Module.buffer, decodedBuffer_p, buffer.length)
-            return Buffer.from(buf);
+        try {
+          Module.HEAPU8.set(buffer, encodedBuffer_p)
+          Module._add_frame(encodedBuffer_p)
         }finally {
-            Module._free(decodedBuffer_p)
-            Module._free(encodedBuffer_p)
+          Module._free(encodedBuffer_p)
         }
+        var encodedBuffer_p, decodedBuffer_p;
     }
 
     

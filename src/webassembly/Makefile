@@ -179,13 +179,13 @@ EXPORTED_FUNCTIONS = "['_add_frame', '_open_stream', '_close_stream', '_free_buf
 
 
 EMCC_COMMON_ARGS = \
-	-s TOTAL_MEMORY=67108864 \
-	-s OUTLINING_LIMIT=20000 \
 	-O3 --memory-init-file 0 \
 	-o $@ \
 	-s WASM=1 \
-	-I./build/include\
-	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS)
+	-I./build/include \
+	-s ALLOW_MEMORY_GROWTH=1 \
+	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) \
+	-s SIDE_MODULE=1 
 
 ffmpeg.js: $(FFMPEG_MP4_BC)
 	emcc $(FILES) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) $(EMCC_COMMON_ARGS)
