@@ -26,7 +26,7 @@ cd ./build
 
 git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264
 wget -O lame-3.100.tar.gz http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-tar xzvf lame-3.100.tar.gz
+tar xvf lame-3.100.tar.gz
 rm -rf lame-3.100.tar.gz
 mv ./lame-3.100 ./lame
 

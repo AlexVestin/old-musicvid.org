@@ -4,6 +4,7 @@
 #include <libavformat/avio.h>
 #include <libavutil/file.h>
 #include <libavutil/timestamp.h>
+#include <libswscale/swscale.h>
 
 #define AV_CODEC_FLAG_GLOBAL_HEADER (1 << 22)
 #define CODEC_FLAG_GLOBAL_HEADER AV_CODEC_FLAG_GLOBAL_HEADER
@@ -142,18 +143,18 @@ void open_stream(int w, int h, int fps, int br){
     avio_ctx_buffer = av_malloc(avio_ctx_buffer_size);
     if (!avio_ctx_buffer) {
         ret = AVERROR(ENOMEM);
-        close_stream();
+        exit(1);
     }
     avio_ctx = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 1, &bd, NULL, &write_packet, &seek);
     if (!avio_ctx) {
         ret = AVERROR(ENOMEM);
-        close_stream();
+        exit(1);
     }
 
     ret = avformat_alloc_output_context2(&ofmt_ctx, of, NULL, NULL);
     if (ret < 0) {
         fprintf(stderr, "Could not create output context\n");
-        close_stream();
+        exit(1);
     }
     
     AVCodec* video_codec = avcodec_find_encoder_by_name(codec_name);
@@ -172,7 +173,7 @@ void open_stream(int w, int h, int fps, int br){
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
+    //av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         printf("couldnt open codec\n");
         exit(1);
@@ -206,7 +207,7 @@ void open_stream(int w, int h, int fps, int br){
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
         fprintf(stderr, "Error occurred when opening output file\n");
-        close_stream();
+        exit(1);
     }
 
     //rescaling
@@ -220,7 +221,7 @@ void open_stream(int w, int h, int fps, int br){
     );
 }    
     
-void close_stream(){
+void close_stream(uint8_t** out, int* size){
     encode(NULL, video_ctx, video_stream);
     av_write_trailer(ofmt_ctx);
     /* close output */
@@ -228,14 +229,12 @@ void close_stream(){
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
 
-    //uint8_t endcode[] = {0,0,1,0xb7};
-    //memcpy()
-    
-    FILE* out_file = fopen("file.mp4", "w");
-    printf("%d\n", bd.size);
-    fwrite(bd.buf, bd.size, 1, out_file);
-    fclose(out_file);
+    printf("buf: %p size: %d\n", bd.buf, bd.size);
+    *out = bd.buf;
+    *size = bd.size;
+}
 
+void free_buffer(){
     av_free(bd.buf);
     if (ret < 0 && ret != AVERROR_EOF) {
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
@@ -280,6 +279,7 @@ static int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt
 
 
 void set_audio(int16_t* buf, const int sr, const int ch, const int sz){
+    /*
     AVCodec* ac = avcodec_find_encoder(AV_CODEC_ID_AAC);
     audio_stream = avformat_new_stream(ofmt_ctx, NULL);
     audio_stream->id = ofmt_ctx->nb_streams-1;
@@ -327,7 +327,6 @@ void set_audio(int16_t* buf, const int sr, const int ch, const int sz){
 
     audio_frame = alloc_audio_frame(nb_samples);
 
-    /* copy the stream parameters to the muxer */
     ret = avcodec_parameters_from_context(audio_stream->codecpar, audio_ctx);
     if (ret < 0) {
         fprintf(stderr, "Could not copy the stream parameters\n");
@@ -340,7 +339,6 @@ void set_audio(int16_t* buf, const int sr, const int ch, const int sz){
         exit(1);
     }
 
-    /* set options */
     av_opt_set_int       (audio_sws_context, "in_channel_count",   audio_ctx->channels,       0);
     av_opt_set_int       (audio_sws_context, "in_sample_rate",     audio_ctx->sample_rate,    0);
     av_opt_set_sample_fmt(audio_sws_context, "in_sample_fmt",      AV_SAMPLE_FMT_S16,         0);
@@ -348,9 +346,9 @@ void set_audio(int16_t* buf, const int sr, const int ch, const int sz){
     av_opt_set_int       (audio_sws_context, "out_sample_rate",    audio_ctx->sample_rate,    0);
     av_opt_set_sample_fmt(audio_sws_context, "out_sample_fmt",     audio_ctx->sample_fmt,     0);
 
-    /* initialize the resampling context */
     if ((ret = swr_init(audio_sws_context)) < 0) {
         fprintf(stderr, "Failed to initialize the resampling context\n");
         exit(1);
     }
+    */
 }

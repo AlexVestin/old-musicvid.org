@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include <stdlib.h>
 
-const int SECONDS = 10;
+const int SECONDS = 20;
 
 //DUMMY VIDEO
 const int FPS = 30;
@@ -29,14 +29,25 @@ int main(int argc, char** argv) {
     uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_COLORS);
     int i, j, int_max = 2147483647;
 
+    
+    for(j = 0; j < WIDTH*HEIGHT*NR_COLORS; j++){
+        buffer[j] = (j*i)+i % 255;
+        //buffer[j] = 0;        
+    }
+        //add_frame(buffer, WIDTH*HEIGHT*NR_COLORS);
     for(i = 0;i < SECONDS*FPS; i++){
-        for(j = 0; j < WIDTH*HEIGHT*NR_COLORS; j++){
-            buffer[j] = (j*i)+i % 255;
-            //buffer[j] = 0;        
-        }
         add_frame(buffer, WIDTH*HEIGHT*NR_COLORS);
     }
     
-    close_stream();
+    uint8_t* out;
+    int size;  
+    close_stream(&out, &size);
+
+    FILE* out_file = fopen("fil2.mp4", "w");
+    printf("out: %p size: %d\n", out, size);
+    fwrite(out, size, 1, out_file);
+    fclose(out_file);
+
+    free_buffer();
     return 0;
 }

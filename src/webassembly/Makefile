@@ -174,7 +174,9 @@ build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
 # NOTE(Kagami): Bump heap size to 64M, default 16M is not enough even
 # for simple tests and 32M tends to run slower than 64M.
 
-FILES = ./ctest/encode.c ./ctest/maintest.c
+FILES = ./ctest/avio_write.c
+EXPORTED_FUNCTIONS = "['_add_frame', '_open_stream', '_close_stream', '_free_buffer']"
+
 
 EMCC_COMMON_ARGS = \
 	-s TOTAL_MEMORY=67108864 \
@@ -183,7 +185,7 @@ EMCC_COMMON_ARGS = \
 	-o $@ \
 	-s WASM=1 \
 	-I./build/include\
-	
+	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS)
 
 ffmpeg.js: $(FFMPEG_MP4_BC)
 	emcc $(FILES) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) $(EMCC_COMMON_ARGS)
