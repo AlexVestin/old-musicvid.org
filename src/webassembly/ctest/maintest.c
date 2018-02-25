@@ -2,13 +2,13 @@
 #include "stdio.h"
 #include <stdlib.h>
 
-const int SECONDS = 5;
+const int SECONDS = 100;
 
 //DUMMY VIDEO
 const int FPS = 30;
 const int WIDTH = 1080;
 const int HEIGHT = 720;
-const int BIT_RATE = 8000000; 
+const int BIT_RATE = 4000000; 
 const int NR_COLORS = 4;
 
 //DUMMY AUDIO
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     }
         //add_frame(buffer, WIDTH*HEIGHT*NR_COLORS);
     for(i = 0;i < SECONDS*FPS; i++){
-        add_frame(buffer, WIDTH*HEIGHT*NR_COLORS);
+        add_frame(buffer);
     }
     
     uint8_t* out;

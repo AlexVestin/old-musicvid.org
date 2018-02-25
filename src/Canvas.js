@@ -6,7 +6,11 @@ import * as THREE from 'three'
 export default class Canvas extends Component {
     constructor(props) {
       super(props)
-  
+
+      this.closeStream = false;
+      this.streamClosed = false;
+      
+
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
       this.animate = this.animate.bind(this)
@@ -39,13 +43,13 @@ export default class Canvas extends Component {
       this.material = material
       this.cube = cube
       this.mount.appendChild(this.renderer.domElement)
-      this.mount.onclick = () => console.log(this.close_stream());
+      this.mount.onclick = () =>this.closeStream=true;
 
       this.start()
 
       window.Module["onRuntimeInitialized"] = () => {
-          this.moduleLoaded = true;
           window.Module._open_stream(400, 400, 20, 400000)
+          this.moduleLoaded = true;
         };
 
       this.gl = renderer.getContext();
@@ -53,16 +57,17 @@ export default class Canvas extends Component {
     }
 
     close_stream = () => {
-      const { Module } = window;
-      var video_p, size, size2;
-      try {
-        video_p = Module._malloc(4)
-        size = Module._close_stream(video_p, size)
-        var buf = Buffer.from(Module.buffer, video_p, size)
-        return Buffer.from(buf)
-      }finally {
-        Module._free(video_p)
-      }
+        const { Module } = window;
+        var video_p, size, size2;
+        try {
+          video_p = Module._malloc(4)
+          size = Module._close_stream(video_p, size2)
+          console.log(size, size2)
+          var buf = Buffer.from(Module.buffer, video_p, size)
+          return Buffer.from(buf)
+        }finally {
+          Module._free(video_p)
+        }
     }
 
     encode = (buffer) =>{
@@ -106,8 +111,16 @@ export default class Canvas extends Component {
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,400,400, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if(this.moduleLoaded){
+        if(this.moduleLoaded && !this.closeStream){
           this.encode(pixels)
+        }else if (this.closeStream && !this.streamClosed){
+            let vid = this.close_stream()
+            const file = new File([vid], 'vid.mp4', { type: 'video/mp4' });
+            const link = this.linkRef;
+            link.setAttribute('href', URL.createObjectURL(file));
+            link.setAttribute('download', file.name);
+            link.click();
+            this.streamClosed = true;
         }
     }
   
@@ -118,6 +131,7 @@ export default class Canvas extends Component {
                 style={{ width: '400px', height: '400px' }}
                 ref={(mount) => { this.mount = mount }}
             />
+            <a ref={(linkRef) => this.linkRef = linkRef}>Download</a>
         </div>
       )
     }

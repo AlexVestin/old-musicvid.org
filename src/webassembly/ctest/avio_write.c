@@ -5,6 +5,7 @@
 #include <libavutil/file.h>
 #include <libavutil/timestamp.h>
 #include <libswscale/swscale.h>
+#include <libavutil/opt.h>
 
 #define AV_CODEC_FLAG_GLOBAL_HEADER (1 << 22)
 #define CODEC_FLAG_GLOBAL_HEADER AV_CODEC_FLAG_GLOBAL_HEADER
@@ -12,7 +13,7 @@
 
 struct buffer_data {
     uint8_t *buf;
-    size_t size;
+    int size;
     uint8_t *ptr;
     size_t room; ///< size left in the buffer
 };
@@ -96,7 +97,6 @@ static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
 }
 
 static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out) {    
-
     ret = avcodec_send_frame(cod, frame);
     if (ret < 0) {
         fprintf(stderr, "Error sending a frame for encoding\n");
@@ -111,6 +111,7 @@ static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out) {
             fprintf(stderr, "Error during encoding\n");
             exit(1);
         }
+
         pkt->stream_index = out->index;      
         av_packet_rescale_ts(pkt, cod->time_base, out->time_base);
         av_interleaved_write_frame(ofmt_ctx, pkt);
@@ -125,10 +126,11 @@ void set_frame_yuv_from_rgb(uint8_t *rgb) {
 }
 
 
-void add_frame(uint8_t* buffer, int len){
+void add_frame(uint8_t* buffer){
     ret = av_frame_make_writable(video_frame);
     set_frame_yuv_from_rgb(buffer);
     video_frame->pts = frameIdx++;
+
     encode(video_frame, video_ctx, video_stream);
 }
 
@@ -176,7 +178,7 @@ void open_stream(int w, int h, int fps, int br){
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    //av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
+    av_opt_set(video_ctx->priv_data, "preset", "ultrafast", 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         printf("couldnt open codec\n");
         exit(1);
@@ -202,8 +204,6 @@ void open_stream(int w, int h, int fps, int br){
         printf(stderr, "error making stream\n");
         exit(1);
     }
-
-    printf("nr streams: %d\n", ofmt_ctx->nb_streams);
     
     ofmt_ctx->pb = avio_ctx;
     ofmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;
@@ -246,7 +246,8 @@ int close_stream(uint8_t** out, int* size){
     *out = bd.buf;
     *size = bd.size;
 
-    return size;
+    printf("bd.size: %d\n", bd.size);
+    return bd.size;
 }
 
 void free_buffer(){
@@ -277,7 +278,6 @@ static AVFrame *alloc_audio_frame(int nb_samples) {
             exit(1);
         }
     }
-    
     
     return audio_frame;
 }
