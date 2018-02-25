@@ -142,7 +142,7 @@ void open_stream(int w, int h, int fps, int br){
         ret = AVERROR(ENOMEM);
     }
     bd.size = bd.room = bd_buf_size;
-
+    
     avio_ctx_buffer = av_malloc(avio_ctx_buffer_size);
     if (!avio_ctx_buffer) {
         ret = AVERROR(ENOMEM);
@@ -176,7 +176,7 @@ void open_stream(int w, int h, int fps, int br){
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
+    //av_opt_set(video_ctx->priv_data, "preset", "slow", 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         printf("couldnt open codec\n");
         exit(1);
@@ -192,26 +192,31 @@ void open_stream(int w, int h, int fps, int br){
         fprintf(stderr, "Error occurred: frame_getbuffer: %s\n", av_err2str(ret));
     //Packet init
     pkt = av_packet_alloc();
-    if(!pkt)
+    if(!pkt){
         printf("errror packer\n");
-    video_stream = avformat_new_stream(ofmt_ctx, video_ctx);  
-    if(!video_stream)
+        exit(1);
+    }
+        
+    video_stream = avformat_new_stream(ofmt_ctx, NULL);  
+    if(!video_stream){
         printf(stderr, "error making stream\n");
+        exit(1);
+    }
 
+    printf("nr streams: %d\n", ofmt_ctx->nb_streams);
     
     ofmt_ctx->pb = avio_ctx;
     ofmt_ctx->flags |= AVFMT_FLAG_CUSTOM_IO;
+
     ofmt_ctx->oformat = of;
-    //hack 
-    ofmt_ctx->nb_streams = 1;
     video_stream->codec->codec_tag = 0;
 
     video_stream->time_base = video_ctx->time_base;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
     if(ret < 0)
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+    
     av_dump_format(ofmt_ctx, 0, "Memory", 1);
-    printf("nr streams: %d\n", ofmt_ctx->nb_streams);
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
@@ -230,7 +235,7 @@ void open_stream(int w, int h, int fps, int br){
     );
 }    
     
-void close_stream(uint8_t** out, int* size){
+int close_stream(uint8_t** out, int* size){
     encode(NULL, video_ctx, video_stream);
     av_write_trailer(ofmt_ctx);
     /* close output */
@@ -240,6 +245,8 @@ void close_stream(uint8_t** out, int* size){
 
     *out = bd.buf;
     *size = bd.size;
+
+    return size;
 }
 
 void free_buffer(){

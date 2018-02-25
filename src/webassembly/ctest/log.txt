@@ -1,0 +1,1 @@
+-L/home/alex/reg/ffmpeg_build/lib -lavformat -lm -lavcodec -lm -lmp3lame -lm -lx264 -lm -lavutil -lm -lx264

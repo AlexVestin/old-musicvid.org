@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include <stdlib.h>
 
-const int SECONDS = 20;
+const int SECONDS = 5;
 
 //DUMMY VIDEO
 const int FPS = 30;
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     int size;  
     close_stream(&out, &size);
 
-    FILE* out_file = fopen("fil2.mp4", "w");
+    FILE* out_file = fopen("fi1.mp4", "w");
     printf("out: %p size: %d\n", out, size);
     fwrite(out, size, 1, out_file);
     fclose(out_file);

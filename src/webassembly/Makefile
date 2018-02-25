@@ -1,15 +1,6 @@
-COMMON_DEMUXERS = matroska ogg avi mov flv mpegps image2 mp3 concat
-COMMON_DECODERS = \
-	vp8 vp9 theora \
-	mpeg2video mpeg4 h264 hevc \
-	png mjpeg \
-	vorbis opus \
-	mp3 ac3 aac \
-	ass ssa srt webvtt
-
 
 MP4_MUXERS = mp4 mp3 null
-MP4_ENCODERS = libx264 libmp3lame aac
+MP4_ENCODERS = libx264 libmp3lame 
 FFMPEG_MP4_BC = build/ffmpeg/ffmpeg.bc
 FFMPEG_MP4_PC_PATH = ../x264/dist/lib/pkgconfig
 MP4_SHARED_DEPS = \
@@ -24,10 +15,6 @@ clean: clean-js \
 	clean-lame clean-x264 clean-ffmpeg
 clean-js:
 	rm -f -- ffmpeg*.js
-clean-opus:
-	-cd build/opus && rm -rf dist && make clean
-clean-freetype:
-	-cd build/freetype && rm -rf dist && make clean
 clean-lame:
 	-cd build/lame && rm -rf dist && make clean
 clean-x264:
@@ -38,43 +25,6 @@ clean-ffmpeg:
 
 build/opus/configure:
 	cd build/opus && ./autogen.sh
-
-build/opus/dist/lib/libopus.so: build/opus/configure
-	cd build/opus && \
-	emconfigure ./configure \
-		CFLAGS=-O3 \
-		--prefix="$$(pwd)/dist" \
-		--disable-static \
-		--disable-doc \
-		--disable-extra-programs \
-		--disable-asm \
-		--disable-rtcd \
-		--disable-intrinsics \
-		&& \
-	emmake make -j8 && \
-	emmake make install
-
-build/freetype/builds/unix/configure:
-	cd build/freetype && ./autogen.sh
-
-# XXX(Kagami): host/build flags are used to enable cross-compiling
-# (values must differ) but there should be some better way to achieve
-# that: it probably isn't possible to build on x86 now.
-build/freetype/dist/lib/libfreetype.so: build/freetype/builds/unix/configure
-	cd build/freetype && \
-	emconfigure ./configure \
-		CFLAGS="-O3" \
-		--prefix="$$(pwd)/dist" \
-		--disable-static \
-		\
-		--without-zlib \
-		--without-bzip2 \
-		--without-png \
-		--without-harfbuzz \
-		&& \
-	emmake make -j8 && \
-	emmake make install
-
 
 build/lame/dist/lib/libmp3lame.so: 
 	cd build/lame && \
@@ -165,13 +115,8 @@ build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
 	emmake make install && \
 	cp ffmpeg ffmpeg.bc
 
-# Compile bitcode to JavaScript.
-# NOTE(Kagami): Bump heap size to 64M, default 16M is not enough even
-# for simple tests and 32M tends to run slower than 64M.
-
 FILES = ./ctest/avio_write.c
 EXPORTED_FUNCTIONS = "['_add_frame', '_open_stream', '_close_stream', '_free_buffer']"
-
 
 EMCC_COMMON_ARGS = \
 	-O3 --memory-init-file 0 \

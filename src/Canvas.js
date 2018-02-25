@@ -39,27 +39,41 @@ export default class Canvas extends Component {
       this.material = material
       this.cube = cube
       this.mount.appendChild(this.renderer.domElement)
+      this.mount.onclick = () => console.log(this.close_stream());
+
       this.start()
 
-  
       window.Module["onRuntimeInitialized"] = () => {
           this.moduleLoaded = true;
-          window.Module._open_stream(400, 400, 30, 400000)
+          window.Module._open_stream(400, 400, 20, 400000)
         };
 
       this.gl = renderer.getContext();
       this.renderTarget = new THREE.WebGLRenderTarget(400,400);    
     }
 
-     encode = (buffer) =>{
-        const Module = window.Module
-        var encodedBuffer_p, decodedBuffer_p;
-        try {
-          Module.HEAPU8.set(buffer, encodedBuffer_p)
-          Module._add_frame(encodedBuffer_p)
-        }finally {
-          Module._free(encodedBuffer_p)
-        }
+    close_stream = () => {
+      const { Module } = window;
+      var video_p, size, size2;
+      try {
+        video_p = Module._malloc(4)
+        size = Module._close_stream(video_p, size)
+        var buf = Buffer.from(Module.buffer, video_p, size)
+        return Buffer.from(buf)
+      }finally {
+        Module._free(video_p)
+      }
+    }
+
+    encode = (buffer) =>{
+      const Module = window.Module
+      try {
+        var encodedBuffer_p = Module._malloc(buffer.length)
+        Module.HEAPU8.set(buffer, encodedBuffer_p)
+        Module._add_frame(encodedBuffer_p)
+      }finally {
+        Module._free(encodedBuffer_p)
+      }
     }
   
     componentWillUnmount() {
@@ -88,7 +102,7 @@ export default class Canvas extends Component {
     
     renderScene() {
         const { gl } = this;
-        let pixels  = new Uint8Array( 400 * 400 * 4)
+        let pixels  = new Uint8Array( 400 * 400 * 4 )
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,400,400, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
