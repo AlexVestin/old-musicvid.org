@@ -88,7 +88,7 @@ static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
         bd->ptr = bd->buf + offset;
         bd->room = bd->size - offset;
     }
-    //printf("write packet pkt_size:%d used_buf_size:%zu buf_size:%zu buf_room:%zu\n", buf_size, bd->ptr-bd->buf, bd->size, bd->room);
+    printf("write packet pkt_size:%d used_buf_size:%zu buf_size:%zu buf_room:%zu\n", buf_size, bd->ptr-bd->buf, bd->size, bd->room);
 
     memcpy(bd->ptr, buf, buf_size);
     bd->ptr  += buf_size;
@@ -112,6 +112,7 @@ static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out) {
             exit(1);
         }
 
+        log_packet(ofmt_ctx, pkt, "write");
         pkt->stream_index = out->index;      
         av_packet_rescale_ts(pkt, cod->time_base, out->time_base);
         av_interleaved_write_frame(ofmt_ctx, pkt);
@@ -235,7 +236,7 @@ void open_stream(int w, int h, int fps, int br){
     );
 }    
     
-int close_stream(uint8_t** out, int* size){
+int close_stream(uint8_t** out){
     encode(NULL, video_ctx, video_stream);
     av_write_trailer(ofmt_ctx);
     /* close output */
@@ -244,7 +245,6 @@ int close_stream(uint8_t** out, int* size){
     av_free(avio_ctx);
 
     *out = bd.buf;
-    *size = bd.size;
 
     printf("bd.size: %d\n", bd.size);
     return bd.size;

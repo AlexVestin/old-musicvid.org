@@ -11,6 +11,8 @@ export default class Canvas extends Component {
       this.streamClosed = false;
       
 
+      this.frameIdx = 0;
+
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
       this.animate = this.animate.bind(this)
@@ -62,7 +64,6 @@ export default class Canvas extends Component {
         try {
           video_p = Module._malloc(4)
           size = Module._close_stream(video_p, size2)
-          console.log(size, size2)
           var buf = Buffer.from(Module.buffer, video_p, size)
           return Buffer.from(buf)
         }finally {
@@ -108,19 +109,25 @@ export default class Canvas extends Component {
     renderScene() {
         const { gl } = this;
         let pixels  = new Uint8Array( 400 * 400 * 4 )
-        this.renderer.render(this.scene, this.camera)
+        //this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,400,400, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if(this.moduleLoaded && !this.closeStream){
+        if(this.moduleLoaded && !this.closeStream && this.frameId < 500){
+          console.log(this.frameId)
           this.encode(pixels)
+
         }else if (this.closeStream && !this.streamClosed){
             let vid = this.close_stream()
-            const file = new File([vid], 'vid.mp4', { type: 'video/mp4' });
-            const link = this.linkRef;
+            console.log(vid)
+            const blob = new Blob([vid], 'vid.mp4', { type: 'video/mp4' });
+            window.navigator.msSaveOrOpenBlob("vid.mp4", blob);
+            /*const link = this.linkRef;
             link.setAttribute('href', URL.createObjectURL(file));
             link.setAttribute('download', file.name);
             link.click();
             this.streamClosed = true;
+            */
+            window.Module._free_buffer();
         }
     }
   
