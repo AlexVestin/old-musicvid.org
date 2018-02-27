@@ -52,12 +52,14 @@ export default class Canvas extends Component {
       this.start()
 
       window.Module["onRuntimeInitialized"] = () => {
-          window.Module._open_stream(this.width, this.height, 20, 400000)
+          window.Module._open_stream(this.width, this.height, 30, 1200000)
           this.moduleLoaded = true;
         };
 
       this.gl = renderer.getContext();
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
+
+      this.encodedFrames = 0;
     }
 
     close_stream = () => {
@@ -74,6 +76,9 @@ export default class Canvas extends Component {
     }
 
     encode(buffer){
+      if(this.encodedFrames === 0)
+        this.startTime = performance.now()
+      
       const Module = window.Module
       try {
         var encodedBuffer_p = Module._malloc(buffer.length)
@@ -81,6 +86,7 @@ export default class Canvas extends Component {
         Module._add_frame(encodedBuffer_p)
       }finally {
         Module._free(encodedBuffer_p)
+        this.encodedFrames++;
       }
     }
   
@@ -113,10 +119,11 @@ export default class Canvas extends Component {
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if( this.moduleLoaded && !this.closeStream && this.frameId < 600 ){
+        if( this.moduleLoaded && this.frameId < 600 ){
           this.encode(pixels)
 
-        }else if (this.closeStream && !this.streamClosed){
+        }else if ( this.moduleLoaded && !this.streamClosed){
+            console.log("frames encoded: ", this.encodedFrames, " seconds taken: ", (performance.now() -this.startTime) / 1000)
             this.streamClosed = true;
             let vid = this.close_stream()
             const blob = new Blob([vid], { type: 'video/mp4' });
