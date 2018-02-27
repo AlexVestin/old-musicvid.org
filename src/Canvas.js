@@ -71,7 +71,7 @@ export default class Canvas extends Component {
         }
     }
 
-    encode = (buffer) =>{
+    async encode(buffer){
       const Module = window.Module
       try {
         var encodedBuffer_p = Module._malloc(buffer.length)
@@ -106,7 +106,7 @@ export default class Canvas extends Component {
     }
 
     
-    renderScene() {
+    async renderScene() {
         const { gl } = this;
         let pixels  = new Uint8Array( 400 * 400 * 4 )
         //this.renderer.render(this.scene, this.camera)
@@ -114,19 +114,22 @@ export default class Canvas extends Component {
 
         if(this.moduleLoaded && !this.closeStream && this.frameId < 500){
           console.log(this.frameId)
-          this.encode(pixels)
+          await this.encode(pixels)
+          console.log(this.frameId)
 
         }else if (this.closeStream && !this.streamClosed){
-            let vid = this.close_stream()
-            console.log(vid)
-            const blob = new Blob([vid], 'vid.mp4', { type: 'video/mp4' });
-            window.navigator.msSaveOrOpenBlob("vid.mp4", blob);
-            /*const link = this.linkRef;
-            link.setAttribute('href', URL.createObjectURL(file));
-            link.setAttribute('download', file.name);
-            link.click();
             this.streamClosed = true;
-            */
+            let vid = this.close_stream()
+            const blob = new Blob([vid], { type: 'video/mp4' });
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+              window.navigator.msSaveOrOpenBlob(blob);
+              return;
+            }else { // Others
+              const link = this.linkRef;
+              link.setAttribute('href', URL.createObjectURL(blob));
+              link.setAttribute('download', "vid.mp4");
+              link.click();
+          } 
             window.Module._free_buffer();
         }
     }
