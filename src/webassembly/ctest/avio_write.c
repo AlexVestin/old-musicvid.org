@@ -231,10 +231,7 @@ void open_stream(int w, int h, int fps, int br){
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
         fprintf(stderr, "Error occurred when opening output file\n");
         exit(1);
-    }
-
-    //rescaling
-    
+    }    
 } 
 
 int close_stream() {
@@ -249,8 +246,6 @@ int close_stream() {
 }   
     
 uint8_t* get_buffer() {
-    printf("bd.size: %d\n", bd.size);
-    printf("%p\n", bd.buf);
     return bd.buf;
 }
 

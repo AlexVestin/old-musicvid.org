@@ -86,6 +86,7 @@ export default class Canvas extends Component {
         Module._add_frame(encodedBuffer_p)
       }finally {
         Module._free(encodedBuffer_p)
+        console.log(this.encodedFrames)
         this.encodedFrames++;
       }
     }
