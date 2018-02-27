@@ -116,7 +116,7 @@ build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
 	cp ffmpeg ffmpeg.bc
 
 FILES = ./ctest/avio_write.c
-EXPORTED_FUNCTIONS = "['_add_frame', '_open_stream', '_close_stream', '_free_buffer']"
+EXPORTED_FUNCTIONS = "['_add_frame', '_open_stream', '_close_stream', '_free_buffer', '_get_buffer']"
 
 EMCC_COMMON_ARGS = \
 	-O3 --memory-init-file 0 \

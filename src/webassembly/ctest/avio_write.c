@@ -38,6 +38,8 @@ AVPacket *pkt;
 static struct SwsContext *sws_context = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
 
+const int NR_COLORS = 4;
+
 static struct SwsContext *audio_sws_context = NULL;
 int16_t* audio_buf;
 int audio_sr;
@@ -88,7 +90,7 @@ static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
         bd->ptr = bd->buf + offset;
         bd->room = bd->size - offset;
     }
-    printf("write packet pkt_size:%d used_buf_size:%zu buf_size:%zu buf_room:%zu\n", buf_size, bd->ptr-bd->buf, bd->size, bd->room);
+    //printf("write packet pkt_size:%d used_buf_size:%zu buf_size:%zu buf_room:%zu\n", buf_size, bd->ptr-bd->buf, bd->size, bd->room);
 
     memcpy(bd->ptr, buf, buf_size);
     bd->ptr  += buf_size;
@@ -112,7 +114,7 @@ static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out) {
             exit(1);
         }
 
-        log_packet(ofmt_ctx, pkt, "write");
+        //log_packet(ofmt_ctx, pkt, "write");
         pkt->stream_index = out->index;      
         av_packet_rescale_ts(pkt, cod->time_base, out->time_base);
         av_interleaved_write_frame(ofmt_ctx, pkt);
@@ -121,13 +123,22 @@ static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out) {
 }
 
 void set_frame_yuv_from_rgb(uint8_t *rgb) {
-    const int in_linesize[1] = { 4 * video_ctx->width };
+    const int in_linesize[1] = { NR_COLORS * video_ctx->width };
+    sws_context = sws_getCachedContext(
+            sws_context,
+            video_ctx->width, video_ctx->height, 
+            AV_PIX_FMT_RGB32,
+            video_ctx->width, video_ctx->height, 
+            AV_PIX_FMT_YUV420P,
+            0, NULL, NULL, NULL
+    );
+
     sws_scale(sws_context, (const uint8_t * const *)&rgb, in_linesize, 0,
     video_ctx->height, video_frame->data, video_frame->linesize);
 }
 
 
-void add_frame(uint8_t* buffer){
+void add_frame(uint8_t* buffer){    
     ret = av_frame_make_writable(video_frame);
     set_frame_yuv_from_rgb(buffer);
     video_frame->pts = frameIdx++;
@@ -137,9 +148,6 @@ void add_frame(uint8_t* buffer){
 
 void open_stream(int w, int h, int fps, int br){
     AVOutputFormat* of = av_guess_format("mp4", 0, 0);
-
-    printf("w: %d h: %d fps: %d br: %d \n", w, h, fps, br);
-    printf("---------------------------------------\n");
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
     if (!bd.buf) {
         ret = AVERROR(ENOMEM);
@@ -226,17 +234,10 @@ void open_stream(int w, int h, int fps, int br){
     }
 
     //rescaling
-    sws_context = sws_getCachedContext(
-            sws_context,
-            video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_RGB8,
-            video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_YUV420P,
-            0, NULL, NULL, NULL
-    );
-}    
     
-int close_stream(uint8_t** out){
+} 
+
+int close_stream() {
     encode(NULL, video_ctx, video_stream);
     av_write_trailer(ofmt_ctx);
     /* close output */
@@ -244,10 +245,13 @@ int close_stream(uint8_t** out){
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
 
-    *out = bd.buf;
-
-    printf("bd.size: %d\n", bd.size);
     return bd.size;
+}   
+    
+uint8_t* get_buffer() {
+    printf("bd.size: %d\n", bd.size);
+    printf("%p\n", bd.buf);
+    return bd.buf;
 }
 
 void free_buffer(){

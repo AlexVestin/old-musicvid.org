@@ -10,7 +10,9 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-
+      this.width = 1280;
+      this.height = 720;
+      
       this.frameIdx = 0;
 
       this.start = this.start.bind(this)
@@ -29,14 +31,14 @@ export default class Canvas extends Component {
         0.1,
         1000
       )
-      const renderer = new THREE.WebGLRenderer({ preserveDrawingBuffer: true  })
+      const renderer = new THREE.WebGLRenderer()
       const geometry = new THREE.BoxGeometry(1, 1, 1)
       const material = new THREE.MeshBasicMaterial({ color: 0xff00ff })
       const cube = new THREE.Mesh(geometry, material)
   
       camera.position.z = 4
       scene.add(cube)
-      renderer.setClearColor('#000000')
+      renderer.setClearColor('#00FF00')
       renderer.setSize(width, height)
   
       this.scene = scene
@@ -50,20 +52,20 @@ export default class Canvas extends Component {
       this.start()
 
       window.Module["onRuntimeInitialized"] = () => {
-          window.Module._open_stream(400, 400, 20, 400000)
+          window.Module._open_stream(this.width, this.height, 20, 400000)
           this.moduleLoaded = true;
         };
 
       this.gl = renderer.getContext();
-      this.renderTarget = new THREE.WebGLRenderTarget(400,400);    
+      this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
     }
 
     close_stream = () => {
         const { Module } = window;
-        var video_p, size, size2;
+        var video_p, size;
         try {
-          video_p = Module._malloc(4)
-          size = Module._close_stream(video_p, size2)
+          size = Module._close_stream();
+          video_p = Module._get_buffer();
           var buf = Buffer.from(Module.buffer, video_p, size)
           return Buffer.from(buf)
         }finally {
@@ -71,7 +73,7 @@ export default class Canvas extends Component {
         }
     }
 
-    async encode(buffer){
+    encode(buffer){
       const Module = window.Module
       try {
         var encodedBuffer_p = Module._malloc(buffer.length)
@@ -104,18 +106,15 @@ export default class Canvas extends Component {
       this.renderScene()
       this.frameId = window.requestAnimationFrame(this.animate)
     }
-
     
-    async renderScene() {
-        const { gl } = this;
-        let pixels  = new Uint8Array( 400 * 400 * 4 )
-        //this.renderer.render(this.scene, this.camera)
-        gl.readPixels(0,0,400,400, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+    renderScene() {
+        const gl = this.renderer.getContext();
+        let pixels  = new Uint8Array( this.height * this.width * 4 )
+        this.renderer.render(this.scene, this.camera)
+        gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if(this.moduleLoaded && !this.closeStream && this.frameId < 500){
-          console.log(this.frameId)
-          await this.encode(pixels)
-          console.log(this.frameId)
+        if( this.moduleLoaded && !this.closeStream && this.frameId < 600 ){
+          this.encode(pixels)
 
         }else if (this.closeStream && !this.streamClosed){
             this.streamClosed = true;
@@ -138,7 +137,7 @@ export default class Canvas extends Component {
       return (
         <div className="canvas-wrapper">
             <div
-                style={{ width: '400px', height: '400px' }}
+                style={{ width: String(this.width) +'px', height: String(this.height) +'px' }}
                 ref={(mount) => { this.mount = mount }}
             />
             <a ref={(linkRef) => this.linkRef = linkRef}>Download</a>
@@ -146,7 +145,3 @@ export default class Canvas extends Component {
       )
     }
   }
-
-function fetchAndInstantiate(url, importObject) {
-
-}
