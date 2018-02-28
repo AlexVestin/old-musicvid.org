@@ -1,5 +1,5 @@
 
-FLAGS = `pkg-config --libs libavcodec libavformat libswscale x264` \
+FLAGS = `pkg-config --libs libavcodec libavformat libswscale libswresample x264` \
 
 FILES = maintest.c avio_write.c avio_write.h \
 	-I/home/alex/reg/ffmpeg_build/include \

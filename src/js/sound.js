@@ -4,13 +4,15 @@ var source = audioCtx.createBufferSource();
 var offlineContext
 
 export default class Sound {
-    constructor(filename){
+    constructor(filename, linkref){
         this.soundDataBuffer = []
         this.startTime = -1
         this.loaded = false
         this.dest = audioCtx.createMediaStreamDestination()
         this.stream = this.dest.stream
         this.loadSound(filename, (data) => this.fftData = data)
+
+        this.linkref = linkref;
     }
 
     play = () => {
@@ -24,6 +26,16 @@ export default class Sound {
         this.startTime = performance.now();
     }
 
+    saveChannel = (ch, buffer)  => {
+        let blob = new Blob(
+            [new Float32Array(buffer.getChannelData(ch))], 
+            {type: "application/octet-stream"}
+        )
+        const link = this.linkref;
+        link.setAttribute('href', URL.createObjectURL(blob));
+        link.setAttribute('download', String(ch) + ".raw");
+        link.click();
+    }
 
     loadSound = (filename, callback) => {
         let that = this
@@ -31,7 +43,17 @@ export default class Sound {
             reader.onload = function(ev) {
                 audioCtx.decodeAudioData(ev.target.result, function(buffer) {
                     that.buffer = buffer;
-                    analyze(buffer, callback)
+                    console.log(buffer)
+                    let left = new Float32Array(buffer.getChannelData(0))
+                    let right = new Float32Array(buffer.getChannelData(1))
+                    
+                    for(var i = 0; i < 10; i++) {
+                        console.log(left[i])
+                        console.log(right[i])
+                    }
+                    that.saveChannel(0, buffer);
+                    that.saveChannel(1, buffer);                    
+ 
                 });
             }
         

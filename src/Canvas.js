@@ -1,6 +1,7 @@
 
 import React, {Component} from 'react'
 import * as THREE from 'three'
+import Sound from './js/sound'
 //import initModule from './webassembly/encode'
 
 export default class Canvas extends Component {
@@ -10,10 +11,12 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 1280;
-      this.height = 720;
+      this.width = 200;
+      this.height = 200;
       
       this.frameIdx = 0;
+
+      
 
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
@@ -60,6 +63,8 @@ export default class Canvas extends Component {
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
 
       this.encodedFrames = 0;
+
+      this.sound = new Sound("sound.wav", this.linkRef)
     }
 
     close_stream = () => {
@@ -129,13 +134,12 @@ export default class Canvas extends Component {
             let vid = this.close_stream()
             const blob = new Blob([vid], { type: 'video/mp4' });
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-              window.navigator.msSaveOrOpenBlob(blob);
-              return;
+              //window.navigator.msSaveOrOpenBlob(blob);
             }else { // Others
               const link = this.linkRef;
               link.setAttribute('href', URL.createObjectURL(blob));
               link.setAttribute('download', "vid.mp4");
-              link.click();
+              //link.click();
           } 
             window.Module._free_buffer();
         }
