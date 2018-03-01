@@ -269,7 +269,7 @@ static AVFrame *alloc_audio_frame() {
     audio_frame->sample_rate      = audio_ctx->sample_rate;
     audio_frame->nb_samples       = audio_ctx->frame_size;
 
-    ret = av_frame_get_buffer(audio_frame, 0);
+    ret = av_frame_get_buffer(audio_frame, 4);
     if (ret < 0) {
         fprintf(stderr, "Error allocating an audio buffer\n");
         exit(1);
@@ -292,8 +292,12 @@ void write_audio_frame() {
     int dts_diff;
     while(bytes_read < src_size) { 
         int ret;
-        
         ret = av_frame_make_writable(audio_frame);
+        if(ret < 0){
+            printf("error\n");
+            exit(1);
+        }
+            
         audio_frame->data[0] = src_buf + bytes_read;
         bytes_read += audio_frame->nb_samples * 4 * 2;
         
@@ -303,7 +307,7 @@ void write_audio_frame() {
         }
 
         dst_nb_samples = av_rescale_rnd (
-            audio_frame->nb_samples, 
+            swr_get_delay(audio_swr_ctx, audio_ctx->sample_rate) + audio_frame->nb_samples, 
             src_sample_rate, 
             audio_ctx->sample_rate,
             AV_ROUND_UP
@@ -330,16 +334,23 @@ void write_audio_frame() {
         frame_bytes += dst_nb_samples;
         encode(audio_frame, audio_ctx, audio_stream);
     }
-
     printf("ouitttwetwet\n");
 }
 
-void open_audio(uint8_t* buf, int size, int sample_rate, int nr_channels, int bit_rate){
+void open_audio(float* left, float* right, int size, int sample_rate, int nr_channels, int bit_rate){
+    float* combined = malloc((size + size) * sizeof(float));
+    int i;
+
+    for(i = 0; i < size; i++ ){
+        combined[i*2] = right[i];
+        combined[(i*2) + 1] = left[i];
+    }
+
     src_sample_rate = sample_rate;
     src_bit_rate = bit_rate;
     src_nr_channels = nr_channels;
-    src_size = size;
-    src_buf = buf;
+    src_size = (size + size) * sizeof(float);
+    src_buf = (uint8_t*)combined;
 
     AVCodec* ac = avcodec_find_encoder(AV_CODEC_ID_MP3);
     audio_stream = avformat_new_stream(ofmt_ctx, NULL);

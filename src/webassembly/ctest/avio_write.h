@@ -5,7 +5,7 @@ void write_audio_frame();
 void free_buffer();
 
 void open_video(int, int, int, int);
-void open_audio(uint8_t*,  int, int, int, int);
+void open_audio(float*,float*, int, int, int, int);
 
 uint8_t* get_buffer();
 int close_stream();

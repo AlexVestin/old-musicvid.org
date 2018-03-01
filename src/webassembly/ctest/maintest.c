@@ -34,46 +34,17 @@ float* get_audio_buf(const char* filename, int *fs){
     return buf;   
 }
 
-float* combine(int *audio_size) {
-    int leftSize;
-    int rightSize;
-    float* left = get_audio_buf("right1.raw", &leftSize);
-    float* right = get_audio_buf("left1.raw", &rightSize);
-
-
-    int size = leftSize > rightSize ? leftSize : rightSize;
-    float* combined = malloc((leftSize + rightSize) * sizeof(float));
-    int i, j;
-
-    for(i = 0; i < size; i++ ){
-        combined[i*2] = right[i];
-        combined[(i*2) + 1] = left[i];
-    }
-
-    //TODO fix segfault
-    //free(left);
-    //free(right);
-    FILE* out = fopen("test.pcm", "wb");
-    if(!out){
-        perror("fopen");
-        exit(1);
-    }
-        
-    fwrite(combined, sizeof(float) * (leftSize+rightSize), 1, out);
-    fclose(out);
-    *audio_size = leftSize + rightSize;
-    return combined;
-}
-
 int main(int argc, char** argv) {
     int i, j, audio_size;
 
     open_video(WIDTH,HEIGHT,FPS,BIT_RATE);
 
-    float* combined = combine(&audio_size);
-    printf("combined size: %d \n", audio_size);
-    double seconds = audio_size / (double) (44100 * 2);
-    open_audio( combined, audio_size * sizeof(float), 44100, 2, 256000 );
+    int leftSize, rightSize;
+    float* left = get_audio_buf("right1.raw", &leftSize);
+    float* right = get_audio_buf("left1.raw", &rightSize);
+
+    double seconds = (leftSize+rightSize) / (double) (44100 * 2);
+    open_audio( left, right, leftSize, 44100, 2, 128000 );
     uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS);
     
     for(j = 0; j < WIDTH*HEIGHT*NR_CLS; j++){
@@ -84,15 +55,12 @@ int main(int argc, char** argv) {
         add_frame(buffer);
     }
 
-    printf("seconds: %f \n", seconds);
-
     write_audio_frame();
 
     int size = close_stream();
     uint8_t* out = get_buffer();
     
     FILE* out_file = fopen("fi1.mp4", "w");
-    printf("out: %p size: %d\n", out, size);
     fwrite(out, size, 1, out_file);
     fclose(out_file);
     free_buffer();
