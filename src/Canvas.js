@@ -11,12 +11,10 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 200;
-      this.height = 200;
+      this.width = 1080;
+      this.height = 720;
       
       this.frameIdx = 0;
-
-      
 
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
@@ -55,7 +53,10 @@ export default class Canvas extends Component {
       this.start()
 
       window.Module["onRuntimeInitialized"] = () => {
-          window.Module._open_stream(this.width, this.height, 30, 1200000)
+          
+          window.Module._open_video(this.width, this.height, 30, 1200000)
+          //this.openAudio()
+          window.Module._write_header();
           this.moduleLoaded = true;
         };
 
@@ -63,8 +64,27 @@ export default class Canvas extends Component {
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
 
       this.encodedFrames = 0;
+      //this.sound = new Sound("sound.wav", this.linkRef)
+    }
 
-      this.sound = new Sound("sound.wav", this.linkRef)
+    openAudio = () => {
+      const { left, right, sampleRate } = this.sound; 
+      const { Module } = window;
+
+      console.log(this.sound)
+      try {
+        var left_p = Module._malloc(left.length * 4)
+        Module.HEAPF32.set(left, left_p >> 2)
+        
+        var right_p = Module._malloc(right.length * 4)
+        Module.HEAPF32.set(right, right_p >> 2)
+
+        Module._open_audio(left, right, left.length, sampleRate, 2, 320000)
+      }finally {
+        this.left_p  = left_p;
+        this.right_p  = right_p;   
+        console.log("audio added")
+      }
     }
 
     close_stream = () => {
@@ -91,7 +111,6 @@ export default class Canvas extends Component {
         Module._add_frame(encodedBuffer_p)
       }finally {
         Module._free(encodedBuffer_p)
-        console.log(this.encodedFrames)
         this.encodedFrames++;
       }
     }
@@ -127,21 +146,25 @@ export default class Canvas extends Component {
 
         if( this.moduleLoaded && this.frameId < 600 ){
           this.encode(pixels)
-
         }else if ( this.moduleLoaded && !this.streamClosed){
             console.log("frames encoded: ", this.encodedFrames, " seconds taken: ", (performance.now() -this.startTime) / 1000)
+            console.log("encoding audio...")
+            //window.Module._write_audio_frame()
+            console.log("closing streams")
             this.streamClosed = true;
             let vid = this.close_stream()
             const blob = new Blob([vid], { type: 'video/mp4' });
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-              //window.navigator.msSaveOrOpenBlob(blob);
+              window.navigator.msSaveOrOpenBlob(blob);
             }else { // Others
               const link = this.linkRef;
               link.setAttribute('href', URL.createObjectURL(blob));
               link.setAttribute('download', "vid.mp4");
-              //link.click();
+              link.click();
           } 
             window.Module._free_buffer();
+            window.Module._free(this.right_p)
+            window.Module._free(this.left_p)
         }
     }
   

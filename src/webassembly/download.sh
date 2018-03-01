@@ -25,13 +25,10 @@ mkdir -p ./build ./build/lib ./build/bin
 cd ./build
 
 git -C x264 pull 2> /dev/null || git clone --depth 1 http://git.videolan.org/git/x264
-wget -O lame-3.100.tar.gz http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-tar xvf lame-3.100.tar.gz
-rm -rf lame-3.100.tar.gz
-mv ./lame-3.100 ./lame
-
-git -C opus pull 2> /dev/null || git clone --depth 1 https://github.com/xiph/opus.git
-
+#wget -O lame-3.100.tar.gz http://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+#tar xvf lame-3.100.tar.gz
+#rm -rf lame-3.100.tar.gz
+cp -R ./lame ./build
 wget -O ffmpeg-snapshot.tar.bz2 http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
 tar xjvf ffmpeg-snapshot.tar.bz2
 rm -rf ffmpeg-snapshot.tar.bz2

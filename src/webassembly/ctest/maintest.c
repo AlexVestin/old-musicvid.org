@@ -36,17 +36,19 @@ float* get_audio_buf(const char* filename, int *fs){
 
 int main(int argc, char** argv) {
     int i, j, audio_size;
+    double seconds = 10;
 
     open_video(WIDTH,HEIGHT,FPS,BIT_RATE);
 
     int leftSize, rightSize;
     float* left = get_audio_buf("right1.raw", &leftSize);
     float* right = get_audio_buf("left1.raw", &rightSize);
-
-    double seconds = (leftSize+rightSize) / (double) (44100 * 2);
-    open_audio( left, right, leftSize, 44100, 2, 128000 );
-    uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS);
+    open_audio( left, right, leftSize, 44100, 2, 320000 );
+    seconds = (leftSize+rightSize) / (double) (44100 * 2);
     
+
+    uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS);
+    write_header();
     for(j = 0; j < WIDTH*HEIGHT*NR_CLS; j++){
         if(j < WIDTH*HEIGHT*NR_CLS/2)
             buffer[j] = (j+1) % 3 == 0 ? 100000 : 0;
