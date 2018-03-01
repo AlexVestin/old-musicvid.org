@@ -11,10 +11,12 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 1080;
-      this.height = 720;
+      this.width = 100;
+      this.height = 100;
       
       this.frameIdx = 0;
+
+      this.enableAudio = true;
 
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
@@ -55,7 +57,8 @@ export default class Canvas extends Component {
       window.Module["onRuntimeInitialized"] = () => {
           
           window.Module._open_video(this.width, this.height, 30, 1200000)
-          //this.openAudio()
+          
+          if(this.enableAudio)this.openAudio()
           window.Module._write_header();
           this.moduleLoaded = true;
         };
@@ -64,7 +67,7 @@ export default class Canvas extends Component {
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
 
       this.encodedFrames = 0;
-      //this.sound = new Sound("sound.wav", this.linkRef)
+      if(this.enableAudio)this.sound = new Sound("sound.wav", this.linkRef)
     }
 
     openAudio = () => {
@@ -149,7 +152,7 @@ export default class Canvas extends Component {
         }else if ( this.moduleLoaded && !this.streamClosed){
             console.log("frames encoded: ", this.encodedFrames, " seconds taken: ", (performance.now() -this.startTime) / 1000)
             console.log("encoding audio...")
-            //window.Module._write_audio_frame()
+            if(this.enableAudio)window.Module._write_audio_frame()
             console.log("closing streams")
             this.streamClosed = true;
             let vid = this.close_stream()
