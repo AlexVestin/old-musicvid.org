@@ -2,7 +2,7 @@
 import React, {Component} from 'react'
 import * as THREE from 'three'
 import Sound from './js/sound'
-//import initModule from './webassembly/encode'
+import VideoEncoder from './videoencoder/videoencoder'
 
 export default class Canvas extends Component {
     constructor(props) {
@@ -13,21 +13,22 @@ export default class Canvas extends Component {
       
       this.width = 1080;
       this.height = 720;
+      this.fps = 30;
+      this.bitrate = 12000000;
       
       this.frameIdx = 0;
 
       this.enableAudio = true;
-      this.framesToEncode = 300
 
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
       this.animate = this.animate.bind(this)
 
+      
       if(this.enableAudio) {
         this.sound = new Sound("sound.wav")
-        this.sound.onload = this.openAudio
+        this.sound.onload = this.audioLoaded
       }
-     
     }
   
     componentDidMount() {
@@ -60,78 +61,27 @@ export default class Canvas extends Component {
       this.cube = cube
       this.mount.appendChild(this.renderer.domElement)
       this.mount.onclick = () =>this.closeStream=true;
-      
-      this.start()
 
-      window.Module["onRuntimeInitialized"] = () => {
-          
-          window.Module._open_video(this.width, this.height, 30, 1200000)
-          if(!this.enableAudio){
-            window.Module._write_header();
-            this.moduleLoaded = true;
-          }
-        };
+      this.start()
 
       this.gl = renderer.getContext();
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
 
       this.encodedFrames = 0;
+      this.eloaded = false
     }
 
-    openAudio = () => {
-        const { left, right, sampleRate } = this.sound; 
-        const { Module } = window;  
-        
-        this.sound.link = this.linkRef
-        try {
-          var left_p = Module._malloc(left.length * 4)
-          Module.HEAPF32.set(left, left_p >> 2)
-          
-          var right_p = Module._malloc(right.length * 4)
-          Module.HEAPF32.set(right, right_p >> 2)
-  
-          Module._open_audio(left_p, right_p, left.length, sampleRate, 2, 320000)
-          window.Module._write_header();
-        }catch(err) {
-          console.log(err)
-        }
-        finally {
-          this.left_p  = left_p;
-          this.right_p  = right_p;   
-
-          this.moduleLoaded = true;
-        }
-      
+    encoderLoaded = () => {
+        this.videoEncoder.openVideo( { w:this.width, h: this.height, fps: this.fps, bitrate: this.bitrate } )
+        this.videoEncoder.openAudio( { sound: this.sound, bitrate: 320000 } )
+        this.videoEncoder.writeHeader()
+        this.eloaded = true;
     }
-
-    close_stream = () => {
-        const { Module } = window;
-        var video_p, size;
-        try {
-          size = Module._close_stream();
-          video_p = Module._get_buffer();
-          var buf = Buffer.from(Module.buffer, video_p, size)
-          return Buffer.from(buf)
-        }finally {
-          Module._free(video_p)
-        }
+    
+    audioLoaded = () => {
+      this.videoEncoder = new VideoEncoder(this.encoderLoaded)
     }
-
-    encode(buffer){
-      if(this.encodedFrames === 0)
-        this.startTime = performance.now()
-      
-      const Module = window.Module
-      try {
-        var encodedBuffer_p = Module._malloc(buffer.length)
-        Module.HEAPU8.set(buffer, encodedBuffer_p)
-        Module._add_frame(encodedBuffer_p)
-      }finally {
-        Module._free(encodedBuffer_p)
-        this.encodedFrames++;
-      }
-    }
-  
+    
     componentWillUnmount() {
       this.stop()
       this.mount.removeChild(this.renderer.domElement)
@@ -161,28 +111,25 @@ export default class Canvas extends Component {
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if( this.moduleLoaded && this.encodedFrames < this.sound.duration * 30){
-          this.encode(pixels)
-        }else if ( this.moduleLoaded && !this.streamClosed){
-            console.log("frames encoded: ", this.encodedFrames, " seconds taken: ", (performance.now() -this.startTime) / 1000)
-            console.log("encoding audio...")
-            if(this.enableAudio)window.Module._write_audio_frame()
-            console.log("closing streams")
-            this.streamClosed = true;
-            let vid = this.close_stream()
-            const blob = new Blob([vid], { type: 'video/mp4' });
-            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-              window.navigator.msSaveOrOpenBlob(blob);
-            }else { // Others
-              const link = this.linkRef;
-              link.setAttribute('href', URL.createObjectURL(blob));
-              link.setAttribute('download', "vid.mp4");
-              link.click();
-          } 
-            window.Module._free_buffer();
-            window.Module._free(this.right_p)
-            window.Module._free(this.left_p)
+        if(this.eloaded && this.encodedFrames < 400){
+          this.videoEncoder.encode(pixels)
+          this.encodedFrames++;
+        }else if(this.eloaded) {
+          let blob = this.videoEncoder.close()
+          this.saveBlob(blob)
         }
+        
+    }
+
+    saveBlob = (blob) => {
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob);
+          }else { 
+            const link = this.linkRef;
+            link.setAttribute('href', URL.createObjectURL(blob));
+            link.setAttribute('download', "vid.mp4");
+            link.click();
+        } 
     }
   
     render() {

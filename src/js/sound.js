@@ -36,8 +36,6 @@ export default class Sound {
                     that.right = new Float32Array(buffer.getChannelData(1))
                     that.sampleRate = buffer.sampleRate
                     that.duration = buffer.duration;
-                    console.log(buffer)
-                    console.log("sound loaded")
                     if(that.onload !== undefined)
                         that.onload()
                 });

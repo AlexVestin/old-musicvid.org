@@ -7,8 +7,6 @@ import handleResize from "./handleresize"
 import Sound from './sound'
 window.onload = () =>{
     handleResize();
-
-    
     var sound
     var scene, camera, mesh, geometry, material, renderer
     var canvas, chunks = [], canvasStream;
