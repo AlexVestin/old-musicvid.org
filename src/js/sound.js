@@ -33,11 +33,13 @@ export default class Sound {
                 audioCtx.decodeAudioData(ev.target.result, function(buffer) {
                     that.buffer = buffer; 
                     that.left = new Float32Array(buffer.getChannelData(0))
-                    that.right = new Float32Array(buffer.getChannelData(0))
+                    that.right = new Float32Array(buffer.getChannelData(1))
                     that.sampleRate = buffer.sampleRate
-
-                    if(that.callback !== undefined)
-                        that.callback()
+                    that.duration = buffer.duration;
+                    console.log(buffer)
+                    console.log("sound loaded")
+                    if(that.onload !== undefined)
+                        that.onload()
                 });
             }
         

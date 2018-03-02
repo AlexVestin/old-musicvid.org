@@ -11,19 +11,23 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 3840;
-      this.height = 2160;
+      this.width = 400;
+      this.height = 400;
       
       this.frameIdx = 0;
 
-      this.enableAudio = false;
+      this.enableAudio = true;
       this.framesToEncode = 300
 
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
       this.animate = this.animate.bind(this)
 
-      if(this.enableAudio)this.sound = new Sound("sound.wav")
+      if(this.enableAudio) {
+        this.sound = new Sound("sound.wav")
+        this.sound.onload = this.openAudio
+      }
+     
     }
   
     componentDidMount() {
@@ -62,16 +66,10 @@ export default class Canvas extends Component {
       window.Module["onRuntimeInitialized"] = () => {
           
           window.Module._open_video(this.width, this.height, 30, 1200000)
-          
-          if(this.enableAudio) {
-            if(!this.sound.loaded) {
-              this.sound.callback = this.openAudio
-            }else {
-              this.openAudio()
+          if(!this.enableAudio){
+            window.Module._write_header();
+            this.moduleLoaded = true;
           }
-        }
-          window.Module._write_header();
-          this.moduleLoaded = true;
         };
 
       this.gl = renderer.getContext();
@@ -84,7 +82,6 @@ export default class Canvas extends Component {
         const { left, right, sampleRate } = this.sound; 
         const { Module } = window;  
         
-  
         this.sound.link = this.linkRef
         try {
           var left_p = Module._malloc(left.length * 4)
@@ -93,11 +90,16 @@ export default class Canvas extends Component {
           var right_p = Module._malloc(right.length * 4)
           Module.HEAPF32.set(right, right_p >> 2)
   
-          Module._open_audio(left, right, left.length, sampleRate, 2, 320000)
-        }finally {
+          Module._open_audio(left_p, right_p, left.length, sampleRate, 2, 320000)
+          window.Module._write_header();
+        }catch(err) {
+          console.log(err)
+        }
+        finally {
           this.left_p  = left_p;
           this.right_p  = right_p;   
-          console.log("audio added")
+
+          this.moduleLoaded = true;
         }
       
     }
@@ -127,7 +129,6 @@ export default class Canvas extends Component {
       }finally {
         Module._free(encodedBuffer_p)
         this.encodedFrames++;
-        console.log(this.encodedFrames)
       }
     }
   
@@ -160,7 +161,7 @@ export default class Canvas extends Component {
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if( this.moduleLoaded && this.frameId < this.framesToEncode ){
+        if( this.moduleLoaded && this.encodedFrames < this.sound.duration * 30){
           this.encode(pixels)
         }else if ( this.moduleLoaded && !this.streamClosed){
             console.log("frames encoded: ", this.encodedFrames, " seconds taken: ", (performance.now() -this.startTime) / 1000)

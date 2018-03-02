@@ -1,7 +1,7 @@
 FFMPEG_MP4_BC = ffmpeg.bc
 MP4_SHARED_DEPS = \
-	/home/alex/ffmpegbuild/build/lame/dist/lib/libmp3lame.so \
-	/home/alex/ffmpegbuild/build/x264/dist/lib/libx264.so
+	/home/alex/ff/em/lib/libmp3lame.so \
+	/home/alex/ff/em/lib/libx264.so
 
 all: mp4
 mp4: ffmpeg.js
@@ -19,7 +19,6 @@ EMCC_COMMON_ARGS = \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) \
 	-s ASSERTIONS=2 \
-	-s "BINARYEN_TRAP_MODE='clamp'"
 
 ffmpeg.js:
-	emcc -I/usr/local/include $(FILES) $(EMCC_COMMON_ARGS) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) 
+	emcc -I/home/alex/ff/em/include $(FILES) $(EMCC_COMMON_ARGS) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) 

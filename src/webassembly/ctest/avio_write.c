@@ -243,13 +243,11 @@ void open_video(int w, int h, int fps, int br){
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
     if(ret < 0)
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
-    
 } 
 
 int close_stream() {
     encode(NULL, video_ctx, video_stream);
-    if(have_audio)
-        encode(NULL, audio_ctx, audio_stream);
+    //encode(NULL, audio_ctx, audio_stream);
     
     av_write_trailer(ofmt_ctx);
     /* close output */
@@ -259,7 +257,7 @@ int close_stream() {
 
     return bd.size;
 }   
-    
+
 uint8_t* get_buffer() {
     return bd.buf;
 }
@@ -303,11 +301,9 @@ static int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt
     }
     return 0;
 }
-
+int count = 0; 
 void write_audio_frame() {
-    while(bytes_read < src_size) { 
-         printf("print1\n", bytes_read);
-
+    while(bytes_read + (audio_frame->nb_samples * sizeof(float) + 1) < src_size ) { 
         int ret;
         ret = av_frame_make_writable(audio_frame);
         if(ret < 0){
@@ -318,7 +314,6 @@ void write_audio_frame() {
         audio_frame->data[0] = src_buf_left + bytes_read;
         audio_frame->data[1] = src_buf_right + bytes_read;
         bytes_read += audio_frame->nb_samples * 4;
-        printf("print 2: %d\n", bytes_read);
 
         dst_nb_samples = av_rescale_rnd (
             swr_get_delay(audio_swr_ctx, audio_ctx->sample_rate) + audio_frame->nb_samples, 
@@ -326,8 +321,6 @@ void write_audio_frame() {
             audio_ctx->sample_rate,
             AV_ROUND_UP
         );   
-
-        printf("print 3\n", bytes_read);
 
         ret = swr_convert (
             audio_swr_ctx,
@@ -341,8 +334,6 @@ void write_audio_frame() {
             printf("error converting \n");
             exit(1);
         }
-
-        printf("print 4\n", bytes_read);
             
         audio_frame->pts = av_rescale_q(
             frame_bytes, 
@@ -350,11 +341,8 @@ void write_audio_frame() {
             audio_ctx->time_base
         );
 
-        printf("print5\n", bytes_read);
-
         frame_bytes += dst_nb_samples;
         encode(audio_frame, audio_ctx, audio_stream);
-        printf("print 6\n", bytes_read);
     }
 }
 
@@ -368,7 +356,6 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
     src_buf_left = (uint8_t*)left;
     src_buf_right = (uint8_t*)right;
     
-
     AVCodec* ac = avcodec_find_encoder(AV_CODEC_ID_MP3);
     audio_stream = avformat_new_stream(ofmt_ctx, NULL);
     audio_stream->id = ofmt_ctx->nb_streams-1;
@@ -420,7 +407,7 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
 
     av_opt_set_int       (audio_swr_ctx, "in_channel_count",   nr_channels,               0);
     av_opt_set_int       (audio_swr_ctx, "in_sample_rate",     sample_rate,               0);
-    av_opt_set_sample_fmt(audio_swr_ctx, "in_sample_fmt",      AV_SAMPLE_FMT_FLTP,         0);
+    av_opt_set_sample_fmt(audio_swr_ctx, "in_sample_fmt",      AV_SAMPLE_FMT_FLTP,        0);
     av_opt_set_int       (audio_swr_ctx, "out_channel_count",  audio_ctx->channels,       0);
     av_opt_set_int       (audio_swr_ctx, "out_sample_rate",    audio_ctx->sample_rate,    0);
     av_opt_set_sample_fmt(audio_swr_ctx, "out_sample_fmt",     audio_ctx->sample_fmt,     0);
