@@ -14,11 +14,12 @@ EXPORTED_FUNCTIONS = "[ \
 
 EMCC_COMMON_ARGS = \
 	-O3 --memory-init-file 0 \
-	-o  ../../public/ffmpeg.js\
+	-o  ../../public/wasm-video-encoder.js\
 	-s WASM=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) \
-	-s ASSERTIONS=2 \
+	-s MODULARIZE=1 \
+	-s EXPORT_NAME="'wasm-video-encoder'"
 
 ffmpeg.js:
 	emcc -I/home/alex/ff/em/include $(FILES) $(EMCC_COMMON_ARGS) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) 
