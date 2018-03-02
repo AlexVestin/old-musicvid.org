@@ -11,16 +11,19 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 100;
-      this.height = 100;
+      this.width = 3840;
+      this.height = 2160;
       
       this.frameIdx = 0;
 
-      this.enableAudio = true;
+      this.enableAudio = false;
+      this.framesToEncode = 300
 
       this.start = this.start.bind(this)
       this.stop = this.stop.bind(this)
       this.animate = this.animate.bind(this)
+
+      if(this.enableAudio)this.sound = new Sound("sound.wav")
     }
   
     componentDidMount() {
@@ -34,12 +37,14 @@ export default class Canvas extends Component {
         0.1,
         1000
       )
-      const renderer = new THREE.WebGLRenderer()
+      const renderer = new THREE.WebGLRenderer({antialias:true})
       const geometry = new THREE.BoxGeometry(1, 1, 1)
       const material = new THREE.MeshBasicMaterial({ color: 0xff00ff })
       const cube = new THREE.Mesh(geometry, material)
   
       camera.position.z = 4
+      cube.position.x -= 2;
+
       scene.add(cube)
       renderer.setClearColor('#00FF00')
       renderer.setSize(width, height)
@@ -51,14 +56,20 @@ export default class Canvas extends Component {
       this.cube = cube
       this.mount.appendChild(this.renderer.domElement)
       this.mount.onclick = () =>this.closeStream=true;
-
+      
       this.start()
 
       window.Module["onRuntimeInitialized"] = () => {
           
           window.Module._open_video(this.width, this.height, 30, 1200000)
           
-          if(this.enableAudio)this.openAudio()
+          if(this.enableAudio) {
+            if(!this.sound.loaded) {
+              this.sound.callback = this.openAudio
+            }else {
+              this.openAudio()
+          }
+        }
           window.Module._write_header();
           this.moduleLoaded = true;
         };
@@ -67,27 +78,28 @@ export default class Canvas extends Component {
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
 
       this.encodedFrames = 0;
-      if(this.enableAudio)this.sound = new Sound("sound.wav", this.linkRef)
     }
 
     openAudio = () => {
-      const { left, right, sampleRate } = this.sound; 
-      const { Module } = window;
-
-      console.log(this.sound)
-      try {
-        var left_p = Module._malloc(left.length * 4)
-        Module.HEAPF32.set(left, left_p >> 2)
+        const { left, right, sampleRate } = this.sound; 
+        const { Module } = window;  
         
-        var right_p = Module._malloc(right.length * 4)
-        Module.HEAPF32.set(right, right_p >> 2)
-
-        Module._open_audio(left, right, left.length, sampleRate, 2, 320000)
-      }finally {
-        this.left_p  = left_p;
-        this.right_p  = right_p;   
-        console.log("audio added")
-      }
+  
+        this.sound.link = this.linkRef
+        try {
+          var left_p = Module._malloc(left.length * 4)
+          Module.HEAPF32.set(left, left_p >> 2)
+          
+          var right_p = Module._malloc(right.length * 4)
+          Module.HEAPF32.set(right, right_p >> 2)
+  
+          Module._open_audio(left, right, left.length, sampleRate, 2, 320000)
+        }finally {
+          this.left_p  = left_p;
+          this.right_p  = right_p;   
+          console.log("audio added")
+        }
+      
     }
 
     close_stream = () => {
@@ -115,6 +127,7 @@ export default class Canvas extends Component {
       }finally {
         Module._free(encodedBuffer_p)
         this.encodedFrames++;
+        console.log(this.encodedFrames)
       }
     }
   
@@ -147,7 +160,7 @@ export default class Canvas extends Component {
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if( this.moduleLoaded && this.frameId < 600 ){
+        if( this.moduleLoaded && this.frameId < this.framesToEncode ){
           this.encode(pixels)
         }else if ( this.moduleLoaded && !this.streamClosed){
             console.log("frames encoded: ", this.encodedFrames, " seconds taken: ", (performance.now() -this.startTime) / 1000)

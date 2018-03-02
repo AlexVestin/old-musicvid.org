@@ -4,7 +4,7 @@ var source = audioCtx.createBufferSource();
 var offlineContext
 
 export default class Sound {
-    constructor(filename, linkref){
+    constructor(filename){
         this.soundDataBuffer = []
         this.startTime = -1
         this.loaded = false
@@ -12,7 +12,7 @@ export default class Sound {
         this.stream = this.dest.stream
         this.loadSound(filename, (data) => this.fftData = data)
 
-        this.linkref = linkref;
+        this.loaded = false;
     }
 
     play = () => {
@@ -35,7 +35,9 @@ export default class Sound {
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(0))
                     that.sampleRate = buffer.sampleRate
-                    console.log(buffer)              
+
+                    if(that.callback !== undefined)
+                        that.callback()
                 });
             }
         
