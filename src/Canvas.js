@@ -11,8 +11,8 @@ export default class Canvas extends Component {
       this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 400;
-      this.height = 400;
+      this.width = 1080;
+      this.height = 720;
       
       this.frameIdx = 0;
 
