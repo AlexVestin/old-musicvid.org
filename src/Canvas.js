@@ -117,7 +117,7 @@ export default class Canvas extends Component {
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
         if(!this.streamClosed) {
-          if(this.encoderLoaded && this.encodedFrames < 1200){
+          if(this.encoderLoaded && this.encodedFrames < 400){
             this.videoEncoder.addFrame(pixels)
             this.encodedFrames++;
           }else if(this.encoderLoaded) {

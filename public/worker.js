@@ -1,4 +1,4 @@
-importScripts("wasmglue.js")
+importScripts("WasmVideoEncoder.js")
 
 let encodedFrames = 0
 let initialized = false

@@ -155,29 +155,30 @@ void set_frame_yuv_from_rgb(uint8_t *rgb) {
     video_ctx->height, video_frame->data, video_frame->linesize);
 }
 
-void flip_vertical(uint8_t* buffer) {
-    int top = 0;
-    int bottom = (video_ctx->height - 1) * video_ctx->width;
-    int c;
-    while(top < bottom) {
-        for(c = 0; c < video_ctx->width; ++c ){
-            int tmp = buffer[top + c];
-            buffer[top + c] = buffer[bottom + c];
-            buffer[bottom + c] = temp;
-        }
+void flip_vertically(uint8_t *pixels) {
+    const size_t width = video_ctx->width;
+    const size_t height = video_ctx->height;
+    
+    const size_t stride = width * 4;
+    uint8_t *row = malloc(stride);
+    uint8_t *low = pixels;
+    uint8_t *high = &pixels[(height - 1) * stride];
+
+    for (; low < high; low += stride, high -= stride) {
+        memcpy(row, low, stride);
+        memcpy(low, high, stride);
+        memcpy(high, row, stride);
     }
-    top += video_ctx->width;
-    bottom -= video_ctx->width;
+    free(row);
 }
 
 
 void add_frame(uint8_t* buffer){    
     ret = av_frame_make_writable(video_frame);
-
-    flip_vertical(buffer);
+    flip_vertically(buffer);
     set_frame_yuv_from_rgb(buffer);
     video_frame->pts = frameIdx++;
-    encode(video_frame, video_ctx, video_stream);        
+    encode(video_frame, video_ctx, video_stream);      
 }
 
 void open_video(int w, int h, int fps, int br){
