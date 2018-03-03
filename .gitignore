@@ -1,6 +1,6 @@
 .vscode
 node_modules/
-src/assets/
 src/webassembly/build
-src/webassembly/ctest/movies
 src/webassembly/ctest/a.out
+src/webassembly/ctest/left1.raw
+src/webassembly/ctest/right1.raw

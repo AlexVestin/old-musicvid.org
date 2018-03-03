@@ -9,7 +9,6 @@ class App extends Component {
         <div className="sidebar-wrapper">
         </div>
           <div className="content-wrapper">
-            <div id="drag-horizontal"></div>
             <div className="content-header"></div>
             <Canvas></Canvas>
             <div className="content-footer"></div>

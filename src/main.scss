@@ -45,16 +45,6 @@ html, body {
         align-items: center;
         background-color: $color-primary;
 
-        #drag-horizontal {
-            position: absolute;
-            left: -4px;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background-color: rgb(100, 99, 99);
-            cursor: w-resize;
-        }
-
         .content-header {
             background-color: whitesmoke;
             height: 2%;

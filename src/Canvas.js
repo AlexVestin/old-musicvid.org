@@ -4,9 +4,19 @@ import * as THREE from 'three'
 import Sound from './js/sound'
 import VideoEncoder from './videoencoder/videoencoder'
 
+import Button from 'material-ui/Button';
+
 export default class Canvas extends Component {
     constructor(props) {
       super(props)
+
+      this.state = {
+        width: 1080,
+        height: 720,
+        fps: 30,
+        bitrate: 400000,
+        streamClosed: false
+      };
 
       this.streamClosed = false;
       
@@ -145,7 +155,9 @@ export default class Canvas extends Component {
                 style={{ width: String(this.width) +'px', height: String(this.height) +'px' }}
                 ref={(mount) => { this.mount = mount }}
             />
-            <a ref={(linkRef) => this.linkRef = linkRef}>Download</a>
+
+            <Button >helloS</Button>
+           <a ref={(linkRef) => this.linkRef = linkRef}>Download</a>
         </div>
       )
     }
