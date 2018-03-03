@@ -8,11 +8,10 @@ export default class Canvas extends Component {
     constructor(props) {
       super(props)
 
-      this.closeStream = false;
       this.streamClosed = false;
       
-      this.width = 400;
-      this.height = 100;
+      this.width = 720;
+      this.height = 480;
       this.fps = 30;
       this.bitrate = 12000000;
       
@@ -49,6 +48,8 @@ export default class Canvas extends Component {
   
       camera.position.z = 4
       cube.position.x -= 2;
+      cube.position.y -= 2;
+      
 
       scene.add(cube)
       renderer.setClearColor('#00FF00')
@@ -68,18 +69,22 @@ export default class Canvas extends Component {
       this.renderTarget = new THREE.WebGLRenderTarget(this.width,this.height);    
 
       this.encodedFrames = 0;
-      this.eloaded = false
+      this.encoderLoaded = false
     }
 
-    encoderLoaded = () => {
-        this.videoEncoder.openVideo( { w:this.width, h: this.height, fps: this.fps, bitrate: this.bitrate } )
-        this.videoEncoder.openAudio( { sound: this.sound, bitrate: 320000 } )
-        this.videoEncoder.writeHeader()
-        this.eloaded = true;
+    encoderInit = () => {
+      this.encoderLoaded = true
+    }
+
+    onEncoderLoaded = () => {
+      let sound = this.sound
+      let videoConfig = { w:this.width, h: this.height, fps: this.fps, bitrate: this.bitrate }
+      let audioConfig = { left: sound.left, right: sound.right, channels: sound.channels, samplerate: sound.sampleRate, bitrate: 320000 }
+      this.videoEncoder.init(videoConfig, audioConfig, this.encoderInit)
     }
     
     audioLoaded = () => {
-      this.videoEncoder = new VideoEncoder(this.encoderLoaded)
+      this.videoEncoder = new VideoEncoder(this.onEncoderLoaded)
     }
     
     componentWillUnmount() {
@@ -111,14 +116,15 @@ export default class Canvas extends Component {
         this.renderer.render(this.scene, this.camera)
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 
-        if(this.eloaded && this.encodedFrames < 400){
-          this.videoEncoder.encode(pixels)
-          this.encodedFrames++;
-        }else if(this.eloaded) {
-          let blob = this.videoEncoder.close()
-          this.saveBlob(blob)
+        if(!this.streamClosed) {
+          if(this.encoderLoaded && this.encodedFrames < 1200){
+            this.videoEncoder.addFrame(pixels)
+            this.encodedFrames++;
+          }else if(this.encoderLoaded) {
+            this.streamClosed = true
+            this.videoEncoder.close(this.saveBlob)
+          }
         }
-        
     }
 
     saveBlob = (blob) => {

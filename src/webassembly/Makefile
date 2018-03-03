@@ -6,7 +6,7 @@ MP4_SHARED_DEPS = \
 all: mp4
 mp4: ffmpeg.js
 
-FILES = ./ctest/avio_write.c
+FILES = ./C/avio_write.c
 EXPORTED_FUNCTIONS = "[ \
 		'_open_audio', '_write_audio_frame', '_add_frame', \
 		'_open_video', '_close_stream', '_free_buffer', '_get_buffer', \
