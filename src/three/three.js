@@ -43,13 +43,14 @@ export default class ThreeRenderer {
         this.height = h
         this.width = w
         this.renderer.setSize(w, h)
+
+        
     }
 
     readPixels() {
         const gl = this.renderer.getContext();
-        let pixels  = new Uint8Array( this.height * this.width * 4 )
-        gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
-        return pixels
+        this.pixels = new Uint8Array(this.width*this.height*4)
+        gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
     }
 
 

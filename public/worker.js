@@ -52,12 +52,15 @@ addFrame = (buffer) => {
         try {
             var encodedBuffer_p = Module._malloc(buffer.length)
             Module.HEAPU8.set(buffer, encodedBuffer_p)
-            Module._add_frame(encodedBuffer_p)
+            //Module._add_frame(encodedBuffer_p)
         }finally {
             Module._free(encodedBuffer_p)
             encodedFrames++;
         }
     }
+    
+    //avoid memory leaks
+   postMessage(buffer.buffer, [buffer.buffer])
 }
 
 close = () => {
@@ -65,7 +68,7 @@ close = () => {
     Module._write_audio_frame()
     let vid = close_stream()
     Module._free_buffer();
-    postMessage(vid.buffer, [vid.buffer])
+    postMessage({action:"return", data: vid.buffer})
 }
 
 onmessage = (e) => {
