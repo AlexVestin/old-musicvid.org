@@ -48,15 +48,16 @@ void apply_window(const float* buf, size_t size, float* out, float* hann) {
     }
 }
 
-int set_audio(const float* audio, const size_t size, float** outbuf) {
+float* magavg;
+int set_audio(const float* audio, const size_t size) {
     float* hann = get_hanning_window(N);    
     kiss_fftr_cfg cfg = kiss_fftr_alloc(N , 0, NULL, NULL);
 
     size_t samples_read = 0;
     kiss_fft_cpx out[N / 2 + 1];
     int masize = (size / N) * NR_BARS * sizeof(float);
-    float* magavg = malloc( masize );
-    printf("size%d \n", masize);
+    magavg = malloc( masize );
+
     int j, step = (N/2+1) / NR_BARS, magIdx = 0; 
 
     while(samples_read + N < size) {
@@ -79,20 +80,24 @@ int set_audio(const float* audio, const size_t size, float** outbuf) {
     }
 
     free(hann);
-    *outbuf = magavg;
     return masize;
 }
 
+float* get_buffer() {
+    return magavg;
+}
+/*
 int main(int argc, const char **argv) {
     int size;
     const float* audio = get_audio_buf("../assets/right1.raw", &size);
 
     float* averages ;
-    int outsize = set_audio(audio, size, &averages);
+    int outsize = set_audio(audio, size);
 
     int i;
     for(i = 0; i < 100; i++)
         printf("%f\n", averages[i]);
     return 0;
 }
+*/
 
