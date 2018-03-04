@@ -3,4 +3,5 @@
 node_modules/
 src/webassembly/build/dependencies
 src/webassembly/C/a.out
+src/webassembly/C/assets/
 src/assets/
