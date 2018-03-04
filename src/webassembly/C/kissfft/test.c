@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <stdint.h>
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
 
@@ -48,14 +48,14 @@ void apply_window(const float* buf, size_t size, float* out, float* hann) {
     }
 }
 
-float* magavg;
+uint8_t* magavg;
 int set_audio(const float* audio, const size_t size) {
     float* hann = get_hanning_window(N);    
     kiss_fftr_cfg cfg = kiss_fftr_alloc(N , 0, NULL, NULL);
 
     size_t samples_read = 0;
     kiss_fft_cpx out[N / 2 + 1];
-    int masize = (size / N) * NR_BARS * sizeof(float);
+    int masize = (size / N) * NR_BARS;
     magavg = malloc( masize );
 
     int j, step = (N/2+1) / NR_BARS, magIdx = 0; 
@@ -72,7 +72,7 @@ int set_audio(const float* audio, const size_t size) {
                 idx = j + k; 
                 avg += sqrt((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i)) / step;
             }
-            magavg[magIdx++] = avg;
+            magavg[magIdx++] = (uint8_t)(avg * 256);
         }   
 
         magIdx--;
@@ -83,7 +83,7 @@ int set_audio(const float* audio, const size_t size) {
     return masize;
 }
 
-float* get_buffer() {
+uint8_t* get_buffer() {
     return magavg;
 }
 /*
