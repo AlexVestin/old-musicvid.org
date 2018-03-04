@@ -10,7 +10,7 @@ const int FPS = 30;
 const int WIDTH = 400;
 const int HEIGHT = 400;
 const int BIT_RATE = 400000; 
-const int NR_CLS = 3;
+const int NR_CLS = 4;
 
 //DUMMY AUDIO
 const int SAMPLE_RATE = 44100;
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
         buffer[j] = 0;
         //Spoof red at half the screen
         if(j < WIDTH*HEIGHT*NR_CLS/2)
-            buffer[j] = !(j % 3) ? 255 : 0;
+            buffer[j] = !(j % NR_CLS) ? 255 : 0;
         }
         add_frame(buffer);
     }

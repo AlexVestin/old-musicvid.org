@@ -43,7 +43,7 @@ static struct SwsContext *sws_context = NULL;
 static struct SwsContext *audio_swr_ctx = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
 
-const int NR_COLORS = 3;
+const int NR_COLORS = 4;
 
 int have_audio = 0;
 
@@ -168,9 +168,9 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
         {
             for( size_t x = 0; x < width; x += 2 )
             {
-                uint8_t r = rgb[3 * i];
-                uint8_t g = rgb[3 * i + 1];
-                uint8_t b = rgb[3 * i + 2];
+                uint8_t r = rgb[NR_COLORS * i];
+                uint8_t g = rgb[NR_COLORS * i + 1];
+                uint8_t b = rgb[NR_COLORS * i + 2];
 
         
                 destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
@@ -178,9 +178,9 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
                 destination[upos++] = ((-38*r + -74*g + 112*b) >> 8) + 128;
                 destination[vpos++] = ((112*r + -94*g + -18*b) >> 8) + 128;
 
-                r = rgb[3 * i];
-                g = rgb[3 * i + 1];
-                b = rgb[3 * i + 2];
+                r = rgb[NR_COLORS * i];
+                g = rgb[NR_COLORS * i + 1];
+                b = rgb[NR_COLORS * i + 2];
 
                 destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
             }
@@ -189,9 +189,9 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
         {
             for( size_t x = 0; x < width; x += 1 )
             {
-                uint8_t r = rgb[3 * i];
-                uint8_t g = rgb[3 * i + 1];
-                uint8_t b = rgb[3 * i + 2];
+                uint8_t r = rgb[NR_COLORS * i];
+                uint8_t g = rgb[NR_COLORS * i + 1];
+                uint8_t b = rgb[NR_COLORS * i + 2];
 
                 destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
             }
