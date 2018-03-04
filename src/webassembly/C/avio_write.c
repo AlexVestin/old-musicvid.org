@@ -160,15 +160,16 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     size_t upos = image_size;
     size_t vpos = upos + upos / 4;
     size_t i = 0;
+    uint8_t r, g, b;
     
 
     for( size_t line = 0; line < height; ++line ) {
         if( !(line % 2) ) {
             for( size_t x = 0; x < width; x += 2 )
             {
-                uint8_t r = rgb[NR_COLORS * i];
-                uint8_t g = rgb[NR_COLORS * i + 1];
-                uint8_t b = rgb[NR_COLORS * i + 2];
+                r = rgb[NR_COLORS * i];
+                g = rgb[NR_COLORS * i + 1];
+                b = rgb[NR_COLORS * i + 2];
 
         
                 destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
@@ -187,9 +188,9 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
         {
             for( size_t x = 0; x < width; x += 1 )
             {
-                uint8_t r = rgb[NR_COLORS * i];
-                uint8_t g = rgb[NR_COLORS * i + 1];
-                uint8_t b = rgb[NR_COLORS * i + 2];
+                r = rgb[NR_COLORS * i];
+                g = rgb[NR_COLORS * i + 1];
+                b = rgb[NR_COLORS * i + 2];
 
                 destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
             }
@@ -202,11 +203,22 @@ void add_frame(uint8_t* buffer){
     flip_vertically(buffer);
     ret = av_frame_make_writable(video_frame);
 
-    //int size = (video_ctx->width * video_ctx->height * 3) / 2;
-    //uint8_t* yuv_buffer = malloc(size);
-    //rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
-    //av_image_fill_arrays ((AVPicture*)frame->data,frame->linesize, yuv_buffer, frame->format, frame->width, frame->height, 1);
+    // ~15% faster than sws_scale
+    int size = (video_ctx->width * video_ctx->height * 3) / 2;
+    uint8_t* yuv_buffer = malloc(size);
+    rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
+    av_image_fill_arrays (
+        (AVPicture*)video_frame->data,
+        video_frame->linesize, 
+        yuv_buffer, 
+        video_frame->format, 
+        video_frame->width, 
+        video_frame->height, 
+        1
+    );
     
+    
+    /*
     const int in_linesize[1] = { NR_COLORS * video_ctx->width };
     sws_scale(
         sws_context, 
@@ -217,11 +229,12 @@ void add_frame(uint8_t* buffer){
         video_frame->data, 
         video_frame->linesize
     );
+    */
 
     video_frame->pts = frameIdx++;
     encode(video_frame, video_ctx, video_stream, pkt);
     free(buffer);
-    //free(yuv_buffer);
+    free(yuv_buffer);
 }
 
 

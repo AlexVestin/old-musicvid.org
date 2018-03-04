@@ -3,12 +3,15 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include <time.h>
+
+
 const int SECONDS = 2;
 
 //DUMMY VIDEO
 const int FPS = 30;
-const int WIDTH = 400;
-const int HEIGHT = 400;
+const int WIDTH = 1280;
+const int HEIGHT = 720;
 const int BIT_RATE = 400000; 
 const int NR_CLS = 4;
 
@@ -40,14 +43,19 @@ int main(int argc, char** argv) {
 
     open_video(WIDTH,HEIGHT,FPS,BIT_RATE);
 
+    /*
     int leftSize, rightSize;
     float* left = get_audio_buf("right1.raw", &leftSize);
     float* right = get_audio_buf("left1.raw", &rightSize);
     open_audio( left, right, leftSize, 44100, 2, 320000 );
     seconds = (leftSize+rightSize) / (double) (44100 * 2);
+    */
 
     write_header();
-    for(i = 0;i < (int)10*FPS; i++){
+
+    clock_t start = clock(), diff;
+
+    for(i = 0;i < (int)20*FPS; i++){
         uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS);
         for(j = 0; j < WIDTH*HEIGHT*NR_CLS; j++){
         buffer[j] = 0;
@@ -57,8 +65,11 @@ int main(int argc, char** argv) {
         }
         add_frame(buffer);
     }
+    diff = clock() - start;
+    int msec = diff * 1000 / CLOCKS_PER_SEC;
+    printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
 
-    write_audio_frame();
+    //write_audio_frame();
 
     int size = close_stream();
     uint8_t* out = get_buffer();
