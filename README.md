@@ -12,7 +12,9 @@ Wasm: 2.5MB, JS: 120KB
 Encodes video at: (capped at 60fps)
 
 2k video ~20FPS in Firefox, ~13FPS in Chrome 
+
 720p at 37FPS in Firefox, 27 FPS in Chrome
+
 480p at cap (60FPS) in Firefox, cap in Chrome
 
 Example usage in src/Canvas.js
