@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include "kiss_fft.h"
 #include "kiss_fftr.h"
 
@@ -44,7 +45,7 @@ float* get_hanning_window(int N) {
 void apply_window(const float* buf, size_t size, float* out, float* hann) {
     int i;
     for(i = 0; i < size; i++) {
-        *(out + i) = *(buf + i) * *(hann + i); 
+        *(out + i) = *(buf + i); //* *(hann + i); 
     }
 }
 
@@ -70,9 +71,9 @@ int set_audio(const float* audio, const size_t size) {
             int k, idx;
             for(k = 0; k < step; k++) {
                 idx = j + k; 
-                avg += sqrt((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i)) / step;
+                avg += fabs(20*log10(sqrt((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i)))) / step;
             }
-            magavg[magIdx++] = (uint8_t)(avg * 256);
+            magavg[magIdx++] = (uint8_t)(avg * 256000);
         }   
 
         magIdx--;
@@ -86,18 +87,20 @@ int set_audio(const float* audio, const size_t size) {
 uint8_t* get_buffer() {
     return magavg;
 }
-/*
+
 int main(int argc, const char **argv) {
     int size;
     const float* audio = get_audio_buf("../assets/right1.raw", &size);
 
-    float* averages ;
+   
     int outsize = set_audio(audio, size);
-
+    uint8_t* averages = get_buffer();
+    
     int i;
-    for(i = 0; i < 100; i++)
-        printf("%f\n", averages[i]);
+    for(i = 0; i < 10000; i++)
+        printf("%" PRIu8 "\n", averages[i]);
+        
     return 0;
 }
-*/
+
 
