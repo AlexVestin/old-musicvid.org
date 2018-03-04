@@ -134,7 +134,7 @@ export default class Canvas extends Component {
             <b>Video</b>
             <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
             <Options onchange={v => this.fps = v} name="fps" labels={["60"]}></Options>
-            <Options onchange={v => this.br = v} name="bitrate" labels={["200k", "400k", "800k", "1200k"]}></Options>
+            <Options onchange={v => this.br = v} name="bitrate" labels={["600k", "800k", "1200k", "2000k"]}></Options>
             <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s"]}></Options>
             <Button 
               onClick={this.encode} 

@@ -1,6 +1,6 @@
-.vscode
+.vscode/
 node_modules/
 src/webassembly/build
-src/webassembly/ctest/a.out
-src/webassembly/ctest/left1.raw
-src/webassembly/ctest/right1.raw
+src/webassembly/C/a.out
+src/webassembly/C/left1.raw
+src/webassembly/C/right1.raw
