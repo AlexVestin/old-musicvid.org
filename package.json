@@ -2,6 +2,7 @@
   "name": "videoeditor",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://AlexVestin.github.io/WasmVideoEncoder",
   "dependencies": {
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
@@ -52,9 +53,12 @@
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
+    "gh-pages": "^1.1.0",
     "webassembly": "^0.11.0"
   },
   "jest": {
