@@ -7,13 +7,6 @@ A video encoder for the browser using FFmpeg with WebAssembly in super early dev
 Currently encodes raw image and audio data, and muxes into a mp4/mp3 format.
 
 Wasm: 2.5MB, JS: 120KB
-
-
-Encodes video at: (capped at 60fps)
-- 2k video: ~20FPS in Firefox, ~13FPS in Chrome 
-- 720p: 37FPS in Firefox, 27 FPS in Chrome
-- 480p: cap in Firefox, cap in Chrome
-
 Example usage in src/Canvas.js
 
 ### TODOs
