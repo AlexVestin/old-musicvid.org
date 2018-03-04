@@ -174,11 +174,11 @@ void flip_vertically(uint8_t *pixels) {
 
 
 void add_frame(uint8_t* buffer){    
-    ret = av_frame_make_writable(video_frame);
-    flip_vertically(buffer);
-    set_frame_yuv_from_rgb(buffer);
-    video_frame->pts = frameIdx++;
-    encode(video_frame, video_ctx, video_stream);
+    //ret = av_frame_make_writable(video_frame);
+    //flip_vertically(buffer);
+    //set_frame_yuv_from_rgb(buffer);
+    //video_frame->pts = frameIdx++;
+    ///encode(video_frame, video_ctx, video_stream);
     free(buffer);      
 }
 
