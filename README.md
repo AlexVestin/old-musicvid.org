@@ -1,5 +1,5 @@
 # WasmVideoEncoder
-A videoencoder for the browser using FFmpeg with WebAssembly
+A video encoder for the browser using FFmpeg with WebAssembly
 
 [Demo website](https://alexvestin.github.io/WasmVideoEncoder/)
 
@@ -10,12 +10,9 @@ Wasm: 2.5MB, JS: 120KB
 
 
 Encodes video at: (capped at 60fps)
-
-2k video ~20FPS in Firefox, ~13FPS in Chrome 
-
-720p at 37FPS in Firefox, 27 FPS in Chrome
-
-480p at cap (60FPS) in Firefox, cap in Chrome
+- 2k video: ~20FPS in Firefox, ~13FPS in Chrome 
+- 720p: 37FPS in Firefox, 27 FPS in Chrome
+- 480p: cap in Firefox, cap in Chrome
 
 Example usage in src/Canvas.js
 
@@ -30,9 +27,14 @@ Example usage in src/Canvas.js
 - better README
 - h265/vp9/vp8/other codec support
 - benchmarks
-
+- interleaved audio/video writing
+- C code clean-up
 
 ### LICENSE
-ffmpeg/mp4 is under GPL
-mp3 is under LGPL
-The rest is MIT
+- ffmpeg/mp4 is under GPL
+- mp3 is under LGPL
+- The rest is MIT
+
+
+### Build
+Makefile & patches from ffmpeg.js / videoencoder.js
