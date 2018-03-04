@@ -37,7 +37,7 @@ export default class VideoEncoder {
                 console.log(data.data)
                 break;
             default:
-                console.log("unknown action")
+                
         }
     }
 }
