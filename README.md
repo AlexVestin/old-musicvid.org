@@ -1,5 +1,5 @@
 # WasmVideoEncoder
-A video encoder for the browser using FFmpeg with WebAssembly
+A video encoder for the browser using FFmpeg with WebAssembly in super early development
 
 [Demo website](https://alexvestin.github.io/WasmVideoEncoder/)
 
