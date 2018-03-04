@@ -8,6 +8,9 @@ export default class Sound {
         this.loaded = false
         this.dest = audioCtx.createMediaStreamDestination()
         this.stream = this.dest.stream
+
+        this.Module  = {};
+        window.KissFFT(this.Module)
         this.loadSound(filename, (data) => this.fftData = data)
     }
 
