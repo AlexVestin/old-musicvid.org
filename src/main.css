@@ -20,13 +20,8 @@ html, body {
   display: flex;
   flex-direction: row; 
 }
-  .wrapper .sidebar-wrapper {
-    width: 15%;
-    height: 100%;
-    min-width: 50px;
-    background-color: #c02f2f; 
-  }
-  .wrapper .content-wrapper {
+
+  .wrapper .content_wrapper {
     position: relative;
     display: flex;
     flex: 1;
@@ -34,18 +29,12 @@ html, body {
     align-items: center;
     background-color: #8f8a8a;
   }
-    .wrapper .content-wrapper .content-header {
+    .wrapper .content_wrapper .content_header {
       background-color: teal;
       height: 2%;
       width: 100%; 
     }
-    .wrapper .content-wrapper .canvas-wrapper {
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      flex-grow: 1; 
-    }
-    .wrapper .content-wrapper .content-footer {
+    .wrapper .content_wrapper .content_footer {
       align-self: flex-end;
       background-color: teal;
       height: 12%;

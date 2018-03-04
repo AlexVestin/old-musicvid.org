@@ -178,7 +178,8 @@ void add_frame(uint8_t* buffer){
     flip_vertically(buffer);
     set_frame_yuv_from_rgb(buffer);
     video_frame->pts = frameIdx++;
-    encode(video_frame, video_ctx, video_stream);      
+    encode(video_frame, video_ctx, video_stream);
+    free(buffer);      
 }
 
 void open_video(int w, int h, int fps, int br){

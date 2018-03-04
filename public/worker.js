@@ -14,7 +14,11 @@ openVideo = (config) => {
 }
 
 openAudio = (config) => {
-    const { bitrate, left, right, samplerate } = config; 
+    let { bitrate, left, right, samplerate, duration } = config; 
+    let durationInBytes = Math.floor(duration * samplerate)
+    left = left.subarray(0, durationInBytes)
+    right = right.subarray(0, durationInBytes)
+    
     try {
       var left_p = Module._malloc(left.length * 4)
       Module.HEAPF32.set(left, left_p >> 2)
@@ -55,15 +59,18 @@ addFrame = (buffer) => {
             encodedFrames++;
         }
     }
+
+    delete buf
+    delete buffer
 }
 
 close = () => {
     console.log("frames encoded: ", encodedFrames, " seconds taken: ", (performance.now() - startTime) / 1000)
     Module._write_audio_frame()
     let vid = close_stream()
-    const blob = new Blob([vid], { type: 'video/mp4' });
+   
     Module._free_buffer();
-    postMessage({action: "return", data: blob})
+    postMessage(vid.buffer, [vid.buffer])
 }
 
 onmessage = (e) => {
@@ -72,8 +79,7 @@ onmessage = (e) => {
         addFrame(data)
         return
     }
-        
-
+    
     switch(data.action) {
         case "init":
             openVideo(data.data.videoConfig)
