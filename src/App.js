@@ -6,8 +6,7 @@ class App extends Component {
   render() {
     return (
       <div className={classes.wrapper}>
-        <div className={classes.sidebar_wrapper}>
-        </div>
+
           <div className={classes.content_wrapper}>
             <div className={classes.content_header}></div>
             <Canvas></Canvas>

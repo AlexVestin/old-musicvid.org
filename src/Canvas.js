@@ -3,9 +3,7 @@ import React, {Component} from 'react'
 import Sound from './js/sound'
 import VideoEncoder from './videoencoder/videoencoderworker'
 import classes from './canvas.css'
-
 import Button from 'material-ui/Button';
-
 import Options from './options'
 import ThreeRenderer from './three/three';
 
@@ -19,7 +17,7 @@ export default class Canvas extends Component {
         encoding: false,
         width: 720,
         height: 480,
-        info: "Loading module"
+        info: "Loading module..."
       };
 
       this.streamClosed = false;
@@ -105,7 +103,7 @@ export default class Canvas extends Component {
           }
         }
     }
-
+    
     saveBlob = (vid) => {
       let fps = (this.frames * this.duration) / ((this.stopTime - this.startTime) / 1000)
       this.setState({info: "Saving video!"}, () => setTimeout(this.setState({info: "Video encoded at: " + String(fps) + " frames per second"}), 3000 ))
@@ -134,7 +132,7 @@ export default class Canvas extends Component {
             <b>Video</b>
             <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
             <Options onchange={v => this.fps = v} name="fps" labels={["60"]}></Options>
-            <Options onchange={v => this.br = v} name="bitrate" labels={["600k", "800k", "1200k", "2000k"]}></Options>
+            <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "4000k", "8000k", "12000k"]}></Options>
             <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s"]}></Options>
             <Button 
               onClick={this.encode} 
