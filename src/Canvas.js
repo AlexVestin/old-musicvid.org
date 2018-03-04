@@ -93,7 +93,7 @@ export default class Canvas extends Component {
        this.displayRenderer.renderScene()
         if(!this.streamClosed) {
           if(this.encoderLoaded && this.encodedFrames < this.frames * this.duration){
-            let pixels = this.displayRenderer.readPixels()
+            const pixels = this.displayRenderer.readPixels()
             this.videoEncoder.addFrame(pixels)
             this.setState({info:"Encoding frame: " + String(this.encodedFrames++ + 1) + "/" + String(this.frames * this.duration)});
           }else if(this.encoderLoaded) {

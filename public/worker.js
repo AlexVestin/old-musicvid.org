@@ -46,29 +46,24 @@ close_stream = () => {
 }
 
 addFrame = (buffer) => {
-    let buf = new Uint8Array(buffer)
     if(initialized) {
         if(encodedFrames === 0)
             startTime = performance.now()
         try {
-            var encodedBuffer_p = Module._malloc(buf.length)
-            Module.HEAPU8.set(buf, encodedBuffer_p)
+            var encodedBuffer_p = Module._malloc(buffer.length)
+            Module.HEAPU8.set(buffer, encodedBuffer_p)
             Module._add_frame(encodedBuffer_p)
         }finally {
             Module._free(encodedBuffer_p)
             encodedFrames++;
         }
     }
-
-    delete buf
-    delete buffer
 }
 
 close = () => {
     console.log("frames encoded: ", encodedFrames, " seconds taken: ", (performance.now() - startTime) / 1000)
     Module._write_audio_frame()
     let vid = close_stream()
-   
     Module._free_buffer();
     postMessage(vid.buffer, [vid.buffer])
 }

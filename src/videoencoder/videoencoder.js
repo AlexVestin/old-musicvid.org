@@ -13,7 +13,7 @@ export default class VideoEncoder {
     }
 
     addFrame = (pixels) => {
-        this.worker.postMessage(pixels.buffer, [pixels.buffer])
+        this.worker.postMessage(pixels, [pixels.buffer])
     }
 
     close = (onsuccess) => {
@@ -23,14 +23,15 @@ export default class VideoEncoder {
     
     onmessage = (e) => {
         const { data } = e;
-        if(data.action === undefined)
-            this.onsuccess(data) 
         switch(data.action){
             case "loaded":
                 this.onload()
                 break;
             case "initialized":
                 this.oninit()
+                break;
+            case "return":
+                this.onsuccess(data.data)
                 break;
             case "error":
                 console.log(data.data)
