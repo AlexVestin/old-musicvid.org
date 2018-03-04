@@ -1,7 +1,7 @@
 
 import React, {Component} from 'react'
 import Sound from './js/sound'
-import VideoEncoder from './videoencoder/videoencoder'
+import VideoEncoder from './videoencoder/videoencoderworker'
 import classes from './canvas.css'
 
 import Button from 'material-ui/Button';
@@ -94,6 +94,7 @@ export default class Canvas extends Component {
         if(!this.streamClosed) {
           if(this.encoderLoaded && this.encodedFrames < this.frames * this.duration){
             this.displayRenderer.readPixels()
+            console.log(this.displayRenderer.pixels)
             this.videoEncoder.addFrame(this.displayRenderer.pixels)
             this.setState({info:"Encoding frame: " + String(this.encodedFrames++ + 1) + "/" + String(this.frames * this.duration)});
           }else if(this.encoderLoaded) {
