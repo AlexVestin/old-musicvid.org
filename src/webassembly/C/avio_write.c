@@ -162,10 +162,8 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     size_t i = 0;
     
 
-    for( size_t line = 0; line < height; ++line )
-    {
-        if( !(line % 2) )
-        {
+    for( size_t line = 0; line < height; ++line ) {
+        if( !(line % 2) ) {
             for( size_t x = 0; x < width; x += 2 )
             {
                 uint8_t r = rgb[NR_COLORS * i];
@@ -200,23 +198,15 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
 }
 
 void add_frame(uint8_t* buffer){ 
-    
-    AVFrame* frame = av_frame_alloc();
-    frame->format = video_ctx->pix_fmt;
-    frame->width  = video_ctx->width;
-    frame->height = video_ctx->height;
-    ret = av_frame_get_buffer(frame, 0);
-    
-    flip_vertically(buffer);
-    ret = av_frame_make_writable(frame);
 
-    int size = (video_ctx->width * video_ctx->height * 3) / 2;
-    uint8_t* yuv_buffer = malloc(size);
-    rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
-    av_image_fill_arrays ((AVPicture*)frame->data,frame->linesize, yuv_buffer, frame->format, frame->width, frame->height, 1);
-    //video_frame->data[0] = yuv_buffer;
+    flip_vertically(buffer);
+    ret = av_frame_make_writable(video_frame);
+
+    //int size = (video_ctx->width * video_ctx->height * 3) / 2;
+    //uint8_t* yuv_buffer = malloc(size);
+    //rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
+    //av_image_fill_arrays ((AVPicture*)frame->data,frame->linesize, yuv_buffer, frame->format, frame->width, frame->height, 1);
     
-    /*
     const int in_linesize[1] = { NR_COLORS * video_ctx->width };
     sws_scale(
         sws_context, 
@@ -227,20 +217,11 @@ void add_frame(uint8_t* buffer){
         video_frame->data, 
         video_frame->linesize
     );
-    */
-    
-    frame->pts = frameIdx++;
-    
-    AVPacket *p = av_packet_alloc();
-    encode(frame, video_ctx, video_stream, p);
 
+    video_frame->pts = frameIdx++;
+    encode(video_frame, video_ctx, video_stream, pkt);
     free(buffer);
-    free(yuv_buffer);
-    av_packet_unref(p);
-    av_frame_free(&frame);
-
-    free(p);
-    free(frame);
+    //free(yuv_buffer);
 }
 
 
@@ -336,7 +317,7 @@ void open_video(int w, int h, int fps, int br){
     
     sws_context = sws_getContext(
             video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_RGB24,
+            AV_PIX_FMT_RGB32,
             video_ctx->width, video_ctx->height, 
             AV_PIX_FMT_YUV420P,
             0, NULL, NULL, NULL
