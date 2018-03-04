@@ -26,7 +26,7 @@ export default class Canvas extends Component {
       this.enableAudio = true;
       
       if(this.enableAudio) {
-        this.sound = new Sound("sound.wav")
+        this.sound = new Sound("sound.mp3")
         this.sound.onload = this.audioLoaded
       }
     }
