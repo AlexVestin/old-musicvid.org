@@ -1,5 +1,9 @@
 importScripts("WasmVideoEncoder.js")
 
+
+let Module = {}
+WasmVideoEncoder(Module)
+
 let encodedFrames = 0
 let initialized = false
 let startTime
@@ -52,14 +56,13 @@ addFrame = (buffer) => {
         try {
             var encodedBuffer_p = Module._malloc(buffer.length)
             Module.HEAPU8.set(buffer, encodedBuffer_p)
-            //Module._add_frame(encodedBuffer_p)
+            Module._add_frame(encodedBuffer_p)
         }finally {
             Module._free(encodedBuffer_p)
             encodedFrames++;
         }
     }
-    
-    //avoid memory leaks
+    //hack to avoid memory leaks
    postMessage(buffer.buffer, [buffer.buffer])
 }
 

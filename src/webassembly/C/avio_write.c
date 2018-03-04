@@ -4,7 +4,7 @@
 #include <libavformat/avio.h>
 #include <libavutil/file.h>
 #include <libavutil/timestamp.h>
-
+#include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
 #include <libswresample/swresample.h>
 
@@ -43,7 +43,7 @@ static struct SwsContext *sws_context = NULL;
 static struct SwsContext *audio_swr_ctx = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
 
-const int NR_COLORS = 4;
+const int NR_COLORS = 3;
 
 int have_audio = 0;
 
@@ -89,6 +89,7 @@ static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, cons
 }
 
 static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
+    
     struct buffer_data *bd = (struct buffer_data *)opaque;
     while (buf_size > bd->room) {
         int64_t offset = bd->ptr - bd->buf;
@@ -104,62 +105,43 @@ static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
     memcpy(bd->ptr, buf, buf_size);
     bd->ptr  += buf_size;
     bd->room -= buf_size;
+    
+    //free(buf);
     return buf_size;
 }
 
-static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out) {    
+static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out, AVPacket* p) {    
     ret = avcodec_send_frame(cod, frame);
+
     if (ret < 0) {
         fprintf(stderr, "Error sending a frame for encoding\n");
         exit(1);
     }
 
     while (ret >= 0) {
-        ret = avcodec_receive_packet(cod, pkt);
-        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+        ret = avcodec_receive_packet(cod, p);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF){
+            av_packet_unref(p);
             return;
+        }
         else if (ret < 0) {
             fprintf(stderr, "Error during encoding\n");
             exit(1);
         }
 
         //log_packet(ofmt_ctx, pkt, "write");
-        pkt->stream_index = out->index;      
-        av_packet_rescale_ts(pkt, cod->time_base, out->time_base);
-        av_write_frame(ofmt_ctx, pkt);
-        av_packet_unref(pkt);
+        p->stream_index = out->index;      
+        av_packet_rescale_ts(p, cod->time_base, out->time_base);
+        av_write_frame(ofmt_ctx, p);
+        av_packet_unref(p);
     }
-}
-
-void write_header() {
-    ret = avformat_write_header(ofmt_ctx, NULL);
-    if (ret < 0) {
-        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
-        fprintf(stderr, "Error occurred when opening output file\n");
-        exit(1);
-    } 
-}
-
-void set_frame_yuv_from_rgb(uint8_t *rgb) {
-    const int in_linesize[1] = { NR_COLORS * video_ctx->width };
-    sws_context = sws_getCachedContext(
-            sws_context,
-            video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_RGB32,
-            video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_YUV420P,
-            0, NULL, NULL, NULL
-    );
-
-    sws_scale(sws_context, (const uint8_t * const *)&rgb, in_linesize, 0,
-    video_ctx->height, video_frame->data, video_frame->linesize);
 }
 
 void flip_vertically(uint8_t *pixels) {
     const size_t width = video_ctx->width;
     const size_t height = video_ctx->height;
     
-    const size_t stride = width * 4;
+    const size_t stride = width * NR_COLORS;
     uint8_t *row = malloc(stride);
     uint8_t *low = pixels;
     uint8_t *high = &pixels[(height - 1) * stride];
@@ -172,13 +154,103 @@ void flip_vertically(uint8_t *pixels) {
     free(row);
 }
 
+void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height)
+{
+    size_t image_size = width * height;
+    size_t upos = image_size;
+    size_t vpos = upos + upos / 4;
+    size_t i = 0;
+    
 
-void add_frame(uint8_t* buffer){    
-    ret = av_frame_make_writable(video_frame);
+    for( size_t line = 0; line < height; ++line )
+    {
+        if( !(line % 2) )
+        {
+            for( size_t x = 0; x < width; x += 2 )
+            {
+                uint8_t r = rgb[3 * i];
+                uint8_t g = rgb[3 * i + 1];
+                uint8_t b = rgb[3 * i + 2];
+
+        
+                destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
+
+                destination[upos++] = ((-38*r + -74*g + 112*b) >> 8) + 128;
+                destination[vpos++] = ((112*r + -94*g + -18*b) >> 8) + 128;
+
+                r = rgb[3 * i];
+                g = rgb[3 * i + 1];
+                b = rgb[3 * i + 2];
+
+                destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
+            }
+        }
+        else
+        {
+            for( size_t x = 0; x < width; x += 1 )
+            {
+                uint8_t r = rgb[3 * i];
+                uint8_t g = rgb[3 * i + 1];
+                uint8_t b = rgb[3 * i + 2];
+
+                destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
+            }
+        }
+    }  
+}
+
+void add_frame(uint8_t* buffer){ 
+    
+    AVFrame* frame = av_frame_alloc();
+    frame->format = video_ctx->pix_fmt;
+    frame->width  = video_ctx->width;
+    frame->height = video_ctx->height;
+    ret = av_frame_get_buffer(frame, 0);
+    
     flip_vertically(buffer);
-    set_frame_yuv_from_rgb(buffer);
-    video_frame->pts = frameIdx++;
-    encode(video_frame, video_ctx, video_stream);
+    ret = av_frame_make_writable(frame);
+
+    int size = (video_ctx->width * video_ctx->height * 3) / 2;
+    uint8_t* yuv_buffer = malloc(size);
+    rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
+    av_image_fill_arrays ((AVPicture*)frame->data,frame->linesize, yuv_buffer, frame->format, frame->width, frame->height, 1);
+    //video_frame->data[0] = yuv_buffer;
+    
+    /*
+    const int in_linesize[1] = { NR_COLORS * video_ctx->width };
+    sws_scale(
+        sws_context, 
+        (const uint8_t * const *)&buffer, 
+        in_linesize, 
+        0, 
+        video_ctx->height, 
+        video_frame->data, 
+        video_frame->linesize
+    );
+    */
+    
+    frame->pts = frameIdx++;
+    
+    AVPacket *p = av_packet_alloc();
+    encode(frame, video_ctx, video_stream, p);
+
+    free(buffer);
+    free(yuv_buffer);
+    av_packet_unref(p);
+    av_frame_free(&frame);
+
+    free(p);
+    free(frame);
+}
+
+
+void write_header() {
+    ret = avformat_write_header(ofmt_ctx, NULL);
+    if (ret < 0) {
+        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+        fprintf(stderr, "Error occurred when opening output file\n");
+        exit(1);
+    } 
 }
 
 void open_video(int w, int h, int fps, int br){
@@ -261,10 +333,19 @@ void open_video(int w, int h, int fps, int br){
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
     if(ret < 0)
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+    
+    sws_context = sws_getContext(
+            video_ctx->width, video_ctx->height, 
+            AV_PIX_FMT_RGB24,
+            video_ctx->width, video_ctx->height, 
+            AV_PIX_FMT_YUV420P,
+            0, NULL, NULL, NULL
+    );
+
 } 
 
 int close_stream() {
-    encode(NULL, video_ctx, video_stream);
+    encode(NULL, video_ctx, video_stream, pkt);
     //encode(NULL, audio_ctx, audio_stream);
     
     av_write_trailer(ofmt_ctx);
@@ -360,7 +441,7 @@ void write_audio_frame() {
         );
 
         frame_bytes += dst_nb_samples;
-        encode(audio_frame, audio_ctx, audio_stream);
+        encode(audio_frame, audio_ctx, audio_stream, audio_pkt);
     }
 }
 

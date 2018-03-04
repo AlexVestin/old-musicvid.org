@@ -10,7 +10,7 @@ const int FPS = 30;
 const int WIDTH = 400;
 const int HEIGHT = 400;
 const int BIT_RATE = 400000; 
-const int NR_CLS = 4;
+const int NR_CLS = 3;
 
 //DUMMY AUDIO
 const int SAMPLE_RATE = 44100;
@@ -45,15 +45,16 @@ int main(int argc, char** argv) {
     float* right = get_audio_buf("left1.raw", &rightSize);
     open_audio( left, right, leftSize, 44100, 2, 320000 );
     seconds = (leftSize+rightSize) / (double) (44100 * 2);
-    
 
-    uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS);
     write_header();
-    for(j = 0; j < WIDTH*HEIGHT*NR_CLS; j++){
+    for(i = 0;i < (int)10*FPS; i++){
+        uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS);
+        for(j = 0; j < WIDTH*HEIGHT*NR_CLS; j++){
+        buffer[j] = 0;
+        //Spoof red at half the screen
         if(j < WIDTH*HEIGHT*NR_CLS/2)
-            buffer[j] = (j+1) % 3 == 0 ? 100000 : 0;
-    }
-    for(i = 0;i < (int)seconds*FPS; i++){
+            buffer[j] = !(j % 3) ? 255 : 0;
+        }
         add_frame(buffer);
     }
 
