@@ -2,5 +2,4 @@
 node_modules/
 src/webassembly/build
 src/webassembly/C/a.out
-src/webassembly/C/left1.raw
-src/webassembly/C/right1.raw
+src/assets/
