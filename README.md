@@ -30,3 +30,9 @@ Example usage in src/Canvas.js
 - better README
 - h265/vp9/vp8/other codec support
 - benchmarks
+
+
+### LICENSE
+ffmpeg/mp4 is under GPL
+mp3 is under LGPL
+The rest is MIT
