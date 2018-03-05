@@ -198,43 +198,48 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     }  
 }
 
-void add_frame(uint8_t* buffer){ 
+void add_frame(uint8_t* frames, int nr_frames){ 
+    int i, frame_size = video_ctx->width*video_ctx->height*NR_COLORS;
+    uint8_t* buffer = frames;
+    for(i = 0; i < nr_frames; i++) {
+        flip_vertically(buffer);
+        ret = av_frame_make_writable(video_frame);
 
-    flip_vertically(buffer);
-    ret = av_frame_make_writable(video_frame);
+        // ~15% faster than sws_scale
+        int size = (video_ctx->width * video_ctx->height * 3) / 2;
+        uint8_t* yuv_buffer = malloc(size);
+        rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
+        av_image_fill_arrays (
+            (AVPicture*)video_frame->data,
+            video_frame->linesize, 
+            yuv_buffer, 
+            video_frame->format, 
+            video_frame->width, 
+            video_frame->height, 
+            1
+        );
+        
+        /*
+        const int in_linesize[1] = { NR_COLORS * video_ctx->width };
+        sws_scale(
+            sws_context, 
+            (const uint8_t * const *)&buffer, 
+            in_linesize, 
+            0, 
+            video_ctx->height, 
+            video_frame->data, 
+            video_frame->linesize
+        );
+        */
 
-    // ~15% faster than sws_scale
-    int size = (video_ctx->width * video_ctx->height * 3) / 2;
-    uint8_t* yuv_buffer = malloc(size);
-    rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
-    av_image_fill_arrays (
-        (AVPicture*)video_frame->data,
-        video_frame->linesize, 
-        yuv_buffer, 
-        video_frame->format, 
-        video_frame->width, 
-        video_frame->height, 
-        1
-    );
-    
-    
-    /*
-    const int in_linesize[1] = { NR_COLORS * video_ctx->width };
-    sws_scale(
-        sws_context, 
-        (const uint8_t * const *)&buffer, 
-        in_linesize, 
-        0, 
-        video_ctx->height, 
-        video_frame->data, 
-        video_frame->linesize
-    );
-    */
+        video_frame->pts = frameIdx++;
+        encode(video_frame, video_ctx, video_stream, pkt);
 
-    video_frame->pts = frameIdx++;
-    encode(video_frame, video_ctx, video_stream, pkt);
-    free(buffer);
-    free(yuv_buffer);
+        free(yuv_buffer);
+        buffer += frame_size;
+    }
+
+    free(frames);
 }
 
 

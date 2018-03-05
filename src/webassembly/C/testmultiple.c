@@ -2,9 +2,7 @@
 #include "stdio.h"
 #include <stdlib.h>
 #include <inttypes.h>
-
 #include <time.h>
-
 
 const int SECONDS = 2;
 
@@ -53,19 +51,24 @@ int main(int argc, char** argv) {
 
     write_header();
 
+    int nr_frames = 10;
+
     clock_t start = clock(), diff;
-    int ;
-    for(i = 0;i < (int)20*FPS; i++){
-        uint8_t* buffer = malloc(WIDTH*HEIGHT*NR_CLS * 10);
-        for(j = 0; j < WIDTH*HEIGHT*NR_CLS; j++){
-        buffer[j] = 0;
-        //Spoof red at half the screen
-        
-        if(j < (WIDTH*HEIGHT*NR_CLS)/2)
-            buffer[j] = !(j % NR_CLS) ? 255 : 0;
+    int k, frame_size = WIDTH*HEIGHT*NR_CLS;
+    for(i = 0;i < (int)2*FPS; i++){
+        uint8_t* buffer = malloc(frame_size * nr_frames);
+        for(k = 0; k < nr_frames; k++) {
+            for(j = 0; j < frame_size; j++){
+                buffer[j + k*frame_size] = 0;
+
+                //Spoof red at half the screen
+                if(j < (frame_size / 2))
+                    buffer[j + k*frame_size] = !(j % NR_CLS) ? 255 : 0;
+            }
         }
-        add_frame(buffer);
+        add_frame(buffer, nr_frames);
     }
+
     diff = clock() - start;
     int msec = diff * 1000 / CLOCKS_PER_SEC;
     printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);

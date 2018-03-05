@@ -6,10 +6,6 @@ MP4_SHARED_DEPS = \
 all: mp4
 mp4: ffmpeg.js
 
-
-FFT_FILES = test.c kiss_fft.c kiss_fftr.c
-FFT_PATHS = $(addprefix C/kissfft/,$(FFT_FILES)) 
-
 FILES = ./C/avio_write.c
 EXPORTED_FUNCTIONS = "[ \
 		'_open_audio', '_write_audio_frame', '_add_frame', \
@@ -26,4 +22,4 @@ EMCC_COMMON_ARGS = \
 	-s EXPORT_NAME="'WasmVideoEncoder'"
 
 ffmpeg.js:
-	emcc -I/home/alex/ff/em/include -I./C/kissfft $(FILES) $(FFT_PATHS) $(EMCC_COMMON_ARGS) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) 
+	emcc -I/home/alex/ff/em/include -I./C/kissfft $(FILES) $(EMCC_COMMON_ARGS) $(FFMPEG_MP4_BC) $(MP4_SHARED_DEPS) 
