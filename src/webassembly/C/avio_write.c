@@ -353,7 +353,7 @@ int close_stream() {
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
 
-    return bd.size;
+    return bd.size - bd.room + 2;
 }   
 
 uint8_t* get_buffer() {
