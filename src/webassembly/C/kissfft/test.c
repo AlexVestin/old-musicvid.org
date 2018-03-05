@@ -54,6 +54,11 @@ int set_audio(const float* audio, const size_t size) {
     float* hann = get_hanning_window(N);    
     kiss_fftr_cfg cfg = kiss_fftr_alloc(N , 0, NULL, NULL);
 
+    int u;
+    for(u=0; u < 20; u++) {
+        printf("%f\n", audio[u]);
+    }
+
     size_t samples_read = 0;
     kiss_fft_cpx out[N / 2 + 1];
     int masize = (size / N) * NR_BARS;
@@ -90,15 +95,11 @@ uint8_t* get_buffer() {
 
 int main(int argc, const char **argv) {
     int size;
-    const float* audio = get_audio_buf("../assets/right1.raw", &size);
+    float* audio = get_audio_buf("../assets/right1.raw", &size);
 
    
     int outsize = set_audio(audio, size);
     uint8_t* averages = get_buffer();
-    
-    int i;
-    for(i = 0; i < 10000; i++)
-        printf("%" PRIu8 "\n", averages[i]);
         
     return 0;
 }
