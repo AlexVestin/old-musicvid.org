@@ -115,9 +115,14 @@ export default class WaterScene {
 
     }
 
-    animate = (time) => {
+    animate = (time, frequencyBins) => {
         let { sphere, water, parameters } = this
-        sphere.position.y = Math.sin( time ) * 20 + 5;
+        if(frequencyBins===undefined) {
+            sphere.position.y = Math.sin( time ) * 20 + 20;
+        }else{ 
+            let bass = 1 + (frequencyBins[0] + frequencyBins[1] ) / 1024
+            sphere.scale.set( bass, bass, bass )
+        }
         sphere.rotation.x = time * 0.5;
         sphere.rotation.z = time * 0.51;
         water.material.uniforms.time.value += 1.0 / 60.0;

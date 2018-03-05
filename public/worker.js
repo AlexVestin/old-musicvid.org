@@ -53,6 +53,7 @@ close_stream = () => {
 
 addFrame = (buffer) => {
     let nrFrames = buffer.length / frameSize
+    console.log("--")
     try {
         var encodedBuffer_p = Module._malloc(buffer.length)
         Module.HEAPU8.set(buffer, encodedBuffer_p)

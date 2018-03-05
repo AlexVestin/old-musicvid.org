@@ -34,8 +34,8 @@ export default class ThreeRenderer {
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
     }
 
-    renderScene(time) { 
-        this.currentScene.animate(time)
+    renderScene(time, frequencyBins) { 
+        this.currentScene.animate(time, frequencyBins)
         const {scene, camera} = this.currentScene
         this.renderer.render(scene, camera)
     }

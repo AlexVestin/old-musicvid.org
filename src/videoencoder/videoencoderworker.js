@@ -7,8 +7,8 @@ export default class VideoEncoder {
         this.onload = onload
         this.isWorker = true
 
-        this.bufferSize = 50
-        this.framesInBuffer = 0
+        this.bufferSize = 1
+        this.framesInBuffer = -1
         this.buffer = new Uint8Array()
         this.encoding = false
     }
@@ -17,27 +17,32 @@ export default class VideoEncoder {
         this.worker.postMessage({action: "init", data: {audioConfig, videoConfig}})
         this.oninit = oninit
         this.getPixels = getPixels
+
+        this.requested = false
+        this.count = 0
     }
-    concat = (pixels) => {
-        let tmp = new Uint8Array(pixels.length + this.buffer.length)
-        tmp.set(this.buffer)
-        tmp.set(pixels, this.buffer.length)
-        this.buffer = tmp
+
+    sendFrame = (pixels) => {
+        this.encoding = true
+        this.worker.postMessage(pixels, [pixels.buffer])
     }
 
     addFrame = (pixels) => {
-        this.concat(pixels)
+        this.requested = false
         if(!this.encoding){
-            this.worker.postMessage(this.buffer, [this.buffer.buffer])
-            this.encoding = true;
+            if(this.bufferSet) {
+                this.bufferSet = false
+                this.sendFrame(this.buffer)
+            }else {
+                this.sendFrame(pixels)
+            }
+            requestAnimationFrame(this.getPixels)
+            this.requested = true
 
-            this.framesInBuffer = 0
-            this.buffer = new Uint8Array()
-        }
-        else {
-            if(++this.framesInBuffer < this.bufferSize)
-                this.addFrame()
-        }
+        }else{
+            this.bufferSet = true
+            this.buffer = pixels
+        }        
     }
 
     close = (onsuccess) => {
@@ -55,8 +60,15 @@ export default class VideoEncoder {
                 this.oninit()
                 break;
             case "ready":
-                this.encoding = false;
-                this.getPixels()
+                this.encoding = false
+                if(this.bufferSet) {
+                    this.bufferSet = false
+                    this.sendFrame(this.buffer)
+                }
+                    
+
+                if(!this.requested)
+                    requestAnimationFrame(this.getPixels)
                 break;
             case "return":
                 this.onsuccess(data.data)

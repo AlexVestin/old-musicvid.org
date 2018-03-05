@@ -37,7 +37,6 @@ export default class Sound {
         let audio_p, size_p, size = 0;
 
         const { left } = this;
-        console.log(this.Module)
         try {
             audio_p = this.Module._malloc(left.length * 4)
             size_p = this.Module._malloc(4)
@@ -46,11 +45,19 @@ export default class Sound {
 
             let size = this.Module._set_audio(audio_p, left.length)
             let buf_p = this.Module._get_buffer()
-            let buf = this.Module.HEAPU8.subarray(buf_p, buf_p + size)
-            console.log(buf)
+            this.frequencyBins = this.Module.HEAPU8.subarray(buf_p, buf_p + size)
         }finally {
-
+            this.Module._free(audio_p)
         }
+    }
+
+    getFrequencyBins = (time) => {
+        if(this.frequencyBins === undefined)
+            return new Uint8Array(10)
+       
+        let idx = Math.floor((time * this.sampleRate) / 1024)
+        idx -= idx % 10
+        return this.frequencyBins.subarray(idx, idx + 10)
     }
 
     loadSound = (filename, callback) => {
@@ -64,9 +71,9 @@ export default class Sound {
                     that.sampleRate = buffer.sampleRate
                     that.channles = 2
                     that.duration = buffer.duration;
-
+                    
                     if(that.moduleLoaded){
-                        that.getSpectrum()
+                        //that.getSpectrum()
                     }
 
                     if(that.onload !== undefined)

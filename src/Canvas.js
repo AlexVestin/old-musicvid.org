@@ -83,14 +83,16 @@ export default class Canvas extends Component {
 
     renderScene = () => {
         const time = this.state.encoding ? this.encodedFrames / this.frames : this.frameId / 60
+        //let frequencybins = this.sound.getFrequencyBins(time)
         this.displayRenderer.renderScene(time)
         if(!this.streamClosed) {
           if(this.state.encoding && this.encodedFrames < this.frames * this.duration){
             this.displayRenderer.readPixels()
-            this.videoEncoder.addFrame(this.displayRenderer.pixels, this.renderScene)
-            
             this.encodedFrames++
+
             this.setState({info:"Encoding frame: " + String(this.encodedFrames) + "/" + String(this.frames * this.duration)});
+
+            this.videoEncoder.addFrame(this.displayRenderer.pixels, this.renderScene)
           }else if(this.state.encoding) {
             this.stopTime = performance.now()
             this.displayRenderer.setSize(720, 480)
@@ -132,9 +134,9 @@ export default class Canvas extends Component {
           <div className={classes.options_wrapper}>
             <b>Video</b>
             <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
-            <Options onchange={v => this.fps = v} name="fps" labels={["60"]}></Options>
-            <Options onchange={v => this.br = v} name="bitrate" labels={["4000k", "8000k", "12000k", "20000k"]}></Options>
-            <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s"]}></Options>
+            <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
+            <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "4000k", "8000k", "12000k", "20000k"]}></Options>
+            <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s"]}></Options>
             <Button 
               onClick={this.encode} 
               variant="raised" 
