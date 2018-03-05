@@ -87,7 +87,7 @@ int set_audio(const float* audio, const size_t size) {
 uint8_t* get_buffer() {
     return magavg;
 }
-/*
+
 int main(int argc, const char **argv) {
     int size;
     float* audio = get_audio_buf("../assets/right1.raw", &size);
@@ -95,9 +95,14 @@ int main(int argc, const char **argv) {
    
     int outsize = set_audio(audio, size);
     uint8_t* averages = get_buffer();
+
+    int j;
+    for(j = 0; j < 200; j++) {
+        printf("%" PRIu8 "\n", averages[j]);
+    }
         
     return 0;
 }
-*/
+
 
 

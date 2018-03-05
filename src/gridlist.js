@@ -6,7 +6,7 @@ import IconButton from 'material-ui/IconButton';
 import StarBorderIcon from 'material-ui-icons/StarBorder';
 //import tileData from './tileData';
 
-import oceanimage from './assets/oceanimage.png'
+//import oceanimage from './assets/oceanimage.png'
 
 
 const styles = theme => ({
@@ -32,7 +32,8 @@ const styles = theme => ({
 });
 
 
-const tileData = [
+const tileData = []
+  /*
     {
       img: oceanimage,
       title: 'f',
@@ -64,7 +65,7 @@ const tileData = [
     author: 'author',
     },
 ];
- 
+ */
 function SingleLineGridList(props) {
   const { classes } = props;
 

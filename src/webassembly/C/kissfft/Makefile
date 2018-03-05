@@ -9,6 +9,7 @@ EMCC_COMMON_ARGS = \
 	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) \
 	-s MODULARIZE=1 \
 	-s EXPORT_NAME="'KissFFT'" \
+	-s "BINARYEN_TRAP_MODE='clamp'"
 	
 
 FILES = test.c kiss_fft.c kiss_fftr.c
