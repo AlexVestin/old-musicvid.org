@@ -55,7 +55,7 @@ int set_audio(const float* audio, const size_t size) {
     kiss_fftr_cfg cfg = kiss_fftr_alloc(N , 0, NULL, NULL);
 
     int u;
-    for(u=0; u < 20; u++) {
+    for(u=0; u < 200; u++) {
         printf("%f\n", audio[u]);
     }
 
