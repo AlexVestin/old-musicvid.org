@@ -4,6 +4,7 @@ export default class VideoEncoder {
         this.Module = {}
         window.WasmVideoEncoder(this.Module)
 
+        this.isWorker = false
         this.encodedFrames = 0
         this.initialized = false
         
@@ -76,7 +77,7 @@ export default class VideoEncoder {
             try {
                 var encodedBuffer_p = Module._malloc(buffer.length)
                 Module.HEAPU8.set(buffer, encodedBuffer_p)
-                Module._add_frame(encodedBuffer_p)
+                Module._add_frame(encodedBuffer_p, 1)
             }finally {
                 Module._free(encodedBuffer_p)
                 this.encodedFrames++;

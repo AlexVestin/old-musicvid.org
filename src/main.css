@@ -38,6 +38,7 @@ html, body {
     .wrapper .content_wrapper .content_footer {
       align-self: flex-end;
       background-color: teal;
-      height: 12%;
+      height: 22%;
       width: 100%; 
+      margin-bottom: 0px;
     }

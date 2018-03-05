@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import classes from  './main.css'
+
 import Canvas from './Canvas'
+import SingleLineGridlist from './gridlist'
 
 class App extends Component {
   render() {
@@ -10,7 +12,9 @@ class App extends Component {
           <div className={classes.content_wrapper}>
             <div className={classes.content_header}></div>
             <Canvas></Canvas>
-            <div className={classes.content_footer}></div>
+            <div className={classes.content_footer}>
+            <SingleLineGridlist></SingleLineGridlist>
+            </div>
         </div>
       </div>
     );

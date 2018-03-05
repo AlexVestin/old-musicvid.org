@@ -11,7 +11,15 @@ export default class Sound {
 
         this.Module  = {};
         window.KissFFT(this.Module)
+        this.Module["onRuntimeInitialized"] = () => { 
+            this.onModuleLoaded()
+        };
+
         this.loadSound(filename, (data) => this.fftData = data)
+    }
+
+    onModuleLoaded = () => {
+        this.moduleLoaded = true
     }
 
     play = () => {
@@ -25,6 +33,26 @@ export default class Sound {
         this.startTime = performance.now();
     }
 
+    getSpectrum = () => {
+        let audio_p, size_p, size = 0;
+
+        const { left } = this;
+        console.log(this.Module)
+        try {
+            audio_p = this.Module._malloc(left.length * 4)
+            size_p = this.Module._malloc(4)
+            
+            this.Module.HEAPF32.set(left, audio_p >> 2)
+
+            let size = this.Module._set_audio(audio_p, left.length)
+            let buf_p = this.Module._get_buffer()
+            let buf = this.Module.HEAPU8.subarray(buf_p, buf_p + size)
+            console.log(buf)
+        }finally {
+
+        }
+    }
+
     loadSound = (filename, callback) => {
         let that = this
         var reader = new FileReader();
@@ -36,6 +64,11 @@ export default class Sound {
                     that.sampleRate = buffer.sampleRate
                     that.channles = 2
                     that.duration = buffer.duration;
+
+                    if(that.moduleLoaded){
+                        that.getSpectrum()
+                    }
+
                     if(that.onload !== undefined)
                         that.onload()
                 });

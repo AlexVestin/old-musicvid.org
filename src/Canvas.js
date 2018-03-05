@@ -7,10 +7,11 @@ import Button from 'material-ui/Button';
 import Options from './options'
 import ThreeRenderer from './three/three';
 
-
 export default class Canvas extends Component {
     constructor(props) {
       super(props)
+
+      this.worker = false
 
       this.state = {
         encoderLoaded: false,
@@ -22,18 +23,18 @@ export default class Canvas extends Component {
 
       this.streamClosed = false;
       this.enableAudio = true;
-      
       if(this.enableAudio) {
         this.sound = new Sound("sound.mp3")
-        this.sound.onload = this.audioLoaded
+        this.sound.onload = this.audioLoaded;
       }
+
+      this.frames = 60
     }
   
     componentDidMount() {
       this.encodedFrames = 0;
-      this.encoderLoaded = false
       this.displayRenderer = new ThreeRenderer(this.mount)
-      this.frameId = window.requestAnimationFrame(this.animate)
+      this.frameId = window.requestAnimationFrame(this.renderScene)
     }
   
     stop = ()  => {
@@ -41,9 +42,7 @@ export default class Canvas extends Component {
     }
 
     encoderInit = () => {
-      this.encoderLoaded = true
       this.setState({ info: "Encoder initialized"})
-
       this.startTime = performance.now()
     }
 
@@ -79,22 +78,20 @@ export default class Canvas extends Component {
 
       let videoConfig = { w, h, fps: this.frames, bitrate: br }
       let audioConfig = { left, right, channels, samplerate, bitrate: 320000, duration: this.duration }
-      this.videoEncoder.init(videoConfig, audioConfig, this.encoderInit)
+      this.videoEncoder.init(videoConfig, audioConfig, this.encoderInit, this.renderScene)
     }
 
-    animate = () =>{
-      this.renderScene()
-      this.frameId = window.requestAnimationFrame(this.animate)
-    }
-
-    renderScene() {
-       this.displayRenderer.renderScene()
+    renderScene = () => {
+        const time = this.state.encoding ? this.encodedFrames / this.frames : this.frameId / 60
+        this.displayRenderer.renderScene(time)
         if(!this.streamClosed) {
-          if(this.encoderLoaded && this.encodedFrames < this.frames * this.duration){
+          if(this.state.encoding && this.encodedFrames < this.frames * this.duration){
             this.displayRenderer.readPixels()
-            this.videoEncoder.addFrame(this.displayRenderer.pixels)
-            this.setState({info:"Encoding frame: " + String(this.encodedFrames++ + 1) + "/" + String(this.frames * this.duration)});
-          }else if(this.encoderLoaded) {
+            this.videoEncoder.addFrame(this.displayRenderer.pixels, this.renderScene)
+            
+            this.encodedFrames++
+            this.setState({info:"Encoding frame: " + String(this.encodedFrames) + "/" + String(this.frames * this.duration)});
+          }else if(this.state.encoding) {
             this.stopTime = performance.now()
             this.displayRenderer.setSize(720, 480)
             this.setState({width: 720, height: 480, info: "Encoding audio/preparing video..."})
@@ -102,12 +99,16 @@ export default class Canvas extends Component {
             this.videoEncoder.close(this.saveBlob)
           }
         }
+
+        if(!this.state.encoding || !this.videoEncoder.isWorker)
+          this.frameId = window.requestAnimationFrame(this.renderScene)
     }
     
     saveBlob = (vid) => {
       let fps = (this.frames * this.duration) / ((this.stopTime - this.startTime) / 1000)
-      this.setState({info: "Saving video!"}, () => setTimeout(this.setState({info: "Video encoded at: " + String(fps) + " frames per second"}), 3000 ))
-      
+      this.setState({info: "Saving video!", encoding: false}, () => setTimeout(this.setState({info: "Video encoded at: " + String(fps) + " frames per second"}), 8000 ))
+      this.streamClosed = true
+      window.requestAnimationFrame(this.renderScene)
       const blob = new Blob([vid], { type: 'video/mp4' });
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(blob);
@@ -132,14 +133,14 @@ export default class Canvas extends Component {
             <b>Video</b>
             <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
             <Options onchange={v => this.fps = v} name="fps" labels={["60"]}></Options>
-            <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "4000k", "8000k", "12000k"]}></Options>
+            <Options onchange={v => this.br = v} name="bitrate" labels={["4000k", "8000k", "12000k", "20000k"]}></Options>
             <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s"]}></Options>
             <Button 
               onClick={this.encode} 
               variant="raised" 
               color="secondary"
               style={{minHeight: "40px", height:"40px", marginTop: "11px"}}
-              disabled={!this.state.encoderLoaded || this.state.encoding}
+              disabled={!this.state.encoderLoaded || this.state.encoding || this.streamClosed}
             >
               Encode!
             </Button>
