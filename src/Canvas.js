@@ -29,6 +29,7 @@ export default class Canvas extends Component {
       }
 
       this.frames = 60
+      this.lastTime = 0
     }
   
     componentDidMount() {
@@ -109,7 +110,6 @@ export default class Canvas extends Component {
     saveBlob = (vid) => {
       let fps = (this.frames * this.duration) / ((this.stopTime - this.startTime) / 1000)
       this.setState({info: "Saving video!", encoding: false}, () => setTimeout(this.setState({info: "Video encoded at: " + String(fps) + " frames per second"}), 8000 ))
-      this.streamClosed = true
       window.requestAnimationFrame(this.renderScene)
       const blob = new Blob([vid], { type: 'video/mp4' });
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -119,8 +119,11 @@ export default class Canvas extends Component {
         link.setAttribute('href', URL.createObjectURL(blob));
         link.setAttribute('download', "vid.mp4");
         link.click();
-    } 
-    }
+      } 
+      this.encodedFrames = 0
+      //this.streamClosed = false
+      this.setState({encoding: false})
+  }
   
     render() {
       return (
@@ -130,18 +133,20 @@ export default class Canvas extends Component {
                 style={{ width: String(this.state.width) +'px', height: String(this.state.height) +'px' }}
                 ref={(mount) => { this.mount = mount }}
             />
-
+          
           <div className={classes.options_wrapper}>
-            <b>Video</b>
+
             <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
             <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
-            <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "4000k", "8000k", "12000k", "20000k"]}></Options>
-            <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s"]}></Options>
+            <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
+            <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s", "300s"]}></Options>
+            <Options disabled onchange={v => this.pre = v} name="preset" labels={["ultrafast", "superfast", "fast", "medium", "slow"]}></Options>
+            
             <Button 
               onClick={this.encode} 
               variant="raised" 
               color="secondary"
-              style={{minHeight: "40px", height:"40px", marginTop: "11px"}}
+              style={{minHeight: "40px", height:"40px", marginTop: "13px"}}
               disabled={!this.state.encoderLoaded || this.state.encoding || this.streamClosed}
             >
               Encode!

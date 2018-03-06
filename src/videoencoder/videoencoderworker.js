@@ -47,8 +47,8 @@ export default class VideoEncoder {
 
         }else{
             if(this.bufferSet){
-                this.sendFrame(this.buffer)
                 this.bufferSet = false
+                this.sendFrame(this.buffer)
             }
             
             this.bufferSet = true

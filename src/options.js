@@ -16,8 +16,8 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 120,
-    maxWidth: 300,
+    minWidth: 90,
+    maxWidth: 200,
   },
   chips: {
     display: 'flex',
@@ -65,7 +65,7 @@ class MultipleSelect extends React.Component {
       <div className={classes.root}>
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="select-multiple">{this.props.name}</InputLabel>
-          <Select value={this.state.name} onChange={this.handleChange} input={<Input id="select-multiple" />} MenuProps={MenuProps}>
+          <Select disabled={this.props.disabled} value={this.state.name} onChange={this.handleChange} input={<Input id="select-multiple" />} MenuProps={MenuProps}>
             {this.props.labels.map(name => (
               <MenuItem
                 key={name}
