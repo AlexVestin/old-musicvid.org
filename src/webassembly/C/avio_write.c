@@ -161,7 +161,8 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     size_t vpos = upos + upos / 4;
     size_t i = 0;
     uint8_t r, g, b;
-    
+
+    size_t idx;
 
     for( size_t line = 0; line < height; ++line ) {
         if( !(line % 2) ) {
@@ -252,8 +253,7 @@ void write_header() {
     } 
 }
 
-void open_video(int w, int h, int fps, int br){
-    printf("w: %d h: %d fps: %d br: %d \n", w,h,fps,br);
+void open_video(int w, int h, int fps, int br, const char* preset){
     AVOutputFormat* of = av_guess_format("mp4", 0, 0);
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
     if (!bd.buf) {
@@ -294,7 +294,7 @@ void open_video(int w, int h, int fps, int br){
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    av_opt_set(video_ctx->priv_data, "preset", "ultrafast", 0);
+    av_opt_set(video_ctx->priv_data, "preset", preset, 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         printf("couldnt open codec\n");
         exit(1);
@@ -333,6 +333,7 @@ void open_video(int w, int h, int fps, int br){
     if(ret < 0)
         fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
     
+    /*
     sws_context = sws_getContext(
             video_ctx->width, video_ctx->height, 
             AV_PIX_FMT_RGB32,
@@ -340,6 +341,7 @@ void open_video(int w, int h, int fps, int br){
             AV_PIX_FMT_YUV420P,
             0, NULL, NULL, NULL
     );
+    */
 
 } 
 

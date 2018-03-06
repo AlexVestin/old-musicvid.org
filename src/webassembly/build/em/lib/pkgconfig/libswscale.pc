@@ -1,0 +1,14 @@
+prefix=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em
+exec_prefix=${prefix}
+libdir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/lib
+includedir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/include
+
+Name: libswscale
+Description: FFmpeg image rescaling library
+Version: 5.0.102
+Requires: libavutil >= 56.8.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lswscale -lm
+Libs.private: 
+Cflags: -I${includedir}

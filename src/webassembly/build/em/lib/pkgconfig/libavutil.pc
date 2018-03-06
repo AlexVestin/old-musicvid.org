@@ -1,0 +1,14 @@
+prefix=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em
+exec_prefix=${prefix}
+libdir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/lib
+includedir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 56.8.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil -lm
+Libs.private: 
+Cflags: -I${includedir}

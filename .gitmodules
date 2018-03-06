@@ -1,0 +1,9 @@
+[submodule "src/webassembly/build/dependencies/ffmpeg"]
+	path = src/webassembly/build/dependencies/ffmpeg
+	url = https://git.ffmpeg.org/ffmpeg.git
+[submodule "src/webassembly/build/dependencies/x264"]
+	path = src/webassembly/build/dependencies/x264
+	url = https://git.videolan.org/git/x264.git
+[submodule "src/webassembly/build/dependencies/lame"]
+	path = src/webassembly/build/dependencies/lame
+	url = https://github.com/rbrito/lame.git

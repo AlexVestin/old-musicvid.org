@@ -1,5 +1,5 @@
 MP4_ENCODERS = libx264 libmp3lame
-MP4_MUXERS = mp4 mp3 null
+MP4_MUXERS = mp4
 
 FFMPEG_MP4_BC = build/ffmpeg/ffmpeg.bc
 FFMPEG_MP4_PC_PATH = ../../em/lib/pkgconfig

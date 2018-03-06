@@ -1,4 +1,4 @@
-importScripts("WasmVideoEncoder.js")
+importScripts("WasmVideoEncoderTest.js")
 console.log("opmdg")
 
 let Module = {}
