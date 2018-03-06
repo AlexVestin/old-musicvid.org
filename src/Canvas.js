@@ -140,7 +140,7 @@ export default class Canvas extends Component {
             <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
             <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
             <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s", "300s"]}></Options>
-            <Options disabled onchange={v => this.pre = v} name="preset" labels={["ultrafast", "superfast", "fast", "medium", "slow"]}></Options>
+            <Options disabled onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
             
             <Button 
               onClick={this.encode} 

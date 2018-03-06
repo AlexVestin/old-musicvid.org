@@ -37,6 +37,7 @@ static struct SwsContext *sws_context = NULL;
 static struct SwsContext *audio_swr_ctx = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
 
+
 const int NR_COLORS = 4;
 
 int have_audio = 0;
@@ -223,7 +224,7 @@ void write_header() {
     } 
 }
 
-void open_video(int w, int h, int fps, int br, const char* preset){
+void open_video(int w, int h, int fps, int br, int preset_idx){
     AVOutputFormat* of = av_guess_format("mp4", 0, 0);
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
 
@@ -265,7 +266,18 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    av_opt_set(video_ctx->priv_data, "preset", "ultrafast", 0);
+
+    const char presets = [
+        "ultrafast",
+        "veryfast",
+        "fast",
+        "medium",
+        "slow",
+        "veryslow"
+    ];
+
+
+    av_opt_set(video_ctx->priv_data, "preset", presets[presetIdx], 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         //printf("couldnt open codec\n");
         exit(1);
