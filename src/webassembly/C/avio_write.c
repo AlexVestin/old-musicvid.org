@@ -294,7 +294,7 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_ctx->gop_size = 10;
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    av_opt_set(video_ctx->priv_data, "preset", preset, 0);
+    av_opt_set(video_ctx->priv_data, "preset", "ultrafast", 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
         printf("couldnt open codec\n");
         exit(1);
