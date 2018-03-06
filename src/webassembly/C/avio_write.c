@@ -69,7 +69,7 @@ static int64_t seek (void *opaque, int64_t offset, int whence) {
             return bd->size;
             break;
         default:
-            printf("none of the above: %d\n", whence);
+           return -1;
     }
     return 1;
 }
@@ -242,6 +242,7 @@ void write_header() {
 void open_video(int w, int h, int fps, int br, const char* preset){
     AVOutputFormat* of = av_guess_format("mp4", 0, 0);
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
+
     if (!bd.buf) {
         ret = AVERROR(ENOMEM);
     }
@@ -269,7 +270,7 @@ void open_video(int w, int h, int fps, int br, const char* preset){
         //printf(stderr, "Codec '%s' not found\n", codec_name);
         exit(1);
     }
-
+   
     video_ctx = avcodec_alloc_context3(video_codec);
     video_ctx->width = w;
     video_ctx->height = h;
@@ -282,7 +283,7 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
     av_opt_set(video_ctx->priv_data, "preset", "ultrafast", 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
-        printf("couldnt open codec\n");
+        //printf("couldnt open codec\n");
         exit(1);
     }
 
@@ -292,18 +293,16 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_frame->width  = w;
     video_frame->height = h;
     ret = av_frame_get_buffer(video_frame, 0);
-    if(ret < 0)
-        //printf(stderr, "Error occurred: frame_getbuffer: %s\n", av_err2str(ret));
-    //Packet init
+
     pkt = av_packet_alloc();
     if(!pkt){
-        printf("errror packer\n");
+        //printf("errror packer\n");
         exit(1);
     }
         
     video_stream = avformat_new_stream(ofmt_ctx, NULL);  
     if(!video_stream){
-        printf(stderr, "error making stream\n");
+        //printf(stderr, "error making stream\n");
         exit(1);
     }
     
@@ -316,7 +315,7 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_stream->time_base = video_ctx->time_base;
     video_stream->id = ofmt_ctx->nb_streams-1;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
-    if(ret < 0)
+    //if(ret < 0)
         //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
     
     /*
@@ -340,6 +339,8 @@ int close_stream() {
     avformat_free_context(ofmt_ctx);
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
+    free(src_buf_left);
+    free(src_buf_right);
 
     return bd.size - bd.room + 2;
 }   
@@ -393,7 +394,7 @@ void write_audio_frame() {
         int ret;
         ret = av_frame_make_writable(audio_frame);
         if(ret < 0){
-            printf("error\n");
+            //printf("error\n");
             exit(1);
         }
         
@@ -417,7 +418,7 @@ void write_audio_frame() {
         );
 
         if(ret < 0){
-            printf("error converting \n");
+            //printf("error converting \n");
             exit(1);
         }
             
@@ -433,7 +434,7 @@ void write_audio_frame() {
 }
 
 void open_audio(float* left, float* right, int size, int sample_rate, int nr_channels, int bit_rate){
-    printf("size: %d sample_rate: %d channels: %d bitrate: %d \n", size,sample_rate, nr_channels,bit_rate);
+    //printf("size: %d sample_rate: %d channels: %d bitrate: %d \n", size,sample_rate, nr_channels,bit_rate);
     src_sample_rate = sample_rate;
     src_bit_rate = bit_rate;
     src_nr_channels = nr_channels;
@@ -503,8 +504,9 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
         exit(1);
     }
     audio_pkt = av_packet_alloc();
+
+    printf("-----------\n");
     if(!audio_pkt){
-        //printf("errror packer\n");
         exit(1);
     }
 

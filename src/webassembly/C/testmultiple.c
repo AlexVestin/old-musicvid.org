@@ -40,7 +40,10 @@ int main(int argc, char** argv) {
     int i, j, audio_size;
     double seconds = 10;
 
+    printf("--------------------------\n");
+
     open_video(WIDTH,HEIGHT,FPS,BIT_RATE, PRESET);
+    printf("--------------------------\n");
 
     /*
     int leftSize, rightSize;
@@ -51,6 +54,8 @@ int main(int argc, char** argv) {
     */
 
     write_header();
+
+    printf("--------------------------\n");
 
     int nr_frames = 1;
 
