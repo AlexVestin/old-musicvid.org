@@ -23,6 +23,5 @@ export default class View {
 
     animate = () => {
         this.Iris.render();
-        
     }
 }

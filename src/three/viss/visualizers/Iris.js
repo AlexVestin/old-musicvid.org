@@ -75,8 +75,6 @@ export default class Iris {
         //analyser.getByteFrequencyData( dataArray );
        // var loudness = getLoudness( dataArray );
         //visualArray = spectrum.GetVisualBins( dataArray, numBars, 4, 1300 );
-
-
         let visualArray = frequencyBins
 
         let loudness = 1

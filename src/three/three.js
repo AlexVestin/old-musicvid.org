@@ -15,6 +15,7 @@ export default class ThreeRenderer {
         this.renderer = renderer
 
         this.currentScene = new OceanScene(this.width, this.height, renderer)
+        
         //this.currentScene = new Iris(this.width, this.height, renderer)
 
         mount.appendChild(this.renderer.domElement)

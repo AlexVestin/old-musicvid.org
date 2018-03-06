@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import Water from "./water"
 import OrbitControls from './orbitcontrols'
+import Text from './text'
+
 
 export default class WaterScene {
     constructor(width, height, renderer){
@@ -64,6 +66,8 @@ export default class WaterScene {
         controls.maxDistance = 200.0;
         camera.lookAt( controls.target );
         this.controls = controls
+
+        this.text = new Text(this.scene)
     }
 
     setWater = () => {
@@ -116,7 +120,7 @@ export default class WaterScene {
     }
 
     animate = (time, frequencyBins) => {
-        let { sphere, water, parameters } = this
+        let { sphere, water, parameters, text } = this
         if(frequencyBins===undefined) {
             sphere.position.y = Math.sin( time ) * 20 + 20;
         }else{ 
@@ -129,6 +133,8 @@ export default class WaterScene {
         water.material.uniforms.size.value = parameters.size;
         water.material.uniforms.distortionScale.value = parameters.distortionScale;
         water.material.uniforms.alpha.value = parameters.alpha;
+
+        text.animate(time)
     }
 
     dispose = () => {
