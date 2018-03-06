@@ -92,7 +92,7 @@ export default class Canvas extends Component {
 
             this.setState({info:"Encoding frame: " + String(this.encodedFrames) + "/" + String(this.frames * this.duration)});
 
-            this.videoEncoder.addFrame(this.displayRenderer.pixels, this.renderScene)
+            this.videoEncoder.addFrame(this.displayRenderer.pixels, this.encodedFrames)
           }else if(this.state.encoding) {
             this.stopTime = performance.now()
             this.displayRenderer.setSize(720, 480)

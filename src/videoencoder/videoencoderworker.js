@@ -27,15 +27,16 @@ export default class VideoEncoder {
         this.worker.postMessage(pixels, [pixels.buffer])
     }
 
-    addFrame = (pixels) => {
+    addFrame = (pixels, frame) => {
         this.requested = false
         if(!this.encoding){
-            if(this.bufferSet) {
-                this.bufferSet = false
-                this.sendFrame(this.buffer)
-            }else {
+            if(!this.bufferSet) {
                 this.sendFrame(pixels)
+            }else {
+                this.sendFrame(this.buffer)
+                this.buffer = pixels
             }
+
             requestAnimationFrame(this.getPixels)
             this.requested = true
 
