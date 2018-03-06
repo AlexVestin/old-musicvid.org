@@ -12,7 +12,7 @@ const int WIDTH = 2048;
 const int HEIGHT = 1080;
 const int BIT_RATE = 400000; 
 const int NR_CLS = 4;
-const char* PRESET = "ultrafast";
+const int PRESET = 0;
 
 //DUMMY AUDIO
 const int SAMPLE_RATE = 44100;
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
 
     clock_t start = clock(), diff;
     int k, frame_size = WIDTH*HEIGHT*NR_CLS;
-    for(i = 0;i < (int)20*FPS; i++){
+    for(i = 0;i < (int)3*FPS; i++){
         uint8_t* buffer = malloc(frame_size * nr_frames);
         for(k = 0; k < nr_frames; k++) {
             for(j = 0; j < frame_size; j++){
