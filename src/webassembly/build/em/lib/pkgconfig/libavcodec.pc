@@ -9,6 +9,6 @@ Version: 58.13.102
 Requires: libavutil >= 56.8.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavcodec -lm -lmp3lame -lm -L/home/alex/videoeditor/src/webassembly/build/dependencies/x264/../../em/lib -lx264
+Libs: -L${libdir}  -lavcodec -lm -L/home/alex/videoeditor/src/webassembly/build/dependencies/x264/../../em/lib -lx264
 Libs.private: 
 Cflags: -I${includedir}

@@ -40,22 +40,18 @@ int main(int argc, char** argv) {
     int i, j, audio_size;
     double seconds = 10;
 
-    printf("--------------------------\n");
-
     open_video(WIDTH,HEIGHT,FPS,BIT_RATE, PRESET);
-    printf("--------------------------\n");
 
-    /*
     int leftSize, rightSize;
-    float* left = get_audio_buf("right1.raw", &leftSize);
-    float* right = get_audio_buf("left1.raw", &rightSize);
+    float* left = get_audio_buf("./assets/right1.raw", &leftSize);
+    float* right = get_audio_buf("./assets/left1.raw", &rightSize);
+    printf("--------------\n");
     open_audio( left, right, leftSize, 44100, 2, 320000 );
     seconds = (leftSize+rightSize) / (double) (44100 * 2);
-    */
-
+    printf("--------------\n");
+    
     write_header();
 
-    printf("--------------------------\n");
 
     int nr_frames = 1;
 
@@ -81,7 +77,7 @@ int main(int argc, char** argv) {
     printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
     printf("--\n");
 
-    //write_audio_frame();
+    write_audio_frame();
 
     int size = close_stream();
     uint8_t* out = get_buffer();

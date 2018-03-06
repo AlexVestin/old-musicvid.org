@@ -3,7 +3,7 @@ MP4_MUXERS = mp4
 
 FFMPEG_MP4_BC = build/ffmpeg/ffmpeg.bc
 FFMPEG_MP4_PC_PATH = ../../em/lib/pkgconfig
-MP4_SHARED_DEPS = libmp3lame libx264
+MP4_SHARED_DEPS = libx264 libmp3lame
 
 all: build/ffmpeg/ffmpeg.bc
 
@@ -34,7 +34,9 @@ libmp3lame:
 		--disable-gtktest \
 		--disable-analyzer-hooks \
 		--disable-decoder \
+		--disable-largefile \
 		--disable-frontend \
+		--disable-decoder \
 		&& \
 	emmake make -j8 && \
 	emmake make install
@@ -52,6 +54,7 @@ libx264:
 		--disable-opencl \
 		--disable-thread \
 		--disable-asm \
+		--chroma-format="420" \
 		\
 		--disable-avs \
 		--disable-swscale \
@@ -109,7 +112,6 @@ build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
 		$(addprefix --enable-encoder=,$(MP4_ENCODERS)) \
 		$(addprefix --enable-muxer=,$(MP4_MUXERS)) \
 		--enable-gpl \
-		--enable-libmp3lame \
 		--enable-libx264 \
 		--extra-cflags="-I../../em/include" \
 		--extra-ldflags="-L../../em/lib" \

@@ -7,9 +7,6 @@
 #include <libswresample/swresample.h>
 #include <libavutil/opt.h>
 
-#define AV_CODEC_FLAG_GLOBAL_HEADER (1 << 22)
-#define CODEC_FLAG_GLOBAL_HEADER AV_CODEC_FLAG_GLOBAL_HEADER
-#define AVFMT_RAWPICTURE 0x0020
 
 struct buffer_data {
     uint8_t *buf;
@@ -205,19 +202,6 @@ void add_frame(uint8_t* frames, int nr_frames){
             video_frame->height, 
             1
         );
-        
-        /*
-        const int in_linesize[1] = { NR_COLORS * video_ctx->width };
-        sws_scale(
-            sws_context, 
-            (const uint8_t * const *)&buffer, 
-            in_linesize, 
-            0, 
-            video_ctx->height, 
-            video_frame->data, 
-            video_frame->linesize
-        );
-        */
 
         video_frame->pts = frameIdx++;
         encode(video_frame, video_ctx, video_stream, pkt);
@@ -315,19 +299,6 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_stream->time_base = video_ctx->time_base;
     video_stream->id = ofmt_ctx->nb_streams-1;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
-    //if(ret < 0)
-        //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
-    
-    /*
-    sws_context = sws_getContext(
-            video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_RGB32,
-            video_ctx->width, video_ctx->height, 
-            AV_PIX_FMT_YUV420P,
-            0, NULL, NULL, NULL
-    );
-    */
-
 } 
 
 int close_stream() {
@@ -351,9 +322,6 @@ uint8_t* get_buffer() {
 
 void free_buffer(){
     av_free(bd.buf);
-    if (ret < 0 && ret != AVERROR_EOF) {
-        //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
-    }
 }
 
 static AVFrame *alloc_audio_frame() {
@@ -505,14 +473,11 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
     }
     audio_pkt = av_packet_alloc();
 
-    printf("-----------\n");
     if(!audio_pkt){
         exit(1);
     }
 
-    frame_bytes = audio_idx = bytes_read = 0;
-    av_dump_format(ofmt_ctx, 0, "Memory", 1);
-    
+    frame_bytes = audio_idx = bytes_read = 0;    
     dst_nb_samples = av_rescale_rnd (
         audio_frame->nb_samples, 
         src_sample_rate, 
