@@ -13,7 +13,9 @@ EXPORTED_FUNCTIONS = "[ \
 		'_write_header', '_set_audio']"
 
 EMCC_COMMON_ARGS = \
-	-O3 --memory-init-file 0 \
+	--llvm-lto 1 \
+	-Oz --memory-init-file 0 \
+	--closure 1 \
 	-o  ../../public/WasmVideoEncoderTest2.js\
 	-s WASM=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \

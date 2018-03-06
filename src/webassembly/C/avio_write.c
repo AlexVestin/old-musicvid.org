@@ -1,13 +1,10 @@
 #include "avio_write.h"
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
-#include <libavformat/avio.h>
-#include <libavutil/file.h>
-#include <libavutil/timestamp.h>
-#include <libavutil/imgutils.h>
-#include <libswscale/swscale.h>
-#include <libswresample/swresample.h>
 
+#include <libavformat/avio.h>
+#include <libavutil/imgutils.h>
+#include <libswresample/swresample.h>
 #include <libavutil/opt.h>
 
 #define AV_CODEC_FLAG_GLOBAL_HEADER (1 << 22)
@@ -77,17 +74,6 @@ static int64_t seek (void *opaque, int64_t offset, int whence) {
     return 1;
 }
 
-static void log_packet(const AVFormatContext *fmt_ctx, const AVPacket *pkt, const char *tag)
-{
-    AVRational *time_base = &fmt_ctx->streams[pkt->stream_index]->time_base;
-    printf("%s: pts:%s pts_time:%s dts:%s dts_time:%s duration:%s duration_time:%s stream_index:%d\n",
-           tag,
-           av_ts2str(pkt->pts), av_ts2timestr(pkt->pts, time_base),
-           av_ts2str(pkt->dts), av_ts2timestr(pkt->dts, time_base),
-           av_ts2str(pkt->duration), av_ts2timestr(pkt->duration, time_base),
-           pkt->stream_index);
-}
-
 static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
     
     struct buffer_data *bd = (struct buffer_data *)opaque;
@@ -114,7 +100,7 @@ static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out, AVPacket*
     ret = avcodec_send_frame(cod, frame);
 
     if (ret < 0) {
-        fprintf(stderr, "Error sending a frame for encoding\n");
+        //printf(stderr, "Error sending a frame for encoding\n");
         exit(1);
     }
 
@@ -125,7 +111,7 @@ static void encode(AVFrame *frame, AVCodecContext* cod, AVStream* out, AVPacket*
             return;
         }
         else if (ret < 0) {
-            fprintf(stderr, "Error during encoding\n");
+            //printf(stderr, "Error during encoding\n");
             exit(1);
         }
 
@@ -247,8 +233,8 @@ void add_frame(uint8_t* frames, int nr_frames){
 void write_header() {
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
-        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
-        fprintf(stderr, "Error occurred when opening output file\n");
+        //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
+        //printf(stderr, "Error occurred when opening output file\n");
         exit(1);
     } 
 }
@@ -274,13 +260,13 @@ void open_video(int w, int h, int fps, int br, const char* preset){
 
     ret = avformat_alloc_output_context2(&ofmt_ctx, of, NULL, NULL);
     if (ret < 0) {
-        fprintf(stderr, "Could not create output context\n");
+        //printf(stderr, "Could not create output context\n");
         exit(1);
     }
     
     AVCodec* video_codec = avcodec_find_encoder_by_name(codec_name);
     if (!video_codec) {
-        fprintf(stderr, "Codec '%s' not found\n", codec_name);
+        //printf(stderr, "Codec '%s' not found\n", codec_name);
         exit(1);
     }
 
@@ -307,7 +293,7 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_frame->height = h;
     ret = av_frame_get_buffer(video_frame, 0);
     if(ret < 0)
-        fprintf(stderr, "Error occurred: frame_getbuffer: %s\n", av_err2str(ret));
+        //printf(stderr, "Error occurred: frame_getbuffer: %s\n", av_err2str(ret));
     //Packet init
     pkt = av_packet_alloc();
     if(!pkt){
@@ -331,7 +317,7 @@ void open_video(int w, int h, int fps, int br, const char* preset){
     video_stream->id = ofmt_ctx->nb_streams-1;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
     if(ret < 0)
-        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+        //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
     
     /*
     sws_context = sws_getContext(
@@ -365,7 +351,7 @@ uint8_t* get_buffer() {
 void free_buffer(){
     av_free(bd.buf);
     if (ret < 0 && ret != AVERROR_EOF) {
-        fprintf(stderr, "Error occurred: %s\n", av_err2str(ret));
+        //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
     }
 }
 
@@ -374,7 +360,7 @@ static AVFrame *alloc_audio_frame() {
     int ret;
 
     if (!audio_frame) {
-        fprintf(stderr, "Error allocating an audio frame\n");
+        //printf(stderr, "Error allocating an audio frame\n");
         exit(1);
     }
 
@@ -385,7 +371,7 @@ static AVFrame *alloc_audio_frame() {
 
     ret = av_frame_get_buffer(audio_frame, 4);
     if (ret < 0) {
-        fprintf(stderr, "Error allocating an audio buffer\n");
+        //printf(stderr, "Error allocating an audio buffer\n");
         exit(1);
     }
     
@@ -487,7 +473,7 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
 
     ret = avcodec_open2(audio_ctx, ac, NULL);
     if (ret < 0) {
-        fprintf(stderr, "Could not open audio codec: %s\n", av_err2str(ret));
+        //printf(stderr, "Could not open audio codec: %s\n", av_err2str(ret));
         exit(1);
     }
 
@@ -495,13 +481,13 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
 
     ret = avcodec_parameters_from_context(audio_stream->codecpar, audio_ctx);
     if (ret < 0) {
-        fprintf(stderr, "Could not copy the stream parameters\n");
+        //printf(stderr, "Could not copy the stream parameters\n");
         exit(1);
     }
 
     audio_swr_ctx = swr_alloc();
     if (!audio_swr_ctx) {
-        fprintf(stderr, "Could not allocate resampler context\n");
+        //printf(stderr, "Could not allocate resampler context\n");
         exit(1);
     }
 
@@ -513,12 +499,12 @@ void open_audio(float* left, float* right, int size, int sample_rate, int nr_cha
     av_opt_set_sample_fmt(audio_swr_ctx, "out_sample_fmt",     audio_ctx->sample_fmt,     0);
 
     if ((ret = swr_init(audio_swr_ctx)) < 0) {
-        fprintf(stderr, "Failed to initialize the resampling context\n");
+        //printf(stderr, "Failed to initialize the resampling context\n");
         exit(1);
     }
     audio_pkt = av_packet_alloc();
     if(!audio_pkt){
-        printf("errror packer\n");
+        //printf("errror packer\n");
         exit(1);
     }
 

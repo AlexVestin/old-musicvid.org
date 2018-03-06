@@ -83,8 +83,8 @@ FFMPEG_COMMON_ARGS = \
 	--enable-avformat \
 	--enable-avutil \
 	--enable-swresample \
-	--enable-swscale \
-	--enable-avfilter \
+	--disable-swscale \
+	--disable-avfilter \
 	--disable-network \
 	--disable-d3d11va \
 	--disable-dxva2 \
