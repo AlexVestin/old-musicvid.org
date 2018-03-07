@@ -6,7 +6,7 @@ A video encoder for the browser using FFmpeg with WebAssembly in super early dev
 
 Currently encodes raw image and audio data, and muxes into a mp4/mp3 format.
 
-Wasm: 1985KB, JS: 25KB
+Wasm: 1985KB, JS: 25KB (or 730KB respectively 10KB when zipped!)
 Example usage in src/Canvas.js
 
 ### TODOs
