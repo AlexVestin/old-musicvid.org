@@ -3,7 +3,7 @@
 export default class VideoEncoder {
     constructor(onload){
 
-        // in the  public folder
+        // in the public folder
         this.worker = new Worker("worker.js")
         this.worker.onmessage = this.onmessage;
 
@@ -88,7 +88,6 @@ export default class VideoEncoder {
                 this.onsuccess(data.data)
                 break;
             case "error":
-                console.log(data.data)
                 break;
             default:
                 

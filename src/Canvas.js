@@ -7,6 +7,16 @@ import Button from 'material-ui/Button';
 import Options from './options'
 import ThreeRenderer from './three/three';
 
+const presetLookup = [
+  "ultrafast",
+  "veryfast",
+  "fast",
+  "medium",
+  "slow",
+  "veryslow"
+];
+
+
 export default class Canvas extends Component {
     constructor(props) {
       super(props)
@@ -67,6 +77,7 @@ export default class Canvas extends Component {
       this.frames = Number(this.fps)
       this.duration = Number(this.t.slice(0,-1))
       let br = Number(this.br.slice(0,-1)) * 1000
+      let presetIdx = presetLookup.indexOf(this.pre)
 
       this.displayRenderer.setSize(w, h)
       this.setState({width: w, height: h, encoding: true, info: "Initializing encoder"})
@@ -77,7 +88,7 @@ export default class Canvas extends Component {
       let channels = sound.channels
       let { left, right } = sound
 
-      let videoConfig = { w, h, fps: this.frames, bitrate: br }
+      let videoConfig = { w, h, fps: this.frames, bitrate: br, presetIdx }
       let audioConfig = { left, right, channels, samplerate, bitrate: 320000, duration: this.duration }
       this.videoEncoder.init(videoConfig, audioConfig, this.encoderInit, this.renderScene)
     }
@@ -140,7 +151,7 @@ export default class Canvas extends Component {
             <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
             <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
             <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s", "300s"]}></Options>
-            <Options disabled onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
+            <Options onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
             
             <Button 
               onClick={this.encode} 

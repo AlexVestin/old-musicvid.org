@@ -65,12 +65,6 @@ addFrame = (buffer) => {
    postMessage({action: "ready"})
 }
 
-close = () => {
-    Module._write_audio_frame()
-    let vid = close_stream()
-    Module._free_buffer();
-    postMessage({action:"return", data: vid.buffer})
-}
 
 onmessage = (e) => {
     const { data } = e
