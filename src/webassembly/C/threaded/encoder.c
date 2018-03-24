@@ -1,4 +1,4 @@
-#include "avio_write.h"
+#include "encoder.h"
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 
@@ -7,12 +7,12 @@
 #include <libswresample/swresample.h>
 #include <libavutil/opt.h>
 
-int i, ret = 0;
+int retval = 0;
 const char* codec_name = "libx264";
 
 //VIDEO
 AVFrame *video_frame;
-int frameIdx = 0;
+int encoder_frameIdx = 0;
 
 AVPacket *pkt;
 
@@ -20,39 +20,39 @@ static struct SwsContext *sws_context = NULL;
 AVCodecContext *video_ctx;
 const int NR_COLORS = 4;
 
-static void encode(AVFrame* frame, uint8_t* packets) {
-    packets[0] = 0;    
-    uint8_t* pkt_ptr = packets + 1;
-    uint32_t size = 1;
-
-    ret = avcodec_send_frame(video_ctx, frame);
-    if (ret < 0) {
+int encode(AVFrame* frame, uint8_t* packets) {
+    int nr_packets = 0;
+    uint32_t size = 0;
+    
+    retval = avcodec_send_frame(video_ctx, frame);
+    if (retval < 0) {
         //printf(stderr, "Error sending a frame for encoding\n");
         exit(1);
     }
 
-    while (ret >= 0) {
-        ret = avcodec_receive_packet(video_ctx, pkt);
-        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF){
+    while (retval >= 0) {
+        retval = avcodec_receive_packet(video_ctx, pkt);
+        if (retval == AVERROR(EAGAIN) || retval == AVERROR_EOF){
             av_packet_unref(pkt);
-            return;
+            return nr_packets;
         }
-        else if (ret < 0) {
+        else if (retval < 0) {
             exit(1);
         }
         
-        packets[0]++;
-
+        nr_packets++;
         int end = size;
-        //packet data, and then dts and pts ints
-        size += sizeof(pkt->data) + 8;
+        //packet data, and then dts/pts/size ints
+        size += pkt->size + 12;
         packets = realloc(packets, size); 
-        memcpy(packets[end], pkt->dts, 4);
-        memcpy(packets[end + 4], pkt->pts, 4);
-        memcpy(packets[end + 8], pkt->data, sizeof(pkt->data));
-        
-        av_packet_unref(pkt);
-    }
+
+        memcpy(packets + end, &pkt->dts, sizeof(int));
+        memcpy(packets + end + 4, &pkt->pts, sizeof(int)); 
+        memcpy(packets + end + 8, &pkt->size, sizeof(int));
+        memcpy(packets + end + 12, pkt->data, pkt->size);        
+            }
+
+    return nr_packets;
 }
 
 void flip_vertically(uint8_t *pixels) {
@@ -114,10 +114,11 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     }  
 }
 
-void encoder_add_frame(uint8_t* frame, uint8_t* packets){ 
+int encoder_add_frame(uint8_t* frame, uint8_t* packets, int* pkt_info){     
+    packets = malloc(4);
     int i, frame_size = video_ctx->width*video_ctx->height*NR_COLORS;
     flip_vertically(frame);
-    ret = av_frame_make_writable(video_frame);
+    retval = av_frame_make_writable(video_frame);
 
     // ~15% faster than sws_scale
     int size = (video_ctx->width * video_ctx->height * 3) / 2;
@@ -133,9 +134,9 @@ void encoder_add_frame(uint8_t* frame, uint8_t* packets){
         1
     );
 
-    video_frame->pts = frameIdx++;
-    encode(video_frame, packets);
-
+    video_frame->pts = encoder_frameIdx++;
+    int ed =encode(video_frame, packets, pkt_info) ;
+    
     free(yuv_buffer);
     free(frame);
 }
@@ -178,7 +179,7 @@ void encoder_init(int w, int h, int fps, int br, int preset_idx){
     video_frame->format = video_ctx->pix_fmt;
     video_frame->width  = w;
     video_frame->height = h;
-    ret = av_frame_get_buffer(video_frame, 0);
+    retval = av_frame_get_buffer(video_frame, 0);
 
     pkt = av_packet_alloc();
     if(!pkt){

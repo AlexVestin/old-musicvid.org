@@ -1,4 +1,4 @@
-#include "avio_write.h"
+#include "muxer.h"
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 
@@ -21,7 +21,7 @@ size_t avio_ctx_buffer_size = 4096;
 int i, ret = 0;
 struct buffer_data bd = { 0 };
 const size_t bd_buf_size = 1024;
-const char* codec_name = "libx264";
+const char* codec_name1 = "libx264";
 
 //VIDEO
 AVFrame *video_frame, *audio_frame;
@@ -36,8 +36,6 @@ static struct SwsContext *sws_context = NULL;
 static struct SwsContext *audio_swr_ctx = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
 
-
-const int NR_COLORS = 4;
 
 int have_audio = 0;
 
@@ -124,8 +122,8 @@ void muxer_add_frame(uint8_t* data, int dts, int pts, int size){
     pkt->dts = dts;
     pkt->pts = pts;
 
-    p->stream_index = video_stream->index;      
-    av_packet_rescale_ts(p, video_ctx->time_base, video_stream->time_base);
+    pkt->stream_index = video_stream->index;      
+    av_packet_rescale_ts(pkt, video_ctx->time_base, video_stream->time_base);
     av_write_frame(ofmt_ctx, pkt);
     //av_packet_unref(p);
 }
@@ -165,7 +163,7 @@ void muxer_video_init(int w, int h, int fps, int br, int preset_idx){
         exit(1);
     }
     
-    AVCodec* video_codec = avcodec_find_encoder_by_name(codec_name);
+    AVCodec* video_codec = avcodec_find_encoder_by_name(codec_name1);
     if (!video_codec) {
         //printf(stderr, "Codec '%s' not found\n", codec_name);
         exit(1);
