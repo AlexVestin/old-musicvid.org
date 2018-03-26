@@ -44,25 +44,24 @@ int main(int argc, char** argv) {
                     buffer[j + k*frame_size] = !(j % NR_CLS) ? 255 : 0;
             }
         }
-        uint8_t*    pkt_data;
-        int*        pkt_info;
-        int nr_packets = encoder_add_frame(buffer, pkt_data, pkt_info); 
-        
-        
+        uint8_t* packets = 0;
+        int nr_packets = encoder_add_frame(buffer, &packets); 
+
+        printf("%d\n", nr_packets);
         int p;
         for(p = 0; p < nr_packets; p++) {
-            printf("1\n");
+            printf("%" PRIu8 "\n", packets[0]);
+            printf("------------------\n");
             int dts =  int_from_uint8_t(packets); 
-            printf("2\n");
-            
+            printf("pppppppppppppppppppppp\n");            
             int pts = *(packets + 4); 
-            printf("3\n");
-            
+            printf("pppppppppppppppppppppp\n");
             int size = *(packets + 8); 
             uint8_t* data = *(packets + 12); 
 
             printf("dts : %d, pts: %d, size: %d \n", dts, pts, size);
         }
+        
         
         //muxer_add_frame(data, dts, pts, size);
     }

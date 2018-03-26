@@ -20,10 +20,10 @@ static struct SwsContext *sws_context = NULL;
 AVCodecContext *video_ctx;
 const int NR_COLORS = 4;
 
-int encode(AVFrame* frame, uint8_t* packets) {
+int encode(AVFrame* frame, uint8_t** packets) {
     int nr_packets = 0;
     uint32_t size = 0;
-    
+
     retval = avcodec_send_frame(video_ctx, frame);
     if (retval < 0) {
         //printf(stderr, "Error sending a frame for encoding\n");
@@ -33,7 +33,9 @@ int encode(AVFrame* frame, uint8_t* packets) {
     while (retval >= 0) {
         retval = avcodec_receive_packet(video_ctx, pkt);
         if (retval == AVERROR(EAGAIN) || retval == AVERROR_EOF){
-            av_packet_unref(pkt);
+            //av_packet_unref(pkt);
+
+            printf("nr packs: %d\n", nr_packets);
             return nr_packets;
         }
         else if (retval < 0) {
@@ -43,15 +45,28 @@ int encode(AVFrame* frame, uint8_t* packets) {
         nr_packets++;
         int end = size;
         //packet data, and then dts/pts/size ints
-        size += pkt->size + 12;
-        packets = realloc(packets, size); 
+        size += pkt->size + (3 * sizeof(int));
+
+        uint8_t* new_packets = realloc(packets, size);
+        if(!new_packets) {
+            printf("error reallocing\n");
+            exit(-1);
+        }
+        
+        *packets = new_packets;
 
         memcpy(packets + end, &pkt->dts, sizeof(int));
         memcpy(packets + end + 4, &pkt->pts, sizeof(int)); 
         memcpy(packets + end + 8, &pkt->size, sizeof(int));
-        memcpy(packets + end + 12, pkt->data, pkt->size);        
-            }
+        memcpy(packets + end + 12, pkt->data, pkt->size);
+        
 
+        printf("...........................................\n");
+        printf("%" PRIu8 "\n", *packets[0]);
+        printf("...........................................\n");        
+    }
+
+    printf("nr packs: %d\n", nr_packets);
     return nr_packets;
 }
 
@@ -88,8 +103,6 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
                 r = rgb[NR_COLORS * i];
                 g = rgb[NR_COLORS * i + 1];
                 b = rgb[NR_COLORS * i + 2];
-
-        
                 destination[i++] = ((66*r + 129*g + 25*b) >> 8) + 16;
 
                 destination[upos++] = ((-38*r + -74*g + 112*b) >> 8) + 128;
@@ -114,8 +127,7 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     }  
 }
 
-int encoder_add_frame(uint8_t* frame, uint8_t* packets, int* pkt_info){     
-    packets = malloc(4);
+int encoder_add_frame(uint8_t* frame, uint8_t** packets){     
     int i, frame_size = video_ctx->width*video_ctx->height*NR_COLORS;
     flip_vertically(frame);
     retval = av_frame_make_writable(video_frame);
@@ -135,10 +147,12 @@ int encoder_add_frame(uint8_t* frame, uint8_t* packets, int* pkt_info){
     );
 
     video_frame->pts = encoder_frameIdx++;
-    int ed =encode(video_frame, packets, pkt_info) ;
+    int ed = encode(video_frame, packets) ;
     
     free(yuv_buffer);
     free(frame);
+
+    return ed;
 }
 
 void encoder_init(int w, int h, int fps, int br, int preset_idx){
