@@ -55,16 +55,17 @@ void init_r(int size) {
     cfg = kiss_fftr_alloc(size , 0, NULL, NULL);
 }
 
-uint8_t* fft_r(float* data, unsigned size, unsigned bins) {
-    float* windowed_data = malloc(size * sizeof(float));
+float* fft_r(float* data, unsigned size, unsigned bins, int window) {
     int i, j;
-    for(i=0;i<size;i++) {
-        windowed_data[i] = data[i] * 0.5 * (1 - cos((float)2*PI / size-1));
+    if(window) {
+        for(i=0;i<size;i++) {
+            data[i] = data[i] * 0.5 * (1 - cos((float)2*PI / size-1));
+        }
     }
-
+    
     kiss_fft_cpx out[size / 2 + 1];
-    kiss_fftr(cfg, windowed_data, out);  
-    uint8_t* avg_result = malloc(bins);
+    kiss_fftr(cfg, data, out);  
+    float* avg_result = malloc(bins * sizeof(float));
 
     int step = (size / 2 + 1) / bins, idx;
     float avg;
@@ -72,14 +73,11 @@ uint8_t* fft_r(float* data, unsigned size, unsigned bins) {
         avg = 0;
         for(j = 0; j < step; j++) {
             idx = (step * i) + j;
-            
-            avg += fabs(20*log10(sqrt((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i))));
+            avg += fabs(20*log10(sqrt( (out[idx].r * out[idx].r) + (out[idx].i * out[idx].i) ) ));
         }
 
-        avg_result[i] = (uint8_t)((avg) / step + 0.5);
+        avg_result[i] = avg / step;
     }
-
-    free(windowed_data);
 
     return avg_result;
 }
@@ -129,18 +127,16 @@ int main(int argc, const char **argv) {
     int size;
     float* audio = get_audio_buf("../assets/right1.raw", &size);
 
-    /*
-    int outsize = set_audio(audio, size);
-    uint8_t* averages = get_buffer();
-    
+    //int outsize = set_audio(audio, size);
+    //uint8_t* averages = get_buffer();
     
     const unsigned nr_bins = 64, window_size = 2048;
     init_r(window_size);
-    uint8_t* averages = fft_r((audio + 20*window_size), window_size, nr_bins);
+    float* averages = fft_r((audio + 20*window_size), window_size, nr_bins, 0);
 
     int j;
     for(j = 0; j < 64; j++) {
-        printf("%" PRIu8 "\n", averages[j]);
+        printf("%f\n", averages[j]);
     }
         
     return 0;
