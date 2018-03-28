@@ -56,7 +56,7 @@ void init_r(int size) {
 }
 
 uint8_t* fft_r(float* data, unsigned size, unsigned bins) {
-    float* windowed_data = malloc(size);
+    float* windowed_data = malloc(size * sizeof(float));
     int i, j;
     for(i=0;i<size;i++) {
         windowed_data[i] = data[i] * 0.5 * (1 - cos((float)2*PI / size-1));
@@ -138,10 +138,9 @@ int main(int argc, const char **argv) {
     init_r(window_size);
     uint8_t* averages = fft_r((audio + 20*window_size), window_size, nr_bins);
 
-    printf("--------------------------------\n");
     int j;
-    for(j = 0; j < 1; j++) {
-        //printf("%" PRIu8 "\n", averages[j]);
+    for(j = 0; j < 64; j++) {
+        printf("%" PRIu8 "\n", averages[j]);
     }
         
     return 0;
