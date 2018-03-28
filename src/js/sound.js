@@ -8,6 +8,7 @@ export default class Sound {
         this.loaded = false
         this.dest = audioCtx.createMediaStreamDestination()
         this.stream = this.dest.stream
+        this.fftSize = 1024
 
         this.Module  = {};
         window.KissFFT(this.Module)
@@ -20,6 +21,7 @@ export default class Sound {
 
     onModuleLoaded = () => {
         this.moduleLoaded = true
+        this.Module._init_r(this.fftSize)
     }
 
     play = () => {
@@ -52,12 +54,25 @@ export default class Sound {
     }
 
     getFrequencyBins = (time) => {
-        if(this.frequencyBins === undefined)
-            return new Uint8Array(10)
-       
-        let idx = Math.floor((time * this.sampleRate) / 1024)
-        idx -= idx % 10
-        return this.frequencyBins.subarray(idx, idx + 10)
+        let bins = []
+        if(this.left !== undefined) {
+            let windowSize = this.fftSize, nr_bins = 64;
+            let idx = Math.floor(time * this.sampleRate)
+            let data = this.left.subarray(idx, idx + windowSize)
+            let audio_p, size_p, size = 0;
+
+            try {   
+
+                audio_p = this.Module._malloc(windowSize*4);
+                this.Module.HEAPF32.set(data, audio_p >> 2)
+                let buf_p = this.Module._fft_r(audio_p, windowSize, nr_bins)
+                bins = this.Module.HEAPU8.subarray(buf_p, buf_p + nr_bins)
+
+            }finally {
+                this.Module._free(audio_p)
+            }
+        }
+        return bins
     }
 
     loadSound = (filename, callback) => {

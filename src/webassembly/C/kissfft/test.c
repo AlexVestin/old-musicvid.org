@@ -8,7 +8,7 @@
 
 const int N = 1024;
 const int NR_BARS = 10;
-float* audi_buf;
+kiss_fftr_cfg cfg;
 
 float* get_audio_buf(const char* filename, int *fs){
     FILE* f = fopen(filename, "rb");
@@ -28,6 +28,7 @@ float* get_audio_buf(const char* filename, int *fs){
     return buf;   
 }
 
+/*
 
 float* get_hanning_window(int N) {
     int i;
@@ -48,7 +49,39 @@ void apply_window(const float* buf, size_t size, float* out, float* hann) {
         *(out + i) = *(buf + i); //* *(hann + i); 
     }
 }
+*/
 
+void init_r(int size) {
+    cfg = kiss_fftr_alloc(size , 0, NULL, NULL);
+}
+
+uint8_t* fft_r(float* data, unsigned size, unsigned bins) {
+    float* windowed_data = malloc(size);
+    int i, j;
+    for(i=0;i<size;i++) {
+        windowed_data[i] = data[i] * 0.5 * (1 - cos((float)2*PI / size-1));
+    }
+
+    kiss_fft_cpx out[size / 2 + 1];
+    kiss_fftr(cfg, windowed_data, out);  
+    uint8_t* avg_result = malloc(bins);
+
+    int step = (size / 2 + 1) / bins, idx;
+    float avg;
+    for(i = 0; i < bins; i++) {
+        avg = 0;
+        for(j = 0; j < step; j++) {
+            idx = (step * i) + j;
+            
+            avg += fabs(20*log10(sqrt((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i))));
+        }
+
+        avg_result[i] = (uint8_t)((avg) / step + 0.5);
+    }
+
+    return avg_result;
+}
+/*
 uint8_t* magavg;
 int set_audio(const float* audio, const size_t size) {
     float* hann = get_hanning_window(N);    
@@ -84,25 +117,33 @@ int set_audio(const float* audio, const size_t size) {
     return masize;
 }
 
+
 uint8_t* get_buffer() {
     return magavg;
 }
-
+*/
+/*
 int main(int argc, const char **argv) {
     int size;
     float* audio = get_audio_buf("../assets/right1.raw", &size);
 
-   
+    /*
     int outsize = set_audio(audio, size);
     uint8_t* averages = get_buffer();
+    
+    
+    const unsigned nr_bins = 64, window_size = 2048;
+    init_r(window_size);
+    uint8_t* averages = fft_r((audio + 20*window_size), window_size, nr_bins);
 
+    printf("--------------------------------\n");
     int j;
-    for(j = 0; j < 200; j++) {
-        printf("%" PRIu8 "\n", averages[j]);
+    for(j = 0; j < 1; j++) {
+        //printf("%" PRIu8 "\n", averages[j]);
     }
         
     return 0;
 }
-
+*/
 
 

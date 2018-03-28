@@ -1,5 +1,6 @@
 
-EXPORTED_FUNCTIONS = "['_set_audio', '_malloc', '_free', '_get_buffer']"
+#EXPORTED_FUNCTIONS = "['_set_audio', '_malloc', '_free', '_get_buffer']"
+EXPORTED_FUNCTIONS = "['_init_r', '_malloc', '_free', '_fft_r']"
 
 EMCC_COMMON_ARGS = \
 	-O3 --memory-init-file 0 \
