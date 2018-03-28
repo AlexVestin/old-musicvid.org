@@ -28,6 +28,20 @@ export default class BarsScene {
         scene.add( ambientLight );
         scene.fog = new THREE.FogExp2( 0xaabbbb, 0.001 );
 
+        this.bins = []
+        for(var i = 0; i < 64; i++) {
+            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+            var cube = new THREE.Mesh( geometry, material );
+
+            cube.position.x = i - 32;
+            
+            //cube.position.y = i * 0.5;
+            
+            this.bins.push(cube)
+            scene.add( cube );
+        }
+        
 
         this.scene = scene
         this.camera = camera
@@ -44,7 +58,9 @@ export default class BarsScene {
 
    
     animate = (time, frequencyBins) => {
-       
+        frequencyBins.forEach((e,i) => {
+            this.bins[i].scale.set(1, e, 1); 
+        })
     }
 
     dispose = () => {

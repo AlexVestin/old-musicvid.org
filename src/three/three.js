@@ -12,12 +12,12 @@ export default class ThreeRenderer {
         this.width = mount.clientWidth
         this.height = mount.clientHeight
         const renderer = new WebGLRenderer({antialias:true})
-        renderer.setClearColor('#00FF00')
+        renderer.setClearColor('#000000')
         renderer.setSize(this.width, this.height)
         this.renderer = renderer
 
-        //this.currentScene = new BarsScene(this.width, this.height, renderer)
-        this.currentScene = new OceanScene(this.width, this.height, renderer)
+        this.currentScene = new BarsScene(this.width, this.height, renderer)
+        //this.currentScene = new OceanScene(this.width, this.height, renderer)
         //this.currentScene = new Iris(this.width, this.height, renderer)
 
         mount.appendChild(this.renderer.domElement)

@@ -97,8 +97,7 @@ export default class Canvas extends Component {
         const time = this.state.encoding ? this.encodedFrames / this.frames : this.frameId / 60
         let frequencybins = this.sound.getFrequencyBins(time)
 
-        console.log(frequencybins)
-        this.displayRenderer.renderScene(time)
+        this.displayRenderer.renderScene(time, frequencybins)
         if(!this.streamClosed) {
           if(this.state.encoding && this.encodedFrames < this.frames * this.duration){
             this.displayRenderer.readPixels()
