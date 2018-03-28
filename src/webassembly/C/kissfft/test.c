@@ -79,6 +79,8 @@ uint8_t* fft_r(float* data, unsigned size, unsigned bins) {
         avg_result[i] = (uint8_t)((avg) / step + 0.5);
     }
 
+    free(windowed_data);
+
     return avg_result;
 }
 /*
