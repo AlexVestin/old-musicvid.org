@@ -65,7 +65,7 @@ float* fft_r(float* data, unsigned size, unsigned bins, int window) {
     
     kiss_fft_cpx out[size / 2 + 1];
     kiss_fftr(cfg, data, out);  
-    float* avg_result = malloc(bins * sizeof(float));
+    uint8_t* avg_result = malloc(bins * sizeof(float));
 
     int step = (size / 2 + 1) / bins, idx;
     float avg;
@@ -73,10 +73,11 @@ float* fft_r(float* data, unsigned size, unsigned bins, int window) {
         avg = 0;
         for(j = 0; j < step; j++) {
             idx = (step * i) + j;
-            avg += fabs(20*log10(sqrt( (out[idx].r * out[idx].r) + (out[idx].i * out[idx].i) ) ));
+            avg += log10( fabs(sqrt( (out[idx].r * out[idx].r) + (out[idx].i * out[idx].i) ) ) + 1);
         }
 
-        avg_result[i] = avg / step;
+        printf("%f\n", avg);
+        avg_result[i] = (uint8_t)(((avg*64) / step + 0.5));
     }
 
     return avg_result;
@@ -122,7 +123,7 @@ uint8_t* get_buffer() {
     return magavg;
 }
 */
-/*
+
 int main(int argc, const char **argv) {
     int size;
     float* audio = get_audio_buf("../assets/right1.raw", &size);
@@ -132,15 +133,15 @@ int main(int argc, const char **argv) {
     
     const unsigned nr_bins = 64, window_size = 2048;
     init_r(window_size);
-    float* averages = fft_r((audio + 20*window_size), window_size, nr_bins, 0);
+    uint8_t* averages = fft_r((audio + 22*window_size), window_size, nr_bins, 0);
 
     int j;
     for(j = 0; j < 64; j++) {
-        printf("%f\n", averages[j]);
+        printf("%" PRIu8 "\n", averages[j]);
     }
         
     return 0;
 }
-*/
+
 
 

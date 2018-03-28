@@ -66,9 +66,8 @@ export default class Sound {
                 this.Module.HEAPF32.set(data, audio_p >> 2)
                 let buf_p = this.Module._fft_r(audio_p, windowSize, nr_bins, 0)
 
-                let b = new Float32Array(nr_bins)
-                b.set(this.Module.HEAPF32.subarray(buf_p, buf_p + nr_bins))
-                console.log(b)
+                bins = this.Module.HEAPU8.subarray(buf_p, buf_p + nr_bins)
+                console.log(bins)
             }finally {
                 this.Module._free(audio_p)
             }

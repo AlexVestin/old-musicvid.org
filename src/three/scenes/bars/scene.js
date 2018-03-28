@@ -58,8 +58,9 @@ export default class BarsScene {
 
    
     animate = (time, frequencyBins) => {
+        frequencyBins.forEach(e =>  { if(e > 50) console.log("hello") })
         frequencyBins.forEach((e,i) => {
-            this.bins[i].scale.set(1, e, 1); 
+            this.bins[i].scale.set(1,  (e / 4) , 1); 
         })
     }
 
