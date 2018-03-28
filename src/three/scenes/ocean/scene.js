@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import Water from "./water"
-import OrbitControls from './orbitcontrols'
+import OrbitControls from '../../controls/orbitcontrols'
 import Text from './text'
 
 
@@ -14,7 +14,6 @@ export default class WaterScene {
           20000
         )
        
-    
         camera.position.set( 30, 30, 100 );
 
         let light = new THREE.DirectionalLight( 0xffffff, 0.8 );

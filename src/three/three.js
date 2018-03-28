@@ -1,7 +1,9 @@
 import {WebGLRenderTarget, WebGLRenderer} from 'three'
 
-import OceanScene from './ocean/scene'
-import Iris from './viss/scene'
+import OceanScene from './scenes/ocean/scene'
+import Iris from './scenes/viss/scene'
+import BarsScene from './scenes/bars/scene'
+
 
 export default class ThreeRenderer {
 
@@ -14,8 +16,8 @@ export default class ThreeRenderer {
         renderer.setSize(this.width, this.height)
         this.renderer = renderer
 
+        //this.currentScene = new BarsScene(this.width, this.height, renderer)
         this.currentScene = new OceanScene(this.width, this.height, renderer)
-        
         //this.currentScene = new Iris(this.width, this.height, renderer)
 
         mount.appendChild(this.renderer.domElement)
