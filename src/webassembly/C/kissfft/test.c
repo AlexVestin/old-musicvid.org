@@ -77,8 +77,6 @@ float* fft_r(float* data, unsigned size, unsigned bins, int window) {
             if(dB>0)
                 avg += dB;
         }
-
-        printf("%f\n", avg);
         
         avg_result[i] = avg / step;
     }
