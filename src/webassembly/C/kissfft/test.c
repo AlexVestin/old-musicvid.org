@@ -134,11 +134,11 @@ int main(int argc, const char **argv) {
     
     const unsigned nr_bins = 16, window_size = 2048;
     init_r(window_size);
-    float* averages = fft_r((audio + 12*window_size), window_size, nr_bins, 0);
+    uint8_t* averages = fft_r(audio, window_size, nr_bins, 0);
 
     int j;
     for(j = 0; j < nr_bins; j++) {
-        printf("%f\n", averages[j]);
+        printf("%" PRIu8 "\n", averages[j]);
     }
         
     return 0;
