@@ -8,7 +8,7 @@ export default class Sound {
         this.loaded = false
         this.dest = audioCtx.createMediaStreamDestination()
         this.stream = this.dest.stream
-        this.fftSize = 1024
+        this.fftSize = 4096
 
         this.Module  = {};
         window.KissFFT(this.Module)
@@ -35,45 +35,28 @@ export default class Sound {
         this.startTime = performance.now();
     }
 
-    getSpectrum = () => {
-        let audio_p, size_p, size = 0;
-
-        const { left } = this;
-        try {
-            audio_p = this.Module._malloc(left.length * 4)
-            size_p = this.Module._malloc(4)
-            
-            this.Module.HEAPF32.set(left, audio_p >> 2)
-
-            let size = this.Module._set_audio(audio_p, left.length)
-            let buf_p = this.Module._get_buffer()
-            this.frequencyBins = this.Module.HEAPU8.subarray(buf_p, buf_p + size)
-        }finally {
-            this.Module._free(audio_p)
-        }
-    }
-
     getFrequencyBins = (time) => {
         let bins = []
-        if(this.left !== undefined) {
+        if(this.left !== undefined && this.dfdf === undefined) {
+
             let windowSize = this.fftSize, nr_bins = 64;
             let idx = Math.floor(time * this.sampleRate)
+
             let data = this.left.subarray(idx, idx + windowSize)
             let audio_p, size_p, size = 0;
 
             try {   
                 audio_p = this.Module._malloc(windowSize*4);
                 this.Module.HEAPF32.set(data, audio_p >> 2)
+                
                 let buf_p = this.Module._fft_r(audio_p, windowSize, nr_bins, 0)
+                bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, nr_bins/* float */)  
 
-                bins = this.Module.HEAPU8.subarray(buf_p, buf_p + nr_bins)
-                console.log(bins)
             }finally {
                 this.Module._free(audio_p)
             }
         }
 
-       
         return bins
     }
 
