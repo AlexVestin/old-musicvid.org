@@ -10,9 +10,13 @@ import FolderIcon from 'material-ui-icons/Folder';
 import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
+import TextField from 'material-ui/TextField';
+
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
+import Tooltip from 'material-ui/Tooltip';
+
 
 import { connect } from 'react-redux'
 import { editItem } from '../../redux/actions/items'
@@ -23,37 +27,89 @@ const styles = theme => ({
     maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 100,
+  },
+
+  listItem: {
+      height: 50,
+      minHeight: 50
+  }
 });
 
 class Item extends React.Component {
+
+    constructor() {
+        super()
+        this.state = {values: {}}
+    }
 
     setWindow = () => {
         this.props.setWindow(4)
     };
 
-    edit = () => {
-        editItem({name: "Bars", color: "FFFF00", strength: 3, layer: "Scene"})
+    handleChange = input => event => {
+        var value = event.target.value
+        var numberValue = -1
+        if(input.type === "Number") {
+            if(value[value.length -1] !== "." && value[0] !== "-")
+                if(isNaN(value) || value.length > 12){
+                return
+            }
+            
+            // if only a '-' set value to zero and allow it to be set to state
+            numberValue =( value[0] === "-" && value.length === 1) ? 0 : Number(value)
+        }
+
+        let values = {...this.state.values}
+        this.props.selectedItem[input.key].value = numberValue !== -1 ? numberValue : value
+        values[input.key] = value
+        this.setState({values})
+        editItem(this.props.selectedItem)
+    }
+
+    componentWillMount() {
+        let values = []
+        const si = this.props.selectedItem
+        Object.keys(si).map((key, index) => {
+            values[key] = si[key].value
+        })
+        this.setState({values})
     }
 
     render() {
         const { classes } = this.props;
+        const si = this.props.selectedItem;
 
         return (
             <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Toolbar>
                 <Typography variant="title" color="inherit">
-                {this.props.selectedItem.name}
+                {this.props.selectedItem.name.value}
                 </Typography>
                 </Toolbar>
             </AppBar>
 
             <List>
-                {Object.keys(this.props.selectedItem).map((key, index) => (
-                    <ListItem key={key} dense button className={classes.listItem} onClick={this.edit}>
-                        <ListItemText primary={key + ": " + this.props.selectedItem[key]}  />
+                {Object.keys(si).map((key, index) => (
+                    <ListItem key={key} dense className={classes.listItem}>
+                     <Tooltip id="tooltip-top-start" title={si[key].tooltip} placement="right-end">
+                        <TextField
+                            id={key}
+                            label={key}
+                            className={classes.textField}
+                            value={this.state.values[key]}
+                            margin="normal"
+                            onChange={this.handleChange({type: si[key].type, key: key})}
+                            disabled={key === "id" || key === "type"}
+                        />
+                    </Tooltip>
                     </ListItem>
                 ))}
+               
                 
                 <ListItem dense button className={classes.listItem}>
                 <Button variant="raised" fullWidth onClick={this.props.back}>
@@ -82,6 +138,12 @@ Item .propTypes = {
               </ListItemSecondaryAction>
             </ListItem>
           ))}
+
+
+                            <ListItem key={key} dense button className={classes.listItem} onClick={this.edit}>
+                        
+                        
+                    
 */
 
 

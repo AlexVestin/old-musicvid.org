@@ -38,7 +38,6 @@ class AddResourceOptions extends React.Component {
                 this.props.setWindow(5)
                 break;
             case 4:
-               
                 break;
             default:
                 console.log("unknown click type")

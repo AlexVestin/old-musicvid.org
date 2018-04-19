@@ -42,13 +42,11 @@ export default class BarsScene {
         controls.maxDistance = 200.0;
         camera.lookAt( controls.target );
         this.controls = controls
-
     }
 
     addItem = (config) => {
-        switch(config.type){
+        switch(config.type.value){
             case "BARS":
-                console.log("add some bars")
                 this.items.push(new Bars(config, this.scene))
                 break;
             default:
@@ -57,7 +55,7 @@ export default class BarsScene {
     }
 
     updateConfig = (config) => {
-        let it = this.items.find((e) => e.name === config.name)
+        let it = this.items.find((e) => e.id === config.id.value)
         it.updateConfig(config)
     }
 

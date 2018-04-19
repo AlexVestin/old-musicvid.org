@@ -13,6 +13,10 @@ import IconButton from 'material-ui/IconButton';
 import { appendItem } from '../../redux/actions/items'
 import items from "../canvas/three/items"
 
+import {connect} from 'react-redux'
+
+let itemId  = 0
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -21,17 +25,20 @@ const styles = theme => ({
   },
 });
 
-class AudioReactiveTypeList extends React.Component {
-
+class AudioReactiveTypeList extends React.Component {  
   setWindow = () => {
     this.props.setWindow(4)
   };
 
   add = (itemName) => {
-    let config = items[itemName]
-    appendItem(config)
-    this.props.setWindow(5)
+    let config = items[itemName]()
+    while(this.props.items.find(e => e.name.value === config.name.value)){
+      config.name.value += "1"
+    }
 
+    config.id.value = itemId++
+    appendItem(config)
+    this.props.setWindow(6)
   }
 
   render() {
@@ -62,4 +69,10 @@ AudioReactiveTypeList .propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AudioReactiveTypeList) 
+const mapStateToProps = state => {
+  return {
+    items: state.items
+  }
+}
+
+export default connect(mapStateToProps)(withStyles(styles)(AudioReactiveTypeList) )

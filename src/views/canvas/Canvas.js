@@ -77,7 +77,7 @@ export default class Canvas extends Component {
       let [w,h] = [Number(sp[0]), Number(sp[1])]
       this.frames = Number(this.fps)
       this.duration = Number(this.t.slice(0,-1))
-      let br = Number(this.br.slice(0,-1)) * 1000
+      let br = Number(this.br.slice(0, -1)) * 1000
       let presetIdx = presetLookup.indexOf(this.pre)
 
       this.displayRenderer.setSize(w, h)

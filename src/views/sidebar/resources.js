@@ -26,9 +26,9 @@ class ResourceList extends React.Component {
         this.props.setWindow(3)
     };
 
-  selectItem = (name) => {
-    selectItem(name)
-    this.props.setWindow(5)
+  selectItem = (obj) => {
+    selectItem(obj)
+    this.props.setWindow(6)
   }
 
   render() {
@@ -38,9 +38,9 @@ class ResourceList extends React.Component {
       <div className={classes.root}>
         <List>
           {this.props.items.map(obj => (
-            <ListItem key={obj.name} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
+            <ListItem key={obj.name.value} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
               <Avatar> <FolderIcon/></Avatar>
-              <ListItemText primary={obj.name} />
+              <ListItemText primary={obj.name.value} />
               <ListItemSecondaryAction>
                     <IconButton aria-label="Delete">
                         <DeleteIcon />
