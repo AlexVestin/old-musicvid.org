@@ -35,7 +35,55 @@ export default class Sound {
         this.startTime = performance.now();
     }
 
+    getFrequencyData = (time) => {
+        let  bins = []
+        const size = 32
+
+        if(this.left !== undefined) {
+
+
+            let windowSize = this.fftSize;
+            let idx = Math.floor(time * this.sampleRate)
+            let data = this.left.subarray(idx, idx + windowSize)
+            let audio_p, size_p, size = 0;
+            let fftData
+            try {   
+                audio_p = this.Module._malloc(windowSize*4);
+                this.Module.HEAPF32.set(data, audio_p >> 2)
+                let buf_p = this.Module._fft_r(audio_p, windowSize, 1)
+                fftData = new Float32Array(this.Module.HEAPU8.buffer, buf_p, windowSize/2)  
+            }finally {
+                this.Module._free(audio_p)
+                bins = new Array(size)
+                let last_upper = 0
+                let lower, upper, avg
+
+                for(var i = 0; i < size; i++) {
+                    lower = last_upper
+                    upper = (i+1)*(i+1)
+                    avg = 0
+                    for(var j = lower; j < upper; j++) {
+                        avg += fftData[j] 
+                    }
+
+                    bins[i] = avg / (upper-lower)
+                    last_upper = upper  
+                }
+            }
+        }
+
+
+        return bins
+    }
+
     getFrequencyBins = (time) => {
+        return this.getFrequencyBinned(time)
+    }
+
+    getFrequencyBinned = (time) => {
+
+    
+        
         let bins = []
         if(this.left !== undefined && this.dfdf === undefined) {
 
@@ -49,8 +97,8 @@ export default class Sound {
                 audio_p = this.Module._malloc(windowSize*4);
                 this.Module.HEAPF32.set(data, audio_p >> 2)
                 
-                let buf_p = this.Module._fft_r(audio_p, windowSize, nr_bins, 0)
-                bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, nr_bins/* float */)  
+                let buf_p = this.Module._fft_r_bins(audio_p, windowSize, nr_bins, 1)
+                bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, nr_bins)  
 
             }finally {
                 this.Module._free(audio_p)
@@ -58,6 +106,7 @@ export default class Sound {
         }
 
         return bins
+        
     }
 
     loadSound = (filename, callback) => {

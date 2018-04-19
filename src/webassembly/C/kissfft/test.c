@@ -55,7 +55,27 @@ void init_r(int size) {
     cfg = kiss_fftr_alloc(size , 0, NULL, NULL);
 }
 
-float* fft_r(float* data, unsigned size, unsigned bins, int window) {
+
+float* fft_r(float* data, unsigned size, int window) {
+    int i, j;
+    if(window) {
+        for(i=0;i<size;i++) {
+            data[i] = data[i] * 0.5 * (1 - cos((float)2*PI / size-1));
+        }
+    }
+    
+    kiss_fft_cpx out[size / 2 + 1];
+    kiss_fftr(cfg, data, out);  
+    float* mag = malloc(size*4);
+
+    for(i = 0; i < size/2; i++) {
+        mag[i] = sqrt( (out[i].r * out[i].r) + (out[i].i * out[i].i) ); 
+    }
+
+    return mag;
+}
+
+float* fft_r_bins(float* data, unsigned size, unsigned bins, int window) {
     int i, j;
     if(window) {
         for(i=0;i<size;i++) {
@@ -77,14 +97,13 @@ float* fft_r(float* data, unsigned size, unsigned bins, int window) {
 
         avg = 0.0;
         for(j = lower; j < upper; j++) {
-            float dB = 20 * log10( (out[j].r * out[j].r) + (out[j].i * out[j].i) ); 
+            float dB = 20 * log10( sqrt((out[j].r * out[j].r) + (out[j].i * out[j].i) )); 
             avg += dB;  
         }
 
         last_upper = upper;
-        avg_result[i] = avg / step;
+        avg_result[i] = avg / (upper-lower);
 
-        printf("sdsdf\n");
     }
 
     /*

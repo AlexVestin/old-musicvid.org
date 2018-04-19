@@ -1,11 +1,12 @@
 
 import React, {Component} from 'react'
-import Sound from './js/sound'
-import VideoEncoder from './videoencoder/videoencoderworker'
+import Sound from '../../sound'
+import ThreeCanvas from './three/three';
+import VideoEncoder from '../../videoencoder/videoencoderworker'
+
 import classes from './canvas.css'
 import Button from 'material-ui/Button';
 import Options from './options'
-import ThreeRenderer from './three/three';
 
 const presetLookup = [
   "ultrafast",
@@ -15,7 +16,6 @@ const presetLookup = [
   "slow",
   "veryslow"
 ];
-
 
 export default class Canvas extends Component {
     constructor(props) {
@@ -33,8 +33,9 @@ export default class Canvas extends Component {
 
       this.streamClosed = false;
       this.enableAudio = true;
+      
       if(this.enableAudio) {
-        this.sound = new Sound("lamourdrop.wav")
+        this.sound = new Sound("sound.mp3")
         this.sound.onload = this.audioLoaded;
       }
 
@@ -44,7 +45,7 @@ export default class Canvas extends Component {
   
     componentDidMount() {
       this.encodedFrames = 0;
-      this.displayRenderer = new ThreeRenderer(this.mount)
+      this.displayRenderer = this.ThreeRenderer.getWrappedInstance()
       this.frameId = window.requestAnimationFrame(this.renderScene)
     }
   
@@ -141,31 +142,32 @@ export default class Canvas extends Component {
       return (
         <div className={classes.canvas_wrapper}>
             <b>{this.state.info}</b>
-            <div
-                style={{ width: String(this.state.width) +'px', height: String(this.state.height) +'px' }}
-                ref={(mount) => { this.mount = mount }}
+            <ThreeCanvas 
+              ref={ref => this.ThreeRenderer = ref}
+              width={this.state.width}
+              height={this.state.height}  
             />
           
-          <div className={classes.options_wrapper}>
+            <div className={classes.options_wrapper}>
 
-            <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
-            <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
-            <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
-            <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s", "300s"]}></Options>
-            <Options onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
-            
-            <Button 
-              onClick={this.encode} 
-              variant="raised" 
-              color="secondary"
-              style={{minHeight: "40px", height:"40px", marginTop: "13px"}}
-              disabled={!this.state.encoderLoaded || this.state.encoding || this.streamClosed}
-            >
-              Encode!
-            </Button>
-          </div>
+              <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
+              <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
+              <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
+              <Options onchange={v => this.t = v} name="duration" labels={["15s", "20s", "30s", "60s", "120s", "300s"]}></Options>
+              <Options onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
+              
+              <Button 
+                onClick={this.encode} 
+                variant="raised" 
+                color="secondary"
+                style={{minHeight: "40px", height:"40px", marginTop: "13px"}}
+                disabled={!this.state.encoderLoaded || this.state.encoding || this.streamClosed}
+              >
+                Encode!
+              </Button>
+            </div>
           
-           <a ref={(linkRef) => this.linkRef = linkRef}></a>
+            <a ref={(linkRef) => this.linkRef = linkRef}></a>
         </div>
       )
     }

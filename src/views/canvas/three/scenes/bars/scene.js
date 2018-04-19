@@ -1,12 +1,9 @@
 import * as THREE from 'three'
 import OrbitControls from '../../controls/orbitcontrols'
-
+import Bars from '../../items/bars'
 
 export default class BarsScene {
     constructor(width, height, renderer){
-        
-        this.delta = 1
-        this.upDelta = 2
 
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(
@@ -32,22 +29,10 @@ export default class BarsScene {
         scene.add( ambientLight );
         scene.fog = new THREE.FogExp2( 0xaabbbb, 0.001 );
 
-        this.bins = []
-        for(var i = 0; i < 32; i++) {
-            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-            var cube = new THREE.Mesh( geometry, material );
-
-            cube.position.x = i - 32;
-            
-            //cube.position.y = i * 0.5;
-            
-            this.bins.push(cube)
-            scene.add( cube );
-        }
         
         this.scene = scene
         this.camera = camera
+        this.items = []
 
         let controls = new OrbitControls( camera, renderer.domElement );
         controls.maxPolarAngle = Math.PI * 0.495;
@@ -57,25 +42,27 @@ export default class BarsScene {
         controls.maxDistance = 200.0;
         camera.lookAt( controls.target );
         this.controls = controls
+
+    }
+
+    addItem = (config) => {
+        switch(config.type){
+            case "BARS":
+                console.log("add some bars")
+                this.items.push(new Bars(config, this.scene))
+                break;
+            default:
+                console.log("unkown config type while adding object")
+        }
+    }
+
+    updateConfig = (config) => {
+        let it = this.items.find((e) => e.name === config.name)
+        it.updateConfig(config)
     }
 
     animate = (time, frequencyBins) => {
-        this.bins.forEach( (e,i) => {
-
-            let o = e.scale.y
-            let n = frequencyBins[i] * 10
-
-            if(n < o) {
-                if(o - this.delta >= 0)
-                    o = o - this.delta;
-            }else if(n > o + this.upDelta){
-                o = n
-            }
-
-            o = Math.abs(o)
-            e.scale.set(1,  o, 1); 
-            e.position.y =  o/2 
-        })
+        this.items.forEach(e => e.animate(time, frequencyBins))
     }
 
     dispose = () => {
@@ -86,3 +73,4 @@ export default class BarsScene {
         controls.dispose()
     }
 } 
+

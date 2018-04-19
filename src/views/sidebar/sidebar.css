@@ -1,0 +1,10 @@
+.wrapper {
+    width: 18%;
+    min-width: 320px;
+    height: 100vh;
+    background-color: pink;
+}
+
+.tabs {
+    background-color: aquamarine;
+}

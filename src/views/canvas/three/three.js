@@ -3,12 +3,13 @@ import {WebGLRenderTarget, WebGLRenderer} from 'three'
 import OceanScene from './scenes/ocean/scene'
 import Iris from './scenes/viss/scene'
 import BarsScene from './scenes/bars/scene'
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux'
 
 
-export default class ThreeRenderer {
-
-    constructor(mount) {
-
+class ThreeCanvas extends PureComponent {
+    componentDidMount() {
+        const mount = this.mountRef
         this.width = mount.clientWidth
         this.height = mount.clientHeight
         const renderer = new WebGLRenderer({antialias:true})
@@ -23,12 +24,22 @@ export default class ThreeRenderer {
         mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
         this.renderTarget = new WebGLRenderTarget(this.width,this.height); 
-    }   
+    } 
 
     setSize(w, h) {
         this.height = h
         this.width = w
         this.renderer.setSize(w, h)        
+    }
+
+    componentWillReceiveProps(props) {
+        console.log(props.lastAction)
+        console.log("props received", props)
+        if(props.lastAction === "EDIT_SELECTED_ITEM"){
+            this.currentScene.updateConfig(props.selectedItem)
+        }else if (props.lastAction === "APPEND_ITEM") {
+            this.currentScene.addItem(props.selectedItem)
+        }
     }
 
     readPixels() {
@@ -42,4 +53,23 @@ export default class ThreeRenderer {
         const {scene, camera} = this.currentScene
         this.renderer.render(scene, camera)
     }
+
+    render() {
+        return(
+            <div
+                style={{ width: String(this.props.width) +'px', height: String(this.props.height) +'px' }}
+                ref={(mount) => { this.mountRef = mount }}
+            />
+        )
+    }
 }
+
+const mapStateToProps = state => {
+    return {
+        items: state.items,
+        selectedItem: state.selectedItem,
+        lastAction: state.lastAction
+    }
+}
+
+export default connect(mapStateToProps, null, null,  { withRef: true })(ThreeCanvas)
