@@ -10,7 +10,9 @@ import FolderIcon from 'material-ui-icons/Folder';
 import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
-import { appendItem, selectItem } from '../../redux/actions/items'
+import { appendItem, selectItem, addSound } from '../../redux/actions/items'
+import items from "../canvas/three/items"
+import { connect } from 'react-redux'
 
 const styles = theme => ({
   root: {
@@ -25,12 +27,39 @@ class AddResourceOptions extends React.Component {
         this.props.back()
     };
 
+
+    componentDidMount() {
+
+        let add = (type, input) => {
+            let config = items[type]()
+
+            config.file.value = input.files[0]
+            config.name.value = input.files[0].name
+            while(this.props.items.find(e => e.name.value === config.name.value)){
+                config.name.value += "1"
+            }
+
+            config.id.value = Math.floor(Math.random() * 100000)
+            appendItem(config, type)
+            this.props.setWindow(6)
+        }
+
+        this.uploadImage.onchange = () => {
+            add("IMAGE", this.uploadImage)
+        }
+
+        this.uploadSound.onchange = () => {
+            add("SOUND", this.uploadSound)
+        }
+    }
+
     add = (e) => {
         switch(e) {
             case 0:
                 this.uploadSound.click()
                 break;
             case 1:
+                this.uploadImage.click()
                 break;
             case 2:
                 break;
@@ -49,9 +78,9 @@ class AddResourceOptions extends React.Component {
 
     return (
       <div className={classes.root}>
-        <input type="file" ref={(ref) => this.uploadSound = ref} style={{ display: 'none' }} />
-        <input type="file" ref={(ref) => this.uploadImage = ref} style={{ display: 'none' }} />
-        <input type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
+        <input accept="audio/*" type="file" ref={(ref) => this.uploadSound = ref} style={{ display: 'none' }} />
+        <input accept="image/*" type="file" ref={(ref) => this.uploadImage = ref} style={{ display: 'none' }} />
+        <input accept="video/*" type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
                         
         <List>
             <ListItem dense button className={classes.listItem}>
@@ -89,4 +118,10 @@ AddResourceOptions .propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AddResourceOptions )
+const mapStateToProps = state => {
+    return {
+        items: state.items
+    }
+}
+
+export default connect(mapStateToProps)(withStyles(styles)(AddResourceOptions ))

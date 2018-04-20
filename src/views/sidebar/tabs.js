@@ -98,8 +98,3 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(withStyles(styles)(SimpleTabs));
-
-
-/*
-           let item = {name: "Bars", color: "FFFFFF", strength: 1, layer: "Scene", centerX: 0, centerY: 0, type: "BARS"}
-                appendItem(item)*/

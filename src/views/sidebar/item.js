@@ -95,19 +95,23 @@ class Item extends React.Component {
 
             <List>
                 {Object.keys(si).map((key, index) => (
-                    <ListItem key={key} dense className={classes.listItem}>
-                     <Tooltip id="tooltip-top-start" title={si[key].tooltip} placement="right-end">
-                        <TextField
-                            id={key}
-                            label={key}
-                            className={classes.textField}
-                            value={this.state.values[key]}
-                            margin="normal"
-                            onChange={this.handleChange({type: si[key].type, key: key})}
-                            disabled={key === "id" || key === "type"}
-                        />
-                    </Tooltip>
-                    </ListItem>
+                    <div key={key}>
+                        {si[key].input &&
+                        <ListItem  dense className={classes.listItem}>
+                        <Tooltip id="tooltip-top-start" title={si[key].tooltip} placement="right-end">
+                            <TextField
+                                id={key}
+                                label={key}
+                                className={classes.textField}
+                                value={this.state.values[key]}
+                                margin="normal"
+                                onChange={this.handleChange({type: si[key].type, key: key})}
+                                disabled={key === "id" || key === "type"}
+                            />
+                        </Tooltip>
+                        </ListItem>
+                        }
+                    </div>
                 ))}
                
                 

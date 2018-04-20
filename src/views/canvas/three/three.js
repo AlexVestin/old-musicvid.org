@@ -6,6 +6,8 @@ import BarsScene from './scenes/bars/scene'
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 
+import Sound from "../../../sound"
+
 
 class ThreeCanvas extends PureComponent {
     componentDidMount() {
@@ -15,6 +17,8 @@ class ThreeCanvas extends PureComponent {
         const renderer = new WebGLRenderer({antialias:true})
         renderer.setClearColor('#000000')
         renderer.setSize(this.width, this.height)
+        renderer.autoClear = false;
+
         this.renderer = renderer
 
         this.currentScene = new BarsScene(this.width, this.height, renderer)
@@ -24,6 +28,8 @@ class ThreeCanvas extends PureComponent {
         mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
         this.renderTarget = new WebGLRenderTarget(this.width,this.height); 
+
+        this.audioLoaded = false
     } 
 
     setSize(w, h) {
@@ -33,13 +39,25 @@ class ThreeCanvas extends PureComponent {
     }
 
     componentWillReceiveProps(props) {
-        console.log(props.lastAction)
-        console.log("props received", props)
-        if(props.lastAction === "EDIT_SELECTED_ITEM"){
-            this.currentScene.updateConfig(props.selectedItem)
-        }else if (props.lastAction === "APPEND_ITEM") {
-            this.currentScene.addItem(props.selectedItem)
+
+        switch(props.lastAction) {
+            case  "EDIT_SELECTED_ITEM":
+                this.currentScene.updateConfig(props.selectedItem);
+                break
+            case "APPEND_ITEM":
+                this.currentScene.addItem(props.selectedItem)
+                break;
+            case "ADD_IMAGE":
+                this.currentScene.addBackgroundImage(props.selectedItem)
+                break
+            case "ADD_SOUND":
+                console.log(props.selectedItem)
+                this.sound = new Sound(props.selectedItem, () => this.audioLoaded = true)
+                break;
+            default:
+                console.log("canvas/three.js: unknown ")
         }
+
     }
 
     readPixels() {
@@ -48,10 +66,13 @@ class ThreeCanvas extends PureComponent {
         gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
     }
 
-    renderScene(time, frequencyBins) { 
+    renderScene(time) { 
+        var frequencyBins = []
+        if(this.audioLoaded)
+            frequencyBins = this.sound.getFrequencyBins(time)
+        
         this.currentScene.animate(time, frequencyBins)
-        const {scene, camera} = this.currentScene
-        this.renderer.render(scene, camera)
+        this.currentScene.render(this.renderer)
     }
 
     render() {
@@ -68,7 +89,8 @@ const mapStateToProps = state => {
     return {
         items: state.items,
         selectedItem: state.selectedItem,
-        lastAction: state.lastAction
+        lastAction: state.lastAction,
+        imagePath: state.imagePath
     }
 }
 

@@ -2,7 +2,8 @@
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 export default class Sound {
-    constructor(filename){
+    constructor(config, onload){
+        this.onload = onload
         this.soundDataBuffer = []
         this.startTime = -1
         this.loaded = false
@@ -16,7 +17,8 @@ export default class Sound {
             this.onModuleLoaded()
         };
 
-        this.loadSound(filename, (data) => this.fftData = data)
+        console.log(config.file.value.name)
+        this.loadSound(config.file.value, (data) => this.fftData = data)
     }
 
     onModuleLoaded = () => {
@@ -35,13 +37,11 @@ export default class Sound {
         this.startTime = performance.now();
     }
 
-    getFrequencyData = (time) => {
+    getFrequencyData2 = (time) => {
         let  bins = []
         const size = 32
 
         if(this.left !== undefined) {
-
-
             let windowSize = this.fftSize;
             let idx = Math.floor(time * this.sampleRate)
             let data = this.left.subarray(idx, idx + windowSize)
@@ -77,13 +77,10 @@ export default class Sound {
     }
 
     getFrequencyBins = (time) => {
-        return this.getFrequencyBinned(time)
+        return this.getFrequencyData(time)
     }
 
-    getFrequencyBinned = (time) => {
-
-    
-        
+    getFrequencyData = (time) => {
         let bins = []
         if(this.left !== undefined && this.dfdf === undefined) {
 
@@ -109,7 +106,7 @@ export default class Sound {
         
     }
 
-    loadSound = (filename, callback) => {
+    loadSound = (file, callback) => {
         let that = this
         var reader = new FileReader();
             reader.onload = function(ev) {
@@ -118,12 +115,8 @@ export default class Sound {
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))
                     that.sampleRate = buffer.sampleRate
-                    that.channles = 2
+                    that.channels = 2
                     that.duration = buffer.duration;
-                    
-                    if(that.moduleLoaded){
-                        //that.getSpectrum()
-                    }
 
                     if(that.onload !== undefined)
                         that.onload()
@@ -131,10 +124,16 @@ export default class Sound {
             }
         
         reader.onerror = (err) => { console.log(err) }
-        fetch(filename).then(function(response) {
-            return response.blob();
-        }).then(function(audioBlob) {
-            reader.readAsArrayBuffer(audioBlob);
-        });
+        //fix ability to get url files
+        if(false) {
+            fetch(file).then(function(response) {
+                return response.blob();
+            }).then(function(audioBlob) {
+                reader.readAsArrayBuffer(audioBlob);
+            });
+        }else {
+            reader.readAsArrayBuffer(file)
+        }
+        
     }
 }

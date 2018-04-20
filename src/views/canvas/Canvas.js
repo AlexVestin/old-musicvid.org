@@ -34,10 +34,6 @@ export default class Canvas extends Component {
       this.streamClosed = false;
       this.enableAudio = true;
       
-      if(this.enableAudio) {
-        this.sound = new Sound("sound.mp3")
-        this.sound.onload = this.audioLoaded;
-      }
 
       this.frames = 60
       this.lastTime = 0
@@ -47,6 +43,8 @@ export default class Canvas extends Component {
       this.encodedFrames = 0;
       this.displayRenderer = this.ThreeRenderer.getWrappedInstance()
       this.frameId = window.requestAnimationFrame(this.renderScene)
+
+      this.videoEncoder = new VideoEncoder(this.onEncoderLoaded)
     }
   
     stop = ()  => {
@@ -61,10 +59,7 @@ export default class Canvas extends Component {
     onEncoderLoaded = () => {
       this.setState({encoderLoaded: true, info: "Module loaded"})
     }
-    
-    audioLoaded = () => {
-      this.videoEncoder = new VideoEncoder(this.onEncoderLoaded)
-    }
+  
     
     componentWillUnmount() {
       this.stop()
@@ -84,7 +79,8 @@ export default class Canvas extends Component {
       this.setState({width: w, height: h, encoding: true, info: "Initializing encoder"})
       
       //audio config
-      let sound = this.sound
+  
+      let sound = this.displayRenderer.sound
       let samplerate = sound.sampleRate
       let channels = sound.channels
       let { left, right } = sound
@@ -96,9 +92,9 @@ export default class Canvas extends Component {
 
     renderScene = () => {
         const time = this.state.encoding ? this.encodedFrames / this.frames : this.frameId / 60
-        let frequencybins = this.sound.getFrequencyBins(time)
+        
 
-        this.displayRenderer.renderScene(time, frequencybins)
+        this.displayRenderer.renderScene(time)
         if(!this.streamClosed) {
           if(this.state.encoding && this.encodedFrames < this.frames * this.duration){
             this.displayRenderer.readPixels()

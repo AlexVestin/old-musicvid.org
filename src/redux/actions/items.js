@@ -7,10 +7,11 @@ export function selectItem(item){
     );  
 }
 
-export function appendItem(item){
+export function appendItem(item, itemType){
     store.dispatch({
         type: "APPEND_ITEM",
-        payload: item
+        payload: item,
+        itemType
         } 
     );  
 }

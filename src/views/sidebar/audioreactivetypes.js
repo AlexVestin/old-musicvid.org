@@ -37,14 +37,12 @@ class AudioReactiveTypeList extends React.Component {
     }
 
     config.id.value = itemId++
-    appendItem(config)
+    appendItem(config, "bars")
     this.props.setWindow(6)
   }
 
   render() {
     const { classes } = this.props;
-
-
     return (
       <div className={classes.root}>
         <List>

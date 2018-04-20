@@ -69,18 +69,18 @@ export default class Bars {
 
 export function getBarConfigs() {
     return {
-        name: {value: "Unnamed", type: "String", tooltip: null},
-        centerX: {value: 0, type: "Number", tooltip: null},
-        centerY: {value: 0, type: "Number",  tooltip: null},
-        strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis"},
-        decreaseSpeed: {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick"},
-        deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)"},        
-        layer: {value: "Scene", type: "String", tooltip: null},
-        color: {value: "FFFFFF", type: "String",tooltip: null},
-        scale: {value: 1, type: "Number", tooltip: null},
+        name: {value: "Unnamed", type: "String", tooltip: "", input: true},
+        centerX: {value: 0, type: "Number", tooltip: "", input: true},
+        centerY: {value: 0, type: "Number",  tooltip: "", input: true},
+        strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", input: true},
+        decreaseSpeed: {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", input: true},
+        deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", input: true},        
+        layer: {value: "Scene", type: "String", tooltip: "", input: true},
+        color: {value: "FFFFFF", type: "String",tooltip: "", input: true},
+        scale: {value: 0.5, type: "Number", tooltip: "", input: true},
         
         //Mandatory
-        type: {value: "BARS", type: "String"}, //TODO uneditable
-        id: {value: 0, type: "Number"}
+        type: {value: "BARS", type: "String", tooltip: "", input: false},
+        id: {value: 0, type: "Number", tooltip: "", input: false}
     }
 }

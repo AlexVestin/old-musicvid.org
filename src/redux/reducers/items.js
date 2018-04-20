@@ -1,14 +1,27 @@
 export default function reducer(state = {
     items: [],
     selectedItem: null,
-    lastAction: ""
+    lastAction: "",
 
     }, action){
         switch(action.type){
             case "SELECT_ITEM":
                 return {...state, selectedItem: action.payload, lastAction: "SELECT_ITEM"}
             case "APPEND_ITEM":
-                return {...state, selectedItem: action.payload, items: [...state.items, action.payload], lastAction: "APPEND_ITEM"}
+                let lastAction = ""
+                switch(action.itemType){
+                    case "IMAGE":
+                        lastAction = "ADD_IMAGE"
+                        break;
+                    case "bars": 
+                        lastAction = "APPEND_ITEM"
+                        break;
+                    case "SOUND":
+                        lastAction = "ADD_SOUND"
+                        break;
+                }
+
+                return {...state, selectedItem: action.payload, items: [...state.items, action.payload], lastAction}
             case "REMOVE_ITEM":
                 let { items } = state    
                 let index = items.indexOf(action.payload)

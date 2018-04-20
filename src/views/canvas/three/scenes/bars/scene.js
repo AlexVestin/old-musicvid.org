@@ -42,6 +42,29 @@ export default class BarsScene {
         controls.maxDistance = 200.0;
         camera.lookAt( controls.target );
         this.controls = controls
+
+        this.backgroundLoaded = false
+    }
+
+    addBackgroundImage = (config) => {
+        var fr = new FileReader()
+        fr.onload = () => {
+            var image = fr.result
+            var texture = new THREE.TextureLoader().load(image)
+            var backgroundMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(2, 2, 0),
+                new THREE.MeshBasicMaterial({map: texture})
+            );
+
+            // Create your background scene
+            this.backgroundScene = new THREE.Scene();
+            this.backgroundCamera = new THREE.Camera();
+            
+            this.backgroundScene.add(this.backgroundCamera );
+            this.backgroundScene.add(backgroundMesh)
+            this.backgroundLoaded = true
+        }
+        fr.readAsDataURL(config.file.value) 
     }
 
     addItem = (config) => {
@@ -61,6 +84,19 @@ export default class BarsScene {
 
     animate = (time, frequencyBins) => {
         this.items.forEach(e => e.animate(time, frequencyBins))
+    }
+
+    render = (renderer) => {
+        renderer.clear();
+
+        if(this.backgroundLoaded){
+            renderer.render(this.backgroundScene, this.backgroundCamera)
+        }
+
+        renderer.clearDepth();
+        
+        renderer.render(this.scene, this.camera)
+        
     }
 
     dispose = () => {
