@@ -1,6 +1,10 @@
 import * as THREE from 'three'
 import OrbitControls from '../../controls/orbitcontrols'
+
+
 import Bars from '../../items/bars'
+import Text3D from '../../items/text3d'
+
 
 export default class BarsScene {
     constructor(width, height, renderer){
@@ -68,9 +72,14 @@ export default class BarsScene {
     }
 
     addItem = (config) => {
+        console.log(config.type.value)
         switch(config.type.value){
+            
             case "BARS":
                 this.items.push(new Bars(config, this.scene))
+                break;
+            case "TEXT3D":
+                this.items.push(new Text3D(config, this.scene))
                 break;
             default:
                 console.log("unkown config type while adding object")

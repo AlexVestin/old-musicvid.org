@@ -13,12 +13,20 @@ export default function reducer(state = {
                     case "IMAGE":
                         lastAction = "ADD_IMAGE"
                         break;
-                    case "bars": 
+                    case "BARS": 
                         lastAction = "APPEND_ITEM"
                         break;
                     case "SOUND":
                         lastAction = "ADD_SOUND"
                         break;
+                    case "TEXT3D":
+                        lastAction = "ADD_TEXT3D"
+                        break;
+                    case "TEXT2D":
+                        lastAction = "ADD_TEXT2D"
+                        break;
+                    default:
+                        console.log("invalid type in reducer")
                 }
 
                 return {...state, selectedItem: action.payload, items: [...state.items, action.payload], lastAction}

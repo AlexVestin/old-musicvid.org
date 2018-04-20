@@ -41,7 +41,7 @@ class ThreeCanvas extends PureComponent {
     componentWillReceiveProps(props) {
 
         switch(props.lastAction) {
-            case  "EDIT_SELECTED_ITEM":
+            case "EDIT_SELECTED_ITEM":
                 this.currentScene.updateConfig(props.selectedItem);
                 break
             case "APPEND_ITEM":
@@ -51,11 +51,13 @@ class ThreeCanvas extends PureComponent {
                 this.currentScene.addBackgroundImage(props.selectedItem)
                 break
             case "ADD_SOUND":
-                console.log(props.selectedItem)
                 this.sound = new Sound(props.selectedItem, () => this.audioLoaded = true)
                 break;
+            case "ADD_TEXT3D":
+                this.currentScene.addItem(props.selectedItem)
+                break;
             default:
-                console.log("canvas/three.js: unknown ")
+                console.log("IN ->>>>> canvas/three.js:  unknown item added")
         }
 
     }

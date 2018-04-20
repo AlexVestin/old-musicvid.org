@@ -64,9 +64,10 @@ class AddResourceOptions extends React.Component {
             case 2:
                 break;
             case 3:
-                this.props.setWindow(5)
+                console.log("add 2d text")
                 break;
             case 4:
+                this.props.setWindow(5)
                 break;
             default:
                 console.log("unknown click type")
@@ -94,13 +95,14 @@ class AddResourceOptions extends React.Component {
             <ListItem dense button className={classes.listItem} onClick={() => this.add(2)}>
                 <ListItemText primary={`Add Video`} />
             </ListItem>
-
+            
             <ListItem dense button className={classes.listItem} onClick={() => this.add(3)}>
-                <ListItemText primary={`Add Audio Reactive Item`} />
+                <ListItemText primary={`Foreground text`} />
             </ListItem>
 
+
             <ListItem dense button className={classes.listItem} onClick={() => this.add(4)}>
-                <ListItemText primary={`Add Text`} />
+                <ListItemText primary={`3D items`} />
             </ListItem>
 
           <ListItem dense button className={classes.listItem}>

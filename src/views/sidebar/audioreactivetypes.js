@@ -15,8 +15,6 @@ import items from "../canvas/three/items"
 
 import {connect} from 'react-redux'
 
-let itemId  = 0
-
 const styles = theme => ({
   root: {
     width: '100%',
@@ -31,13 +29,13 @@ class AudioReactiveTypeList extends React.Component {
   };
 
   add = (itemName) => {
-    let config = items[itemName]()
+    let config = items[itemName.toUpperCase()]()
     while(this.props.items.find(e => e.name.value === config.name.value)){
       config.name.value += "1"
     }
 
-    config.id.value = itemId++
-    appendItem(config, "bars")
+    config.id.value = Math.floor(Math.random() * 1000000)
+    appendItem(config, itemName.toUpperCase())
     this.props.setWindow(6)
   }
 
@@ -46,8 +44,8 @@ class AudioReactiveTypeList extends React.Component {
     return (
       <div className={classes.root}>
         <List>
-          {["Bars"].map(value => (
-            <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add("BARS")}>
+          {["Bars", "Text3D"].map(value => (
+            <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add(value)}>
               <ListItemText primary={value} />
             </ListItem>
           ))}
