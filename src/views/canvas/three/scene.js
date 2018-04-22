@@ -66,6 +66,9 @@ export default class BarsScene {
         this.backgroundScene.add(this.backgroundCamera );
         this.backgroundLoaded = true
         this.backgroundItems = []
+
+        this.toRenderFG = []
+        this.toRenderBG = []
     }
 
     add = (name, info) => {
@@ -73,6 +76,7 @@ export default class BarsScene {
         switch(info.type) {
             case "IMAGE":
                 item = new BackgroundImage(name, info, this.backgroundScene)
+                this.backgroundItems.push(item)
                 break;
             case "BARS":
                 item = new Bars(info, this.sceneConfig)
@@ -93,16 +97,64 @@ export default class BarsScene {
         addItem(item.defaultConfig)
     }
 
+    stop = () => {
+        while(this.scene.children.length > 0){ 
+            this.scene.remove(this.scene.children[0]); 
+        }
+
+        while(this.backgroundScene.children.length > 0){ 
+            this.backgroundScene.remove(this.backgroundScene.children[0]); 
+        }
+
+        this.toRenderFG = []
+        this.toRenderBG = []
+
+        console.log(this.backgroundScene.children.length)
+
+    }
+
+    play = (time) => {
+        this.items.forEach(e => {
+            if(e.config.start >= time)
+                this.toRenderFG.push(e)
+        })
+
+        this.backgroundItems.forEach(e => {
+            if(e.config.start >= time) {
+                this.toRenderBG.push(e)
+            }
+        })
+    }
+
 
     updateConfig = (config) => {
         let it = this.items.find((e) => e.config.id === config.id.value)
         if(!it)
             it = this.backgroundItems.find((e) => e.config.id === config.id.value)
-
+        
         it.updateConfig(config)
     }
 
     animate = (time, frequencyBins) => {
+        this.toRenderFG.forEach(e => {
+            console.log(e.config.start, e.config.duration)
+        })
+
+        var i = this.toRenderBG.length
+        while (i--) {
+            const e = this.toRenderBG[i]
+            const { start, duration } = e.config
+
+            if (time >= (start+duration) / 100) { 
+                this.toRenderBG.splice(i, 1);
+                this.backgroundScene.remove(e.mesh)
+                return
+            } 
+            if(time >= (start / 100 ) && this.backgroundScene.getObjectByName(e.mesh.name) === undefined) {
+                this.backgroundScene.add(e.mesh)
+            }
+        }
+
         this.items.forEach(e => e.animate(time, frequencyBins))
     }
 

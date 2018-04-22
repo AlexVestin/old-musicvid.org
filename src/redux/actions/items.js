@@ -44,8 +44,8 @@ export function removeItem(item){
 export function editItem(item){
     store.dispatch({
         type: "EDIT_SELECTED_ITEM",
-        payload: item
-        } 
-    );  
+        key: item.key,
+        value: item.value
+    });  
 }
 

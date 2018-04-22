@@ -5,7 +5,7 @@ export default class BackgroundImage extends BaseItem {
     constructor(name, config, sceneConfig) {
         super(name) 
 
-        this.mesh = null
+        this.mesh = {}
         var fr = new FileReader()
         fr.onload = () => {
             var image = fr.result
@@ -16,10 +16,16 @@ export default class BackgroundImage extends BaseItem {
             );
 
             this.mesh = backgroundMesh
-            sceneConfig.add(this.mesh)
+            this.mesh.name = String(this.config.id) 
         }
         
         fr.readAsDataURL(config.file) 
+        this.config = this.getConfig(this.defaultConfig)
     }
+
+    updateConfig = (config) => {
+        this.config = this.getConfig(config)
+    }
+
 }
 

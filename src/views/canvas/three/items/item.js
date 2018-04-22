@@ -1,17 +1,20 @@
 
-
-
-
 export default class BaseItem {
     constructor(name) {
         this.defaultConfig = {
             name: {value: name, type: "String", tooltip: "",  editable: true},
             start: {value: 0, type: "Number", tooltip: "Time in millisecond when item will be rendered", editable:  true},
-            end: {value: 0, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true},
+            duration: {value: 18000, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true},
             id: {value: Math.floor(Math.random() * 10000000), type: "Number", show: false},
             type: {value: 0, type: "String",  show: false},
         }
+
+        this.config = this.getConfig(this.defaultConfig)
     }
+
+    updateConfig = (config) => {
+        this.config = this.getConfig(config)
+    } 
 
     getConfig = (config) => {
         let updatedObject = {}

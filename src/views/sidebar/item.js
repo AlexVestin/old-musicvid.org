@@ -69,42 +69,43 @@ class Item extends React.Component {
 
         let values = {...this.state.values}
         values[input.key] = value
-        this.setState({values})
-        let val = numberValue !== -1 ? numberValue : value
-        let key = { ["value"] : val } 
-
-        const updatedItem = Object.assign({}, this.props.selectedItem, {
-            ...this.props.selectedItem,
-            [input.key]: {
-                ...this.props.selectedItem[input.key],
-                value: val
-            }
-        })
-
-        editItem(updatedItem)
+        this.setState({values}, () => {
+            let val = numberValue !== -1 ? numberValue : value
+            editItem({key: input.key, value: val})
+        })   
     }
 
-    componentWillMount() {
-        let values = []
-        const si = this.props.selectedItem
+    setInputValues = (props) => {
+        let values = {}
+        const si = props.selectedItem
 
         Object.keys(si).map((key, index) => {
-            values[key] = si[key].value
+            values[key] =  this.state.values[key] !== (String(si[key].value) + ".") ? si[key].value : values[key] 
         })
         this.setState({values})
+    
     }
+
+    componentWillMount(props) {
+        this.setInputValues(this.props)
+    }
+        
+    componentWillReceiveProps(props) {
+        this.setInputValues(props)
+    } 
 
     render() {
         const { classes } = this.props;
         const si = this.props.selectedItem;
 
+
         return (
             <div className={classes.root}>
             <AppBar position="static" color="default">
                 <Toolbar>
-                <Typography variant="title" color="inherit">
-                {this.props.selectedItem.name.value}
-                </Typography>
+                    <Typography variant="title" color="inherit">
+                        {this.props.selectedItem.name.value}
+                    </Typography>
                 </Toolbar>
             </AppBar>
 
@@ -145,30 +146,9 @@ Item .propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-/*
-          {["dfgdf", "Scene", "Background"].map(value => (
-            <ListItem key={value} dense button className={classes.listItem}>
-              <Avatar> <FolderIcon/></Avatar>
-              <ListItemText primary={value} />
-              <ListItemSecondaryAction>
-                    <IconButton aria-label="Delete">
-                        <DeleteIcon />
-                    </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-
-
-                            <ListItem key={key} dense button className={classes.listItem} onClick={this.edit}>
-                        
-                        
-                    
-*/
-
-
 const mapStateToProps = state => {
     return {
-        selectedItem: state.selectedItem
+        selectedItem: state.items.selectedItem
     }
 }
 

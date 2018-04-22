@@ -41,7 +41,6 @@ class ThreeCanvas extends PureComponent {
     componentWillReceiveProps(props) {
         switch(props.lastAction) {
             case "EDIT_SELECTED_ITEM":
-                
                 this.currentScene.updateConfig(props.selectedItem);
                 break
             case "CREATE_ITEM":
@@ -59,7 +58,14 @@ class ThreeCanvas extends PureComponent {
             default:
                 console.log("IN ->>>>> canvas/three.js:  unknown item added")
         }
+    }
 
+    stop = () => {
+        this.currentScene.stop()
+    }
+
+    play = (time) => {
+        this.currentScene.play(time)
     }
 
     readPixels() {
@@ -90,10 +96,10 @@ class ThreeCanvas extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        items: state.items,
-        selectedItem: state.selectedItem,
-        lastAction: state.lastAction,
-        imagePath: state.imagePath
+        items: state.items.items,
+        selectedItem: state.items.selectedItem,
+        lastAction: state.items.lastAction,
+        imagePath: state.items.imagePath
     }
 }
 

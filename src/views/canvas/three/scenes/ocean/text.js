@@ -83,25 +83,5 @@ export default class Text {
                 }
             })
         }
-        /*
-        
-        for (var i = this.group.children.length - 1; i >= 0; i--) {
-            
-            console.log("removing:", nums[i], t, i)
-            if(nums[i] !== t){
-                
-            }
-
-            
-        }
-
-        
-        nums.map((e, i) => {
-
-           
-            this.group.add(this.numbers[e])
-        })
-        */
-        
     }
 }

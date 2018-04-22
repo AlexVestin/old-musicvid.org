@@ -22,8 +22,7 @@ const styles = theme => ({
 class LayerList  extends React.Component {
 
   setWindow = () => {
-        this.props.setWindow(4)
-    };
+  };
 
   render() {
     const { classes } = this.props;

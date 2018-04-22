@@ -82,9 +82,9 @@ SimpleTabs.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        selectedItem: state.selectedItem,
-        items: state.items,
-        sideBarWindowIndex: state.sideBarWindowIndex
+        selectedItem: state.items.selectedItem,
+        items: state.items.items,
+        sideBarWindowIndex: state.items.sideBarWindowIndex
     }
 }
 
