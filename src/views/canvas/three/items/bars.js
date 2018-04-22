@@ -1,38 +1,60 @@
 
 import * as THREE from 'three'
+import DragControls from '../controls/dragcontrols'
+import { MeshItem } from './item';
 
-export default class Bars {
-    constructor(config, scene) {
-        this.bins = []
+export default class Bars extends MeshItem {
+    constructor(config, sceneConfig) {
+        super("Bars")
+        this.bins = new THREE.Group()
 
-        this.decreaseSpeed = config.decreaseSpeed.value
-        this.deltaRequired = config.deltaRequired.value
-        this.centerX = config.centerX.value
-        this.centerY = config.centerY.value
-        this.color = config.color.value
-        this.id = config.id.value
-        this.scale = config.scale.value
-
+        this.defaultConfig.type.value = "BARS"
+        this.defaultConfig.name.value = "Bars"
+        this.defaultConfig.strength = {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true}
+        this.defaultConfig.decreaseSpeed = {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true}
+        this.defaultConfig.deltaRequired = {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true}       
 
         for(var i = 0; i < 32; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshBasicMaterial( {color: "0x" + this.color} );
+            var material = new THREE.MeshBasicMaterial( {color: "0xFFFFFF"} );
             var cube = new THREE.Mesh( geometry, material );
 
-            cube.position.x = this.centerX + i+(i*0.5) - 24;
-            cube.position.y = this.centerY
-            
-            //cube.position.y = i * 0.5;
-            this.bins.push(cube)
-            scene.add(cube);
+            cube.position.x = i+(i*0.5) - 24;
+            this.bins.add(cube)
         }
 
+        sceneConfig.scene.add(this.bins)
+        
+        //wireframe bounding box 
+        //TODO bounding  box and moving stuff
+        /*
+        var geometry = new THREE.BoxGeometry(this.getCompoundBoundingBox(this.bins.children))
+
+        var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true} );
+        var cube = new THREE.Mesh( geometry, material );
+        sceneConfig.scene.add( cube );
+
+
+        var dragControls = new DragControls( [cube], sceneConfig.camera, sceneConfig.renderer.domElement );
+        dragControls.addEventListener( 'dragstart', function ( event ) { sceneConfig.controls.enabled = false; } );
+        dragControls.addEventListener( 'dragend', function ( event ) { sceneConfig.controls.enabled = true; } )
+        */
         this.strength = 1
+        this.config = this.getConfig(this.defaultConfig)
+    }
+
+    getCompoundBoundingBox = (items) => {
+        var box = null;
+        items.forEach((e) => {
+            
+        });
+
+        return box;
     }
 
 
     move = (x, y) => {
-        this.bins.forEach((e, i) => {
+        this.bins.children.forEach((e, i) => {
             e.position.x = x + i+(i*0.5) - 24;
         })
 
@@ -40,47 +62,28 @@ export default class Bars {
     }
 
     updateConfig = (config) => {
-        this.strength = config.strength.value
-        this.bins.forEach(e => {
+        this.bins.children.forEach(e => {
             e.material.color.setHex("0x" + config.color.value)
         })
 
-        this.decreaseSpeed  = config.decreaseSpeed.value
-        this.deltaRequired  = config.deltaRequired.value
-        this.scale          = config.scale.value 
-
-        if(this.centerX !== config.centerX.value || this.centerY !== config.centerY.value) {
+        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY.value) {
             this.move(config.centerX.value, config.centerY.value)
         }
+
+        this.config = this.getConfig(config)
     }
 
     animate = (time, frequencyBins) => {
-        this.bins.forEach( (e,i) => {
+        const { deltaRequired, decreaseSpeed, strength, scale, centerY } = this.config
+
+        this.bins.children.forEach( (e,i) => {
             let o = e.scale.y
-            let n = (frequencyBins[i] / 3) * this.strength * this.scale
+            let n = (frequencyBins[i] / 3) * strength * scale
 
-            o = n > (o + this.deltaRequired) ? n : (o - this.decreaseSpeed) >= 0 ? (o-this.decreaseSpeed) : 0.001;
+            o = n > (o + deltaRequired) ? n : (o - decreaseSpeed) >= 0 ? (o-decreaseSpeed) : 0.001;
       
-            e.scale.set(this.scale , o, this.scale); 
-            e.position.y = this.centerY + o/2 
+            e.scale.set(scale , o, scale); 
+            e.position.y = centerY + o/2 
         })
-    }
-}
-
-export function getBarConfigs() {
-    return {
-        name: {value: "Unnamed", type: "String", tooltip: "", input: true},
-        centerX: {value: 0, type: "Number", tooltip: "", input: true},
-        centerY: {value: 0, type: "Number",  tooltip: "", input: true},
-        strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", input: true},
-        decreaseSpeed: {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", input: true},
-        deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", input: true},        
-        layer: {value: "Scene", type: "String", tooltip: "", input: true},
-        color: {value: "FFFFFF", type: "String",tooltip: "", input: true},
-        scale: {value: 0.5, type: "Number", tooltip: "", input: true},
-        
-        //Mandatory
-        type: {value: "BARS", type: "String", tooltip: "", input: false},
-        id: {value: 0, type: "Number", tooltip: "", input: false}
     }
 }

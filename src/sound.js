@@ -1,8 +1,15 @@
+import BaseItem from "./views/canvas/three/items/item";
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-export default class Sound {
+export default class Sound extends BaseItem {
     constructor(config, onload){
+        super(config.file.name)
+
+        this.defaultConfig.sampleRate = {value: 0, type: "Number", tooltip: "", editable: false},
+        this.defaultConfig.channels = {value: 0, type: "Number",  tooltip: "", editable: false}
+        this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: false}
+
         this.onload = onload
         this.soundDataBuffer = []
         this.startTime = -1
@@ -17,8 +24,8 @@ export default class Sound {
             this.onModuleLoaded()
         };
 
-        console.log(config.file.value.name)
-        this.loadSound(config.file.value, (data) => this.fftData = data)
+        console.log(config.file)
+        this.loadSound(config.file, (data) => this.fftData = data)
     }
 
     onModuleLoaded = () => {
@@ -111,9 +118,15 @@ export default class Sound {
         var reader = new FileReader();
             reader.onload = function(ev) {
                 audioCtx.decodeAudioData(ev.target.result, function(buffer) {
+                    console.log(buffer)
                     that.buffer = buffer; 
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))
+
+                    that.defaultConfig.sampleRate.value = buffer.sampleRate
+                    that.defaultConfig.channels.value = buffer.numberOfChannels
+                    that.defaultConfig.duration.value = buffer.duration
+                                        
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;

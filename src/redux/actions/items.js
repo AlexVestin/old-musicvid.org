@@ -7,9 +7,26 @@ export function selectItem(item){
     );  
 }
 
-export function appendItem(item, itemType){
+export function setSidebarWindowIndex(item) {
     store.dispatch({
-        type: "APPEND_ITEM",
+        type: "SET_SIDEBAR_WINDOW_INDEX",
+        payload: item,
+        } 
+    ); 
+}
+
+export function addItem(item, itemType){
+    store.dispatch({
+        type: "ADD_ITEM",
+        payload: item,
+        itemType
+        } 
+    );  
+}
+
+export function createItem(item, itemType){
+    store.dispatch({
+        type: "CREATE_ITEM",
         payload: item,
         itemType
         } 

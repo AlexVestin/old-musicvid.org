@@ -19,7 +19,7 @@ import Tooltip from 'material-ui/Tooltip';
 
 
 import { connect } from 'react-redux'
-import { editItem } from '../../redux/actions/items'
+import { editItem, setSidebarWindowIndex } from '../../redux/actions/items'
 
 const styles = theme => ({
   root: {
@@ -47,8 +47,12 @@ class Item extends React.Component {
     }
 
     setWindow = () => {
-        this.props.setWindow(4)
+        //this.props.setWindow(4)
     };
+
+    back = () => {
+        setSidebarWindowIndex(0)
+    }
 
     handleChange = input => event => {
         var value = event.target.value
@@ -64,15 +68,26 @@ class Item extends React.Component {
         }
 
         let values = {...this.state.values}
-        this.props.selectedItem[input.key].value = numberValue !== -1 ? numberValue : value
         values[input.key] = value
         this.setState({values})
-        editItem(this.props.selectedItem)
+        let val = numberValue !== -1 ? numberValue : value
+        let key = { ["value"] : val } 
+
+        const updatedItem = Object.assign({}, this.props.selectedItem, {
+            ...this.props.selectedItem,
+            [input.key]: {
+                ...this.props.selectedItem[input.key],
+                value: val
+            }
+        })
+
+        editItem(updatedItem)
     }
 
     componentWillMount() {
         let values = []
         const si = this.props.selectedItem
+
         Object.keys(si).map((key, index) => {
             values[key] = si[key].value
         })
@@ -96,7 +111,7 @@ class Item extends React.Component {
             <List>
                 {Object.keys(si).map((key, index) => (
                     <div key={key}>
-                        {si[key].input &&
+                        {si[key].show !== false &&
                         <ListItem  dense className={classes.listItem}>
                         <Tooltip id="tooltip-top-start" title={si[key].tooltip} placement="right-end">
                             <TextField
@@ -106,7 +121,7 @@ class Item extends React.Component {
                                 value={this.state.values[key]}
                                 margin="normal"
                                 onChange={this.handleChange({type: si[key].type, key: key})}
-                                disabled={key === "id" || key === "type"}
+                                disabled={!si[key].editable}
                             />
                         </Tooltip>
                         </ListItem>
@@ -116,7 +131,7 @@ class Item extends React.Component {
                
                 
                 <ListItem dense button className={classes.listItem}>
-                <Button variant="raised" fullWidth onClick={this.props.back}>
+                <Button variant="raised" fullWidth onClick={this.back}>
                     Back
                 </Button>
                 </ListItem>

@@ -7,15 +7,7 @@ import Typography from 'material-ui/Typography';
 
 import { connect } from 'react-redux'
 
-import AddResourceOptions from './newresource'
-import AddLayerOptions from './newlayer'
-
-import AudioReactiveTypeList from './audioreactivetypes'
-import ResourceList from "./resources"
-import LayerList from './layers'
-
 import { setSidebarWindowIndex } from '../../redux/actions/items'
-import Item from './item'
 
 function TabContainer(props) {
   return (
@@ -31,46 +23,39 @@ TabContainer.propTypes = {
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
+    minHeight: 30,
+    height: 30,
+    
   },
 });
 
-class SimpleTabs extends React.Component {
+class SimpleTabs extends React.PureComponent {
     state = {
         tabValue: 0,
         contentValue: 0,
     };
 
     handleChange = (event, value) => {
-        setSidebarWindowIndex(value)
+        this.setState({tabValue: value})
     };
 
     render() {
         const { classes } = this.props;
         const value = this.props.sideBarWindowIndex
-        const tabStyle = { minWidth: "30px", maxWidth: "100px" }
+        const tabStyle = { minWidth: "30px", maxWidth: "100px", minHeight: "30px", height: "20px", maxHeight: "20px" }
         if(value <= 2)
             this.tabValue = value
 
         return (
             <div className={classes.root}>
                 <AppBar position="static" >
-                    <Tabs value={this.tabValue} onChange={this.handleChange} fullWidth>
-                        <Tab label="Resources" style={tabStyle}/>
-                        <Tab label="Effects" style={tabStyle}/>
-                        <Tab label="Layers" style={tabStyle} href="#basic-tabs" />
+                    <Tabs value={this.state.tabValue} onChange={this.handleChange} fullWidth>
+                        <Tab label="Items" style={tabStyle}/>
+                        <Tab label="Automations" style={tabStyle}/>
                     </Tabs>
                 </AppBar>
-                
-                {value === 0 && <ResourceList ></ResourceList>}
-                {value === 1 && <TabContainer >effects will go here</TabContainer>}
-                {value === 2 && <LayerList ></LayerList>}
-                {value === 3 && <AddResourceOptions ></AddResourceOptions>}
-                {value === 4 && <AddLayerOptions ></AddLayerOptions>}
-                {value === 5 && <AudioReactiveTypeList ></AudioReactiveTypeList>}
-                {value === 6 && <Item item={this.props.selectedItem}></Item>}
-            
+        
             </div>
         );
     }
@@ -84,7 +69,6 @@ const mapStateToProps = state => {
     return {
         selectedItem: state.selectedItem,
         items: state.items,
-        sideBarWindowIndex: state.sideBarWindowIndex
     }
 }
 

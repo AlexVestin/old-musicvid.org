@@ -92,16 +92,14 @@ export default class Canvas extends Component {
 
     renderScene = () => {
         const time = this.state.encoding ? this.encodedFrames / this.frames : this.frameId / 60
-        
-
         this.displayRenderer.renderScene(time)
+        
         if(!this.streamClosed) {
           if(this.state.encoding && this.encodedFrames < this.frames * this.duration){
             this.displayRenderer.readPixels()
             this.encodedFrames++
 
             this.setState({info:"Encoding frame: " + String(this.encodedFrames) + "/" + String(this.frames * this.duration)});
-
             this.videoEncoder.addFrame(this.displayRenderer.pixels, this.encodedFrames)
           }else if(this.state.encoding) {
             this.stopTime = performance.now()
@@ -138,12 +136,8 @@ export default class Canvas extends Component {
       return (
         <div className={classes.canvas_wrapper}>
             <b>{this.state.info}</b>
-            <ThreeCanvas 
-              ref={ref => this.ThreeRenderer = ref}
-              width={this.state.width}
-              height={this.state.height}  
-            />
-          
+            <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
+            
             <div className={classes.options_wrapper}>
 
               <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>

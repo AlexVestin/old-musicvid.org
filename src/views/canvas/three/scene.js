@@ -1,14 +1,16 @@
 import * as THREE from 'three'
-import OrbitControls from '../../controls/orbitcontrols'
+import OrbitControls from './controls/orbitcontrols'
 
 
-import Bars from '../../items/bars'
-import Text3D from '../../items/text3d'
+import Bars from './items/bars'
+import Text3D from './items/text3d'
+import Water from './items/water';
+import BackgroundImage from './items/backgroundimage'
 
+import {addItem} from '../../../redux/actions/items'
 
 export default class BarsScene {
     constructor(width, height, renderer){
-
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(
           55,
@@ -48,46 +50,55 @@ export default class BarsScene {
         this.controls = controls
 
         this.backgroundLoaded = false
-    }
 
-    addBackgroundImage = (config) => {
-        var fr = new FileReader()
-        fr.onload = () => {
-            var image = fr.result
-            var texture = new THREE.TextureLoader().load(image)
-            var backgroundMesh = new THREE.Mesh(
-                new THREE.PlaneGeometry(2, 2, 0),
-                new THREE.MeshBasicMaterial({map: texture})
-            );
-
-            // Create your background scene
-            this.backgroundScene = new THREE.Scene();
-            this.backgroundCamera = new THREE.Camera();
-            
-            this.backgroundScene.add(this.backgroundCamera );
-            this.backgroundScene.add(backgroundMesh)
-            this.backgroundLoaded = true
+        this.sceneConfig = {
+            light ,
+            camera,
+            scene,
+            controls,
+            renderer
         }
-        fr.readAsDataURL(config.file.value) 
+
+         // Create your background scene
+        this.backgroundScene = new THREE.Scene();
+        this.backgroundCamera = new THREE.Camera();
+         
+        this.backgroundScene.add(this.backgroundCamera );
+        this.backgroundLoaded = true
+        this.backgroundItems = []
     }
 
-    addItem = (config) => {
-        console.log(config.type.value)
-        switch(config.type.value){
-            
+    add = (name, info) => {
+        let item;
+        switch(info.type) {
+            case "IMAGE":
+                item = new BackgroundImage(name, info, this.backgroundScene)
+                break;
             case "BARS":
-                this.items.push(new Bars(config, this.scene))
+                item = new Bars(info, this.sceneConfig)
+                this.items.push(item)
                 break;
             case "TEXT3D":
-                this.items.push(new Text3D(config, this.scene))
+                item = new Text3D(info, this.sceneConfig)
+                this.items.push(item)
+                break;
+            case "WATER":
+                item = new Water(info, this.sceneConfig)
+                this.items.push(item)
                 break;
             default:
                 console.log("unkown config type while adding object")
         }
+
+        addItem(item.defaultConfig)
     }
 
+
     updateConfig = (config) => {
-        let it = this.items.find((e) => e.id === config.id.value)
+        let it = this.items.find((e) => e.config.id === config.id.value)
+        if(!it)
+            it = this.backgroundItems.find((e) => e.config.id === config.id.value)
+
         it.updateConfig(config)
     }
 
@@ -103,9 +114,7 @@ export default class BarsScene {
         }
 
         renderer.clearDepth();
-        
         renderer.render(this.scene, this.camera)
-        
     }
 
     dispose = () => {

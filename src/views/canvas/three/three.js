@@ -1,17 +1,18 @@
 import {WebGLRenderTarget, WebGLRenderer} from 'three'
 
-import OceanScene from './scenes/ocean/scene'
-import Iris from './scenes/viss/scene'
-import BarsScene from './scenes/bars/scene'
+import BarsScene from './scene'
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux'
 
+import { addItem } from '../../../redux/actions/items'
 import Sound from "../../../sound"
 
 
 class ThreeCanvas extends PureComponent {
     componentDidMount() {
+        
         const mount = this.mountRef
+        //const mount = this.mountRef
         this.width = mount.clientWidth
         this.height = mount.clientHeight
         const renderer = new WebGLRenderer({antialias:true})
@@ -22,14 +23,13 @@ class ThreeCanvas extends PureComponent {
         this.renderer = renderer
 
         this.currentScene = new BarsScene(this.width, this.height, renderer)
-        //this.currentScene = new OceanScene(this.width, this.height, renderer)
-        //this.currentScene = new Iris(this.width, this.height, renderer)
 
         mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
         this.renderTarget = new WebGLRenderTarget(this.width,this.height); 
 
         this.audioLoaded = false
+        this.mount = mount 
     } 
 
     setSize(w, h) {
@@ -39,23 +39,23 @@ class ThreeCanvas extends PureComponent {
     }
 
     componentWillReceiveProps(props) {
-
         switch(props.lastAction) {
             case "EDIT_SELECTED_ITEM":
+                
                 this.currentScene.updateConfig(props.selectedItem);
                 break
-            case "APPEND_ITEM":
-                this.currentScene.addItem(props.selectedItem)
-                break;
-            case "ADD_IMAGE":
-                this.currentScene.addBackgroundImage(props.selectedItem)
-                break
-            case "ADD_SOUND":
-                this.sound = new Sound(props.selectedItem, () => this.audioLoaded = true)
-                break;
-            case "ADD_TEXT3D":
-                this.currentScene.addItem(props.selectedItem)
-                break;
+            case "CREATE_ITEM":
+                if(props.selectedItem.type === "SOUND") {
+                    this.sound = new Sound(props.selectedItem, () => { this.audioLoaded = true;  addItem(this.sound.defaultConfig) })
+                   
+                }else {
+                    let name = props.selectedItem.type
+                    while(this.props.items.find(e => e.name.value === name)){
+                        name += "1"
+                    }
+                    this.currentScene.add(name, props.selectedItem)
+                }    
+                break; 
             default:
                 console.log("IN ->>>>> canvas/three.js:  unknown item added")
         }
@@ -80,9 +80,10 @@ class ThreeCanvas extends PureComponent {
     render() {
         return(
             <div
-                style={{ width: String(this.props.width) +'px', height: String(this.props.height) +'px' }}
-                ref={(mount) => { this.mountRef = mount }}
+                ref={ref => this.mountRef = ref } 
+                style={{ width: String(this.props.width) +'px',  height: String(this.props.height) +'px'}}                
             />
+            
         )
     }
 }

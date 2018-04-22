@@ -10,9 +10,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
-import { appendItem } from '../../redux/actions/items'
-import items from "../canvas/three/items"
-
+import { setSidebarWindowIndex, createItem } from '../../redux/actions/items'
 import {connect} from 'react-redux'
 
 const styles = theme => ({
@@ -29,14 +27,11 @@ class AudioReactiveTypeList extends React.Component {
   };
 
   add = (itemName) => {
-    let config = items[itemName.toUpperCase()]()
-    while(this.props.items.find(e => e.name.value === config.name.value)){
-      config.name.value += "1"
-    }
+    createItem({type: itemName.toUpperCase()})
+  }
 
-    config.id.value = Math.floor(Math.random() * 1000000)
-    appendItem(config, itemName.toUpperCase())
-    this.props.setWindow(6)
+  back = () => {
+    setSidebarWindowIndex(3)
   }
 
   render() {
@@ -44,14 +39,14 @@ class AudioReactiveTypeList extends React.Component {
     return (
       <div className={classes.root}>
         <List>
-          {["Bars", "Text3D"].map(value => (
+          {["Bars", "Text3D", "Water"].map(value => (
             <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add(value)}>
               <ListItemText primary={value} />
             </ListItem>
           ))}
 
           <ListItem dense button className={classes.listItem}>
-            <Button variant="raised" fullWidth onClick={this.props.back}>
+            <Button variant="raised" fullWidth onClick={this.back}>
                 Back
             </Button>
             </ListItem>

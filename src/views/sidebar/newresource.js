@@ -10,7 +10,7 @@ import FolderIcon from 'material-ui-icons/Folder';
 import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
-import { appendItem, selectItem, addSound } from '../../redux/actions/items'
+import { createItem, setSidebarWindowIndex } from '../../redux/actions/items'
 import items from "../canvas/three/items"
 import { connect } from 'react-redux'
 
@@ -24,24 +24,16 @@ const styles = theme => ({
 
 class AddResourceOptions extends React.Component {
     back = () => {
-        this.props.back()
+        setSidebarWindowIndex(0)
     };
 
 
     componentDidMount() {
 
         let add = (type, input) => {
-            let config = items[type]()
-
-            config.file.value = input.files[0]
-            config.name.value = input.files[0].name
-            while(this.props.items.find(e => e.name.value === config.name.value)){
-                config.name.value += "1"
-            }
-
-            config.id.value = Math.floor(Math.random() * 100000)
-            appendItem(config, type)
-            this.props.setWindow(6)
+            let file = input.files[0]
+            let name = input.files[0].name
+            createItem({type, file, name})
         }
 
         this.uploadImage.onchange = () => {
@@ -67,7 +59,7 @@ class AddResourceOptions extends React.Component {
                 console.log("add 2d text")
                 break;
             case 4:
-                this.props.setWindow(5)
+                setSidebarWindowIndex(5)
                 break;
             default:
                 console.log("unknown click type")

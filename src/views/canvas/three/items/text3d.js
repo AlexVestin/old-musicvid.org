@@ -1,30 +1,30 @@
 
 import * as THREE from 'three'
+import { MeshItem } from './item';
 
-export default class Text3D {
-    constructor(config, scene) {
+export default class Text3D extends MeshItem{
+    constructor(config, sceneConfig) {
+        super("Text3D")
         this.bins = []
 
-        this.text       = config.text.value
-        this.centerX    = config.centerX.value
-        this.centerY    = config.centerY.value
-        this.color      = config.color.value
-        this.id         = config.id.value
-        this.scale      = config.scale.value
-        this.fontSize   = config.fontSize.value
+        this.defaultConfig.text = {value: "text", type: "String", tooltip: "", editable: true}
+        this.defaultConfig.fontSize = {value: 5, type: "Number", tooltip: "", editable: true}
 
        
-        this.scene = scene
+        this.scene = sceneConfig.scene
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
         this.scene.add(this.group)
 
+        this.config = this.getConfig(this.defaultConfig)
         this.textMesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()
             .then((mesh) => this.scene.add(mesh))
-        })        
+        })    
+        
+    
     }
 
     createTextMesh = () => {
@@ -41,10 +41,12 @@ export default class Text3D {
         };
 
         return new Promise((resolve, reject) => {
+            const {color, fontSize, text} = this.config
             var geometry = new THREE.TextGeometry( 
-                this.text, {
+                text, {
+                color: color,
                 font: this.font,
-                size: this.fontSize,
+                size: fontSize,
                 height: data.height,
                 curveSegments: data.curveSegments,
                 bevelEnabled: data.bevelEnabled,
@@ -58,42 +60,29 @@ export default class Text3D {
         })
     }
 
-    update = (config) => {
-        this.textMesh.material.color.setHex("0x" + config.color.value)
-        this.textMesh.position.x = config.centerX.value
-        this.textMesh.position.y = config.centerY.value
-        this.scale = config.scale.value 
+    update = () => {
+        const config = this.config
+        this.textMesh.material.color.setHex("0x" + config.color)
+        this.textMesh.position.x = config.centerX
+        this.textMesh.position.y = config.centerY
+        this.scale = config.scale 
     }
 
     updateConfig = (config) => {
-        if(this.text !== config.text.value || this.fontSize !== config.fontSize.value) {
-            this.text = config.text.value
-            this.fontSize = config.fontSize.value
-            this.textMesh = this.createTextMesh().then((mesh) => {this.textMesh = mesh; this.update(config)})
+        const {text, fontSize } = this.config
+        console.log(text)
+        this.config = this.getConfig(config)
+
+        console.log(text)
+        if(text !== config.text.value || fontSize !== config.fontSize.value) {
+            this.textMesh = this.createTextMesh().then((mesh) => {this.textMesh = mesh; this.update()})
         }else {
-            this.update(config)
+            this.update()
         }
     }
 
     animate = (time, frequencyBins) => {
-       //dsdf
+       //TODO effects
     }
 }
 
-export function getText3DConfigs() {
-    return {
-        name: {value: "Unnamed", type: "String", tooltip: "Name for resources-list", input: true},
-        text: {value: "Text", typ:"String", tooltip: "", input: true},
-        centerX: {value: 0, type: "Number", tooltip: "", input: true},
-        centerY: {value: 0, type: "Number",  tooltip: "", input: true},
-        fontSize: {value: 5, type: "Number",  tooltip: "", input: true},
-        
-        layer: {value: "Scene", type: "String", tooltip: "", input: true},
-        color: {value: "FFFFFF", type: "String",tooltip: "", input: true},
-        scale: {value: 0.5, type: "Number", tooltip: "", input: true},
-        
-        //Mandatory
-        type: {value: "TEXT3D", type: "String", tooltip: "", input: false},
-        id: {value: 0, type: "Number", tooltip: "", input: false}
-    }
-}

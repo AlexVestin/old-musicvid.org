@@ -11,7 +11,7 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
 import { connect } from 'react-redux'
-import { selectItem } from '../../redux/actions/items'
+import { selectItem, setSidebarWindowIndex } from '../../redux/actions/items'
 const styles = theme => ({
   root: {
     width: '100%',
@@ -23,12 +23,12 @@ const styles = theme => ({
 class ResourceList extends React.Component {
 
   setWindow = () => {
-        this.props.setWindow(3)
-    };
+    setSidebarWindowIndex(3)
+  };
 
   selectItem = (obj) => {
     selectItem(obj)
-    this.props.setWindow(6)
+    setSidebarWindowIndex(6)
   }
 
   render() {
@@ -38,7 +38,7 @@ class ResourceList extends React.Component {
       <div className={classes.root}>
         <List>
           {this.props.items.map(obj => (
-            <ListItem key={obj.name.value} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
+            <ListItem key={obj.id.value} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
               <Avatar> <FolderIcon/></Avatar>
               <ListItemText primary={obj.name.value} />
               <ListItemSecondaryAction>
