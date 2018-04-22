@@ -24,8 +24,11 @@ export default class Sound extends BaseItem {
             this.onModuleLoaded()
         };
 
-        console.log(config.file)
         this.loadSound(config.file, (data) => this.fftData = data)
+
+
+        this.ac = new AudioContext()
+        this.lastIdx
     }
 
     onModuleLoaded = () => {
@@ -33,7 +36,36 @@ export default class Sound extends BaseItem {
         this.Module._init_r(this.fftSize)
     }
 
-    play = () => {
+    stop = () => {
+        this.bs.stop()
+    }
+
+
+    play = (time, fps) => {
+        if(!this.playing) {
+            const idx = Math.floor(time*this.sampleRate)
+            const left = this.left.subarray(idx, this.left.length -1)
+            const right = this.right.subarray(idx, this.right.length-1)
+            
+            var ab = this.ac.createBuffer(2, left.length, this.sampleRate)
+            this.bs = this.ac.createBufferSource();
+            ab.getChannelData(0).set(left);
+            ab.getChannelData(1).set(right);
+            
+            this.bs.buffer = ab;
+            this.bs.connect(this.ac.destination);
+            this.bs.start(0);
+
+            this.playing = true
+        }else {
+            this.bs.stop()
+            this.playing = false
+        }
+
+        
+    
+        
+        /*
         this.source = audioCtx.createBufferSource();
         this.source.buffer = this.buffer;
         //video output
@@ -42,6 +74,7 @@ export default class Sound extends BaseItem {
         this.source.connect(audioCtx.destination)
         this.source.start(0)
         this.startTime = performance.now();
+        */
     }
 
     getFrequencyData2 = (time) => {
@@ -118,14 +151,13 @@ export default class Sound extends BaseItem {
         var reader = new FileReader();
             reader.onload = function(ev) {
                 audioCtx.decodeAudioData(ev.target.result, function(buffer) {
-                    console.log(buffer)
                     that.buffer = buffer; 
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))
 
                     that.defaultConfig.sampleRate.value = buffer.sampleRate
                     that.defaultConfig.channels.value = buffer.numberOfChannels
-                    that.defaultConfig.duration.value = buffer.duration
+                    that.defaultConfig.duration.value = buffer.duration * 100
                                         
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2

@@ -38,11 +38,11 @@ export default class Clip extends PureComponent {
         const { width, height, top, item } = this.props
         return (
             <div onClick={this.onClick}>
-            <Draggable axis="x" onClick={this.onClick} onStop={this.onStop}  bounds={{left: 0}} position={this.state.position}>
-                <div style={{width, height, backgroundColor:this.color, overflow:"hidden", position:"absolute", top, borderRadius: "2px", borderWidth: 0.5,borderColor: '#d6d7da'} }  >
-                    {item.name.value}
-                </div>
-            </Draggable>
+                <Draggable axis="x" onClick={this.onClick} onStop={this.onStop}  bounds={{left: 0}} position={this.state.position}>
+                    <div style={{width, height, backgroundColor:this.color, overflow:"hidden", position:"absolute", top, borderRadius: "2px", borderWidth: 0.5,borderColor: '#d6d7da'} }  >
+                        {item.name.value}
+                    </div>
+                </Draggable>
             </div>
         )
     }

@@ -14,3 +14,26 @@ export function setSidebarWindowIndex(item) {
         } 
     ); 
 }
+
+export function togglePlaying(){
+    store.dispatch({
+        type: "TOGGLE_PLAYING",
+        } 
+    );  
+}
+
+export function setPlaying(item){
+    store.dispatch({
+        type: "SET_PLAYING",
+        payload: item
+        } 
+    );  
+}
+
+
+export function incrementFrame(){
+    store.dispatch({
+        type: "INCREMENT_FRAME"
+        } 
+    );  
+}

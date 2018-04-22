@@ -7,10 +7,11 @@ import Typography from 'material-ui/Typography';
 import ScrollArea from './scrollarea'
 
 import classes from './playlist.css'
-
 import { connect } from 'react-redux'
-
 import { setSidebarWindowIndex } from '../../redux/actions/items'
+
+
+const offset = 65
 
 class SimpleTabs extends React.PureComponent {
     state = {
@@ -25,12 +26,12 @@ class SimpleTabs extends React.PureComponent {
     };
 
     updateWindowDimensions = () => {
-        this.setState({ width: this.wrapperRef.offsetWidth, height: this.wrapperRef.offsetHeight })
+        this.setState({ width: this.wrapperRef.offsetWidth - offset, height: this.wrapperRef.offsetHeight - offset})
     }
 
     componentDidMount() {
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.setState({ width: this.wrapperRef.offsetWidth , height: this.wrapperRef.offsetHeight })
+        this.setState({ width: this.wrapperRef.offsetWidth - offset, height: this.wrapperRef.offsetHeight - offset})
     }
 
     render() {

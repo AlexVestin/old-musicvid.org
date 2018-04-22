@@ -15,7 +15,7 @@ class ScrollArea extends PureComponent {
             horizontalPosition: { x: 0, y: 0 },
             verticalPosition: { x: 0, y: 0 },
             dragging: false,
-            gridWidth: 6000,
+            gridWidth: 12000,
             gridHeight: 2000,
             zoomWidth: 1,
             zoomHeight: 1 
@@ -30,11 +30,7 @@ class ScrollArea extends PureComponent {
     }
 
     onDragEnd = (e, b) => {
-        this.setState({
-            dragging: false, 
-            horizontalPosition: { x: b.lastX, y: 0},
-            verticalPosition: { x: 0, y: b.lastY}
-        })
+        this.setState({dragging: false })
     }
 
     onScroll = (e, v) => {
@@ -59,15 +55,17 @@ class ScrollArea extends PureComponent {
 
     onDragHorizontal = (e, b) => {
         const { gridWidth } = this.state
-        const widthOffset = (this.props.width / gridWidth) * gridWidth
-        this.scrollAreaRef.scrollLeft = (b.lastX / this.props.width) * (gridWidth - widthOffset)
+        this.setState({horizontalPosition: { x: b.lastX, y: 0}})
+        this.scrollAreaRef.scrollLeft = (b.lastX / this.props.width) * (gridWidth - this.props.width)
     }
 
     onDragVertical = (e, b) => {
         const { gridHeight } = this.state
-        const heightOffset = this.props.height / gridHeight * gridHeight 
-        this.scrollAreaRef.scrollTop = (b.lastY / this.props.height) * (gridHeight - heightOffset)
+
+        this.setState({verticalPosition: { x: 0, y: b.lastY}})
+        this.scrollAreaRef.scrollTop = (b.lastY / this.props.height) * (gridHeight - this.props.height)
     }
+
 
     getRelativeCoordinates = (evt) => {
         var e = evt.target
@@ -126,7 +124,8 @@ class ScrollArea extends PureComponent {
 
     render() {
         const dragHandlers = {onStart: this.onDragStart, onStop: this.onDragEnd}; 
-        const { gridHeight, gridWidth } = this.state
+        const { horizontalPosition, gridWidth, zoomWidth, zoomHeight, gridHeight } = this.state
+        const { width, height } = this.props
 
         return (
             <div>
@@ -134,7 +133,7 @@ class ScrollArea extends PureComponent {
                     <div className={classes.horizontalTrack} onClick={this.onClickHorizontal}>
                         <Draggable
                             axis="x"
-                            bounds={{ left: 0, right: this.props.width - 65 }}
+                            bounds={{ left: 0, right: this.props.width}}
                             onDrag={this.onDragHorizontal}
                             position={this.state.horizontalPosition}
                             {...dragHandlers}
@@ -144,10 +143,17 @@ class ScrollArea extends PureComponent {
                     </div>
                     <div className={classes.button}></div>
                 </div>
-                <Timeline scrollPosition={this.horizontalPosition} zoomWidth={this.state.zoomWidth} onWheel={this.onWheel}></Timeline>
+                <Timeline 
+                    scrollPosition={horizontalPosition} 
+                    zoomWidth={zoomWidth} 
+                    scrollOffset={(horizontalPosition.x / width) * (gridWidth-width)}
+                    onWheel={this.onWheel}
+                    gridWidth={gridWidth}
+                >
+                </Timeline>
 
                 <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} onScroll={this.onScroll}>
-                    <div className={classes.group2} >
+                    <div style={{width: this.props.gridWidth, display: "flex", flexDirection: "row", height: "100%"}}>
                         <div className={classes.bars} >
 
                             <div className={classes.grid} ref={ref => this.gridRef = ref}>
@@ -182,7 +188,7 @@ class ScrollArea extends PureComponent {
                 <div className={classes.verticalTrack} onClick={this.onClickVertical}>
                     <Draggable
                         axis="y"
-                        bounds={{ top: 0, bottom: this.props.height - 65}}
+                        bounds={{ top: 0, bottom: this.props.height}}
                         onDrag={this.onDragVertical}
                         position={this.state.verticalPosition}
                         {...dragHandlers}

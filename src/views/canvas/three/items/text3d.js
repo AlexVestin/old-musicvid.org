@@ -17,14 +17,12 @@ export default class Text3D extends MeshItem{
         this.scene.add(this.group)
 
         this.config = this.getConfig(this.defaultConfig)
-        this.textMesh = new THREE.Mesh()
+        this.mesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()
             .then((mesh) => this.scene.add(mesh))
         })    
-        
-    
     }
 
     createTextMesh = () => {
@@ -55,16 +53,17 @@ export default class Text3D extends MeshItem{
                 bevelSegments: data.bevelSegments
             })
             
-            this.textMesh.geometry = geometry
-            resolve(this.textMesh)
+            this.mesh.geometry = geometry
+            this.mesh.name = String(this.config.id)
+            resolve(this.mesh)
         })
     }
 
     update = () => {
         const config = this.config
-        this.textMesh.material.color.setHex("0x" + config.color)
-        this.textMesh.position.x = config.centerX
-        this.textMesh.position.y = config.centerY
+        this.mesh.material.color.setHex("0x" + config.color)
+        this.mesh.position.x = config.centerX
+        this.mesh.position.y = config.centerY
         this.scale = config.scale 
     }
 
@@ -73,7 +72,7 @@ export default class Text3D extends MeshItem{
         this.config = this.getConfig(config)
 
         if(text !== config.text.value || fontSize !== config.fontSize.value) {
-            this.textMesh = this.createTextMesh().then((mesh) => {this.textMesh = mesh; this.update()})
+            this.mesh = this.createTextMesh().then((mesh) => {this.mesh = mesh; this.update()})
         }else {
             this.update()
         }

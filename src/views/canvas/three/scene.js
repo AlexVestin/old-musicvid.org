@@ -108,9 +108,6 @@ export default class BarsScene {
 
         this.toRenderFG = []
         this.toRenderBG = []
-
-        console.log(this.backgroundScene.children.length)
-
     }
 
     play = (time) => {
@@ -126,7 +123,6 @@ export default class BarsScene {
         })
     }
 
-
     updateConfig = (config) => {
         let it = this.items.find((e) => e.config.id === config.id.value)
         if(!it)
@@ -139,7 +135,7 @@ export default class BarsScene {
         this.toRenderFG.forEach(e => {
             console.log(e.config.start, e.config.duration)
         })
-
+        
         var i = this.toRenderBG.length
         while (i--) {
             const e = this.toRenderBG[i]

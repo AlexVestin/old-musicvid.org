@@ -6,9 +6,10 @@ import ThreeCanvas from './three/three';
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
 
-import { setTime } from '../../redux/actions/globals' 
+import { setTime, togglePlaying, setPlaying, incrementFrame } from '../../redux/actions/globals' 
+import { connect } from 'react-redux';
 
-export default class Canvas extends Component {
+class Canvas extends Component {
     constructor(props) {
       super(props)
 
@@ -16,8 +17,6 @@ export default class Canvas extends Component {
         width: 720,
         height: 480,
         info: "",
-        time: 0,
-        playing: false
       };
 
       this.frames = 60
@@ -29,8 +28,6 @@ export default class Canvas extends Component {
       this.encodedFrames = 0;
       this.displayRenderer = this.ThreeRenderer.getWrappedInstance()
       window.requestAnimationFrame(this.renderScene)
-
-      //this.videoEncoder = new VideoEncoder()
     }
   
     componentWillUnmount() {
@@ -39,32 +36,34 @@ export default class Canvas extends Component {
     }
   
     renderScene = () => {
-      if(this.state.playing) {
-        const time = this.state.encoding ? this.encodedFrames / this.frames : this.frameId / 60
+      const {fps, frameId} = this.props
+      if(this.props.playing) {
+
+        const time = frameId / fps
         this.displayRenderer.renderScene(time)
-        this.setState({time: time})       
-        
+                
         setTime(time)
-        this.frameId++
+        incrementFrame()
       }
       if(!this.state.encoding || !this.videoEncoder.isWorker)
           window.requestAnimationFrame(this.renderScene)
     }
     
-    
     stop = () => {
-      this.setState({playing: false, time: 0})
       this.frameId = 0
       this.displayRenderer.stop()
+      setPlaying(false)
+      setTime(0)
     }
 
     play = () => {
-      this.setState({playing: !this.state.playing})
-      this.displayRenderer.play(this.state.time)
+      togglePlaying()
+      this.displayRenderer.play(this.props.time)
     }
   
     render() {
-      const {width, playing, time } = this.state
+      const {width} = this.state
+      const { playing, time } = this.props
 
       return (
         <div className={classes.canvas_wrapper}>
@@ -76,3 +75,15 @@ export default class Canvas extends Component {
       )
     }
   }
+
+const mapStateToProps = state => {
+  return {
+    time: state.globals.time,
+    playing: state.globals.playing,
+    frameId: state.globals.frameId,
+    fps: state.globals.fps
+  }
+}
+
+
+export default connect(mapStateToProps)(Canvas)

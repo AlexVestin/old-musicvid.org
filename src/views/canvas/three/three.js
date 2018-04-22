@@ -62,10 +62,15 @@ class ThreeCanvas extends PureComponent {
 
     stop = () => {
         this.currentScene.stop()
+        if(this.audioLoaded)
+            this.sound.stop()
     }
 
     play = (time) => {
+        const {fps, frameId} = this.props
         this.currentScene.play(time)
+        if(this.audioLoaded)
+            this.sound.play(time, fps)
     }
 
     readPixels() {
@@ -75,9 +80,11 @@ class ThreeCanvas extends PureComponent {
     }
 
     renderScene(time) { 
+        
         var frequencyBins = []
-        if(this.audioLoaded)
-            frequencyBins = this.sound.getFrequencyBins(time)
+        if(this.audioLoaded) {
+            frequencyBins = this.sound.getFrequencyBins(time)               
+        }
         
         this.currentScene.animate(time, frequencyBins)
         this.currentScene.render(this.renderer)
@@ -99,7 +106,9 @@ const mapStateToProps = state => {
         items: state.items.items,
         selectedItem: state.items.selectedItem,
         lastAction: state.items.lastAction,
-        imagePath: state.items.imagePath
+        imagePath: state.items.imagePath,
+        fps: state.globals.fps,
+        frameId: state.globals.fps
     }
 }
 
