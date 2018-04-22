@@ -46,7 +46,6 @@ class ThreeCanvas extends PureComponent {
             case "CREATE_ITEM":
                 if(props.selectedItem.type === "SOUND") {
                     this.sound = new Sound(props.selectedItem, () => { this.audioLoaded = true;  addItem(this.sound.defaultConfig) })
-                   
                 }else {
                     let name = props.selectedItem.type
                     while(this.props.items.find(e => e.name.value === name)){
@@ -69,6 +68,7 @@ class ThreeCanvas extends PureComponent {
     play = (time) => {
         const {fps, frameId} = this.props
         this.currentScene.play(time)
+        
         if(this.audioLoaded)
             this.sound.play(time, fps)
     }

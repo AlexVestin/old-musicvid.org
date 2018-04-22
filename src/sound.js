@@ -28,7 +28,7 @@ export default class Sound extends BaseItem {
 
 
         this.ac = new AudioContext()
-        this.lastIdx
+        this.lastIdx = -1
     }
 
     onModuleLoaded = () => {
@@ -38,6 +38,22 @@ export default class Sound extends BaseItem {
 
     stop = () => {
         this.bs.stop()
+    }
+
+    load = (time) => {
+        const idx = Math.floor(time*this.sampleRate)
+        const left = this.left.subarray(idx, idx + this.sampleRate)
+        const right = this.right.subarray(idx, idx + this.sampleRate)
+
+        var ab = this.ac.createBuffer(2, left.length, this.sampleRate)
+        this.bs = this.ac.createBufferSource();
+        ab.getChannelData(0).set(left);
+        ab.getChannelData(1).set(right);
+        this.bs.buffer = ab
+    }
+
+    playPart = (time) => {
+
     }
 
 
@@ -58,13 +74,12 @@ export default class Sound extends BaseItem {
 
             this.playing = true
         }else {
-            this.bs.stop()
+            if(this.bs)
+                this.bs.stop()
+                
             this.playing = false
         }
 
-        
-    
-        
         /*
         this.source = audioCtx.createBufferSource();
         this.source.buffer = this.buffer;

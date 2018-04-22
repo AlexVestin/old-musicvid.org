@@ -23,7 +23,6 @@ export default class Bars extends MeshItem {
             this.bins.add(cube)
         }
 
-        sceneConfig.scene.add(this.bins)
         
         //wireframe bounding box 
         //TODO bounding  box and moving stuff
@@ -41,6 +40,8 @@ export default class Bars extends MeshItem {
         */
         this.strength = 1
         this.config = this.getConfig(this.defaultConfig)
+        this.mesh = this.bins
+        this.mesh.name = String(this.config.id)
     }
 
     getCompoundBoundingBox = (items) => {

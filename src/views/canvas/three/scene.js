@@ -131,26 +131,27 @@ export default class BarsScene {
         it.updateConfig(config)
     }
 
-    animate = (time, frequencyBins) => {
-        this.toRenderFG.forEach(e => {
-            console.log(e.config.start, e.config.duration)
-        })
-        
-        var i = this.toRenderBG.length
+    addOrRemove(toRender, scene, time) {
+        var i = toRender.length
         while (i--) {
-            const e = this.toRenderBG[i]
+            const e = toRender[i]
             const { start, duration } = e.config
 
             if (time >= (start+duration) / 100) { 
-                this.toRenderBG.splice(i, 1);
-                this.backgroundScene.remove(e.mesh)
+                toRender.splice(i, 1);
+                scene.remove(e.mesh)
                 return
             } 
-            if(time >= (start / 100 ) && this.backgroundScene.getObjectByName(e.mesh.name) === undefined) {
-                this.backgroundScene.add(e.mesh)
+            if(time >= (start / 100 ) && scene.getObjectByName(e.mesh.name) === undefined) {
+                scene.add(e.mesh)
             }
         }
+    }
 
+    animate = (time, frequencyBins) => {
+        this.addOrRemove(this.toRenderFG, this.scene, time)
+        this.addOrRemove(this.toRenderBG, this.backgroundScene, time)
+        
         this.items.forEach(e => e.animate(time, frequencyBins))
     }
 
