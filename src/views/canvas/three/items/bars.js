@@ -23,21 +23,7 @@ export default class Bars extends MeshItem {
             this.bins.add(cube)
         }
 
-        
-        //wireframe bounding box 
-        //TODO bounding  box and moving stuff
-        /*
-        var geometry = new THREE.BoxGeometry(this.getCompoundBoundingBox(this.bins.children))
 
-        var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true} );
-        var cube = new THREE.Mesh( geometry, material );
-        sceneConfig.scene.add( cube );
-
-
-        var dragControls = new DragControls( [cube], sceneConfig.camera, sceneConfig.renderer.domElement );
-        dragControls.addEventListener( 'dragstart', function ( event ) { sceneConfig.controls.enabled = false; } );
-        dragControls.addEventListener( 'dragend', function ( event ) { sceneConfig.controls.enabled = true; } )
-        */
         this.strength = 1
         this.config = this.getConfig(this.defaultConfig)
         this.mesh = this.bins

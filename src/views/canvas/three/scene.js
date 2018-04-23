@@ -110,14 +110,27 @@ export default class BarsScene {
         this.toRenderBG = []
     }
 
+    removeItem = (config) => {
+        let it = this.items.findIndex((e) => e.config.id === config.id.value)
+        if(it === -1){
+            it = this.backgroundItems.findIndex((e) => e.config.id === config.id.value)
+            this.backgroundItems = this.backgroundItems.filter((_,i) => i !== it)
+        }else {
+            this.items = this.items.filter((_, i) => i !== it)
+        }
+    }
+
     play = (time) => {
         this.items.forEach(e => {
-            if(e.config.start >= time)
+            const { start, duration} = e.config
+            if(start >= time || (start < time && (start + duration) > time)) {
                 this.toRenderFG.push(e)
+            }
         })
 
         this.backgroundItems.forEach(e => {
-            if(e.config.start >= time) {
+            const { start, duration} = e.config
+            if(start >= time || (start < time && (start + duration) > time)) {
                 this.toRenderBG.push(e)
             }
         })

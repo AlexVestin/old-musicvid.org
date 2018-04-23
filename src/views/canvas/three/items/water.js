@@ -39,11 +39,14 @@ export default class Water extends BaseItem{
 
         this.scene.add(this.water)
         this.parameters = parameters
+        this.mesh = this.water 
+        this.config = this.getConfig(this.defaultConfig)
+        this.mesh.name = String(this.config.id)
     }
 
 
     updateConfig = (config) => {
-
+        this.config = this.getConfig(config)
     }
 
     animate = (time, frequencyBins) => {

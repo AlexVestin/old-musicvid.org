@@ -40,6 +40,9 @@ class ThreeCanvas extends PureComponent {
 
     componentWillReceiveProps(props) {
         switch(props.lastAction) {
+            case "REMOVE_ITEM":
+                this.currentScene.removeItem(props.selectedItem)
+                break;
             case "EDIT_SELECTED_ITEM":
                 this.currentScene.updateConfig(props.selectedItem);
                 break

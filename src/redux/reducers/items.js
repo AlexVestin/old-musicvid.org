@@ -15,10 +15,8 @@ export default function itemsReducer(state = {
             case "ADD_ITEM":
                 return {...state, selectedItem: action.payload, items: [...state.items, action.payload], lastAction: action.itemType, sideBarWindowIndex: 6}
             case "REMOVE_ITEM":
-                let { items } = state    
-                let index = items.indexOf(action.payload)
-                items.splice(index, 1)
-                return {...state, items, lastAction: "REMOVE_ITEM"}
+                let index = state.items.findIndex((e) => state.selectedItem.name.value === e.name.value)
+                return {...state, items: state.items.filter((_, i) => i !== index), lastAction: "REMOVE_ITEM", sideBarWindowIndex: 0}
             case "EDIT_SELECTED_ITEM": 
                 const updatedItem = Object.assign({}, state.selectedItem, {
                     ...state.selectedItem,

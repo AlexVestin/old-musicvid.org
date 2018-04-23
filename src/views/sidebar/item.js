@@ -7,7 +7,7 @@ import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button'
 
 import FolderIcon from 'material-ui-icons/Folder';
-import DeleteIcon from 'material-ui-icons/Delete';
+import Delete from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
 import TextField from 'material-ui/TextField';
@@ -19,7 +19,7 @@ import Tooltip from 'material-ui/Tooltip';
 
 
 import { connect } from 'react-redux'
-import { editItem, setSidebarWindowIndex } from '../../redux/actions/items'
+import { editItem, setSidebarWindowIndex, removeItem } from '../../redux/actions/items'
 
 const styles = theme => ({
   root: {
@@ -86,6 +86,10 @@ class Item extends React.Component {
     
     }
 
+    removeItem = () => {
+        removeItem(this.props.selectedItem)
+    }
+
     componentWillMount(props) {
         this.setInputValues(this.props)
     }
@@ -129,6 +133,12 @@ class Item extends React.Component {
                         }
                     </div>
                 ))}
+                <ListItem dense button className={classes.listItem}>
+                <Button className={classes.button} onClick={this.removeItem} variant="raised" color="secondary">
+                    Delete item
+                    <Delete className={classes.rightIcon} />
+                </Button>
+                </ListItem>
                
                 
                 <ListItem dense button className={classes.listItem}>

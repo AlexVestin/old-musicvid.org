@@ -37,7 +37,9 @@ export default class Sound extends BaseItem {
     }
 
     stop = () => {
-        this.bs.stop()
+        this.playing = false
+        if(this.bs)
+            this.bs.stop()
     }
 
     load = (time) => {
@@ -51,11 +53,6 @@ export default class Sound extends BaseItem {
         ab.getChannelData(1).set(right);
         this.bs.buffer = ab
     }
-
-    playPart = (time) => {
-
-    }
-
 
     play = (time, fps) => {
         if(!this.playing) {
