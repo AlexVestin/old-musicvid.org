@@ -20,6 +20,14 @@ static struct SwsContext *sws_context = NULL;
 AVCodecContext *video_ctx;
 const int NR_COLORS = 4;
 
+
+void inttolitend(uint32_t x, uint8_t *lit_int) {
+    lit_int[0] = (uint8_t)(x >>  0);
+    lit_int[1] = (uint8_t)(x >>  8);
+    lit_int[2] = (uint8_t)(x >> 16);
+    lit_int[3] = (uint8_t)(x >> 24);
+}
+
 int encode(AVFrame* frame, uint8_t** packets) {
     int nr_packets = 0;
     uint32_t size = 0;
@@ -33,9 +41,7 @@ int encode(AVFrame* frame, uint8_t** packets) {
     while (retval >= 0) {
         retval = avcodec_receive_packet(video_ctx, pkt);
         if (retval == AVERROR(EAGAIN) || retval == AVERROR_EOF){
-            //av_packet_unref(pkt);
-
-            printf("nr packs: %d\n", nr_packets);
+            av_packet_unref(pkt);
             return nr_packets;
         }
         else if (retval < 0) {
@@ -47,26 +53,35 @@ int encode(AVFrame* frame, uint8_t** packets) {
         //packet data, and then dts/pts/size ints
         size += pkt->size + (3 * sizeof(int));
 
-        uint8_t* new_packets = realloc(packets, size);
+        uint8_t* new_packets = realloc(*packets, size);
         if(!new_packets) {
             printf("error reallocing\n");
             exit(-1);
         }
         
-        *packets = new_packets;
+        
+        memcpy(new_packets + end, &pkt->dts, sizeof(int));
+        memcpy(new_packets + end + 4, &pkt->pts, sizeof(int)); 
+        memcpy(new_packets + end + 8, &pkt->size, sizeof(int));
+        /*
+        
+        *(new_packets + end) = pkt->dts;
+        *(new_packets + end + 4) = pkt->pts;
+        *(new_packets + end + 8) = pkt->size;
+        
+        inttolitend(pkt->dts, new_packets + end);
+        inttolitend(pkt->pts, new_packets + end + 4);
+        inttolitend(pkt->size, new_packets + end + 8);        
+        */
+        memcpy(new_packets + end + 12, pkt->data, pkt->size);
 
-        memcpy(packets + end, &pkt->dts, sizeof(int));
-        memcpy(packets + end + 4, &pkt->pts, sizeof(int)); 
-        memcpy(packets + end + 8, &pkt->size, sizeof(int));
-        memcpy(packets + end + 12, pkt->data, pkt->size);
+        printf("-- : %d :  %d \n", pkt->duration, 5);
         
 
-        printf("...........................................\n");
-        printf("%" PRIu8 "\n", *packets[0]);
-        printf("...........................................\n");        
+        *packets = new_packets;
+        printf("In encoder: dts: %d pts: %d size: %d\n", pkt->dts, pkt->pts, pkt->size);
     }
 
-    printf("nr packs: %d\n", nr_packets);
     return nr_packets;
 }
 

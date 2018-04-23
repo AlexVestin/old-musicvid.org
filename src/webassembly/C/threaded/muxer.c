@@ -70,7 +70,7 @@ static int64_t seek (void *opaque, int64_t offset, int whence) {
 }
 
 static int write_packet(void *opaque, uint8_t *buf, int buf_size) {
-    
+    printf("writing!\n");
     struct buffer_data *bd = (struct buffer_data *)opaque;
     while (buf_size > bd->room) {
         int64_t offset = bd->ptr - bd->buf;
@@ -122,19 +122,26 @@ void muxer_add_frame(uint8_t* data, int dts, int pts, int size){
     pkt->dts = dts;
     pkt->pts = pts;
 
+   
     pkt->stream_index = video_stream->index;      
+
+    printf("packet inited dts : %d, pts: %d, size: %d stream index: %d\n", dts, pts, size, video_stream->index);
     av_packet_rescale_ts(pkt, video_ctx->time_base, video_stream->time_base);
     av_write_frame(ofmt_ctx, pkt);
-    //av_packet_unref(p);
+
+    printf("packet mux done\n");
 }
 
 void write_header() {
+    printf("headers written\n");
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
         //printf(stderr, "Error occurred: %s\n", av_err2str(ret));
         //printf(stderr, "Error occurred when opening output file\n");
         exit(1);
     } 
+
+    av_dump_format(ofmt_ctx, NULL, "Memort", 1);
 }
 
 void muxer_video_init(int w, int h, int fps, int br, int preset_idx){
@@ -181,7 +188,6 @@ void muxer_video_init(int w, int h, int fps, int br, int preset_idx){
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
 
 
-
     pkt = av_packet_alloc();
     if(!pkt){
         //printf("errror packer\n");
@@ -203,6 +209,10 @@ void muxer_video_init(int w, int h, int fps, int br, int preset_idx){
     video_stream->time_base = video_ctx->time_base;
     video_stream->id = ofmt_ctx->nb_streams-1;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
+    if(ret <0 )
+        exit(0);
+
+    printf("muxer initialized\n");
 } 
 
 int close_stream() {

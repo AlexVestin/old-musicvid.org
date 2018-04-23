@@ -28,7 +28,7 @@ float* get_audio_buf(const char* filename, int *fs){
     return buf;   
 }
 
-/*
+
 
 float* get_hanning_window(int N) {
     int i;
@@ -49,7 +49,7 @@ void apply_window(const float* buf, size_t size, float* out, float* hann) {
         *(out + i) = *(buf + i); //* *(hann + i); 
     }
 }
-*/
+
 
 void init_r(int size) {
     cfg = kiss_fftr_alloc(size , 0, NULL, NULL);
@@ -65,64 +65,41 @@ float* fft_r(float* data, unsigned size, unsigned bins, int window) {
     
     kiss_fft_cpx out[size / 2 + 1];
     kiss_fftr(cfg, data, out);  
-    float* avg_result = malloc(bins * 4);
+    float* avg_result = malloc(bins*4);
 
     int step = (size / 2 + 1) / bins, idx;
     float avg;
+
+    int last_upper = 0, lower, upper;
+    for(i = 0; i < bins; i++) {
+        lower = last_upper;
+        upper = ((i+1)*(i+1));
+
+        avg = 0.0;
+        for(j = lower; j < upper; j++) {
+            float dB = 20 * log10( (out[j].r * out[j].r) + (out[j].i * out[j].i) ); 
+            avg += dB;  
+        }
+
+        last_upper = upper;
+        avg_result[i] = avg / step;
+    }
+
+    /*
     for(i = 0; i < bins; i++) {
         avg = 0;
         for(j = 0; j < step; j++) {
             idx = (step * i) + j;
             float dB = log10((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i)); 
+
             avg += dB;
         }
         
-        avg_result[i] = avg / step;
+        avg_result[i] = log10(avg / step);
     }
-
+    */
     return avg_result;
 }
-/*
-uint8_t* magavg;
-int set_audio(const float* audio, const size_t size) {
-    float* hann = get_hanning_window(N);    
-    kiss_fftr_cfg cfg = kiss_fftr_alloc(N , 0, NULL, NULL);
-
-    size_t samples_read = 0;
-    kiss_fft_cpx out[N / 2 + 1];
-    int masize = (size / N) * NR_BARS;
-    magavg = malloc( masize );
-
-    int j, step = (N/2+1) / NR_BARS, magIdx = 0; 
-
-    while(samples_read + N < size) {
-        float buf[N];
-        apply_window(audio + samples_read, N, buf, hann);
-        kiss_fftr(cfg, buf, out);  
-       
-        for(j = 0; j < (N / 2 )+ 1; j+= step) {
-            float avg = 0;
-            int k, idx;
-            for(k = 0; k < step; k++) {
-                idx = j + k; 
-                avg += fabs(20*log10(sqrt((out[idx].r * out[idx].r) + (out[idx].i * out[idx].i)))) / step;
-            }
-            magavg[magIdx++] = (uint8_t)(avg * 256000);
-        }   
-
-        magIdx--;
-        samples_read += N;
-    }
-
-    free(hann);
-    return masize;
-}
-
-
-uint8_t* get_buffer() {
-    return magavg;
-}
-*/
 
 int main(int argc, const char **argv) {
     int size;

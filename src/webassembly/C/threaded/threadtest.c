@@ -41,29 +41,27 @@ int main(int argc, char** argv) {
 
                 //Spoof red at half the screen
                 if(j < (frame_size / 2))
-                    buffer[j + k*frame_size] = !(j % NR_CLS) ? 255 : 0;
+                    buffer[j + k*frame_size] = !(j % NR_CLS) ? 120 : 0;
             }
         }
         uint8_t* packets = 0;
         int nr_packets = encoder_add_frame(buffer, &packets); 
-
-        printf("%d\n", nr_packets);
+        
         int p;
+        printf("nr packets: %d\n", nr_packets);
         for(p = 0; p < nr_packets; p++) {
-            printf("%" PRIu8 "\n", packets[0]);
-            printf("------------------\n");
-            int dts =  int_from_uint8_t(packets); 
-            printf("pppppppppppppppppppppp\n");            
-            int pts = *(packets + 4); 
-            printf("pppppppppppppppppppppp\n");
-            int size = *(packets + 8); 
-            uint8_t* data = *(packets + 12); 
+            int dts         = int_from_uint8_t(packets);
+            packets += sizeof(int);
+            int pts         = int_from_uint8_t(packets); 
+            packets += sizeof(int);
+            int size        = int_from_uint8_t(packets); 
+            packets += sizeof(int);
+            uint8_t* data   = *packets;  
+            packets += size;
 
-            printf("dts : %d, pts: %d, size: %d \n", dts, pts, size);
+            printf("in main dts : %d, pts: %d, size: %d \n", dts, pts, size);
+            muxer_add_frame(data, dts, pts, size);
         }
-        
-        
-        //muxer_add_frame(data, dts, pts, size);
     }
 
     diff = clock() - start;
@@ -74,10 +72,13 @@ int main(int argc, char** argv) {
 
     int size = close_stream();
     uint8_t* out = get_buffer();
+
+    printf("pit\n");
     
-    FILE* out_file = fopen("fi1.mp4", "w");
+    FILE* out_file = fopen("fi.mp4", "w");
     fwrite(out, size, 1, out_file);
     fclose(out_file);
     free_buffer();
+    
     return 0;
 }

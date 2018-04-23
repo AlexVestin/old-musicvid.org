@@ -4,6 +4,10 @@ import OrbitControls from '../../controls/orbitcontrols'
 
 export default class BarsScene {
     constructor(width, height, renderer){
+        
+        this.delta = 1
+        this.upDelta = 2
+
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(
           55,
@@ -29,7 +33,7 @@ export default class BarsScene {
         scene.fog = new THREE.FogExp2( 0xaabbbb, 0.001 );
 
         this.bins = []
-        for(var i = 0; i < 64; i++) {
+        for(var i = 0; i < 32; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
             var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
             var cube = new THREE.Mesh( geometry, material );
@@ -42,7 +46,6 @@ export default class BarsScene {
             scene.add( cube );
         }
         
-
         this.scene = scene
         this.camera = camera
 
@@ -56,11 +59,22 @@ export default class BarsScene {
         this.controls = controls
     }
 
-   
     animate = (time, frequencyBins) => {
-        frequencyBins.forEach(e =>  { if(e > 50) console.log("hello") })
-        frequencyBins.forEach((e,i) => {
-            this.bins[i].scale.set(1,  (e / 4) , 1); 
+        this.bins.forEach( (e,i) => {
+
+            let o = e.scale.y
+            let n = frequencyBins[i] * 10
+
+            if(n < o) {
+                if(o - this.delta >= 0)
+                    o = o - this.delta;
+            }else if(n > o + this.upDelta){
+                o = n
+            }
+
+            o = Math.abs(o)
+            e.scale.set(1,  o, 1); 
+            e.position.y =  o/2 
         })
     }
 
