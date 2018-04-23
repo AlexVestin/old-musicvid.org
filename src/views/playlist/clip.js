@@ -20,7 +20,6 @@ export default class Clip extends PureComponent {
     }
 
     onClick = (e) => {
-        e.stopPropagation()
         selectItem(this.props.item)
     }
 
@@ -31,8 +30,6 @@ export default class Clip extends PureComponent {
         }
     }
  
-
-
     getRelativeCoordinates = (evt) => {
         var e = evt.target
         var dim = e.getBoundingClientRect();
@@ -46,18 +43,19 @@ export default class Clip extends PureComponent {
     }
 
     componentWillReceiveProps(props) {
-        if(this.state.position.x  !== props.start * props.zoomWidth){
-            this.setState({position: {x: props.start * props.zoomWidth, y: props.top} })
+        if(this.state.position.x  !== props.item.start.value * props.zoomWidth){
+            this.setState({position: {x: props.item.start.value * props.zoomWidth, y: props.top} })
         }
     }
 
     render() {
-        const { width, height, top, item, zoomWidth } = this.props
+        const { height, top, item, zoomWidth } = this.props
+
         return (
             
             <div onClick={this.onClick} style={{position:"absolute", display: "flex", flexDirection: "row"}}>
-                <Draggable onDrag={this.clipDragged} axis="x" onClick={this.onClick} onStop={this.onStop} bounds={{left: 0}} position={this.state.position}>
-                    <div style={{width: this.props.width*zoomWidth, height, backgroundColor:this.color, overflow:"hidden", borderRadius: "2px", borderWidth: 0.5,borderColor: '#d6d7da'} }  >
+                <Draggable onDrag={this.clipDragged} axis="x" onStop={this.onStop} bounds={{left: 0}} position={this.state.position}>
+                    <div style={{width: this.props.item.duration.value*zoomWidth, top, height, backgroundColor:this.color, overflow:"hidden", borderRadius: "2px", borderWidth: 0.5,borderColor: '#d6d7da'} }  >
                         <div style={{fontSize: 12, fontFamily: "'Lucida Console', Monaco, monospace", color:"white", pointerEvents: "none", textShadow: "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black"}}>
                             {item.name.value}
                         </div>
@@ -67,14 +65,3 @@ export default class Clip extends PureComponent {
         )
     }
 }
-/* 
-<div 
-        style={{left: (this.state.position.x+ (width*zoomWidth) )}} 
-        className={classes.rightBorder} 
-        draggable="true" 
-        onDragEnd={this.onDragEnd} 
-        onDragStart={this.onDragStart} 
-        onDrag={this.onDrag}></div>
-    
-
-*/

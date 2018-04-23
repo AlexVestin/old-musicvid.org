@@ -38,17 +38,20 @@ class Canvas extends Component {
   
     renderScene = () => {
       const {fps, frameId} = this.props
+      var time = this.props.time
       if(this.props.playing) {
-
         //const time = frameId / fps
-        let now = performance.now()
-        const time = (now - this.lastTime) / 1000 + this.props.time
-        this.displayRenderer.renderScene(time)
-                
-        setTime(time)
-        incrementFrame()
-        this.lastTime = now
+        if(this.props.playing) {
+          let now = performance.now()
+          time = (now - this.lastTime) / 1000 + this.props.time
+        
+          setTime(time)
+          incrementFrame()
+          this.lastTime = now
+        }
       }
+      
+      this.displayRenderer.renderScene(time)
       if(!this.state.encoding || !this.videoEncoder.isWorker)
           window.requestAnimationFrame(this.renderScene)
     }
