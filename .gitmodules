@@ -7,3 +7,6 @@
 [submodule "src/webassembly/build/dependencies/lame"]
 	path = src/webassembly/build/dependencies/lame
 	url = https://github.com/rbrito/lame.git
+[submodule "demuxer/dependencies/ffmpeg"]
+	path = demuxer/dependencies/ffmpeg
+	url = https://git.ffmpeg.org/ffmpeg.git

@@ -5,3 +5,7 @@ src/webassembly/build/dependencies
 src/webassembly/C/a.out
 src/webassembly/C/assets/
 src/assets/
+src/webassembly/build/
+src/webassembly/build/em/
+src/webassembly/build/reg/
+

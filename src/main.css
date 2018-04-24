@@ -22,6 +22,14 @@ html, body {
   flex-direction: row; 
 }
 
+  .wrapper .header {
+    height: 5vh;
+  }
+
+  .wrapper .footer {
+    height: 1vh;
+  }
+
   .wrapper .content_wrapper {
     position: relative;
     display: flex;

@@ -6,9 +6,9 @@ includedir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../.
 Name: libavcodec
 Description: FFmpeg codec library
 Version: 58.13.102
-Requires: libavutil >= 56.8.100
+Requires: libswresample >= 3.0.101, libavutil >= 56.8.100
 Requires.private: 
 Conflicts:
-Libs: -L${libdir}  -lavcodec -lm -L/home/alex/videoeditor/src/webassembly/build/dependencies/x264/../../em/lib -lx264
+Libs: -L${libdir}  -lavcodec -lm
 Libs.private: 
 Cflags: -I${includedir}

@@ -1,0 +1,14 @@
+
+
+
+.rightBorder {
+    position: absolute;
+    width: 3px;
+    height: 30px;
+    background-color: #242424;
+    cursor: w-resize;
+    border-right: 1px solid #232323;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+    
+}

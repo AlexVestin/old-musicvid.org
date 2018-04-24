@@ -6,7 +6,7 @@ includedir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../.
 Name: libavformat
 Description: FFmpeg container format library
 Version: 58.10.100
-Requires: libavcodec >= 58.13.102, libavutil >= 56.8.100
+Requires: libavcodec >= 58.13.102, libswresample >= 3.0.101, libavutil >= 56.8.100
 Requires.private: 
 Conflicts:
 Libs: -L${libdir}  -lavformat -lm

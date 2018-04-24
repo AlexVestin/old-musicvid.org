@@ -3,9 +3,19 @@ MP4_MUXERS = mp4
 
 FFMPEG_MP4_BC = build/ffmpeg/ffmpeg.bc
 FFMPEG_MP4_PC_PATH = ../../em/lib/pkgconfig
-MP4_SHARED_DEPS = libx264 libmp3lame
 
-all: build/ffmpeg/ffmpeg.bc
+
+COMMON_DEMUXERS = matroska ogg avi mov flv mpegps image2 mp3 concat
+COMMON_DECODERS = \
+	vp8 vp9 theora \
+	mpeg2video mpeg4 h264 hevc \
+	png mjpeg \
+	vorbis opus \
+	mp3 ac3 aac \
+ass ssa srt webvtt
+
+
+all: encode.bc decode.bc
 
 clean: clean-js \
 	clean-lame clean-x264 clean-ffmpeg lib include
@@ -86,7 +96,7 @@ FFMPEG_COMMON_ARGS = \
 	--enable-avformat \
 	--enable-avutil \
 	--enable-swresample \
-	--disable-swscale \
+	--enable-swscale \
 	--disable-avfilter \
 	--disable-network \
 	--disable-d3d11va \
@@ -103,7 +113,24 @@ FFMPEG_COMMON_ARGS = \
 	--disable-xlib \
 	--disable-zlib
 
-build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
+decode.bc: 
+	cd ../dependencies/ffmpeg && \
+	git reset --hard && \
+	EM_PKG_CONFIG_PATH=$(FFMPEG_MP4_PC_PATH) emconfigure ./configure \
+		--prefix="$$(pwd)/../../em" \
+		$(FFMPEG_COMMON_ARGS) \
+		$(addprefix --enable-decoder=,$(COMMON_DECODERS)) \
+		$(addprefix --enable-demuxer=,$(COMMON_DEMUXERS)) \
+		--enable-gpl \
+		--enable-libx264 \
+		--extra-cflags="-I../../em/include" \
+		--extra-ldflags="-L../../em/lib" \
+		&& \
+	emmake make -j8 && \
+	emmake make install && \
+	cp ffmpeg ~/videoeditor/src/webassembly/ffmpeg_prod_demux.bc 
+
+encode.bc: $(MP4_SHARED_DEPS)
 	cd ../dependencies/ffmpeg && \
 	git reset --hard && \
 	EM_PKG_CONFIG_PATH=$(FFMPEG_MP4_PC_PATH) emconfigure ./configure \
@@ -118,4 +145,4 @@ build/ffmpeg/ffmpeg.bc: $(MP4_SHARED_DEPS)
 		&& \
 	emmake make -j8 && \
 	emmake make install && \
-	cp ffmpeg ~/videoeditor/src/webassembly/ffmpeg_prod.bc 
+cp ffmpeg ~/videoeditor/src/webassembly/ffmpeg_prod.bc 
