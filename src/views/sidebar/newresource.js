@@ -33,6 +33,7 @@ class AddResourceOptions extends React.Component {
         let add = (type, input) => {
             let file = input.files[0]
             let name = input.files[0].name
+
             createItem({type, file, name})
         }
 
@@ -42,6 +43,10 @@ class AddResourceOptions extends React.Component {
 
         this.uploadSound.onchange = () => {
             add("SOUND", this.uploadSound)
+        }
+
+        this.uploadVideo.onchange = () => {
+            add("VIDEO", this.uploadVideo)
         }
     }
 
@@ -54,6 +59,7 @@ class AddResourceOptions extends React.Component {
                 this.uploadImage.click()
                 break;
             case 2:
+                this.uploadVideo.click();
                 break;
             case 3:
                 console.log("add 2d text")

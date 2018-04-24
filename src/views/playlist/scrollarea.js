@@ -162,7 +162,7 @@ class ScrollArea extends PureComponent {
                                         <Clip 
                                             key={e.id.value} 
                                             height={30 * this.state.zoomHeight}
-                                            top={i * 30 * this.state.zoomHeight}
+                                            top={(i+1) * 30 * this.state.zoomHeight}
                                             zoomWidth={this.state.zoomWidth}
                                             item={e}
                                             >

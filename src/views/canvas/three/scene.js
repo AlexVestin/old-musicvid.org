@@ -6,6 +6,8 @@ import Bars from './items/bars'
 import Text3D from './items/text3d'
 import Water from './items/water';
 import BackgroundImage from './items/backgroundimage'
+import Video from './items/video'
+
 
 import {addItem} from '../../../redux/actions/items'
 
@@ -89,6 +91,11 @@ export default class BarsScene {
             case "WATER":
                 item = new Water(info, this.sceneConfig)
                 this.items.push(item)
+                break;
+            case "VIDEO":
+                item = new Video(name, info, this.backgroundScene)
+                this.backgroundItems.push(item)
+                console.log("adding video")
                 break;
             default:
                 console.log("unkown config type while adding object")

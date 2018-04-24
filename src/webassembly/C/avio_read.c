@@ -39,11 +39,7 @@ static AVCodecContext *video_dec_ctx = NULL, *audio_dec_ctx;
 static int width, height;
 static enum AVPixelFormat pix_fmt;
 static AVStream *video_stream = NULL, *audio_stream = NULL;
-static const char *src_filename = NULL;
-static const char *video_dst_filename = NULL;
-static const char *audio_dst_filename = NULL;
-static FILE *video_dst_file = NULL;
-static FILE *audio_dst_file = NULL;
+
 
 static uint8_t *video_dst_data[4] = {NULL};
 static int      video_dst_linesize[4];
@@ -192,7 +188,7 @@ static int decode_packet(int *got_frame, int cached, uint8_t** data)
              * in these cases.
              * You should use libswresample or libavfilter to convert the frame
              * to packed data. */
-            fwrite(frame->extended_data[0], 1, unpadded_linesize, audio_dst_file);
+            //fwrite(frame->extended_data[0], 1, unpadded_linesize, audio_dst_file);
         }
     }
 
@@ -215,7 +211,7 @@ static int open_codec_context(int *stream_idx,
     ret = av_find_best_stream(fmt_ctx, type, -1, -1, NULL, 0);
     if (ret < 0) {
         fprintf(stderr, "Could not find %s stream in input file '%s'\n",
-                av_get_media_type_string(type), src_filename);
+                av_get_media_type_string(type), 0);
         return ret;
     } else {
         stream_index = ret;
@@ -375,7 +371,7 @@ void demux() {
         printf("Play the output video file with the command:\n"
                "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
                av_get_pix_fmt_name(pix_fmt), width, height,
-               video_dst_filename);
+               0);
     }
 
     if (audio_stream) {
@@ -395,19 +391,14 @@ void demux() {
         if ((ret = get_format_from_sample_fmt(&fmt, sfmt)) < 0)
             exit(1);
 
-        printf("Play the output audio file with the command:\n"
-               "ffplay -f %s -ac %d -ar %d %s\n",
-               fmt, n_channels, audio_dec_ctx->sample_rate,
-               audio_dst_filename);
+ 
     }
 }
 
 int init_muxer(uint8_t* data, int size, int keep_audio) {
+    print("%d size, %d keep_audio\n", size, keep_audio);
+
     int ret;
-    video_dst_filename = "video";
-    audio_dst_filename = "audio";
-
-
     bd.buf = bd.ptr = data;
     bd.total_size = bd.size = size;
 
@@ -431,7 +422,7 @@ int init_muxer(uint8_t* data, int size, int keep_audio) {
     if ( ret < 0) {
         char buf[128];
         av_strerror(ret, buf, sizeof(buf));
-        fprintf(stderr, "Could not open source file %s errorcode: %s\n", src_filename, buf);
+        fprintf(stderr, "Could not open source file %s errorcode: %s\n", 0, buf);
         exit(1);
     }
 
@@ -447,13 +438,6 @@ int init_muxer(uint8_t* data, int size, int keep_audio) {
     if (open_codec_context(&video_stream_idx, &video_dec_ctx, fmt_ctx, AVMEDIA_TYPE_VIDEO) >= 0) {
         video_stream = fmt_ctx->streams[video_stream_idx];
 
-        video_dst_file = fopen(video_dst_filename, "wb");
-        if (!video_dst_file) {
-            fprintf(stderr, "Could not open destination file %s\n", video_dst_filename);
-            ret = 1;
-            exit(0);
-        }
-
         /* allocate image where the decoded image will be put */
         width = video_dec_ctx->width;
         height = video_dec_ctx->height;
@@ -462,12 +446,6 @@ int init_muxer(uint8_t* data, int size, int keep_audio) {
 
     if (open_codec_context(&audio_stream_idx, &audio_dec_ctx, fmt_ctx, AVMEDIA_TYPE_AUDIO) >= 0) {
         audio_stream = fmt_ctx->streams[audio_stream_idx];
-        audio_dst_file = fopen(audio_dst_filename, "wb");
-        if (!audio_dst_file) {
-            fprintf(stderr, "Could not open destination file %s\n", audio_dst_filename);
-            ret = 1;
-            exit(0);
-        }
     }
 
     /* dump input information to stderr */
@@ -511,10 +489,6 @@ void close_muxer() {
     avcodec_free_context(&audio_dec_ctx);
     avformat_close_input(&fmt_ctx);
 
-    if (video_dst_file)
-        fclose(video_dst_file);
-    if (audio_dst_file)
-        fclose(audio_dst_file);
     av_frame_free(&frame);
     av_free(video_dst_data[0]);
     av_free(bd.buf);

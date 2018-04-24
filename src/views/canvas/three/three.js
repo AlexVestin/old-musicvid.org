@@ -51,9 +51,6 @@ class ThreeCanvas extends PureComponent {
                     this.sound = new Sound(props.selectedItem, () => { this.audioLoaded = true;  addItem(this.sound.defaultConfig) })
                 }else {
                     let name = props.selectedItem.type
-                    while(this.props.items.find(e => e.name.value === name)){
-                        name += "1"
-                    }
                     this.currentScene.add(name, props.selectedItem)
                 }    
                 break; 

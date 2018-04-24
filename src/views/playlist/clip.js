@@ -52,7 +52,6 @@ export default class Clip extends PureComponent {
         const { height, top, item, zoomWidth } = this.props
 
         return (
-            
             <div onClick={this.onClick} style={{position:"absolute", display: "flex", flexDirection: "row"}}>
                 <Draggable onDrag={this.clipDragged} axis="x" onStop={this.onStop} bounds={{left: 0}} position={this.state.position}>
                     <div style={{width: this.props.item.duration.value*zoomWidth, top, height, backgroundColor:this.color, overflow:"hidden", borderRadius: "2px", borderWidth: 0.5,borderColor: '#d6d7da'} }  >

@@ -45,10 +45,8 @@ int main(int argc, char** argv) {
     int leftSize, rightSize;
     float* left = get_audio_buf("./assets/right1.raw", &leftSize);
     float* right = get_audio_buf("./assets/left1.raw", &rightSize);
-    printf("--------------\n");
     open_audio( left, right, leftSize, 44100, 2, 320000 );
     seconds = (leftSize+rightSize) / (double) (44100 * 2);
-    printf("--------------\n");
     
     write_header();
 
