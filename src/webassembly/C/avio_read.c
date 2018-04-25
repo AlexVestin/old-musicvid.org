@@ -29,17 +29,22 @@
  * @example demuxing_decoding.c
  */
 
+#include "bonus.c"
+
 #include <libavutil/imgutils.h>
 #include <libavutil/samplefmt.h>
 #include <libavutil/timestamp.h>
 #include <libavformat/avformat.h>
+
+#include <libswscale/swscale.h>
+
 
 static AVFormatContext *fmt_ctx = NULL;
 static AVCodecContext *video_dec_ctx = NULL, *audio_dec_ctx;
 static int width, height;
 static enum AVPixelFormat pix_fmt;
 static AVStream *video_stream = NULL, *audio_stream = NULL;
-
+static struct SwsContext *sws_context = NULL;
 
 static uint8_t *video_dst_data[4] = {NULL};
 static int      video_dst_linesize[4];
@@ -57,6 +62,8 @@ static int audio_frame_count = 0;
  * differences of API usage between them. */
 
 static int refcount = 0;
+AVIOContext *avio_ctx = NULL;
+
 
 struct buffer_data {
     uint8_t* buf;
@@ -121,7 +128,7 @@ static int decode_packet(int *got_frame, int cached, uint8_t** data)
             if(!image_inited && frame->format != -1) {
                 video_dec_ctx->pix_fmt = frame->format;
                 pix_fmt = frame->format;
-                ret = av_image_alloc(video_dst_data, video_dst_linesize,width, height, pix_fmt, 1);
+                //ret = av_image_alloc(video_dst_data, video_dst_linesize,width, height, pix_fmt, 1);
                 if (ret < 0) {
                     fprintf(stderr, "Could not allocate raw video buffer\n");
                     exit(1);
@@ -129,6 +136,14 @@ static int decode_packet(int *got_frame, int cached, uint8_t** data)
                 video_dst_bufsize = ret;
                 image_inited = 1;
                 time_base = 2*((int64_t)(video_dec_ctx->time_base.num) *AV_TIME_BASE) / ( int64_t)(video_dec_ctx->time_base.den);
+                sws_context = sws_getCachedContext(
+                    sws_context,
+                    video_dec_ctx->width, video_dec_ctx->height, 
+                    pix_fmt,
+                    video_dec_ctx->width, video_dec_ctx->height, 
+                    AV_PIX_FMT_RGB24,
+                    0, NULL, NULL, NULL
+                );
             }
            
             if (frame->width != width || frame->height != height || frame->format != pix_fmt) {
@@ -153,12 +168,24 @@ static int decode_packet(int *got_frame, int cached, uint8_t** data)
 
             /* copy decoded frame to destination buffer:
              * this is required since rawvideo expects non aligned data */
-            av_image_copy(video_dst_data, video_dst_linesize,(const uint8_t **)(frame->data), frame->linesize,pix_fmt, width, height);
+            //av_image_copy(video_dst_data, video_dst_linesize,(const uint8_t **)(frame->data), frame->linesize,pix_fmt, width, height);
+            const int size = video_dec_ctx->width*video_dec_ctx->height*3;
+            uint8_t* buffer = malloc(size);
 
-            /* write to rawvideo file */
-
-            *data = video_dst_data[0];
-            decoded =  video_dst_bufsize;
+            const int out_linesize[1] = { 3 * video_dec_ctx->width };
+            sws_scale(
+                sws_context, 
+                frame->data, 
+                frame->linesize, 
+                0, 
+                video_dec_ctx->height, 
+                (const uint8_t * const *)&buffer, 
+                out_linesize
+            );
+        
+            *data = buffer;
+            //*data = video_dst_data[0];
+            decoded =  size;
             //fwrite(*data, 1, decoded, video_dst_file);
             //fwrite(video_dst_data[0], 1, video_dst_bufsize, video_dst_file);
         }
@@ -302,7 +329,6 @@ static int read_packet(void *opaque, uint8_t *buf, int buf_size)
 
     return buf_size;
 }
-AVIOContext *avio_ctx = NULL;
 
 int set_frame(int t) {
     int flgs = AVSEEK_FLAG_ANY;
@@ -315,22 +341,22 @@ int set_frame(int t) {
     return 0;
 }
 
-int get_next_frame(uint8_t** data, int* size) {
+uint8_t* get_next_frame(int* size) {
     int ret = 0, got_frame;
     do {
         ret = av_read_frame(fmt_ctx, &pkt);
     }while(pkt.stream_index != video_stream_idx && ret >= 0);
     
     if(ret < 0){
+        *size = -1;
         return -1;
     }
 
+    uint8_t* data;
     AVPacket orig_pkt = pkt;
     int s = 0;
     do {
-        ret = decode_packet(&got_frame, 0, data);
-        
-        
+        ret = decode_packet(&got_frame, 0, &data);
         if (ret < 0)
             break;
 
@@ -340,78 +366,15 @@ int get_next_frame(uint8_t** data, int* size) {
     } while (pkt.size > 0);
     av_packet_unref(&orig_pkt);
 
-    *size = s;
-    return 0;
-}
-
-
-void demux() {
-    int got_frame, ret = 0;    
-
-    uint8_t* d;
-    while (av_read_frame(fmt_ctx, &pkt) >= 0) {
-        AVPacket orig_pkt = pkt;
-        do {
-            ret = decode_packet(&got_frame, 0, &d);
-            if (ret < 0)
-                break;
-
-            pkt.data += ret;
-            pkt.size -= ret;
-        } while (pkt.size > 0);
-        av_packet_unref(&orig_pkt);
-    }
-
-    /* flush cached frames */
-    pkt.data = NULL;
-    pkt.size = 0;
-
-    uint8_t* data;
-    do {
-        decode_packet(&got_frame, 1, &data);
-    } while (got_frame);
-
-    if (video_stream) {
-        printf("Play the output video file with the command:\n"
-               "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
-               av_get_pix_fmt_name(pix_fmt), width, height,
-               0);
-    }
-
-    if (audio_stream) {
-        enum AVSampleFormat sfmt = audio_dec_ctx->sample_fmt;
-        int n_channels = audio_dec_ctx->channels;
-        const char *fmt;
-
-        if (av_sample_fmt_is_planar(sfmt)) {
-            const char *packed = av_get_sample_fmt_name(sfmt);
-            printf("Warning: the sample format the decoder produced is planar "
-                   "(%s). This example will output the first channel only.\n",
-                   packed ? packed : "?");
-            sfmt = av_get_packed_sample_fmt(sfmt);
-            n_channels = 1;
-        }
-
-        if ((ret = get_format_from_sample_fmt(&fmt, sfmt)) < 0)
-            exit(1);
-
- 
-    }
+    *size = video_dec_ctx->width * video_dec_ctx->height *3;
+    //*size = s;
+    return data;
 }
 
 int init_muxer(uint8_t* data, int size, int keep_audio) {
-
-    fprintf(stderr, "initing muxer: size: %d keep_aduio: %d\n", size, keep_audio);
     int ret;
     bd.buf = bd.ptr = data;
     bd.total_size = bd.size = size;
-
-    printf("test\n");
-    int t;
-    for(t = 0; t < 30; t++) {
-        fprintf(stderr, "%" PRIu8 "\n", data[t]);
-    }
-
 
     /* open input file, and allocate format context */
     fmt_ctx = avformat_alloc_context();
@@ -491,6 +454,7 @@ void close_muxer() {
     pkt.size = 0;
     int got_frame;
     uint8_t* data;
+
     do {
         decode_packet(&got_frame, 1, &data);
     } while (got_frame);
@@ -515,13 +479,15 @@ void close_muxer() {
 int main (int argc, char **argv) {
     int ret = 0;
     
-    FILE *f = fopen("vid.mp4", "rb");
+    FILE *f = fopen("box.mp4", "rb");
     if(!f) {
         printf("file reallt not found\n");
     }
     fseek(f, 0, SEEK_END);
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
+
+    FILE* of = fopen("video", "wb");
 
     uint8_t *buffer = malloc(fsize);
     fread(buffer, fsize, 1, f); 
@@ -532,16 +498,20 @@ int main (int argc, char **argv) {
     // get frames
     uint8_t* fr;
     int size, got_frame;
-    get_next_frame(&fr, &size);
-    //fwrite(fr, 1, size, "video_dst_file");
-    
-    set_frame(100);
-    while(get_next_frame(&fr, &size) >= 0) { 
-        //write(fr, 1, size, "video_dst_file");
-    }
-    
-    close();
+    fr = get_next_frame(&size);
+    //fwrite(fr, 1, size, of);
 
+    while(1) {
+        fr = get_next_frame(&size);
+        if(size < 0)
+            break;
+
+        fwrite(fr, 1, size, of);
+        free(fr);
+    }
+
+    close_muxer();
+    fclose(of);
     return ret < 0;
 }
 */

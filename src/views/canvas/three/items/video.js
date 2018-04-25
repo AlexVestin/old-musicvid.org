@@ -36,11 +36,12 @@ export default class Video extends BaseItem {
 
 
     onframe = (frame) => {
-        console.log("got frame", frame)
         if(this.test <= 5) {
             this.decoder.getFrame(this.onframe)
             this.test--;
         }
+
+        this.frame = frame;
     }
 
     animate = (time) => {
