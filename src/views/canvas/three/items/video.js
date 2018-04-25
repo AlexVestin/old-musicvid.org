@@ -12,7 +12,10 @@ export default class Video extends BaseItem {
 
         this.bytesLoaded = false
         fr.onload = () => {
+            console.log(fr.result)
+            
             this.bytes = new Uint8Array(fr.result)
+            console.log(this.bytes.length)
             this.bytesLoaded = true
         }
         

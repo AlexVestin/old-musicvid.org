@@ -122,7 +122,6 @@ decode.bc:
 		$(addprefix --enable-decoder=,$(COMMON_DECODERS)) \
 		$(addprefix --enable-demuxer=,$(COMMON_DEMUXERS)) \
 		--enable-gpl \
-		--enable-libx264 \
 		--extra-cflags="-I../../em/include" \
 		--extra-ldflags="-L../../em/lib" \
 		&& \

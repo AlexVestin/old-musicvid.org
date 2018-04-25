@@ -30,20 +30,21 @@ DECODE_FUNCTIONS ="['_init_muxer', '_get_next_frame', '_set_frame', '_close_muxe
 DECODE_FILES = ./C/avio_read.c
 
 DECODE_COMMON = \
-	--llvm-lto 1 \
-	-Oz --memory-init-file 0 \
-	--closure 1 \
-	-o  ../../public/Demux.js\
+	-O2 --memory-init-file 0 \
+	-o  ../../public/Demux2.js\
 	-s WASM=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s EXPORTED_FUNCTIONS=$(DECODE_FUNCTIONS) \
 	-s MODULARIZE=1 \
 	-s EXPORT_NAME="'Demuxer'" \
-	-s NO_FILESYSTEM=1 \
 	-s ASSERTIONS=2
 
+
+INCLUDES = -I/home/alex/videoeditor/src/webassembly/build/em/include \
+			-L/home/alex/videoeditor/src/webassembly/build/em/lib
+
 demux.js:
-	emcc -I./build/em/include -L./build/em/lib $(DECODE_FILES) $(DECODE_COMMON) $(DECODE_BC) 
+	emcc $(INCLUDES) $(DECODE_FILES) $(DECODE_COMMON) $(DECODE_BC) $(ENCODE_DEPS) 
 
 encode.js:
 	emcc -I./build/em/include $(ENCODE_FILES) $(ENCODE_COMMON) $(ENCODE_BC) $(ENCODE_DEPS) 

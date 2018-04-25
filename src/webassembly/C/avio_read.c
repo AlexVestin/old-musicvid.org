@@ -70,6 +70,8 @@ int64_t time_base = 0;
 
 static int64_t seek (void *opaque, int64_t offset, int whence) {
     struct buffer_data *bd = (struct buffer_data *)opaque;
+
+    fprintf(stderr, "seeking:::::: offset: %d whence: %d\n", offset, whence);
     switch(whence){
         case SEEK_SET:
             bd->size = bd->total_size - offset;
@@ -286,6 +288,7 @@ static int read_packet(void *opaque, uint8_t *buf, int buf_size)
     struct buffer_data *bd = (struct buffer_data *)opaque;
     buf_size = FFMIN(buf_size, bd->size);
 
+    fprintf(stderr, "reading: buf->size: %d, buf_size: ", bd->size, buf_size);
     if (!buf_size){
         printf("read the thing\n");
         return AVERROR_EOF;
@@ -295,6 +298,7 @@ static int read_packet(void *opaque, uint8_t *buf, int buf_size)
     memcpy(buf, bd->ptr, buf_size);
     bd->ptr  += buf_size;
     bd->size -= buf_size;
+
 
     return buf_size;
 }
@@ -396,16 +400,23 @@ void demux() {
 }
 
 int init_muxer(uint8_t* data, int size, int keep_audio) {
-    print("%d size, %d keep_audio\n", size, keep_audio);
 
+    fprintf(stderr, "initing muxer: size: %d keep_aduio: %d\n", size, keep_audio);
     int ret;
     bd.buf = bd.ptr = data;
     bd.total_size = bd.size = size;
 
+    printf("test\n");
+    int t;
+    for(t = 0; t < 30; t++) {
+        fprintf(stderr, "%" PRIu8 "\n", data[t]);
+    }
+
+
     /* open input file, and allocate format context */
     fmt_ctx = avformat_alloc_context();
     if(!fmt_ctx)
-        printf("%d\n", ret);
+        fprintf(stderr, "%d\n", ret);
 
 
     const int avio_ctx_buffer_size = 4096;
@@ -414,11 +425,17 @@ int init_muxer(uint8_t* data, int size, int keep_audio) {
         ret = AVERROR(ENOMEM);
         exit(0);
     }
+
     avio_ctx = avio_alloc_context(avio_ctx_buffer, avio_ctx_buffer_size, 0, &bd, &read_packet, 0, &seek);
+    if(!avio_ctx){
+        fprintf(stderr, "failed oto init avio_ctx\n");
+        exit(1);
+    }
+
     fmt_ctx->pb = avio_ctx;
     fmt_ctx->flags = AVFMT_FLAG_CUSTOM_IO;
 
-    ret = avformat_open_input(&fmt_ctx, "", NULL, NULL);
+    ret = avformat_open_input(&fmt_ctx, NULL, NULL, NULL);
     if ( ret < 0) {
         char buf[128];
         av_strerror(ret, buf, sizeof(buf));
@@ -482,7 +499,7 @@ void close_muxer() {
         printf("Play the output video file with the command:\n"
                "ffplay -f rawvideo -pix_fmt %s -video_size %dx%d %s\n",
                av_get_pix_fmt_name(pix_fmt), width, height,
-               video_dst_filename);
+               "video_dst_filename");
     }
     
     avcodec_free_context(&video_dec_ctx);
@@ -516,11 +533,11 @@ int main (int argc, char **argv) {
     uint8_t* fr;
     int size, got_frame;
     get_next_frame(&fr, &size);
-    fwrite(fr, 1, size, video_dst_file);
+    //fwrite(fr, 1, size, "video_dst_file");
     
     set_frame(100);
     while(get_next_frame(&fr, &size) >= 0) { 
-        fwrite(fr, 1, size, video_dst_file);
+        //write(fr, 1, size, "video_dst_file");
     }
     
     close();
