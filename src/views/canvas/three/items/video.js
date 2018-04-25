@@ -11,23 +11,40 @@ export default class Video extends BaseItem {
         var fr = new FileReader()
 
         this.bytesLoaded = false
-        fr.onload = () => {
-            console.log(fr.result)
-            
+        fr.onload = () => {            
             this.bytes = new Uint8Array(fr.result)
-            console.log(this.bytes.length)
             this.bytesLoaded = true
         }
         
         fr.readAsArrayBuffer(config.file) 
         this.config = this.getConfig(this.defaultConfig)
         this.decoder = new Demuxer(this.onDecoderReady)
+
+        this.test = 5
     }
 
     onDecoderReady = () => {
         if(this.bytesLoaded) {
-            this.decoder.init(this.bytes, this.bytes.length, 0)
+            this.decoder.init(this.bytes, this.bytes.length, 0, this.decoderInitialized)
         }
+    }
+
+    decoderInitialized = () => {
+        this.decoderReady = true
+        this.decoder.getFrame(this.onframe)
+    }
+
+
+    onframe = (frame) => {
+        console.log("got frame", frame)
+        if(this.test <= 5) {
+            this.decoder.getFrame(this.onframe)
+            this.test--;
+        }
+    }
+
+    animate = (time) => {
+        this.decoder.getFrame(this.onframe)
     }
 
     updateConfig = (config) => {

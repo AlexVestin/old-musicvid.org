@@ -7,7 +7,6 @@
 #include <libswresample/swresample.h>
 #include <libavutil/opt.h>
 
-
 struct buffer_data {
     uint8_t *buf;
     int size;
