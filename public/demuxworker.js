@@ -29,13 +29,12 @@ onmessage = (e) => {
     if(initBuffer) {
         try {
             var buffer_p = Module._malloc(data.length)
+            var video_info_p = Module._malloc(4 * 6)
+
             Module.HEAPU8.set(data, buffer_p)
-            Module._init_muxer(buffer_p, data.length, 0)
-            //need to deocde a frame to find pixel fmt etc
-            getNextFrame();
-            //return to first
-            Module._set_frame(0)
-            postMessage({action: "init"})
+            Module._init_muxer(buffer_p, data.length, video_info_p)
+            const info = new Int32Array(Module.HEAPU8.buffer, video_info_p, 6)  
+            postMessage({action: "init", info: info})
         }finally {
             //Module._free(buffer_p)
             initBuffer = false;

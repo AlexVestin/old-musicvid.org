@@ -44,7 +44,9 @@ export default class Video extends BaseItem {
         }
     }
 
-    decoderInitialized = () => {
+    decoderInitialized = (info) => {
+        this.info = info;
+        console.log(info)
         this.decoderReady = true
         //this.decoder.getFrame(this.onframe)
 

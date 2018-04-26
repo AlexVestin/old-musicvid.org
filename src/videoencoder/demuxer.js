@@ -40,7 +40,16 @@ export default class Demuxer {
                 this.onload()
                 break;
             case "init":
-                this.oninit()
+                const { info } = data
+                const f = {
+                    fps: info[0] / info[1],
+                    width: info[2],
+                    height: info[3],
+                    format: info[4],
+                    bitrate: info[5]
+                }
+
+                this.oninit(f)
                 break;
             case "frame_decoded":
                 this.awaitingFrame = true
