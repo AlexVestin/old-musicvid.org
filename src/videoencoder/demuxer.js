@@ -8,6 +8,8 @@ export default class Demuxer {
         this.onload = onload;
 
         this.awaitingFrame = false;
+        this.extractAudio = 0
+        this.audio = []
     }
     init = (buffer, bufferLength, keepAudio, oninit) => {
         this.worker.postMessage({action: "init", keepAudio: keepAudio})
@@ -15,6 +17,10 @@ export default class Demuxer {
         this.oninit = oninit
     }
 
+
+    setFrame = (frameNr) => {
+        this.worker.postMessage({action: "set_frame", value: frameNr})
+    }
 
     sendFrame = (pixels) => {
         this.worker.postMessage(pixels, [pixels.buffer])
@@ -32,7 +38,15 @@ export default class Demuxer {
     onmessage = (e) => {
         const { data } = e;
         if(data.action === undefined) {
-            this.onframe(data)
+            if(this.extractAudio === 2) {
+                this.audioLeft = data
+                this.extractAudio--;
+            }else if (this.extractAudio === 1) {
+                this.oninit({videoInfo: this.videoInfo, audio: {bitrate: this.bitrate, left: this.audioLeft, right: data}})
+                this.extractAudio--;
+            }else {
+                this.onframe(data)
+            }
         }
 
         switch(data.action){
@@ -41,7 +55,7 @@ export default class Demuxer {
                 break;
             case "init":
                 const { info } = data
-                const f = {
+                this.videoInfo = {
                     fps: info[0] / info[1],
                     width: info[2],
                     height: info[3],
@@ -49,10 +63,14 @@ export default class Demuxer {
                     bitrate: info[5]
                 }
 
-                this.oninit(f)
+                this.worker.postMessage( {action: "extract_audio"})
                 break;
             case "frame_decoded":
                 this.awaitingFrame = true
+                break;
+            case "audio_extracted":
+                this.bitrate = data.info
+                this.extractAudio = 2; 
                 break;
             case "return":
                 this.onsuccess(data.data)

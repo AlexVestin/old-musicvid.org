@@ -22,6 +22,24 @@ function getNextFrame() {
     return s
 } 
 
+function extractAudio() {
+    var size_p   = Module._malloc(4)
+    var left_buffer_p = 0, right_buffer_p = 0;
+    buffer_p = Module._extract_audio(left_buffer_p, right_buffer_p, size_p)
+    var bufferSize = Module.HEAP32[size_p >> 2]
+    
+    console.log(bufferSize / 4)
+    const right = new Float32Array( Module.HEAPU8.buffer, left_buffer_p, Math.floor(bufferSize / 4)) // shouldnt be needed, but y'know
+    const left = new Float32Array( Module.HEAPU8.buffer, right_buffer_p,  Math.floor(bufferSize / 4))
+    
+    postMessage({action: "audio_extracted"})
+    postMessage(left, [left.buffer])
+    postMessage(right, [right.buffer])
+    
+    Module._free(left_buffer_p)
+    Module._free(right_buffer_p)
+}
+
 
 var initBuffer = false
 onmessage = (e) => {
@@ -55,7 +73,13 @@ onmessage = (e) => {
         case "close":
             close(data.data)
             break;
+        case "set_frame": 
+            Module._set_frame(data.value)
+            break;
+        case "extract_audio":
+            extractAudio()
+            break;
         default:
-            console.log("unknown command")
+            console.log("unknown command: ", data.action)
     }
 }

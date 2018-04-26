@@ -24,13 +24,13 @@ export default class Video extends BaseItem {
         this.texData = new Uint8Array(1280*720*3)
         this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType);
         this.tex.flipY = true
+        
         this.mesh = new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2, 0),
             new THREE.MeshBasicMaterial({map: this.tex})
         );
 
         //this.mesh.rotation.y = Math.PI / 2;
-
 
         this.mesh.name = String(this.config.id)
 
@@ -45,10 +45,21 @@ export default class Video extends BaseItem {
     }
 
     decoderInitialized = (info) => {
-        this.info = info;
+        this.info = info.info;
+        this.sound = info.audio
+
         console.log(info)
+
+        this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
+        this.tex.flipY = true
+        this.mesh.material.map = this.tex
+        this.tex.needsUpdate = true
+
         this.decoderReady = true
-        //this.decoder.getFrame(this.onframe)
+
+        //Show first frame
+        this.decoder.getFrame(this.onframe)
+        this.decoder.setFrame(0)
 
         this.mesh.name = String(this.config.id)
     }
