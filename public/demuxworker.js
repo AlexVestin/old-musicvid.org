@@ -24,20 +24,25 @@ function getNextFrame() {
 
 function extractAudio() {
     var size_p   = Module._malloc(4)
-    var left_buffer_p = 0, right_buffer_p = 0;
-    buffer_p = Module._extract_audio(left_buffer_p, right_buffer_p, size_p)
+    var bitrate_p   = Module._malloc(4)
+
+
+    var buffer_p = 0
+    buffer_p = Module._extract_audio(size_p, bitrate_p)
     var bufferSize = Module.HEAP32[size_p >> 2]
+    var bitrate  = Module.HEAP32[bitrate_p >> 2]
     
     console.log(bufferSize / 4)
-    const right = new Float32Array( Module.HEAPU8.buffer, left_buffer_p, Math.floor(bufferSize / 4)) // shouldnt be needed, but y'know
-    const left = new Float32Array( Module.HEAPU8.buffer, right_buffer_p,  Math.floor(bufferSize / 4))
-    
-    postMessage({action: "audio_extracted"})
+    // Cant send WASM array, neeed to copy
+    const data = new Uint8Array( Module.HEAPU8.subarray(buffer_p, buffer_p + bufferSize * 2))
+
+    const right = new Float32Array( data.buffer, 0, bufferSize / 4) // shouldnt be needed, but y'know
+    const left = new Float32Array( data.buffer, bufferSize,  bufferSize / 4)
+    postMessage({action: "audio_extracted", info: bitrate})
     postMessage(left, [left.buffer])
     postMessage(right, [right.buffer])
     
-    Module._free(left_buffer_p)
-    Module._free(right_buffer_p)
+    Module._free(buffer_p)
 }
 
 

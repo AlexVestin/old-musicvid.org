@@ -45,7 +45,7 @@ export default class Video extends BaseItem {
     }
 
     decoderInitialized = (info) => {
-        this.info = info.info;
+        this.info = info.videoInfo;
         this.sound = info.audio
 
         console.log(info)
