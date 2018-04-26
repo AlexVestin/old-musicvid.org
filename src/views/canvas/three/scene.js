@@ -95,28 +95,29 @@ export default class BarsScene {
                 break;
             case "VIDEO":
                 item = new Video(name, info, this.backgroundScene)
-                this.items.push(item)
-                this.backgroundScene.add(item.mesh)
+                this.backgroundItems.push(item)
                 break;
             default:
                 console.log("unkown config type while adding object")
         }
 
         addItem(item.defaultConfig)
-
-        console.log(this.scene.children)
     }
 
     stop = () => {
+
         while(this.scene.children.length > 0){ 
             this.scene.remove(this.scene.children[0]); 
         }
 
         while(this.backgroundScene.children.length > 0){ 
+            
             this.backgroundScene.remove(this.backgroundScene.children[0]); 
         }
 
+        this.backgroundItems.forEach(e => {e.stop()})
         this.toRenderFG = []
+
         this.toRenderBG = []
     }
 
@@ -142,6 +143,9 @@ export default class BarsScene {
             const { start, duration} = e.config
             if(start >= time || (start < time && (start + duration) > time)) {
                 this.toRenderBG.push(e)
+
+                if(e.play)
+                    e.play(time)
             }
         })
     }
@@ -175,8 +179,8 @@ export default class BarsScene {
         this.addOrRemove(this.toRenderFG, this.scene, time)
         this.addOrRemove(this.toRenderBG, this.backgroundScene, time)
         
-        this.items.forEach(e => e.animate(time, frequencyBins))
-        this.backgroundItems.forEach(e => e.animate(time, frequencyBins))
+        this.toRenderFG.forEach(e => e.animate(time, frequencyBins))
+        this.toRenderBG.forEach(e => e.animate(time, frequencyBins))
     }
 
     render = (renderer) => {

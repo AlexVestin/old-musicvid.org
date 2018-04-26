@@ -45,36 +45,73 @@ export default class Video extends BaseItem {
     }
 
     decoderInitialized = (info) => {
+        console.log(info)
         this.info = info.videoInfo;
         this.sound = info.audio
-
-        console.log(info)
 
         this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
         this.tex.flipY = true
         this.mesh.material.map = this.tex
         this.tex.needsUpdate = true
 
-        this.decoderReady = true
+        
 
         //Show first frame
         this.decoder.getFrame(this.onframe)
         this.decoder.setFrame(0)
 
         this.mesh.name = String(this.config.id)
+        
+        /*
+        
+        */
+
+        this.playing = true
+        this.decoderReady = true
     }
 
 
-    onframe = (frame) => {
-        this.texData.set(frame)
-        this.tex.needsUpdate = true
+    onframe = (frame, shouldUpdate) => {
+        if(shouldUpdate) {
+            this.texData.set(frame)
+            this.tex.needsUpdate = true
+        }
     }
 
     animate = (time) => {
-        if(this.decoderReady)
-            this.decoder.getFrame(this.onframe)
-
+        this.time = time
+        if(this.decoderReady) {
+            const frameId = Math.floor((time - (this.config.start/100)) * this.info.fps)
+            if(frameId >= 0)
+                this.decoder.getFrame(this.onframe, frameId)
+        }
         
+    }
+
+    stop = () => {
+        this.time = 0
+        this.decoder.setFrame(0)
+    }
+
+    play = (time) => {
+        this.time = time
+        this.decoder.setFrame(Math.floor((time - (this.config.start/100)) * this.info.fps))
+        
+        /*
+            // test audio ------- works
+            this.ac = new AudioContext()
+            const left = this.sound.left
+            const right = this.sound.right
+            
+            var ab = this.ac.createBuffer(2, left.length, this.sound.bitrate)
+            this.bs = this.ac.createBufferSource();
+            ab.getChannelData(0).set(left);
+            ab.getChannelData(1).set(right);
+            
+            this.bs.buffer = ab;
+            this.bs.connect(this.ac.destination);
+            this.bs.start(0);
+        */
     }
 
     updateConfig = (config) => {

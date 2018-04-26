@@ -24,6 +24,15 @@ export default class BaseItem {
 
         return updatedObject
     }
+
+    //TODO remove // find better use
+    stop = () => {
+
+    }
+
+    play = () => {
+
+    }
 } 
 
 export class MeshItem extends BaseItem {

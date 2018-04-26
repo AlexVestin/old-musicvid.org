@@ -9,7 +9,9 @@ export default class Demuxer {
 
         this.awaitingFrame = false;
         this.extractAudio = 0
-        this.audio = []
+        
+        this.frames = []
+        this.currentFrame = 0
     }
     init = (buffer, bufferLength, keepAudio, oninit) => {
         this.worker.postMessage({action: "init", keepAudio: keepAudio})
@@ -18,15 +20,25 @@ export default class Demuxer {
     }
 
 
-    setFrame = (frameNr) => {
-        this.worker.postMessage({action: "set_frame", value: frameNr})
+    setFrame = (frameId) => {
+        this.currentFrame = frameId
+        this.worker.postMessage({action: "set_frame", value: frameId})
+
+        this.frames = this.frames.filter(e => e.frameId >= frameId && Math.abs(frameId - e.frameId) < 7)
     }
 
     sendFrame = (pixels) => {
         this.worker.postMessage(pixels, [pixels.buffer])
     }
 
-    getFrame = (onframe) => {
+    getFrame = (onframe, frameId) => {
+        this.frames = this.frames.filter(e => e.frameId >= frameId)
+        const frame = this.frames.find(e => e.frameId === frameId)
+        if (frame) {
+            onframe(frame.data, false)
+            return
+        }
+
         this.worker.postMessage({action: "get_frame"})
         this.onframe = onframe;
     }
@@ -45,7 +57,9 @@ export default class Demuxer {
                 this.oninit({videoInfo: this.videoInfo, audio: {bitrate: this.bitrate, left: this.audioLeft, right: data}})
                 this.extractAudio--;
             }else {
-                this.onframe(data)
+                this.frames.push({frameId: this.currentFrame, data: data })
+                this.currentFrame++;
+                this.onframe(data, true)
             }
         }
 
