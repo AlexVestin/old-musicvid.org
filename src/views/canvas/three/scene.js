@@ -91,17 +91,20 @@ export default class BarsScene {
             case "WATER":
                 item = new Water(info, this.sceneConfig)
                 this.items.push(item)
+                
                 break;
             case "VIDEO":
                 item = new Video(name, info, this.backgroundScene)
-                this.backgroundItems.push(item)
-                console.log("adding video")
+                this.items.push(item)
+                this.backgroundScene.add(item.mesh)
                 break;
             default:
                 console.log("unkown config type while adding object")
         }
 
         addItem(item.defaultConfig)
+
+        console.log(this.scene.children)
     }
 
     stop = () => {
@@ -173,6 +176,7 @@ export default class BarsScene {
         this.addOrRemove(this.toRenderBG, this.backgroundScene, time)
         
         this.items.forEach(e => e.animate(time, frequencyBins))
+        this.backgroundItems.forEach(e => e.animate(time, frequencyBins))
     }
 
     render = (renderer) => {

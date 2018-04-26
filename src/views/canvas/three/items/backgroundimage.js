@@ -27,5 +27,9 @@ export default class BackgroundImage extends BaseItem {
         this.config = this.getConfig(config)
     }
 
+    animate  = (time, freqs) => {
+
+    }
+
 }
 

@@ -1,6 +1,6 @@
 import BaseItem from "./item";
 import * as THREE from 'three'
-
+import FileSaver from 'file-saver'
 import Demuxer from '../../../../videoencoder/demuxer.js'
 
 export default class Video extends BaseItem {
@@ -20,7 +20,22 @@ export default class Video extends BaseItem {
         this.config = this.getConfig(this.defaultConfig)
         this.decoder = new Demuxer(this.onDecoderReady)
 
-        this.test = 5
+
+        this.texData = new Uint8Array(1280*720*3)
+        this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType);
+        this.tex.flipY = true
+        this.mesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(2, 2, 0),
+            new THREE.MeshBasicMaterial({map: this.tex})
+        );
+
+        //this.mesh.rotation.y = Math.PI / 2;
+
+
+        this.mesh.name = String(this.config.id)
+
+        this.downloaded = false
+        this.counter = 0;
     }
 
     onDecoderReady = () => {
@@ -31,21 +46,22 @@ export default class Video extends BaseItem {
 
     decoderInitialized = () => {
         this.decoderReady = true
-        this.decoder.getFrame(this.onframe)
+        //this.decoder.getFrame(this.onframe)
+
+        this.mesh.name = String(this.config.id)
     }
 
 
     onframe = (frame) => {
-        if(this.test <= 5) {
-            this.decoder.getFrame(this.onframe)
-            this.test--;
-        }
-
-        this.frame = frame;
+        this.texData.set(frame)
+        this.tex.needsUpdate = true
     }
 
     animate = (time) => {
-        this.decoder.getFrame(this.onframe)
+        if(this.decoderReady)
+            this.decoder.getFrame(this.onframe)
+
+        
     }
 
     updateConfig = (config) => {

@@ -32,7 +32,6 @@ export default class Demuxer {
     onmessage = (e) => {
         const { data } = e;
         if(data.action === undefined) {
-            console.log("on frame")
             this.onframe(data)
         }
 
