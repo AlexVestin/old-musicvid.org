@@ -30,6 +30,14 @@ export function setPlaying(item){
     );  
 }
 
+export function setDisabled(item){
+    store.dispatch({
+        type: "SET_DISABLED",
+        payload: item
+        } 
+    );  
+}
+
 
 export function incrementFrame(){
     store.dispatch({

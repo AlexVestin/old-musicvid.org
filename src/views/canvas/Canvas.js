@@ -77,7 +77,7 @@ class Canvas extends Component {
         <div className={classes.canvas_wrapper}>
             <b>{this.state.info}</b>
             <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
-            <PlaybackPanel width={width} playing={playing} time={time} play={this.play} stop={this.stop} ></PlaybackPanel>
+            <PlaybackPanel disabled={this.props.disabled} width={width} playing={playing} time={time} play={this.play} stop={this.stop} ></PlaybackPanel>
             <a ref={(linkRef) => this.linkRef = linkRef}></a>
         </div>
       )
@@ -89,7 +89,8 @@ const mapStateToProps = state => {
     time: state.globals.time,
     playing: state.globals.playing,
     frameId: state.globals.frameId,
-    fps: state.globals.fps
+    fps: state.globals.fps,
+    disabled: state.globals.disabled
   }
 }
 

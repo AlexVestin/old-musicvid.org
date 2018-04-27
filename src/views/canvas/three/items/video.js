@@ -3,6 +3,9 @@ import * as THREE from 'three'
 import FileSaver from 'file-saver'
 import Demuxer from '../../../../videoencoder/demuxer.js'
 
+import {setDisabled} from '../../../../redux/actions/globals'
+
+
 export default class Video extends BaseItem {
     constructor(name, config, sceneConfig) {
         super(name) 
@@ -19,6 +22,8 @@ export default class Video extends BaseItem {
         fr.readAsArrayBuffer(config.file) 
         this.config = this.getConfig(this.defaultConfig)
         this.decoder = new Demuxer(this.onDecoderReady)
+
+        setDisabled(true)
 
 
         this.texData = new Uint8Array(1280*720*3)
@@ -45,7 +50,6 @@ export default class Video extends BaseItem {
     }
 
     decoderInitialized = (info) => {
-        console.log(info)
         this.info = info.videoInfo;
         this.sound = info.audio
 
@@ -54,17 +58,12 @@ export default class Video extends BaseItem {
         this.mesh.material.map = this.tex
         this.tex.needsUpdate = true
 
-        
-
         //Show first frame
         this.decoder.getFrame(this.onframe)
         this.decoder.setFrame(0)
-
         this.mesh.name = String(this.config.id)
-        
-        /*
-        
-        */
+        setDisabled(false)
+        console.log("setdisabled false damnit")
 
         this.playing = true
         this.decoderReady = true
@@ -91,17 +90,22 @@ export default class Video extends BaseItem {
     stop = () => {
         this.time = 0
         this.decoder.setFrame(0)
+        if(this.bs)
+            this.bs.stop()
     }
 
     play = (time) => {
         this.time = time
         this.decoder.setFrame(Math.floor((time - (this.config.start/100)) * this.info.fps))
-        
-        /*
-            // test audio ------- works
+        console.log("play")
+        this.playAudio = true
+        if(this.playAudio) {
+            // test audio ------- worksc
+
+            const idx = Math.floor((time-(this.config.start/100))*this.sampleRate)
             this.ac = new AudioContext()
-            const left = this.sound.left
-            const right = this.sound.right
+            const left = this.sound.left.subarray(idx )
+            const right = this.sound.right.subarray(idx)
             
             var ab = this.ac.createBuffer(2, left.length, this.sound.bitrate)
             this.bs = this.ac.createBufferSource();
@@ -111,7 +115,7 @@ export default class Video extends BaseItem {
             this.bs.buffer = ab;
             this.bs.connect(this.ac.destination);
             this.bs.start(0);
-        */
+        }
     }
 
     updateConfig = (config) => {

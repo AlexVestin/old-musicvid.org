@@ -144,8 +144,6 @@ export default class BarsScene {
             if(start >= time || (start < time && (start + duration) > time)) {
                 this.toRenderBG.push(e)
 
-                if(e.play)
-                    e.play(time)
             }
         })
     }
@@ -167,10 +165,12 @@ export default class BarsScene {
             if (time >= (start+duration) / 100) { 
                 toRender.splice(i, 1);
                 scene.remove(e.mesh)
+                e.stop()
                 return
             } 
             if(time >= (start / 100 ) && scene.getObjectByName(e.mesh.name) === undefined) {
                 scene.add(e.mesh)
+                e.play()
             }
         }
     }
