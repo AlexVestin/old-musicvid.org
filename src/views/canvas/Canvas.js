@@ -6,7 +6,7 @@ import ThreeCanvas from './three/three';
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
 
-import { setTime, togglePlaying, setPlaying, incrementFrame } from '../../redux/actions/globals' 
+import { setTime, togglePlaying, setPlaying, incrementFrame, incrementTime } from '../../redux/actions/globals' 
 import { connect } from 'react-redux';
 
 class Canvas extends Component {
@@ -45,8 +45,7 @@ class Canvas extends Component {
           let now = performance.now()
           time = (now - this.lastTime) / 1000 + this.props.time
         
-          setTime(time)
-          incrementFrame()
+          incrementTime(time)
           this.lastTime = now
         }
       }

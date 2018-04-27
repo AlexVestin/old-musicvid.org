@@ -8,6 +8,8 @@ export default function itemsReducer(state = {
         switch(action.type){
             case "SET_SIDEBAR_WINDOW_INDEX":
                 return {...state, sideBarWindowIndex: action.payload}
+            case "SET_LAST_ACTION":
+                return {...state, lastAction: action.payload}
             case "SELECT_ITEM":
                 return {...state, selectedItem: action.payload, lastAction: "SELECT_ITEM", sideBarWindowIndex: 6}
             case "CREATE_ITEM":

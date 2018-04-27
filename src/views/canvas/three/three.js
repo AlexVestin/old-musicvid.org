@@ -1,14 +1,15 @@
 import {WebGLRenderTarget, WebGLRenderer} from 'three'
 
 import BarsScene from './scene'
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
 import { addItem } from '../../../redux/actions/items'
 import Sound from "../../../sound"
 
+import store from '../../../redux/store'
 
-class ThreeCanvas extends PureComponent {
+class ThreeCanvas extends Component {
     componentDidMount() {
         
         const mount = this.mountRef
@@ -20,6 +21,8 @@ class ThreeCanvas extends PureComponent {
         renderer.setSize(this.width, this.height)
         renderer.autoClear = false;
 
+
+        const unsubscribe = store.subscribe(this.handleStoreChange)
         this.renderer = renderer
 
         this.currentScene = new BarsScene(this.width, this.height, renderer)
@@ -30,7 +33,11 @@ class ThreeCanvas extends PureComponent {
 
         this.audioLoaded = false
         this.mount = mount 
-    } 
+    }
+    
+    handleStoreChange = () => {
+        
+    }
 
     setSize(w, h) {
         this.height = h
@@ -38,14 +45,21 @@ class ThreeCanvas extends PureComponent {
         this.renderer.setSize(w, h)        
     }
 
+    shouldComponentUpdate() {
+        return false;
+    }
+
     componentWillReceiveProps(props) {
-        switch(props.lastAction) {
+        switch(store.getState().lastAction.type) {
             case "REMOVE_ITEM":
                 this.currentScene.removeItem(props.selectedItem)
                 break;
             case "EDIT_SELECTED_ITEM":
                 this.currentScene.updateConfig(props.selectedItem);
                 break
+            case "SET_TIME":
+                this.currentScene.setTime(props.time, props.playing)
+                break;
             case "CREATE_ITEM":
                 if(props.selectedItem.type === "SOUND") {
                     this.sound = new Sound(props.selectedItem, () => { this.audioLoaded = true;  addItem(this.sound.defaultConfig) })
@@ -55,7 +69,6 @@ class ThreeCanvas extends PureComponent {
                 }    
                 break; 
             default:
-                console.log("IN ->>>>> canvas/three.js:  unknown item added")
         }
     }
 
@@ -108,7 +121,9 @@ const mapStateToProps = state => {
         lastAction: state.items.lastAction,
         imagePath: state.items.imagePath,
         fps: state.globals.fps,
-        frameId: state.globals.fps
+        frameId: state.globals.frameId,
+        time: state.globals.time,
+        playing: state.globals.playing
     }
 }
 

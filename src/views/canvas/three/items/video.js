@@ -27,7 +27,7 @@ export default class Video extends BaseItem {
 
 
         this.texData = new Uint8Array(1280*720*3)
-        this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType);
+        this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType)
         this.tex.flipY = true
         
         this.mesh = new THREE.Mesh(
@@ -35,18 +35,27 @@ export default class Video extends BaseItem {
             new THREE.MeshBasicMaterial({map: this.tex})
         );
 
-        //this.mesh.rotation.y = Math.PI / 2;
-
         this.mesh.name = String(this.config.id)
 
         this.downloaded = false
         this.counter = 0;
+        this.ac = new AudioContext()
     }
 
     onDecoderReady = () => {
         if(this.bytesLoaded) {
             this.decoder.init(this.bytes, this.bytes.length, 0, this.decoderInitialized)
         }
+    }
+
+    convertTimeToFrame = (time) => Math.floor((time - (this.config.start/100)) * this.info.fps)
+
+    setTime = (time, playing) => {
+        const frameId = this.convertTimeToFrame(time)
+        this.decoder.setFrame(frameId)
+        this.time = time
+        if(playing)
+            this.play(time)
     }
 
     decoderInitialized = (info) => {
@@ -58,12 +67,8 @@ export default class Video extends BaseItem {
         this.mesh.material.map = this.tex
         this.tex.needsUpdate = true
 
-        //Show first frame
-        this.decoder.getFrame(this.onframe)
-        this.decoder.setFrame(0)
         this.mesh.name = String(this.config.id)
         setDisabled(false)
-        console.log("setdisabled false damnit")
 
         this.playing = true
         this.decoderReady = true
@@ -78,9 +83,10 @@ export default class Video extends BaseItem {
     }
 
     animate = (time) => {
+        
         this.time = time
         if(this.decoderReady) {
-            const frameId = Math.floor((time - (this.config.start/100)) * this.info.fps)
+            const frameId = this.convertTimeToFrame(time)
             if(frameId >= 0)
                 this.decoder.getFrame(this.onframe, frameId)
         }
@@ -96,16 +102,19 @@ export default class Video extends BaseItem {
 
     play = (time) => {
         this.time = time
-        this.decoder.setFrame(Math.floor((time - (this.config.start/100)) * this.info.fps))
-        console.log("play")
+
         this.playAudio = true
+       
         if(this.playAudio) {
+            if(this.bs)
+                this.bs.stop()
+
+            console.log("PLLLLLLLLLLLLLLLLLLLLLLLLLAY")
             // test audio ------- worksc
 
-            const idx = Math.floor((time-(this.config.start/100))*this.sampleRate)
-            this.ac = new AudioContext()
-            const left = this.sound.left.subarray(idx )
-            const right = this.sound.right.subarray(idx)
+            const idx = Math.floor((time-(this.config.start/100))*this.sound.bitrate)
+            const left = this.sound.left.subarray(idx, this.sound.left.length - 1)
+            const right = this.sound.right.subarray(idx, this.sound.right.length - 1)
             
             var ab = this.ac.createBuffer(2, left.length, this.sound.bitrate)
             this.bs = this.ac.createBufferSource();

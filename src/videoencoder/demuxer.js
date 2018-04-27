@@ -1,3 +1,5 @@
+import { ThemeOptions } from "material-ui/styles/createMuiTheme";
+
 //import WasmVideoEncoder from './WasmVideoEncoder'
 
 export default class Demuxer {
@@ -11,41 +13,59 @@ export default class Demuxer {
         this.extractAudio = 0
         
         this.frames = []
-        this.currentFrame = 0
+        this.currentFrameId = 0
+        this.lastRequestedFrameId = 0
+
+        this.cacheSize = 5
     }
+
     init = (buffer, bufferLength, keepAudio, oninit) => {
         this.worker.postMessage({action: "init", keepAudio: keepAudio})
         this.worker.postMessage(buffer, [buffer.buffer])
         this.oninit = oninit
     }
 
-
     setFrame = (frameId) => {
-        this.currentFrame = frameId
+        if(frameId < 0) {
+            frameId = 0;
+            console.log("FrameId set to less than 0, setting to 0") 
+        }
+
+        this.cacheDone = false;
+        this.frames = []
+
+        this.lastRequestedFrameId = this.currentFrameId = frameId
         this.worker.postMessage({action: "set_frame", value: frameId})
-
-        this.frames = this.frames.filter(e => e.frameId >= frameId && Math.abs(frameId - e.frameId) < 7)
+        this.fillCache()
     }
 
-    sendFrame = (pixels) => {
-        this.worker.postMessage(pixels, [pixels.buffer])
-    }
-
-    getFrame = (onframe, frameId) => {
-        this.frames = this.frames.filter(e => e.frameId >= frameId)
-        const frame = this.frames.find(e => e.frameId === frameId)
-        if (frame) {
-            onframe(frame.data, false)
+    fillCache = () => {
+        if(this.currentFrameId < this.lastRequestedFrameId + this.cacheSize) {
+            this.worker.postMessage({action: "get_frame", frameId: this.currentFrameId++})
             return
         }
 
-        this.worker.postMessage({action: "get_frame"})
-        this.onframe = onframe;
+        this.cacheDone = true      
+    }
+
+    getFrame = (onframe, frameId) => {
+        const frame = this.frames.find(e => e.frameId === frameId)
+        if(!frame) {
+            //console.log("no cached frame for frameId")
+            return
+        }
+        
+        onframe(frame.data, true)
+        this.frames = this.frames.filter(e => e.frameId >= frameId)
+
+        if(this.frames.length < this.cacheSize && this.cacheDone){
+            this.worker.postMessage({action: "get_frame", frameId: this.currentFrameId++})
+        }
     }
 
     close = (onsuccess) => { 
         this.worker.postMessage({action: "close"})
-    }
+    }   
     
     onmessage = (e) => {
         const { data } = e;
@@ -54,12 +74,14 @@ export default class Demuxer {
                 this.audioLeft = data
                 this.extractAudio--;
             }else if (this.extractAudio === 1) {
+                this.setFrame(0)
                 this.oninit({videoInfo: this.videoInfo, audio: {bitrate: this.bitrate, left: this.audioLeft, right: data}})
                 this.extractAudio--;
             }else {
-                this.frames.push({frameId: this.currentFrame, data: data })
-                this.currentFrame++;
-                this.onframe(data, true)
+                this.frames.push({frameId:  this.awaitedFrameId, data: data })
+                if(!this.cacheDone) {
+                    this.fillCache()
+                }
             }
         }
 
@@ -74,13 +96,14 @@ export default class Demuxer {
                     width: info[2],
                     height: info[3],
                     format: info[4],
-                    bitrate: info[5]
+                    bitrate: info[5],
+                    duration: info[6]
                 }
 
                 this.worker.postMessage( {action: "extract_audio"})
                 break;
             case "frame_decoded":
-                this.awaitingFrame = true
+                this.awaitedFrameId = data.frameId
                 break;
             case "audio_extracted":
                 this.bitrate = data.info

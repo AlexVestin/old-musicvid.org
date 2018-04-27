@@ -19,6 +19,9 @@ export default function playbackReducer(state = {
             case "SET_PLAYING":
                 return {...state, playing: action.payload}
             case "SET_TIME":
+                const f = Math.floor(action.payload * state.fps + 0.00001)
+                return {...state, time: action.payload, frameId: f, lastAction: "SET_TIME"}
+            case "INCREMENT_TIME":
                 const frameId = Math.floor(action.payload * state.fps + 0.00001)
                 return {...state, time: action.payload, frameId: frameId}
             case "SET_FPS":

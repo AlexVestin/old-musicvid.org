@@ -22,9 +22,6 @@ export default class DragControls extends THREE.EventDispatcher {
         var _intersection = new THREE.Vector3();
 
         var _selected = null, _hovered = null;
-
-        //
-
         var scope = this;
 
         function activate() {

@@ -26,13 +26,9 @@ export default class BaseItem {
     }
 
     //TODO remove // find better use
-    stop = () => {
-
-    }
-
-    play = () => {
-
-    }
+    stop = () => {}
+    play = () => {}
+    setTime = () => {}
 } 
 
 export class MeshItem extends BaseItem {

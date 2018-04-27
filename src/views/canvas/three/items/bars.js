@@ -23,7 +23,6 @@ export default class Bars extends MeshItem {
             this.bins.add(cube)
         }
 
-
         this.strength = 1
         this.config = this.getConfig(this.defaultConfig)
         this.mesh = this.bins

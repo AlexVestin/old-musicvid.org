@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import OrbitControls from './controls/orbitcontrols'
 
-
 import Bars from './items/bars'
 import Text3D from './items/text3d'
 import Water from './items/water';
@@ -71,6 +70,8 @@ export default class BarsScene {
 
         this.toRenderFG = []
         this.toRenderBG = []
+        this.renderingFG = []
+        this.renderingBG = []
     }
 
     add = (name, info) => {
@@ -116,8 +117,10 @@ export default class BarsScene {
         }
 
         this.backgroundItems.forEach(e => {e.stop()})
+        
+        this.renderingFG = []
+        this.renderingBG = []
         this.toRenderFG = []
-
         this.toRenderBG = []
     }
 
@@ -131,11 +134,12 @@ export default class BarsScene {
         }
     }
 
-    play = (time) => {
+    play = (time, update) => {
         this.items.forEach(e => {
             const { start, duration} = e.config
             if(start >= time || (start < time && (start + duration) > time)) {
                 this.toRenderFG.push(e)
+                if(update)e.play(time)
             }
         })
 
@@ -143,7 +147,7 @@ export default class BarsScene {
             const { start, duration} = e.config
             if(start >= time || (start < time && (start + duration) > time)) {
                 this.toRenderBG.push(e)
-
+                if(update)e.play(e)
             }
         })
     }
@@ -156,31 +160,45 @@ export default class BarsScene {
         it.updateConfig(config)
     }
 
-    addOrRemove(toRender, scene, time) {
-        var i = toRender.length
+    setTime = (time, playing) => {
+        this.backgroundItems.forEach(e => e.setTime(time))
+        this.items.forEach(e => e.setTime(time))
+        if(playing) {
+            this.play(time, playing)
+        }
+    }
+
+    addOrRemove(toRender, rendering, scene, time) {
+        var i = rendering.length
+        while (i--) {
+            const e = rendering[i]
+            const { start, duration } = e.config
+            if (time >= (start+duration) / 100) { 
+                rendering.splice(i, 1);
+                scene.remove(e.mesh)
+                e.stop()
+            } 
+        }
+        i = toRender.length
         while (i--) {
             const e = toRender[i]
             const { start, duration } = e.config
 
-            if (time >= (start+duration) / 100) { 
-                toRender.splice(i, 1);
-                scene.remove(e.mesh)
-                e.stop()
-                return
-            } 
             if(time >= (start / 100 ) && scene.getObjectByName(e.mesh.name) === undefined) {
+                toRender.splice(i, 1);
+                rendering.push(e)
                 scene.add(e.mesh)
-                e.play()
+                e.play(time)
             }
         }
     }
 
     animate = (time, frequencyBins) => {
-        this.addOrRemove(this.toRenderFG, this.scene, time)
-        this.addOrRemove(this.toRenderBG, this.backgroundScene, time)
+        this.addOrRemove(this.toRenderFG,  this.renderingFG, this.scene, time)
+        this.addOrRemove(this.toRenderBG,  this.renderingBG, this.backgroundScene, time)
         
-        this.toRenderFG.forEach(e => e.animate(time, frequencyBins))
-        this.toRenderBG.forEach(e => e.animate(time, frequencyBins))
+        this.renderingFG.forEach(e => e.animate(time, frequencyBins))
+        this.renderingBG.forEach(e => e.animate(time, frequencyBins))
     }
 
     render = (renderer) => {

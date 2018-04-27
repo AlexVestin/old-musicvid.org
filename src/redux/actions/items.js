@@ -7,6 +7,14 @@ export function selectItem(item){
     );  
 }
 
+export function setLastAction(item) {
+    store.dispatch({
+        type: "SET_LAST_ACTION",
+        payload: item,
+        } 
+    ); 
+}
+
 export function setSidebarWindowIndex(item) {
     store.dispatch({
         type: "SET_SIDEBAR_WINDOW_INDEX",

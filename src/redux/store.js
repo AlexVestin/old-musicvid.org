@@ -3,7 +3,12 @@ import {applyMiddleware, createStore, combineReducers} from "redux"
 import itemReducer from "./reducers/items"
 import playbackReducer from "./reducers/globals"
 
-const rootReducer = combineReducers({globals: playbackReducer, items: itemReducer})
+function lastAction(state = null, action) {
+    return action;
+}
 
+const rootReducer = combineReducers({globals: playbackReducer, items: itemReducer, lastAction: lastAction})
 
-export default createStore(rootReducer)
+const store = createStore(rootReducer)
+
+export default store

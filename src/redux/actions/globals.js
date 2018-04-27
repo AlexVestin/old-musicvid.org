@@ -1,4 +1,14 @@
 import store from '../store'
+import {setLastAction} from './items'
+
+export function incrementTime(item){
+    store.dispatch({
+        type: "INCREMENT_TIME",
+        payload: item
+        } 
+    );  
+}
+
 export function setTime(item){
     store.dispatch({
         type: "SET_TIME",
@@ -18,8 +28,8 @@ export function setSidebarWindowIndex(item) {
 export function togglePlaying(){
     store.dispatch({
         type: "TOGGLE_PLAYING",
-        } 
-    );  
+    } 
+);  
 }
 
 export function setPlaying(item){
@@ -27,7 +37,7 @@ export function setPlaying(item){
         type: "SET_PLAYING",
         payload: item
         } 
-    );  
+    );   
 }
 
 export function setDisabled(item){
