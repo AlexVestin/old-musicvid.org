@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
-import ScrollArea from './scrollarea'
+import ScrollArea2 from './scrollarea2'
 
 import classes from './playlist.css'
 import { connect } from 'react-redux'
@@ -19,22 +19,26 @@ class SimpleTabs extends React.PureComponent {
         height: 2000
     };
 
+
     handleChange = (event, value) => {
         this.setState({tabValue: value})
     };
 
     updateWindowDimensions = () => {
-        this.setState({ width: this.wrapperRef.offsetWidth - offset, height: this.wrapperRef.offsetHeight - offset})
+        this.setState({ width: this.wrapperRef.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
     componentDidMount() {
+
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.setState({ width: this.wrapperRef.offsetWidth - offset, height: this.wrapperRef.offsetHeight - offset})
+        this.setState({ width: this.wrapperRef.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
     render() {
         const value = this.props.sideBarWindowIndex
         const tabStyle = { minWidth: "30px", maxWidth: "100px", minHeight: "30px", height: "20px", maxHeight: "20px" }
+
+        console.log(this.state.width, this.state.height)
         if(value <= 2)
             this.tabValue = value
 
@@ -51,7 +55,7 @@ class SimpleTabs extends React.PureComponent {
                     </div>
                 </div>
                 <div className={classes.scrollbarWrapper}>
-                    <ScrollArea width={this.state.width} height={this.state.height} items={this.props.items}> </ScrollArea>
+                    <ScrollArea2 width={this.state.width} height={this.state.height} items={this.props.items}> </ScrollArea2>
                 </div>
             </div>
         );

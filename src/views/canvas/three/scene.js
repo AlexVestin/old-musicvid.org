@@ -100,6 +100,8 @@ export default class BarsScene {
             default:
                 console.log("unkown config type while adding object")
         }
+
+        console.log(this.backgroundItems)
         
     }
 
@@ -123,9 +125,9 @@ export default class BarsScene {
     }
 
     removeItem = (config) => {
-        let it = this.items.findIndex((e) => e.config.id === config.id.value)
+        let it = this.items.findIndex((e) => e.config.id === config.id)
         if(it === -1){
-            it = this.backgroundItems.findIndex((e) => e.config.id === config.id.value)
+            it = this.backgroundItems.findIndex((e) => e.config.id === config.id)
             this.backgroundItems = this.backgroundItems.filter((_,i) => i !== it)
         }else {
             this.items = this.items.filter((_, i) => i !== it)
@@ -151,11 +153,16 @@ export default class BarsScene {
     }
 
     updateConfig = (config) => {
-        let it = this.items.find((e) => e.config.id === config.id.value)
-        if(!it)
-            it = this.backgroundItems.find((e) => e.config.id === config.id.value)
-        
-        it.updateConfig(config)
+        let it = this.items.find((e) => e.config.id === config.id)
+        if(!it) {
+            it = this.backgroundItems.find((e, i) => e.config.id === config.id)
+        }   
+        if(it) {
+            it.updateConfig(config)
+        } else {
+            console.log("[scene.js] can't find id")
+        } 
+       
     }
 
     setTime = (time, playing) => {
@@ -171,7 +178,7 @@ export default class BarsScene {
         while (i--) {
             const e = rendering[i]
             const { start, duration } = e.config
-            if (time >= (start+duration) / 100) { 
+            if (time >= start+duration) { 
                 rendering.splice(i, 1);
                 scene.remove(e.mesh)
                 e.stop()
@@ -182,7 +189,7 @@ export default class BarsScene {
             const e = toRender[i]
             const { start } = e.config
 
-            if(time >= (start / 100 ) && scene.getObjectByName(e.mesh.name) === undefined) {
+            if(time >= start && scene.getObjectByName(e.mesh.name) === undefined) {
                 toRender.splice(i, 1);
                 rendering.push(e)
                 scene.add(e.mesh)

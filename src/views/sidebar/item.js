@@ -74,8 +74,9 @@ class Item extends React.Component {
         let values = {}
         const si = props.selectedItem
 
+
         Object.keys(si).map((key, index) => 
-            values[key] = this.state.values[key] !== (String(si[key].value) + ".") ? si[key].value : values[key] 
+            values[key] = this.state.values[key] !== (String(si[key]) + ".") ? si[key] : values[key] 
         )
         this.setState({values})
     
@@ -95,7 +96,7 @@ class Item extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const si = this.props.selectedItem;
+        const conf = this.props.selectedItem.defaultConfig;
 
 
         return (
@@ -103,25 +104,25 @@ class Item extends React.Component {
             <AppBar position="static" color="default">
                 <Toolbar>
                     <Typography variant="title" color="inherit">
-                        {this.props.selectedItem.name.value}
+                        {this.props.selectedItem.name}
                     </Typography>
                 </Toolbar>
             </AppBar>
 
             <List>
-                {Object.keys(si).map((key, index) => (
+                {Object.keys(conf).map((key, index) => (
                     <div key={key}>
-                        {si[key].show !== false &&
+                        {conf[key].show !== false &&
                         <ListItem  dense className={classes.listItem}>
-                        <Tooltip id="tooltip-top-start" title={si[key].tooltip} placement="right-end">
+                        <Tooltip id="tooltip-top-start" title={conf[key].tooltip} placement="right-end">
                             <TextField
                                 id={key}
                                 label={key}
                                 className={classes.textField}
                                 value={this.state.values[key]}
                                 margin="normal"
-                                onChange={this.handleChange({type: si[key].type, key: key})}
-                                disabled={!si[key].editable}
+                                onChange={this.handleChange({type: conf[key].type, key: key})}
+                                disabled={!conf[key].editable}
                             />
                         </Tooltip>
                         </ListItem>

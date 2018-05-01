@@ -7,6 +7,7 @@ const style = {
     backgroundColor: "#222222",
     minHeight: "15px",
     height: "15px",
+    width: "100%"
 }
 
 class Timeline extends PureComponent {
@@ -30,12 +31,12 @@ class Timeline extends PureComponent {
     onClick = (evt) => {
         const { scrollOffset } = this.props
         const [x, ] = this.getRelativeCoordinates(evt)
-        setTime(((x/this.props.zoomWidth) + (scrollOffset / this.props.zoomWidth)) / 100)
+        setTime(((x/this.props.zoomWidth) + (scrollOffset / this.props.zoomWidth)) / this.props.unitSize)
     }
 
     render() {
-        const { zoomWidth, time, scrollOffset } = this.props
-        const l =  (time * zoomWidth * 100) - 6 - scrollOffset
+        const { zoomWidth, time, scrollOffset, unitSize } = this.props
+        const l =  (time * zoomWidth * unitSize) - 6 - scrollOffset
         const m = l+6; const r = m +6;
 
         return(

@@ -68,10 +68,10 @@ export default class Text3D extends MeshItem{
     }
 
     updateConfig = (config) => {
-        const {text, fontSize } = this.config
-        this.config = this.getConfig(config)
+        const { text, fontSize } = this.config
+        this.getConfig(config)
 
-        if(text !== config.text.value || fontSize !== config.fontSize.value) {
+        if(text !== config.text || fontSize !== config.fontSize) {
             this.mesh = this.createTextMesh().then((mesh) => {this.mesh = mesh; this.update()})
         }else {
             this.update()

@@ -166,9 +166,9 @@ export default class Sound extends BaseItem {
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))
 
-                    that.defaultConfig.sampleRate.value = buffer.sampleRate
-                    that.defaultConfig.channels.value = buffer.numberOfChannels
-                    that.defaultConfig.duration.value = buffer.duration * 100
+                    that.defaultConfig.sampleRate = buffer.sampleRate
+                    that.defaultConfig.channels = buffer.numberOfChannels
+                    that.defaultConfig.duration = buffer.duration * 100
                                         
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2

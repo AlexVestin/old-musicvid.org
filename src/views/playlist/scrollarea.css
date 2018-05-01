@@ -4,9 +4,8 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    -ms-overflow-style: auto;
-    overflow: auto;
-    
+    max-width: 100%;
+    overflow: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -48,11 +47,8 @@
     background-color: black;
 }
 
-.group2 {
-    
-}
 
-.group2 .bars {
+.bars {
     width: 100%;
     height: 100%;
 }

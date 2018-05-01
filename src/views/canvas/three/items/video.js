@@ -8,19 +8,24 @@ import {setDisabled} from '../../../../redux/actions/globals'
 export default class Video extends BaseItem {
     constructor(name, config, sceneConfig) {
         super(name) 
-
-        this.mesh = {}
+        setDisabled(true)
         var fr = new FileReader()
-
         this.bytesLoaded = false
         fr.onload = () => {            
             this.bytes = new Uint8Array(fr.result)
             this.bytesLoaded = true
         }
-        
+
+        this.setupTexture()
         fr.readAsArrayBuffer(config.file) 
+
+        this.ac = new AudioContext()
         this.decoder = new Demuxer(this.onDecoderReady)
-        setDisabled(true)
+        this.playAudio = config.keepAudio
+        this.config.name = config.name
+    }
+
+    setupTexture = () => {
         this.texData = new Uint8Array(1280*720*3)
         this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType)
         this.tex.flipY = true
@@ -29,15 +34,9 @@ export default class Video extends BaseItem {
             new THREE.PlaneGeometry(2, 2, 0),
             new THREE.MeshBasicMaterial({map: this.tex})
         );
-
-        this.defaultConfig.name.value = config.name
-        this.mesh.name = String(this.config.id)
-        this.ac = new AudioContext()
-        this.playAudio = config.keepAudio
-    }
+    }   
 
     onDecoderReady = () => {
-        console.log(this.bytesLoaded)
         if(this.bytesLoaded) {
             this.decoder.init(this.bytes, this.bytes.length, this.playAudio, this.decoderInitialized)
             this.bytes = null
@@ -58,21 +57,17 @@ export default class Video extends BaseItem {
         this.info = info.videoInfo;
         this.sound = info.audio
         
-        this.defaultConfig.duration.value = this.info.duration * 100;
-        this.config = this.getConfig(this.defaultConfig)
-        
-        this.addItem(this.defaultConfig)        
+        this.config.duaration = this.info.duration * 100;
+        this.addItem(this.config)        
 
         this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
         this.tex.flipY = true
         this.mesh.material.map = this.tex
         this.tex.needsUpdate = true
 
-        this.mesh.name = String(this.config.id)
-        setDisabled(false)
-
         this.playing = true
         this.decoderReady = true
+        setDisabled(false)
     }
 
 
@@ -122,10 +117,5 @@ export default class Video extends BaseItem {
             this.bs.start(0);
         }
     }
-
-    updateConfig = (config) => {
-        this.config = this.getConfig(config)
-    }
-
 }
 

@@ -7,8 +7,8 @@ export default class Bars extends MeshItem {
         super("Bars")
         this.bins = new THREE.Group()
 
-        this.defaultConfig.type.value = "BARS"
-        this.defaultConfig.name.value = "Bars"
+        this.config.type = "BARS"
+        this.config.name = "Bars"
         this.defaultConfig.strength = {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true}
         this.defaultConfig.decreaseSpeed = {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true}
         this.defaultConfig.deltaRequired = {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true}       
@@ -23,9 +23,7 @@ export default class Bars extends MeshItem {
         }
 
         this.strength = 1
-        this.config = this.getConfig(this.defaultConfig)
-        this.mesh = this.bins
-        this.mesh.name = String(this.config.id)
+        this.getConfig(this.defaultConfig)
     }
 
     getCompoundBoundingBox = (items) => {

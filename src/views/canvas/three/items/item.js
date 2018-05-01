@@ -9,22 +9,25 @@ export default class BaseItem {
             id: {value: Math.floor(Math.random() * 10000000), type: "Number", show: false},
             type: {value: 0, type: "String",  show: false},
         }
-
-        this.config = this.getConfig(this.defaultConfig)
+    
+        this.config = {}
+        this.mesh = {}
         this.addItem = addItem
+        this.getConfig(this.defaultConfig)
+        console.log(this.config)
+        this.mesh.name = String(this.config.id)
     }
 
     updateConfig = (config) => {
-        this.config = this.getConfig(config)
+        this.config = config
     } 
 
     getConfig = (config) => {
-        let updatedObject = {}
         Object.keys(config).map((key, index) => {
-            updatedObject[key] = config[key].value
+            this.config[key] = config[key].value
         })
 
-        return updatedObject
+        this.config.defaultConfig = config
     }
 
     //TODO remove // find better use
@@ -41,5 +44,7 @@ export class MeshItem extends BaseItem {
         this.defaultConfig.layer = {value: "Scene", type: "String", tooltip: "", editable: true}
         this.defaultConfig.color = {value: "FFFFFF", type: "String", tooltip: "", editable: true}
         this.defaultConfig.scale = {value: 0.5, type: "Number", tooltip: "", editable: true}
+
+        this.getConfig(this.defaultConfig)
     }
 }
