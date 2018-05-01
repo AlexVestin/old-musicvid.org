@@ -18,9 +18,12 @@ export default class BackgroundImage extends BaseItem {
             this.mesh = backgroundMesh
             this.mesh.name = String(this.config.id) 
         }
+
+       
         
         fr.readAsDataURL(config.file) 
         this.config = this.getConfig(this.defaultConfig)
+        this.config.duration = 300;
     }
 
     updateConfig = (config) => {

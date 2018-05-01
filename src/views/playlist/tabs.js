@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
-import Typography from 'material-ui/Typography';
 import ScrollArea from './scrollarea'
 
 import classes from './playlist.css'
 import { connect } from 'react-redux'
-import { setSidebarWindowIndex } from '../../redux/actions/items'
 
 
 const offset = 65

@@ -1,15 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
+import List, { ListItem } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
-
-import FolderIcon from 'material-ui-icons/Folder';
 import Delete from 'material-ui-icons/Delete';
-import IconButton from 'material-ui/IconButton';
-
 import TextField from 'material-ui/TextField';
 
 import AppBar from 'material-ui/AppBar';
@@ -79,9 +74,9 @@ class Item extends React.Component {
         let values = {}
         const si = props.selectedItem
 
-        Object.keys(si).map((key, index) => {
-            values[key] =  this.state.values[key] !== (String(si[key].value) + ".") ? si[key].value : values[key] 
-        })
+        Object.keys(si).map((key, index) => 
+            values[key] = this.state.values[key] !== (String(si[key].value) + ".") ? si[key].value : values[key] 
+        )
         this.setState({values})
     
     }
@@ -152,7 +147,7 @@ class Item extends React.Component {
     }
 }
 
-Item .propTypes = {
+Item.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 

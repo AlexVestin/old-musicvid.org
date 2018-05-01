@@ -22,7 +22,7 @@ class ThreeCanvas extends Component {
         renderer.autoClear = false;
 
 
-        const unsubscribe = store.subscribe(this.handleStoreChange)
+        this.unsubscribe = store.subscribe(this.handleStoreChange)
         this.renderer = renderer
 
         this.currentScene = new BarsScene(this.width, this.height, renderer)
@@ -33,6 +33,10 @@ class ThreeCanvas extends Component {
 
         this.audioLoaded = false
         this.mount = mount 
+    }
+
+    componentWillUnmount(){
+        this.unsubscribe()
     }
     
     handleStoreChange = () => {
@@ -79,7 +83,7 @@ class ThreeCanvas extends Component {
     }
 
     play = (time) => {
-        const {fps, frameId} = this.props
+        const {fps } = this.props
         this.currentScene.play(time)
         
         if(this.audioLoaded)

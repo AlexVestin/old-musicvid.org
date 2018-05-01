@@ -1,11 +1,9 @@
 import React, { PureComponent } from 'react'
 import Draggable from 'react-draggable'
 
-import classes from "./clip.css"
 import { editItem, selectItem } from '../../redux/actions/items'
 
 const colors = ["green", "red", "brown", "blue"]
-const style = {}
 
 export default class Clip extends PureComponent {
     constructor(props) {

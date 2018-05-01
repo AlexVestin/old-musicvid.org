@@ -1,5 +1,4 @@
 import store from '../store'
-import {setLastAction} from './items'
 
 export function incrementTime(item){
     store.dispatch({

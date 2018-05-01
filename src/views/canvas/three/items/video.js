@@ -1,6 +1,5 @@
 import BaseItem from "./item";
 import * as THREE from 'three'
-import FileSaver from 'file-saver'
 import Demuxer from '../../../../videoencoder/demuxer.js'
 
 import {setDisabled} from '../../../../redux/actions/globals'

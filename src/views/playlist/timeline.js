@@ -29,7 +29,7 @@ class Timeline extends PureComponent {
 
     onClick = (evt) => {
         const { scrollOffset } = this.props
-        const [x, y] = this.getRelativeCoordinates(evt)
+        const [x, ] = this.getRelativeCoordinates(evt)
         setTime(((x/this.props.zoomWidth) + (scrollOffset / this.props.zoomWidth)) / 100)
     }
 

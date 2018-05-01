@@ -1,6 +1,5 @@
 
 import * as THREE from 'three'
-import DragControls from '../controls/dragcontrols'
 import { MeshItem } from './item';
 
 export default class Bars extends MeshItem {

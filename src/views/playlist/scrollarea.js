@@ -77,7 +77,7 @@ class ScrollArea extends PureComponent {
 
     onClickVertical = (evt) => {
         const { gridHeight } = this.state
-        var [x, y] = this.getRelativeCoordinates(evt)
+        var [, y] = this.getRelativeCoordinates(evt)
         y = y >= 25 ? y - 25 : 0;
         y = y < this.props.width ? y : this.props.width
         this.scrollAreaRef.scrollTop = (y/this.props.height)*gridHeight
@@ -85,7 +85,7 @@ class ScrollArea extends PureComponent {
 
     onClickHorizontal = (evt) => {
         const { gridWidth } = this.state
-        var [x, y] = this.getRelativeCoordinates(evt)
+        var [x, ] = this.getRelativeCoordinates(evt)
         x = x >= 25 ? x - 25 : 0;
         x = x < this.props.width ? x : this.props.width
 
@@ -108,7 +108,6 @@ class ScrollArea extends PureComponent {
     }
 
     zoomOut = () => {
-        let z = 
         this.setState({
             zoomWidth: this.state.zoomWidth + 0.12,
         })
@@ -124,8 +123,8 @@ class ScrollArea extends PureComponent {
 
     render() {
         const dragHandlers = {onStart: this.onDragStart, onStop: this.onDragEnd}; 
-        const { horizontalPosition, gridWidth, zoomWidth, zoomHeight, gridHeight } = this.state
-        const { width, height } = this.props
+        const { horizontalPosition, gridWidth, zoomWidth, gridHeight } = this.state
+        const { width } = this.props
 
         return (
             <div>

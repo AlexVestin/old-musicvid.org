@@ -3,9 +3,6 @@ import SimpleTabs from "./tabs"
 import classes from "./sidebar.css"
 
 export default class Sidebar extends PureComponent {
-    constructor(props){
-        super(props)
-    }
 
     render() {
         return ( 

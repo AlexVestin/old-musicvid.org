@@ -1,5 +1,3 @@
-import { ThemeOptions } from "material-ui/styles/createMuiTheme";
-import { SIGPROF, ENGINE_METHOD_DIGESTS } from "constants";
 
 //import WasmVideoEncoder from './WasmVideoEncoder'
 
@@ -72,7 +70,6 @@ export default class Demuxer {
     
     onmessage = (e) => {
         const { data } = e;
-        console.log("data received ", data)
 
         if(data.action === undefined) {
             if(this.keepAudio && this.extractAudio === 2) {
@@ -104,11 +101,9 @@ export default class Demuxer {
                     bitrate: info[5],
                     duration: info[6]
                 }
-
                 
                 if(this.keepAudio) {
                     this.worker.postMessage( {action: "extract_audio"})
-                    console.log("extracting audio")
                 }else  {
                     this.setFrame(0)
                     this.oninit({videoInfo: this.videoInfo})

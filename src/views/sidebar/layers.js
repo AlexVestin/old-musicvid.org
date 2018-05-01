@@ -53,7 +53,7 @@ class LayerList  extends React.Component {
   }
 }
 
-LayerList .propTypes = {
+LayerList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 

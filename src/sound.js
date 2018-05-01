@@ -6,7 +6,7 @@ export default class Sound extends BaseItem {
     constructor(config, onload){
         super(config.file.name)
 
-        this.defaultConfig.sampleRate = {value: 0, type: "Number", tooltip: "", editable: false},
+        this.defaultConfig.sampleRate = {value: 0, type: "Number", tooltip: "", editable: false}
         this.defaultConfig.channels = {value: 0, type: "Number",  tooltip: "", editable: false}
         this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: false}
 
@@ -91,13 +91,12 @@ export default class Sound extends BaseItem {
 
     getFrequencyData2 = (time) => {
         let  bins = []
-        const size = 32
 
         if(this.left !== undefined) {
             let windowSize = this.fftSize;
             let idx = Math.floor(time * this.sampleRate)
             let data = this.left.subarray(idx, idx + windowSize)
-            let audio_p, size_p, size = 0;
+            let audio_p, size = 0;
             let fftData
             try {   
                 audio_p = this.Module._malloc(windowSize*4);
@@ -140,7 +139,7 @@ export default class Sound extends BaseItem {
             let idx = Math.floor(time * this.sampleRate)
 
             let data = this.left.subarray(idx, idx + windowSize)
-            let audio_p, size_p, size = 0;
+            let audio_p;
 
             try {   
                 audio_p = this.Module._malloc(windowSize*4);

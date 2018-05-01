@@ -29,5 +29,4 @@ export default function playbackReducer(state = {
             default:
                 return state
         }
-    return state
 }

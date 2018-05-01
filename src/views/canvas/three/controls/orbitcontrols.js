@@ -329,6 +329,8 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 					v.setFromMatrixColumn( objectMatrix, 0 );
 					v.crossVectors( scope.object.up, v );
 					break;
+				default:
+				
 			}
 			v.multiplyScalar( distance );
 			panOffset.add( v );
@@ -555,6 +557,8 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 				pan( - scope.keyPanSpeed, 0 );
 				scope.update();
 				break;
+			default:
+
 
 		}
 
@@ -684,24 +688,16 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 				break;
 
 			case scope.mouseButtons.ZOOM:
-
 				if ( scope.enableZoom === false ) return;
-
 				handleMouseDownDolly( event );
-
 				state = STATE.DOLLY;
-
 				break;
-
 			case scope.mouseButtons.PAN:
-
 				if ( scope.enablePan === false ) return;
-
 				handleMouseDownPan( event );
-
 				state = STATE.PAN;
-
 				break;
+			default:
 
 		}
 
@@ -741,12 +737,11 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 				break;
 
 			case STATE.PAN:
-
 				if ( scope.enablePan === false ) return;
-
 				handleMouseMovePan( event );
-
 				break;
+			default:
+
 
 		}
 

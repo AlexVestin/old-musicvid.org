@@ -60,7 +60,7 @@ class ResourceList extends React.Component {
   }
 }
 
-ResourceList .propTypes = {
+ResourceList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
