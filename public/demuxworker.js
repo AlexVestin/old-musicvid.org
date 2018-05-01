@@ -32,9 +32,10 @@ function extractAudio() {
     var bufferSize = Module.HEAP32[size_p >> 2]
     var bitrate  = Module.HEAP32[bitrate_p >> 2]
     
+    console.log("starting audio extraction")
     // Cant send WASM array, neeed to copy
     const data = new Uint8Array( Module.HEAPU8.subarray(buffer_p, buffer_p + bufferSize * 2))
-
+    console.log("audio extraction done")
     const right = new Float32Array( data.buffer.slice(), 0, bufferSize / 4) 
     const left = new Float32Array( data.buffer.slice(), bufferSize,  bufferSize / 4)
     postMessage({action: "audio_extracted", info: bitrate})

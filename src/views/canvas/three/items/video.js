@@ -35,10 +35,11 @@ export default class Video extends BaseItem {
 
         this.mesh.name = String(this.config.id)
         this.ac = new AudioContext()
-        this.playAudio = false
+        this.playAudio = true
     }
 
     onDecoderReady = () => {
+        console.log(this.bytesLoaded)
         if(this.bytesLoaded) {
             this.decoder.init(this.bytes, this.bytes.length, this.playAudio, this.decoderInitialized)
             this.bytes = null
