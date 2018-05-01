@@ -1,4 +1,5 @@
 import { ThemeOptions } from "material-ui/styles/createMuiTheme";
+import { SIGPROF, ENGINE_METHOD_DIGESTS } from "constants";
 
 //import WasmVideoEncoder from './WasmVideoEncoder'
 
@@ -23,6 +24,8 @@ export default class Demuxer {
         this.worker.postMessage({action: "init", keepAudio: keepAudio})
         this.worker.postMessage(buffer, [buffer.buffer])
         this.oninit = oninit
+        this.keepAudio = keepAudio
+
     }
 
     setFrame = (frameId) => {
@@ -69,11 +72,13 @@ export default class Demuxer {
     
     onmessage = (e) => {
         const { data } = e;
+        console.log("data received ", data)
+
         if(data.action === undefined) {
-            if(this.extractAudio === 2) {
+            if(this.keepAudio && this.extractAudio === 2) {
                 this.audioLeft = data
                 this.extractAudio--;
-            }else if (this.extractAudio === 1) {
+            }else if (this.keepAudio && this.extractAudio === 1) {
                 this.setFrame(0)
                 this.oninit({videoInfo: this.videoInfo, audio: {bitrate: this.bitrate, left: this.audioLeft, right: data}})
                 this.extractAudio--;
@@ -100,7 +105,14 @@ export default class Demuxer {
                     duration: info[6]
                 }
 
-                this.worker.postMessage( {action: "extract_audio"})
+                
+                if(this.keepAudio) {
+                    this.worker.postMessage( {action: "extract_audio"})
+                    console.log("extracting audio")
+                }else  {
+                    this.setFrame(0)
+                    this.oninit({videoInfo: this.videoInfo})
+                }
                 break;
             case "frame_decoded":
                 this.awaitedFrameId = data.frameId

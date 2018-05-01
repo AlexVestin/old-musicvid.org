@@ -24,8 +24,6 @@ export default class Video extends BaseItem {
         this.decoder = new Demuxer(this.onDecoderReady)
 
         setDisabled(true)
-
-
         this.texData = new Uint8Array(1280*720*3)
         this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType)
         this.tex.flipY = true
@@ -36,15 +34,14 @@ export default class Video extends BaseItem {
         );
 
         this.mesh.name = String(this.config.id)
-
-        this.downloaded = false
-        this.counter = 0;
         this.ac = new AudioContext()
+        this.playAudio = false
     }
 
     onDecoderReady = () => {
         if(this.bytesLoaded) {
-            this.decoder.init(this.bytes, this.bytes.length, 0, this.decoderInitialized)
+            this.decoder.init(this.bytes, this.bytes.length, this.playAudio, this.decoderInitialized)
+            this.bytes = null
         }
     }
 
@@ -59,7 +56,9 @@ export default class Video extends BaseItem {
     }
 
     decoderInitialized = (info) => {
+        console.log(info)
         this.info = info.videoInfo;
+        
         this.sound = info.audio
 
         this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
@@ -103,14 +102,10 @@ export default class Video extends BaseItem {
     play = (time) => {
         this.time = time
 
-        this.playAudio = true
        
         if(this.playAudio) {
             if(this.bs)
                 this.bs.stop()
-
-            console.log("PLLLLLLLLLLLLLLLLLLLLLLLLLAY")
-            // test audio ------- worksc
 
             const idx = Math.floor((time-(this.config.start/100))*this.sound.bitrate)
             const left = this.sound.left.subarray(idx, this.sound.left.length - 1)

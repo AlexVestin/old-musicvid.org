@@ -79,7 +79,7 @@ class AddResourceOptions extends React.Component {
       <div className={classes.root}>
         <input accept="audio/*" type="file" ref={(ref) => this.uploadSound = ref} style={{ display: 'none' }} />
         <input accept="image/*" type="file" ref={(ref) => this.uploadImage = ref} style={{ display: 'none' }} />
-        <input accept="video/*" type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
+        <input accept="video/mp4,video/mkv,video/x-m4v,video/*" type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
                         
         <List>
             <ListItem dense button className={classes.listItem}>
