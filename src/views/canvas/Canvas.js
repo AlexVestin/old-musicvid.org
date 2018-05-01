@@ -75,7 +75,7 @@ class Canvas extends Component {
             <b>{this.state.info}</b>
             <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
             <PlaybackPanel disabled={this.props.disabled} width={width} playing={playing} time={time} play={this.play} stop={this.stop} ></PlaybackPanel>
-            <a ariaLabel="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
+            <a aria-label="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
         </div>
       )
     }

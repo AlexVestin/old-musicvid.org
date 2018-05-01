@@ -93,13 +93,14 @@ export default class Demuxer {
                 break;
             case "init":
                 const { info } = data
+                console.log(info)
                 this.videoInfo = {
                     fps: info[0] / info[1],
                     width: info[2],
                     height: info[3],
                     format: info[4],
                     bitrate: info[5],
-                    duration: info[6]
+                    duration: info[6] / 1000000 // ffmpeg AV_TIMESCALE_SOMETHING
                 }
                 
                 if(this.keepAudio) {

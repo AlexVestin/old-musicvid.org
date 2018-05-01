@@ -1,3 +1,4 @@
+import {addItem} from '../../../../redux/actions/items'
 
 export default class BaseItem {
     constructor(name) {
@@ -10,6 +11,7 @@ export default class BaseItem {
         }
 
         this.config = this.getConfig(this.defaultConfig)
+        this.addItem = addItem
     }
 
     updateConfig = (config) => {
@@ -41,4 +43,3 @@ export class MeshItem extends BaseItem {
         this.defaultConfig.scale = {value: 0.5, type: "Number", tooltip: "", editable: true}
     }
 }
-

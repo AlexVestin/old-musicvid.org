@@ -8,7 +8,6 @@ import BackgroundImage from './items/backgroundimage'
 import Video from './items/video'
 
 
-import {addItem} from '../../../redux/actions/items'
 
 export default class BarsScene {
     constructor(width, height, renderer){
@@ -101,8 +100,7 @@ export default class BarsScene {
             default:
                 console.log("unkown config type while adding object")
         }
-
-        addItem(item.defaultConfig)
+        
     }
 
     stop = () => {
@@ -182,7 +180,7 @@ export default class BarsScene {
         i = toRender.length
         while (i--) {
             const e = toRender[i]
-            const { start, duration } = e.config
+            const { start } = e.config
 
             if(time >= (start / 100 ) && scene.getObjectByName(e.mesh.name) === undefined) {
                 toRender.splice(i, 1);

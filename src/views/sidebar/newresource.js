@@ -7,6 +7,8 @@ import Button from 'material-ui/Button'
 import { createItem, setSidebarWindowIndex } from '../../redux/actions/items'
 import { connect } from 'react-redux'
 
+import Modal from './modal'
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -16,10 +18,16 @@ const styles = theme => ({
 });
 
 class AddResourceOptions extends React.Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {modalOpen: false}
+
+    }
     back = () => {
         setSidebarWindowIndex(0)
     };
-
 
     componentDidMount() {
 
@@ -27,7 +35,7 @@ class AddResourceOptions extends React.Component {
             let file = input.files[0]
             let name = input.files[0].name
 
-            createItem({type, file, name})
+            createItem({type, file, name, keepAudio: this.keepAudio})
         }
 
         this.uploadImage.onchange = () => {
@@ -43,6 +51,12 @@ class AddResourceOptions extends React.Component {
         }
     }
 
+    loadVideo = (keepAudio) => {
+        this.uploadVideo.click();
+        this.keepAudio = keepAudio
+        this.setState({modalOpen: false})
+    }
+
     add = (e) => {
         switch(e) {
             case 0:
@@ -52,7 +66,8 @@ class AddResourceOptions extends React.Component {
                 this.uploadImage.click()
                 break;
             case 2:
-                this.uploadVideo.click();
+                this.setState({modalOpen: true})
+                
                 break;
             case 3:
                 console.log("add 2d text")
@@ -73,7 +88,8 @@ class AddResourceOptions extends React.Component {
         <input accept="audio/*" type="file" ref={(ref) => this.uploadSound = ref} style={{ display: 'none' }} />
         <input accept="image/*" type="file" ref={(ref) => this.uploadImage = ref} style={{ display: 'none' }} />
         <input accept="video/mp4,video/mkv,video/x-m4v,video/*" type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
-                        
+
+        <Modal onChoice={this.loadVideo} onCancel={() => this.setState({modalOpen: false})} open={this.state.modalOpen}></Modal>        
         <List>
             <ListItem dense button className={classes.listItem}>
                 <ListItemText primary={`Add sound`} onClick={() => this.add(0)}/>

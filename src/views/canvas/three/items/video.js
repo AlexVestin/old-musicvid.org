@@ -19,9 +19,7 @@ export default class Video extends BaseItem {
         }
         
         fr.readAsArrayBuffer(config.file) 
-        this.config = this.getConfig(this.defaultConfig)
         this.decoder = new Demuxer(this.onDecoderReady)
-
         setDisabled(true)
         this.texData = new Uint8Array(1280*720*3)
         this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType)
@@ -32,9 +30,10 @@ export default class Video extends BaseItem {
             new THREE.MeshBasicMaterial({map: this.tex})
         );
 
+        this.defaultConfig.name.value = config.name
         this.mesh.name = String(this.config.id)
         this.ac = new AudioContext()
-        this.playAudio = true
+        this.playAudio = config.keepAudio
     }
 
     onDecoderReady = () => {
@@ -56,10 +55,13 @@ export default class Video extends BaseItem {
     }
 
     decoderInitialized = (info) => {
-        console.log(info)
         this.info = info.videoInfo;
-        
         this.sound = info.audio
+        
+        this.defaultConfig.duration.value = this.info.duration * 100;
+        this.config = this.getConfig(this.defaultConfig)
+        
+        this.addItem(this.defaultConfig)        
 
         this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
         this.tex.flipY = true
@@ -82,7 +84,6 @@ export default class Video extends BaseItem {
     }
 
     animate = (time) => {
-        
         this.time = time
         if(this.decoderReady) {
             const frameId = this.convertTimeToFrame(time)
