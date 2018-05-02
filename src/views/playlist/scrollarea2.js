@@ -191,7 +191,7 @@ class ScrollArea2 extends PureComponent {
         return (
             <div>
                 <div className={classes.group1}>
-                <div className={classes.button}></div>
+                    <div className={classes.button}></div>
                     <div className={classes.horizontalTrack} onClick={this.onClickHorizontal}>
 
                         <Draggable
@@ -206,16 +206,21 @@ class ScrollArea2 extends PureComponent {
                     </div>
                     <div className={classes.button}></div>
                 </div>
-                <Timeline 
-                    scrollPosition={horizontalPosition.x} 
-                    zoomWidth={zoomWidth} 
-                    onWheel={this.onWheel}
-                    viewport={viewport[0] * maxNrUnits*this.unitSize * zoomWidth}
-                    unitSize={this.unitSize}
-                    maxNrUnits={maxNrUnits}
-                >
-                </Timeline>
 
+                <div style={{display: "flex", flexDirection: "row"}}>
+                    <Timeline 
+                        scrollPosition={horizontalPosition.x} 
+                        zoomWidth={zoomWidth} 
+                        onWheel={this.onWheel}
+                        viewport={viewport}
+                        left={viewport[0] * maxNrUnits*this.unitSize * zoomWidth}
+                        unitSize={this.unitSize}
+                        maxNrUnits={maxNrUnits}
+                    >
+                    </Timeline>
+
+                    <div className={classes.button} style={{backgroundColor: "black", width: 15, height: 20}}></div>
+                </div>
                 <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} >
                     <div style={{width:"100%", display: "flex", flexDirection: "row", height: "100%"}}>
                         <div className={classes.bars}  onWheel={this.gridScrolled} >
@@ -247,7 +252,7 @@ class ScrollArea2 extends PureComponent {
                                 <svg style={{position: "absolute", left: gridOffset, zIndex: 0}} width={width+rOffset} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
                                     <defs>
                                         <pattern id="grid" width={rOffset} height={30 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
-                                            <path d={"M "+String(rOffset)+" 0 L 0 0 0 "+String(80*this.state.zoomHeight)} fill="none" stroke="gray" strokeWidth="1" />
+                                            <path d={"M "+String(rOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
                                         </pattern>
                                     </defs>
                                     <rect width="100%" height="100%" fill="url(#grid)" />

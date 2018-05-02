@@ -3,6 +3,15 @@ import Button from 'material-ui/Button'
 
 export default class PlaybackPanel extends PureComponent {
 
+    convertTime = (sec) => {
+        var min = Math.floor(sec/60);
+        (min >= 1) ? sec = sec - (min*60) : min = '00';
+        (sec < 1) ? sec='00' : void 0;
+
+        (min.toString().length == 1) ? min = '0'+min : void 0;    
+        (sec.toString().length == 1) ? sec = '0'+sec : void 0;    
+        return min+':'+sec;
+    }
     render() {
         return(
             <div style={{display: "flex", flexDirection: "column", backgroundColor: "c3c3c3"}}>
@@ -12,9 +21,9 @@ export default class PlaybackPanel extends PureComponent {
 
                 <div style={{display: "flex", flexDirection: "row"}}>
                     <div style={{position: "absolute", margin: 8}}>
-                        {String(this.props.time).substring(0, 4)}
+                        {this.convertTime(this.props.time).substring(0, 7)}
                     </div>
-                    <div style={{marginLeft: 50}}>
+                    <div style={{marginLeft: 85}}>
                         <Button disabled={this.props.disabled} onClick={this.props.play}>{this.props.playing ? "Pause" : "Play"}</Button> 
                         <Button disabled={this.props.disabled} onClick={this.props.stop}>Stop</Button>      
                     </div>         

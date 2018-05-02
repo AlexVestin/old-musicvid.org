@@ -8,14 +8,12 @@ import Playlist from './views/playlist/Playlist'
 class App extends Component {
   render() {
     return (
-
       <div className={classes.pageWrapper}>
       <div className={classes.header}></div>
       <div className={classes.wrapper}>
         
           <Sidebar></Sidebar>
           <div className={classes.content_wrapper}>
-            <div className={classes.content_header}></div>
             <Canvas></Canvas>
             <Playlist className={classes.content_footer}></Playlist>
         </div>
