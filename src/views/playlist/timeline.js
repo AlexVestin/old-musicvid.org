@@ -29,19 +29,21 @@ class Timeline extends PureComponent {
     }
 
     onClick = (evt) => {
-        const { scrollOffset } = this.props
+        const { viewport, zoomWidth, unitSize, maxNrUnits } = this.props
         const [x, ] = this.getRelativeCoordinates(evt)
-        setTime(((x/this.props.zoomWidth) + (scrollOffset / this.props.zoomWidth)) / this.props.unitSize)
+
+        const t = x/(zoomWidth * unitSize) + viewport / (zoomWidth * unitSize)
+        setTime(t)
     }
 
     render() {
-        const { zoomWidth, time, scrollOffset, unitSize } = this.props
-        const l =  (time * zoomWidth * unitSize) - 6 - scrollOffset
+        const { zoomWidth, time, scrollOffset, unitSize, viewport } = this.props
+        const l =  (time * zoomWidth * unitSize) - 6 - (viewport)
         const m = l+6; const r = m +6;
 
         return(
             <div style={style} onWheel={this.props.onWheel} onClick={this.onClick}>
-            <svg height="20" width="100%" style={{position:"absolute", zIndex: 1000}}>
+            <svg height="20" width="100%" style={{position:"absolute", zIndex: 1000, pointerEvents: "none"}}>
                 <polygon points={`${l},8 ${m},16 ${r},8`} style={{fill: "white", stroke: "gray", strokeWidth:1 }}/>
             </svg>
         </div>

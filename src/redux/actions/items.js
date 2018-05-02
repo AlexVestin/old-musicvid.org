@@ -46,7 +46,7 @@ export function editItem(item){
     store.dispatch({
         type: "EDIT_SELECTED_ITEM",
         key: item.key,
-        value: item.value
+        value: item.value,
     });  
 }
 

@@ -91,7 +91,6 @@ export default class BarsScene {
             case "WATER":
                 item = new Water(info, this.sceneConfig)
                 this.items.push(item)
-                
                 break;
             case "VIDEO":
                 item = new Video(name, info, this.backgroundScene)
@@ -100,8 +99,6 @@ export default class BarsScene {
             default:
                 console.log("unkown config type while adding object")
         }
-
-        console.log(this.backgroundItems)
         
     }
 
@@ -112,7 +109,6 @@ export default class BarsScene {
         }
 
         while(this.backgroundScene.children.length > 0){ 
-            
             this.backgroundScene.remove(this.backgroundScene.children[0]); 
         }
 
@@ -160,17 +156,17 @@ export default class BarsScene {
         if(it) {
             it.updateConfig(config)
         } else {
-            console.log("[scene.js] can't find id")
+            console.log("[scene.js] can't find id", config, this.items)
         } 
        
     }
 
     setTime = (time, playing) => {
-        this.backgroundItems.forEach(e => e.setTime(time))
-        this.items.forEach(e => e.setTime(time))
-        if(playing) {
-            this.play(time, playing)
-        }
+        this.backgroundItems.forEach(e => e.setTime(time, playing))
+        this.items.forEach(e => e.setTime(time, playing))
+
+        if(playing)
+            this.play(time)
     }
 
     addOrRemove(toRender, rendering, scene, time) {

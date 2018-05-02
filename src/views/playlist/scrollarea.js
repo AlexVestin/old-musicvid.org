@@ -167,7 +167,6 @@ class ScrollArea extends PureComponent {
                             <div className={classes.grid} ref={ref => this.gridRef = ref}>
                                 {this.props.items.map((item, i) => {
                                     const { start, duration } = item
-                                    console.log("--", rOffset * start, viewport[0], (horizontalPosition.x / this.props.width) * 60)
                                     if( (start * rOffset) < viewport[2] && (start + duration) * rOffset >= viewport[0] && true) {
                                         return (
                                         

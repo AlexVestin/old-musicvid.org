@@ -9,7 +9,8 @@ export default function itemsReducer(state = {
             case "SET_SIDEBAR_WINDOW_INDEX":
                 return {...state, sideBarWindowIndex: action.payload}
             case "SELECT_ITEM":
-                return {...state, selectedItem: action.payload, sideBarWindowIndex: 6}
+                const item = state.items.find((e) => action.payload.id === e.id)
+                return {...state, selectedItem: item, sideBarWindowIndex: 6}
             case "CREATE_ITEM":
                 return {...state, selectedItem: action.payload}
             case "ADD_ITEM":
@@ -23,11 +24,12 @@ export default function itemsReducer(state = {
                     [action.key]: action.value
                 })
 
-                console.log(updatedItem)
-                const idx = state.items.findIndex((e) => state.selectedItem.name === e.name)
+                const idx = state.items.findIndex((e) => state.selectedItem.id === e.id)
+                const prevState = [...state.items]
+                const items = [...prevState.slice(0,idx), updatedItem, ...prevState.slice(idx+1)]
                 return {
                     ...state,
-                    items: [...state.items.splice(0, idx), updatedItem, ...state.items.splice(idx+1)], 
+                    items: items, 
                     selectedItem: updatedItem
                 }
             default:

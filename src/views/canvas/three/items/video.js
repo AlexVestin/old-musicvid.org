@@ -2,13 +2,11 @@ import BaseItem from "./item";
 import * as THREE from 'three'
 import Demuxer from '../../../../videoencoder/demuxer.js'
 
-import {setDisabled} from '../../../../redux/actions/globals'
 
 
 export default class Video extends BaseItem {
     constructor(name, config, sceneConfig) {
         super(name) 
-        setDisabled(true)
         var fr = new FileReader()
         this.bytesLoaded = false
         fr.onload = () => {            
@@ -43,7 +41,7 @@ export default class Video extends BaseItem {
         }
     }
 
-    convertTimeToFrame = (time) => Math.floor((time - (this.config.start/100)) * this.info.fps)
+    convertTimeToFrame = (time) => Math.floor((time*this.info.fps) - (this.config.start * this.info.fps))
 
     setTime = (time, playing) => {
         const frameId = this.convertTimeToFrame(time)
@@ -57,9 +55,8 @@ export default class Video extends BaseItem {
         this.info = info.videoInfo;
         this.sound = info.audio
         
-        this.config.duaration = this.info.duration * 100;
-        this.addItem(this.config)        
-
+        this.config.duaration = this.info.duration;
+              
         this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
         this.tex.flipY = true
         this.mesh.material.map = this.tex
@@ -67,7 +64,9 @@ export default class Video extends BaseItem {
 
         this.playing = true
         this.decoderReady = true
-        setDisabled(false)
+
+        this.config.duration = this.info.duration
+        this.addItem() 
     }
 
 
@@ -82,7 +81,8 @@ export default class Video extends BaseItem {
         this.time = time
         if(this.decoderReady) {
             const frameId = this.convertTimeToFrame(time)
-            if(frameId >= 0)
+
+            if(frameId >= 0 && frameId < this.info.fps * this.info.duration)
                 this.decoder.getFrame(this.onframe, frameId)
         }
         
@@ -103,7 +103,7 @@ export default class Video extends BaseItem {
             if(this.bs)
                 this.bs.stop()
 
-            const idx = Math.floor((time-(this.config.start/100))*this.sound.bitrate)
+            const idx = Math.floor((time-this.config.start)*this.sound.bitrate)
             const left = this.sound.left.subarray(idx, this.sound.left.length - 1)
             const right = this.sound.right.subarray(idx, this.sound.right.length - 1)
             

@@ -1,4 +1,4 @@
-import BaseItem from "./views/canvas/three/items/item";
+import BaseItem from "./item";
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -8,7 +8,7 @@ export default class Sound extends BaseItem {
 
         this.defaultConfig.sampleRate = {value: 0, type: "Number", tooltip: "", editable: false}
         this.defaultConfig.channels = {value: 0, type: "Number",  tooltip: "", editable: false}
-        this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: false}
+        this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: true}
 
         this.onload = onload
         this.soundDataBuffer = []
@@ -26,7 +26,7 @@ export default class Sound extends BaseItem {
 
         this.loadSound(config.file, (data) => this.fftData = data)
 
-
+        this.getConfig(this.defaultConfig)
         this.ac = new AudioContext()
         this.lastIdx = -1
     }
@@ -154,7 +154,6 @@ export default class Sound extends BaseItem {
         }
 
         return bins
-        
     }
 
     loadSound = (file, callback) => {
@@ -166,14 +165,15 @@ export default class Sound extends BaseItem {
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))
 
-                    that.defaultConfig.sampleRate = buffer.sampleRate
-                    that.defaultConfig.channels = buffer.numberOfChannels
-                    that.defaultConfig.duration = buffer.duration * 100
+                    that.config.sampleRate = buffer.sampleRate
+                    that.config.channels = buffer.numberOfChannels
+                    that.config.duration = buffer.duration
                                         
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
-
+                    
+                    that.addItem()
                     if(that.onload !== undefined)
                         that.onload()
                 });

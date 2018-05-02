@@ -16,12 +16,12 @@ export default class Text3D extends MeshItem{
         this.mesh = new THREE.Mesh()
         this.scene.add(this.group)
 
-        this.config = this.getConfig(this.defaultConfig)
+        this.getConfig(this.defaultConfig)
         this.mesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()
-            .then((mesh) => this.scene.add(mesh))
+            .then((mesh) => this.addItem())
         })    
     }
 
@@ -60,19 +60,18 @@ export default class Text3D extends MeshItem{
     }
 
     update = () => {
-        const config = this.config
-        this.mesh.material.color.setHex("0x" + config.color)
-        this.mesh.position.x = config.centerX
-        this.mesh.position.y = config.centerY
-        this.scale = config.scale 
+        this.mesh.material.color.setHex("0x" + this.config.color)
+        this.mesh.position.x = this.config.centerX
+        this.mesh.position.y = this.config.centerY
+        this.scale = this.config.scale 
     }
 
     updateConfig = (config) => {
         const { text, fontSize } = this.config
-        this.getConfig(config)
+        this.config = config
 
         if(text !== config.text || fontSize !== config.fontSize) {
-            this.mesh = this.createTextMesh().then((mesh) => {this.mesh = mesh; this.update()})
+            this.createTextMesh().then((mesh) => {this.mesh = mesh; this.update()})
         }else {
             this.update()
         }

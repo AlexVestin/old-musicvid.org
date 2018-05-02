@@ -5,7 +5,6 @@ export default class BackgroundImage extends BaseItem {
     constructor(name, config, sceneConfig) {
         super(name) 
 
-        this.mesh = {}
         var fr = new FileReader()
         fr.onload = () => {
             var image = fr.result
@@ -16,14 +15,10 @@ export default class BackgroundImage extends BaseItem {
             );
 
             this.mesh = backgroundMesh
-            this.mesh.name = String(this.config.id) 
+            this.addItem()
         }
         
         fr.readAsDataURL(config.file) 
-        this.getConfig(this.defaultConfig)
-        this.config.duration = 300;
-
-        this.addItem(this.config)
     }
 
     animate  = (time, freqs) => {

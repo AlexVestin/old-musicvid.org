@@ -73,7 +73,7 @@ class Item extends React.Component {
     setInputValues = (props) => {
         let values = {}
         const si = props.selectedItem
-
+        
 
         Object.keys(si).map((key, index) => 
             values[key] = this.state.values[key] !== (String(si[key]) + ".") ? si[key] : values[key] 

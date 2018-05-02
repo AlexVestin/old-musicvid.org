@@ -38,7 +38,6 @@ class SimpleTabs extends React.PureComponent {
         const value = this.props.sideBarWindowIndex
         const tabStyle = { minWidth: "30px", maxWidth: "100px", minHeight: "30px", height: "20px", maxHeight: "20px" }
 
-        console.log(this.state.width, this.state.height)
         if(value <= 2)
             this.tabValue = value
 
@@ -55,7 +54,7 @@ class SimpleTabs extends React.PureComponent {
                     </div>
                 </div>
                 <div className={classes.scrollbarWrapper}>
-                    <ScrollArea2 width={this.state.width} height={this.state.height} items={this.props.items}> </ScrollArea2>
+                    <ScrollArea2 maxNrUnits={305} width={this.state.width} height={this.state.height} items={this.props.items}> </ScrollArea2>
                 </div>
             </div>
         );

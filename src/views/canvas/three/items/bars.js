@@ -24,13 +24,13 @@ export default class Bars extends MeshItem {
 
         this.strength = 1
         this.getConfig(this.defaultConfig)
+        this.mesh = this.bins
+        this.addItem()
     }
 
     getCompoundBoundingBox = (items) => {
         var box = null;
-        items.forEach((e) => {
-            
-        });
+        items.forEach((e) => {});
 
         return box;
     }
@@ -46,14 +46,14 @@ export default class Bars extends MeshItem {
 
     updateConfig = (config) => {
         this.bins.children.forEach(e => {
-            e.material.color.setHex("0x" + config.color.value)
+            e.material.color.setHex("0x" + config.color)
         })
 
-        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY.value) {
-            this.move(config.centerX.value, config.centerY.value)
+        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY) {
+            this.move(config.centerX, config.centerY)
         }
 
-        this.config = this.getConfig(config)
+        this.config = config
     }
 
     animate = (time, frequencyBins) => {

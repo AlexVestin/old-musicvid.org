@@ -38,9 +38,9 @@ class ResourceList extends React.Component {
       <div className={classes.root}>
         <List>
           {this.props.items.map(obj => (
-            <ListItem key={obj.id.value} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
+            <ListItem key={obj.id} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
               <Avatar> <FolderIcon/></Avatar>
-              <ListItemText primary={obj.name.value} />
+              <ListItemText primary={obj.name} />
               <ListItemSecondaryAction>
                     <IconButton aria-label="Delete">
                         <DeleteIcon />

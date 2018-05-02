@@ -17,19 +17,13 @@ class ScrollArea2 extends PureComponent {
             dragging: false,
             zoomWidth: 1,
             zoomHeight: 1,
-            thumbWidth: props.width,
         }
-
-        console.log(props.width)
-        
-        this.unitSize = 20
-        this.maxUnits = 10 * 60   // 10 minutes -- 1 second = 50px in basezoom
+               
         this.lastScrollY = 0
         this.lastScrollX = 0
         this.viewport = [0, 0, 1, 1]
-
-        console.log("initial width: ", this.viewport[2])
     }
+
 
     onDragStart = () => {
         this.setState({dragging: true})
@@ -40,6 +34,8 @@ class ScrollArea2 extends PureComponent {
     }
 
     onScroll = (e, v) => {
+
+        console.log("scroll")
 
         if(!this.state.dragging) {  
             const { gridHeight, gridWidth } = this.state
@@ -73,11 +69,11 @@ class ScrollArea2 extends PureComponent {
 
     onDragVertical = (e, b) => {
         const { gridHeight } = this.state
-
-        this.setState({verticalPosition: { x: 0, y: b.lastY}})
-        //this.scrollAreaRef.scrollTop = (b.lastY / this.props.height) * (gridHeight - this.props.height)
+        this.setState({verticalPosition: { x: 0, y: b.y}})
+        const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
+        const pos = b.y / (this.props.height -  115)
+        this.scrollAreaRef.scrollTop = pos * scrollMax
     }
-
 
     getRelativeCoordinates = (evt) => {
         var e = evt.target
@@ -93,7 +89,7 @@ class ScrollArea2 extends PureComponent {
         y = y >= 25 ? y - 25 : 0;
         y = y < this.props.width ? y : this.props.width
         
-        //this.scrollAreaRef.scrollTop = (y/this.props.height)
+        this.scrollAreaRef.scrollTop = (y/this.props.height)
     }
 
     onClickHorizontal = (evt) => {
@@ -112,55 +108,63 @@ class ScrollArea2 extends PureComponent {
     }
 
     zoomOut = (pos) => {
-        if(this.state.zoomWidth !== 1) {
-            let z = this.state.zoomWidth - 0.36
-            z = z < 1 ? 1 : z
-            
-            const viewWidth  = 1 / z;
-            const diff = (this.viewport[2] - this.viewport[0]) - viewWidth
-            this.viewport[0] = this.viewport[0] + diff / 2
-            this.viewport[2] = this.viewport[2] - diff / 2
+        let z = this.state.zoomWidth - 1 
+        z = z < 1 ? 1 : z
+        
+        const viewWidth  = 1 / z;
+        const diff = (this.viewport[2] - this.viewport[0]) - viewWidth
+        this.viewport[0] = this.viewport[0] + diff / 2
+        this.viewport[2] = this.viewport[2] - diff / 2
 
+
+        if(Math.abs( this.viewport[0] - this.viewport[2]) > 1) {
+            this.viewport[0] = 0
+            this.viewport[2] = 1
+        }else {
             if(this.viewport[0] < 0){
                 this.viewport[2] -= this.viewport[0]
                 this.viewport[0] = 0
-            }
-
-            if(this.viewport[2] > 1){
-                this.viewport[0] -= (1 - this.viewport[2])
+            }else if(this.viewport[2] > 1){
+                this.viewport[0] += (1 - this.viewport[2])
                 this.viewport[2] = 1
             }
-
-            const thumbX = Math.floor(this.viewport[0] * this.props.width)
-            console.log(this.viewport[2] - this.viewport[0])
-            this.setState({
-                zoomWidth: z,
-                horizontalPosition: {x: thumbX, y: 0}
-            })
-
         }
-        
+
+        const thumbX = Math.floor(this.viewport[0] * this.props.width)
+        this.setState({
+            zoomWidth: z,
+            horizontalPosition: {x: thumbX, y: 0}
+        })
     }
 
     zoomIn = (pos) => {
-        if(this.state.zoomWidth !== 10) {
+        const maxZoom = 50
+        if(this.state.zoomWidth !== maxZoom) {
             const { width } = this.props
-            let z = this.state.zoomWidth + 0.36 
-            z = z > 10 ? 10 : z
-
+            let z = this.state.zoomWidth + 1
+            z = z > maxZoom ? maxZoom : z
             const viewWidth  = 1 / z;
-            const diff = (this.viewport[2] - this.viewport[0]) / 2
+            const diff =  -(viewWidth - (this.viewport[2] - this.viewport[0]))
 
-            this.viewport[0] = diff * (pos * viewWidth) + this.viewport[0]
-            this.viewport[2] = this.viewport[2] - diff * ((1-pos) * viewWidth)
+            this.viewport[0] = diff * pos + this.viewport[0]
+            this.viewport[2] = this.viewport[2] - diff * (1-pos)
             
             const thumbX = Math.floor(this.viewport[0] * width)
-            console.log(this.viewport[2] - this.viewport[0], viewWidth)
             this.setState({
                 zoomWidth: z,
                 horizontalPosition: {x: thumbX, y: 0}
             })
         }
+    }
+
+    gridScrolled = (e) => {
+        e.preventDefault()
+
+        this.scrollAreaRef.scrollTop += e.deltaY / 10
+        const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
+        const s = this.scrollAreaRef.scrollTop
+        const pos = (s /scrollMax) * (this.props.height -  115)
+        this.setState({verticalPosition: { x: 0, y:pos}})
     }
 
     onWheel = (e) => {
@@ -175,13 +179,15 @@ class ScrollArea2 extends PureComponent {
     render() {
         const dragHandlers = {onStart: this.onDragStart, onStop: this.onDragEnd}; 
         const { horizontalPosition, zoomWidth } = this.state
-        const { width } = this.props
+        const { width, maxNrUnits, height } = this.props
+
+        this.unitSize = width / maxNrUnits
 
         const viewport = this.viewport
-        const rOffset = this.unitSize / zoomWidth //relative offset to 
-       
+        const rOffset = this.unitSize * zoomWidth //relative offset to zoom and unitsize
         const thumbWidth = ((this.props.width - 30) * (this.viewport[2] - this.viewport[0])) 
-        console.log(thumbWidth)
+        const gridOffset = -(this.viewport[0]* width * zoomWidth) % rOffset
+
         return (
             <div>
                 <div className={classes.group1}>
@@ -201,32 +207,35 @@ class ScrollArea2 extends PureComponent {
                     <div className={classes.button}></div>
                 </div>
                 <Timeline 
-                    scrollPosition={horizontalPosition} 
+                    scrollPosition={horizontalPosition.x} 
                     zoomWidth={zoomWidth} 
-                    scrollOffset={(horizontalPosition.x / width) * (this.maxWidth-width)}
                     onWheel={this.onWheel}
-                    gridWidth={this.maxWidth}
+                    viewport={viewport[0] * maxNrUnits*this.unitSize * zoomWidth}
                     unitSize={this.unitSize}
+                    maxNrUnits={maxNrUnits}
                 >
                 </Timeline>
 
-                <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} onScroll={this.onScroll}>
+                <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} >
                     <div style={{width:"100%", display: "flex", flexDirection: "row", height: "100%"}}>
-                        <div className={classes.bars} >
+                        <div className={classes.bars}  onWheel={this.gridScrolled} >
 
                             <div className={classes.grid} ref={ref => this.gridRef = ref}>
                                 {this.props.items.map((item, i) => {
                                     const { start, duration } = item
-                                    if( (start * rOffset) < viewport[2] && (start + duration) * rOffset >= viewport[0] && true) {
+                                    const right = viewport[2] * maxNrUnits*this.unitSize * zoomWidth
+                                    const left = viewport[0] * maxNrUnits*this.unitSize * zoomWidth
+
+                                    if( ((start * rOffset) < right || (start + duration) * rOffset >= left) && true) {
                                         return (
-                                        
                                             <Clip 
                                                 key={item.id} 
                                                 height={30 * this.state.zoomHeight}
-                                                left={ (item.start * rOffset) - viewport[0]}
+                                                left={ (start * rOffset) - left}
                                                 top={(i+1) * 30 * this.state.zoomHeight}
                                                 zoomWidth={this.state.zoomWidth}
                                                 item={item}
+                                                rOffset={rOffset}
                                                 unitSize={this.unitSize}
                                                 >
                                             </Clip>
@@ -235,10 +244,10 @@ class ScrollArea2 extends PureComponent {
 
                                 })}
 
-                                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <svg style={{position: "absolute", left: gridOffset, zIndex: 0}} width={width+rOffset} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
                                     <defs>
-                                        <pattern id="grid" width={this.unitSize * this.state.zoomWidth} height={30 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
-                                            <path d={"M "+String(80*this.state.zoomWidth)+" 0 L 0 0 0 "+String(80*this.state.zoomHeight)} fill="none" stroke="gray" strokeWidth="1" />
+                                        <pattern id="grid" width={rOffset} height={30 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
+                                            <path d={"M "+String(rOffset)+" 0 L 0 0 0 "+String(80*this.state.zoomHeight)} fill="none" stroke="gray" strokeWidth="1" />
                                         </pattern>
                                     </defs>
                                     <rect width="100%" height="100%" fill="url(#grid)" />
@@ -251,7 +260,7 @@ class ScrollArea2 extends PureComponent {
                 <div className={classes.verticalTrack} onClick={this.onClickVertical}>
                     <Draggable
                         axis="y"
-                        bounds={{ top: 0, bottom: this.props.height}}
+                        bounds={{ top: 0, bottom: this.props.height - 115}}
                         onDrag={this.onDragVertical}
                         position={this.state.verticalPosition}
                         {...dragHandlers}

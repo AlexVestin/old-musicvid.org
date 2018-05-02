@@ -29,7 +29,6 @@ export default class Demuxer {
     setFrame = (frameId) => {
         if(frameId < 0) {
             frameId = 0;
-            console.log("FrameId set to less than 0, setting to 0") 
         }
 
         this.cacheDone = false;
@@ -52,7 +51,10 @@ export default class Demuxer {
     getFrame = (onframe, frameId) => {
         const frame = this.frames.find(e => e.frameId === frameId)
         if(!frame) {
-            //console.log("no cached frame for frameId")
+            if(this.frames.length < this.cacheSize && this.cacheDone){
+                this.currentFrameId = frameId + 1 
+                this.worker.postMessage({action: "get_frame", frameId: this.currentFrameId})
+            }
             return
         }
         
@@ -93,7 +95,6 @@ export default class Demuxer {
                 break;
             case "init":
                 const { info } = data
-                console.log(info)
                 this.videoInfo = {
                     fps: info[0] / info[1],
                     width: info[2],

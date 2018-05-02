@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
 import { addItem } from '../../../redux/actions/items'
-import Sound from "../../../sound"
+import Sound from "./items/sound"
 
 import store from '../../../redux/store'
 
@@ -22,7 +22,6 @@ class ThreeCanvas extends Component {
         renderer.autoClear = false;
 
 
-        this.unsubscribe = store.subscribe(this.handleStoreChange)
         this.renderer = renderer
 
         this.currentScene = new BarsScene(this.width, this.height, renderer)
@@ -37,10 +36,6 @@ class ThreeCanvas extends Component {
 
     componentWillUnmount(){
         this.unsubscribe()
-    }
-    
-    handleStoreChange = () => {
-        
     }
 
     setSize(w, h) {
@@ -66,7 +61,7 @@ class ThreeCanvas extends Component {
                 break;
             case "CREATE_ITEM":
                 if(props.selectedItem.type === "SOUND") {
-                    this.sound = new Sound(props.selectedItem, () => { this.audioLoaded = true;  addItem(this.sound.defaultConfig) })
+                    this.sound = new Sound(props.selectedItem, () => { this.audioLoaded = true; })
                 }else {
                     let name = props.selectedItem.type
                     this.currentScene.add(name, props.selectedItem)
