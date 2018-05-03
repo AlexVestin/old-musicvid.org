@@ -5,7 +5,6 @@ import * as THREE from 'three'
 import ThreeWater from "./waterclass"
 import BaseItem from './item';
 
-
 export default class Water extends BaseItem{
     constructor(config, sceneConfig) {
         super("Water")
@@ -37,16 +36,16 @@ export default class Water extends BaseItem{
             }
         );
 
-        this.scene.add(this.water)
         this.parameters = parameters
         this.mesh = this.water 
-        this.config = this.getConfig(this.defaultConfig)
+        this.getConfig(this.defaultConfig)
         this.mesh.name = String(this.config.id)
+        this.addItem()
     }
 
 
     updateConfig = (config) => {
-        this.config = this.getConfig(config)
+        this.getConfig(config)
     }
 
     animate = (time, frequencyBins) => {

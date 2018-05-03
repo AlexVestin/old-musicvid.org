@@ -7,7 +7,7 @@ export default class BaseItem {
         this.defaultConfig = {
             name: {value: name, type: "String", tooltip: "",  editable: true},
             start: {value: 0, type: "Number", tooltip: "Time in millisecond when item will be rendered", editable:  true},
-            duration: {value: 300, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true},
+            duration: {value: 180, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true},
             id: {value: Math.floor(Math.random() * 10000000), type: "Number", show: false},
             type: {value: 0, type: "String",  show: false},
         }

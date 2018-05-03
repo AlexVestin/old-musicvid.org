@@ -52,11 +52,14 @@ class Timeline extends PureComponent {
         const l =  (time * zoomWidth * unitSize) - 6 - left
         const m = l+6; const r = m +6;
 
+
         let numbers = []
         const nNrs = 20
+        const between = maxNrUnits / nNrs
+        
         for(var i = 0; i < nNrs; i++) {
-            let xPos = i * (maxNrUnits / nNrs) * zoomWidth * unitSize - left
-            let nr =  (maxNrUnits /  nNrs) * i
+            let xPos = i * between * zoomWidth * unitSize - left
+            let nr =  between * i
             numbers.push({x: xPos, val: nr})
         }
 
@@ -72,18 +75,23 @@ class Timeline extends PureComponent {
 
                 <div style={{color:"white", position: "relative"}}>
                     {numbers.map((e) => 
-                    <div 
-                        key={e.val} 
-                        style={{
-                            left: e.x, 
-                            position: "absolute", 
-                            pointerEvents: "none", 
-                            fontSize: 10, 
-                            transform: "translateX(-50%)",
-                            overflow: "hidden"
-                            }}>
-                        {this.convertTime(e.val)}
-                    </div>)}
+                    <div key={e.val} >
+                        <div 
+                            style={{
+                                left: e.x, 
+                                position: "absolute", 
+                                pointerEvents: "none", 
+                                fontSize: 10, 
+                                transform: "translateX(-50%)",
+                                overflow: "hidden"
+                                }}>
+                            {this.convertTime(e.val)}
+                        </div>
+                        <div style={{backgroundColor:"white", width:1, height: 5, top:15, position:"absolute", zIndex: 10000, pointerEvents: "none", left: e.x}}></div>
+                        <div style={{backgroundColor:"white", width:1, height: 3, top:17, position:"absolute", zIndex: 10000, pointerEvents: "none", left: e.x + zoomWidth*between*2}}></div>
+                    </div>
+                    )}
+                    
                 </div>
             </div>
         )

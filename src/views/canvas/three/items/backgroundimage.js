@@ -15,6 +15,7 @@ export default class BackgroundImage extends BaseItem {
             );
 
             this.mesh = backgroundMesh
+            this.config.name = config.name
             this.addItem()
         }
         

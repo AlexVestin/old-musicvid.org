@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
+
+import Button from 'material-ui/Button'
+
 import ScrollArea2 from './scrollarea2'
 
 import classes from './playlist.css'
@@ -43,13 +46,20 @@ class SimpleTabs extends React.PureComponent {
 
         return (
             <div className={classes.wrapper} ref={ref => this.wrapperRef = ref}>
-                <div className={classes.header}>
+                <div className={classes.header} style={{minHeight: 30, height: 30}}>
                     <div className={classes.root}>
-                        <AppBar position="static" >
+                        <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 30, height: 30}} >
                             <Tabs value={this.state.tabValue} onChange={this.handleChange} fullWidth>
                                 <Tab label="Items" style={tabStyle}/>
                                 <Tab label="Automations" style={tabStyle}/>
                             </Tabs>
+
+                            <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>                                
+                            </div>
                         </AppBar>
                     </div>
                 </div>

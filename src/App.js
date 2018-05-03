@@ -19,7 +19,7 @@ class App extends Component {
         </div>
         
       </div>
-      <div className={classes.footer}></div>
+        <div className={classes.footer}></div>
       </div>
       
     );
