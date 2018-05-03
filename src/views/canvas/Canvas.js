@@ -72,10 +72,12 @@ class Canvas extends Component {
 
       return (
         <div className={classes.canvas_wrapper}>
-            <b>{this.state.info}</b>
-            <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
-            <PlaybackPanel disabled={this.props.disabled} width={width} playing={playing} time={time} play={this.play} stop={this.stop} ></PlaybackPanel>
-            <a aria-label="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
+        	 <div className={classes.center_canvas}>
+              <b>{this.state.info}</b>
+              <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
+              <PlaybackPanel disabled={this.props.disabled} width={width} playing={playing} time={time} play={this.play} stop={this.stop} ></PlaybackPanel>
+              <a aria-label="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
+            </div>
         </div>
       )
     }

@@ -18,8 +18,6 @@ class SimpleTabs extends React.PureComponent {
     state = {
         tabValue: 0,
         contentValue: 0,
-        width: 1200,
-        height: 2000
     };
 
 
@@ -27,15 +25,7 @@ class SimpleTabs extends React.PureComponent {
         this.setState({tabValue: value})
     };
 
-    updateWindowDimensions = () => {
-        this.setState({ width: this.wrapperRef.offsetWidth, height: this.wrapperRef.offsetHeight})
-    }
-
-    componentDidMount() {
-
-        window.addEventListener('resize', this.updateWindowDimensions);
-        this.setState({ width: this.wrapperRef.offsetWidth, height: this.wrapperRef.offsetHeight})
-    }
+    
 
     render() {
         const value = this.props.sideBarWindowIndex
@@ -45,26 +35,26 @@ class SimpleTabs extends React.PureComponent {
             this.tabValue = value
 
         return (
-            <div className={classes.wrapper} ref={ref => this.wrapperRef = ref}>
+            <div className={classes.wrapper} >
                 <div className={classes.header} style={{minHeight: 30, height: 30}}>
                     <div className={classes.root}>
                         <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 30, height: 30}} >
-                            <Tabs value={this.state.tabValue} onChange={this.handleChange} fullWidth>
+                            <Tabs style={{marginLeft: "13%"}} value={this.state.tabValue} onChange={this.handleChange} >
                                 <Tab label="Items" style={tabStyle}/>
                                 <Tab label="Automations" style={tabStyle}/>
                             </Tabs>
 
                             <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised"></Button>                                
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">1</Button>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">2</Button>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">3</Button>
+                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">4</Button>                                
                             </div>
                         </AppBar>
                     </div>
                 </div>
                 <div className={classes.scrollbarWrapper}>
-                    <ScrollArea2 maxNrUnits={305} width={this.state.width} height={this.state.height} items={this.props.items}> </ScrollArea2>
+                    <ScrollArea2 maxNrUnits={300} items={this.props.items}> </ScrollArea2>
                 </div>
             </div>
         );

@@ -69,7 +69,7 @@ class Timeline extends PureComponent {
                     <polygon points={`${l},10 ${m},18 ${r},10`} style={{fill: "white", stroke: "gray", strokeWidth:1 }}/>
                 </svg>
 
-                <svg height="100%" width="100%" style={{position:"absolute", zIndex: 10000, pointerEvents: "none"}}>
+                <svg height="100%" width="100%" style={{position:"absolute", zIndex: 10, pointerEvents: "none"}}>
                     <line x1={String(m)} y1="20" x2={String(m)} y2="400" stroke="white" style={{strokeWidth: 1}}/>
                 </svg>
 

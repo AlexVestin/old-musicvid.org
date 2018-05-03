@@ -5,7 +5,7 @@ export default class Playlist extends PureComponent {
 
     render() {
         return (
-           <SimpleTabs></SimpleTabs>
+            <SimpleTabs></SimpleTabs>
         )
     }
 }

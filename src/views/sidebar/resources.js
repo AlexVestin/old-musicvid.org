@@ -15,7 +15,6 @@ import { selectItem, setSidebarWindowIndex } from '../../redux/actions/items'
 const styles = theme => ({
   root: {
     width: '100%',
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
 });

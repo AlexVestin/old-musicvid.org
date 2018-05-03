@@ -12,7 +12,6 @@ import Modal from './modal'
 const styles = theme => ({
   root: {
     width: '100%',
-    maxWidth: 330,
     backgroundColor: theme.palette.background.paper,
   },
 });

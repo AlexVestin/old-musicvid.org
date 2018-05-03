@@ -118,7 +118,7 @@ export default class Clip extends PureComponent {
         return (
             <div 
                 onClick={this.onClick}
-                style={{position:"absolute", display: "flex", flexDirection: "row", zIndex: 1}} 
+                style={{position:"relative", display: "flex", flexDirection: "row", zIndex: 2}} 
                 onMouseDown={this.onMouseDown}
                 onMouseUp={this.onMouseUp}
                 onMouseMove={this.onMouseMove}
@@ -126,12 +126,12 @@ export default class Clip extends PureComponent {
                 <div 
                     style={{
                         position: "absolute",
+                        overflow: "hidden",
                         width: w, 
                         top:top, 
                         height:height, 
                         left: l,
                         backgroundColor:this.color, 
-                        overflow:"hidden", 
                         border: "solid",
                         borderRadius: "0.12rem", 
                         borderWidth: 1,

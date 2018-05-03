@@ -19,13 +19,12 @@ import { editItem, setSidebarWindowIndex, removeItem } from '../../redux/actions
 const styles = theme => ({
   root: {
     width: '100%',
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 100,
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    width: 80,
   },
 
   listItem: {
@@ -109,40 +108,34 @@ class Item extends React.Component {
                 </Toolbar>
             </AppBar>
 
-            <List>
-                {Object.keys(conf).map((key, index) => (
-                    <div key={key}>
-                        {conf[key].show !== false &&
-                        <ListItem  dense className={classes.listItem}>
-                        <Tooltip id="tooltip-top-start" title={conf[key].tooltip} placement="right-end">
-                            <TextField
-                                id={key}
-                                label={key}
-                                className={classes.textField}
-                                value={this.state.values[key]}
-                                margin="normal"
-                                onChange={this.handleChange({type: conf[key].type, key: key})}
-                                disabled={!conf[key].editable}
-                            />
-                        </Tooltip>
-                        </ListItem>
-                        }
-                    </div>
-                ))}
-                <ListItem dense button className={classes.listItem}>
-                <Button className={classes.button} onClick={this.removeItem} variant="raised" color="secondary">
+            <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
+                    {Object.keys(conf).map((key, index) => (
+                        <div key={key}>
+                            {conf[key].show !== false &&
+                            <Tooltip id="tooltip-top-start" title={conf[key].tooltip} placement="right-end">
+                                <TextField
+                                    id={key}
+                                    label={key}
+                                    className={classes.textField}
+                                    value={this.state.values[key]}
+                                    margin="normal"
+                                    onChange={this.handleChange({type: conf[key].type, key: key})}
+                                    disabled={!conf[key].editable}
+                                />
+                            </Tooltip>
+                            }
+                        </div>
+                    ))}
+                </div>
+                <Button className={classes.button} style={{marginLeft: "auto"}} onClick={this.removeItem} variant="raised" color="secondary">
                     Delete item
                     <Delete className={classes.rightIcon} />
                 </Button>
-                </ListItem>
                
                 
-                <ListItem dense button className={classes.listItem}>
                 <Button variant="raised" fullWidth onClick={this.back}>
                     Back
                 </Button>
-                </ListItem>
-            </List>
             </div>
         );
     }
