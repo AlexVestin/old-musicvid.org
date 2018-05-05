@@ -75,11 +75,11 @@ class Canvas extends Component {
       this.setState({modalOpen: true})
     }
 
-    startEncoding = (config) => {
+    startEncoding = (config, useAudioDuration) => {
       this.stop()
       setDisabled(true)
       this.setState({modalOpen: false})
-      this.displayRenderer.initEncoder(config)
+      this.displayRenderer.initEncoder(config, useAudioDuration)
     }
   
     render() {
@@ -93,7 +93,7 @@ class Canvas extends Component {
               <b>{this.state.info}</b>
               <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
               <PlaybackPanel 
-                  disabled={this.props.disabled} 
+                  disabled={this.props.audioInfo === null} 
                   width={width} playing={playing} 
                   time={time} play={this.play} 
                   stop={this.stop} 
@@ -114,7 +114,8 @@ const mapStateToProps = state => {
     frameId: state.globals.frameId,
     fps: state.globals.fps,
     disabled: state.globals.disabled,
-    encoding: state.globals.encoding
+    encoding: state.globals.encoding,
+    audioInfo: state.items.audioInfo
   }
 }
 

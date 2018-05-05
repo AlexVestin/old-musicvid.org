@@ -1,5 +1,7 @@
 import React, {PureComponent} from 'react'
 import Button from 'material-ui/Button'
+import Tooltip from 'material-ui/Tooltip'
+
 
 export default class PlaybackPanel extends PureComponent {
 
@@ -27,16 +29,26 @@ export default class PlaybackPanel extends PureComponent {
                         <Button disabled={this.props.disabled} onClick={this.props.play}>{this.props.playing ? "Pause" : "Play"}</Button> 
                         <Button disabled={this.props.disabled} onClick={this.props.stop}>Stop</Button>      
                     </div>    
-
-                <Button 
-                    onClick={this.props.encode} 
-                    variant="raised" 
-                    color="secondary"
-                    style={{minHeight: "30px", height:"30px", marginLeft: "auto"}}
-                    disabled={!true}
-                >
-                    Export Video
-                </Button>
+                
+                    <Tooltip 
+                            style={{minHeight: "30px", height:"30px", marginLeft: "auto"}} 
+                            id="tooltip-top-start" 
+                            title={"A sound needs to be loaded before exporting"} 
+                            placement="right-end"
+                        >
+                        <div>
+                            <Button 
+                                onClick={this.props.encode} 
+                                variant="raised" 
+                                color="secondary"
+                                
+                                disabled={this.props.disabled}
+                            >
+                                Export Video
+                            </Button>
+                        </div>
+                </Tooltip>
+                
                 </div>        
             </div>
 

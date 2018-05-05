@@ -69,12 +69,13 @@ class ThreeCanvas extends Component {
 
     add = (name, info) => {
         const scene = this.scenes.find(e => e.config.id === this.props.selectedLayer.id)
-        scene.addItem(name, info)
+        scene.addItem(name, info, this.props.time)
     }
 
-    initEncoder = (config) => {
+    initEncoder = (config, useAudio) => {
         this.videoEncoder = new VideoEncoder(this.encoderLoaded)
         this.config = config
+        this.useAudio = useAudio
     }
 
     encoderInitialized = () => {
@@ -82,20 +83,25 @@ class ThreeCanvas extends Component {
         this.encoding = true
         this.play(0)
 
-        const { width, height }= this.config
+        const { width, height } = this.config
         this.setSize(width, height, true)
         this.renderScene(this.props.time)
     }
 
     encoderLoaded = () => {
         let audioConfig = null
-        this.duration = this.sound.duration
+        if(!this.useAudio.useAudioDuration) {
+            this.duration = this.useAudio.value
+        }else {
+            this.duration = this.sound.duration
+        }
+
         if(this.sound) {
             let sound = this.sound
             let samplerate = sound.sampleRate
             let channels = sound.channels
             let { left, right } = sound
-            audioConfig = { left, right, channels, samplerate, bitrate: 320000, duration: sound.config.duration }
+            audioConfig = { left, right, channels, samplerate, bitrate: 320000, duration: this.duration }
         }
   
         let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate }
@@ -124,7 +130,7 @@ class ThreeCanvas extends Component {
                 this.add(name, props.selectedItem)
                 break; 
             case "ADD_SOUND":
-                this.sound = new Sound(props.audio)
+                this.sound = new Sound(props.audio, () => {if(this.props.playing)this.sound.play(this.props.time)})
                 break;
             default:
         }
@@ -147,7 +153,7 @@ class ThreeCanvas extends Component {
 
     play = (time) => {
         this.scenes.forEach(e => e.play(time, this.props.fps))
-        if(this.sound)
+        if(this.sound && !this.encoding)
             this.sound.play(time, this.props.fps)
     }
 

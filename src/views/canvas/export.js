@@ -5,6 +5,9 @@ import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 import Button from 'material-ui/Button';
 import Options from './options'
+import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
+import {  FormControlLabel } from 'material-ui/Form';
 
 
 const presetLookup = [
@@ -19,13 +22,13 @@ const presetLookup = [
 
 const style= {
     top: `30%`,
-    left: `30%`,
+    left: `25%`,
 };
 
 const styles = theme => ({
   paper: {
     position: 'absolute',
-    width: theme.spacing.unit * 100,
+    width: theme.spacing.unit * 110,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
@@ -33,9 +36,23 @@ const styles = theme => ({
 });
 
 class SimpleModal extends React.Component {
-  
+
+    state = {
+        useSongDuration: true,
+        duationValue: 1
+    }
+
     handleClose = () => {
         this.props.onCancel()
+    }
+
+    handleChange = (e) => {
+        const val = e.target.value
+        if(!isNaN(val) && val >= 0) {
+            this.setState({durationValue: val})
+        }else if(val === ""){
+            this.setState({durationValue: 0})
+        }
     }
 
     saveBlob = (vid) => {
@@ -72,7 +89,7 @@ class SimpleModal extends React.Component {
             presetIdx: presetIdx
         }
 
-        this.props.startEncoding(config)
+        this.props.startEncoding(config, {useSongDuration: this.state.useSongDuration, value: Number(this.state.durationValue)})
     }
 
     stopEncoding = ()  => {
@@ -86,10 +103,13 @@ class SimpleModal extends React.Component {
     onEncoderLoaded = () => {
         this.setState({encoderLoaded: true, info: "Module loaded"})
     }
+
+    toggleDurationButton  = () => this.setState({useSongDuration: !this.state.useSongDuration})
     
     
     render() {
         const { classes } = this.props;
+        const { durationValue, useSongDuration } = this.state
         return (
             <Modal
                 aria-labelledby="simple-modal-title"
@@ -111,8 +131,36 @@ class SimpleModal extends React.Component {
                         <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
                         <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
                         <Options onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
-                        <Button onClick={this.encode}>Start</Button>
+                        <div style={{display: "flex", flexDirection: "row", marginLeft: 30}}>
+                            <TextField
+                                style={{width: 100, marginTop: 9, marginRight: 15}}
+                                label={"duration (sec)"}
+                                value={this.state.durationValue}
+                                margin="normal"
+                                onChange={this.handleChange}
+                                disabled={this.state.useSongDuration}
+                            />
+
+                            <FormControlLabel
+                                style={{marginTop: 15}}
+                                control={
+                                    <Checkbox
+                                        checked={this.state.useSongDuration}
+                                        onChange={this.toggleDurationButton}
+                                        value="0"
+                                        color="primary"
+                                    />
+                                }
+                                label="Use song duration"
+                                />
+
+                        </div>
                     </div>
+                    <Button 
+                        variant="raised" 
+                        color="primary" 
+                        disabled={!useSongDuration && durationValue < 1} 
+                    onClick={this.encode}>Start encoding</Button>
                 </div>
             </Modal>
         );

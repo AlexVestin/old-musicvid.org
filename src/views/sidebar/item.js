@@ -66,8 +66,8 @@ class Item extends React.Component {
         var value = event.target.value
         var numberValue = null
 
-        if(input.type === "Number" && value !== "" && value[value.length -1] !== ".") {
-            if(value === "." || value === "-") {
+        if(input.type === "Number") {
+            if(value === "." || value === "-" || value === "") {
                 numberValue = 0
             }else {
                 if((!isNaN(value) && value.length < 12)) {
@@ -96,21 +96,23 @@ class Item extends React.Component {
 
         Object.keys(conf).map((key, index) => {
             // check if is negative or decimal
-            
             const val = this.state.values[key]
             if (conf[key].type === "Number" && val !== undefined) {
-                if (val === "-" || val === ".") {
+                if (val === "-" || val === "." || val === "") {
+                   
                     if (si[key] !== 0) {
                         values[key] = si[key]
+                    }else {
+                        values[key] = val
                     }
                 } else {
-                    values[key] = (val !== (String(si[key]) + ".") && val[val.length-1] !== "0") ? si[key] : values[key]
+                    values[key] = (val !== (String(si[key]) + ".") && (val[val.length -1] !== "0" && val[val.length -1] !== ".")) ? si[key] : values[key]
                 }
 
             } else {
                 values[key] = si[key]
             }
-
+            
         })
 
         this.setState({ values })

@@ -32,7 +32,7 @@ export default class SceneContainer {
         }
     }
 
-    addItem = (name, info) => {
+    addItem = (name, info, time) => {
         
         info.name = name
         info.sceneId = this.config.id
@@ -72,6 +72,10 @@ export default class SceneContainer {
         }
 
         this.items.push(item)
+        const { start, duration } = item.config
+        if(start >= time || (start < time && (start + duration) > time)) {
+            this.toRender.push(item)
+        }
     }
 
     removeItem = (config) => {

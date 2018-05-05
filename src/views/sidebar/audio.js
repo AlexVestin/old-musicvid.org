@@ -39,6 +39,8 @@ class Audio extends React.Component {
             let name =  this.fileInputRef.files[0].name
             addSound({type:"SOUND", file, name})
         }
+
+        if(this.props.audioInfo !== null)setSidebarWindowIndex(this.props.idxs.ITEM)
     }
 
     setWindow = () => {
@@ -68,7 +70,7 @@ Audio.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        audioInfo: state.items.audioInfo
+        audioInfo: state.items.audioInfo,
     }
 }
 
