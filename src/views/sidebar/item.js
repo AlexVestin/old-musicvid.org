@@ -53,24 +53,35 @@ class Item extends React.Component {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
+    charOccurances = (str, char) =>{
+        for (var c = 0, i = 0, len = str.length; i < len; ++i){
+            if (str[i] == char){
+                ++c;
+            }
+        }
+        return c;
+    }
+
     handleChange = input => event => {
         var value = event.target.value
         var numberValue = null
-        if(input.type === "Number" && value !== "") {
-            if(value === "" || value === ".") {
+
+        if(input.type === "Number" && value !== "" && value[value.length -1] !== ".") {
+            if(value === "." || value === "-") {
                 numberValue = 0
             }else {
-                if(value[value.length -1] !== "." && value[0] !== "-" ){
-                    if(isNaN(value) || value.length > 12)
-                        return
-                    } 
-                // if only a '-' set value to zero and allow it to be set to state
-                numberValue = ( value[0] === "-" && value.length === 1) ? 0 : Number(value)
+                if((!isNaN(value) && value.length < 12)) {
+                    numberValue = Number(value)
+                }else {
+                    return
+                }       
             }
         }
 
+        if(this.charOccurances(value, ".") > 1 || this.charOccurances(value, "-") > 1)return
         let values = {...this.state.values}
         values[input.key] = value
+
         this.setState({values}, () => {
             let val = numberValue !== null ? numberValue : value
             editItem({key: input.key, value: val})
@@ -85,6 +96,7 @@ class Item extends React.Component {
 
         Object.keys(conf).map((key, index) => {
             // check if is negative or decimal
+            
             const val = this.state.values[key]
             if (conf[key].type === "Number" && val !== undefined) {
                 if (val === "-" || val === ".") {

@@ -31,6 +31,13 @@ export function selectLayer(index){
 }
 
 
+export function removeAudio(){
+    store.dispatch({
+        type: "REMOVE_AUDIO",
+
+        } 
+    );  
+}
 
 export function setSidebarWindowIndex(item) {
     store.dispatch({

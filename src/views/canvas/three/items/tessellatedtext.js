@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import { MeshItem } from './item';
+import {  AudioreactiveItem } from './item';
 import { modify  } from './modifiers/tessellatemodifier'
 
 
@@ -32,7 +32,7 @@ const fragmentShader = [
 
 
 
-export default class TessellatedText extends MeshItem {
+export default class TessellatedText extends AudioreactiveItem {
     constructor(config) {
         super(config)
         this.bins = []
@@ -40,7 +40,7 @@ export default class TessellatedText extends MeshItem {
         this.defaultConfig.text = {value: "text", type: "String", tooltip: "", editable: true}
         this.defaultConfig.fontSize = {value: 5, type: "Number", tooltip: "", editable: true}
         this.defaultConfig.threshold = {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true}
-        this.defaultConfig.scale.value = 200
+        this.defaultConfig.scale = {value: 200, type: "Number", tooltip: "", editable: true}
 
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()

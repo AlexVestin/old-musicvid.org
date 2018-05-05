@@ -104,8 +104,8 @@ class AddResourceOptions extends React.Component {
                 <ListItemText primary={`Add Video`} />
             </ListItem>
             
-            <ListItem dense button className={classes.listItem} onClick={() => this.add(3)}>
-                <ListItemText primary={`Foreground text`} />
+            <ListItem dense disabled button className={classes.listItem} onClick={() => this.add(3)}>
+                <ListItemText  primary={`Foreground text`} />
             </ListItem>
 
 

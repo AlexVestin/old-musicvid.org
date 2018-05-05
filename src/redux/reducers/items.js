@@ -12,6 +12,8 @@ export default function itemsReducer(state = {
 
     }, action){
         switch(action.type){
+            case "REMOVE_AUDIO":
+                return {...state, audioInfo: null, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO}
             case "ADD_SOUND": 
                 return {...state, audioInfo: action.payload}
             case "ADD_LAYER":

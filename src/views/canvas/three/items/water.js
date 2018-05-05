@@ -9,7 +9,7 @@ export default class Water extends BaseItem{
     constructor(config) {
         super(config)
         this.light = config.sceneConfig.light
-
+        this.getConfig(this.defaultConfig)
         let parameters = {
             oceanSide: 2000,
             size: 1.0,
@@ -37,7 +37,7 @@ export default class Water extends BaseItem{
 
         this.parameters = parameters
         this.mesh = this.water 
-        this.getConfig(this.defaultConfig)
+        
         this.mesh.name = String(this.config.id)
         this.addItem()
     }

@@ -37,7 +37,6 @@ export default class PlaybackPanel extends PureComponent {
                 >
                     Export Video
                 </Button>
-
                 </div>        
             </div>
 

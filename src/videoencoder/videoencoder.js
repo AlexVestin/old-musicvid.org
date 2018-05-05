@@ -60,7 +60,6 @@ export default class VideoEncoder {
         this.Module._write_header();
         this.initialized = true
 
-        console.log("write header")
     } 
     
     close_stream = () => {

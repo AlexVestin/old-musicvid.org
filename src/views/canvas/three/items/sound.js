@@ -12,6 +12,7 @@ export default class Sound extends BaseItem {
         this.defaultConfig.start.editable = false
         this.defaultConfig.name.editable = false
         this.config.movable = false
+        this.config.type = "SOUND"
 
         this.onload = onload
         this.soundDataBuffer = []
@@ -55,9 +56,17 @@ export default class Sound extends BaseItem {
         this.bs.buffer = ab
     }
 
-    play = (time, fps) => {
-        if(!this.playing) {
+    play = (time, playing) => {
+
+        if(!this.playing || playing) {
+            if(this.bs) {
+                this.bs.stop()
+            }
+
             const idx = Math.floor(time*this.sampleRate)
+            if (idx > this.left.length)
+                return
+                
             const left = this.left.subarray(idx, this.left.length -1)
             const right = this.right.subarray(idx, this.right.length-1)
             

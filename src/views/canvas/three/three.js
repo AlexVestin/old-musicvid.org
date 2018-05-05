@@ -3,13 +3,15 @@ import {WebGLRenderTarget, WebGLRenderer} from 'three'
 import SceneContainer from './scene'
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { addItem, addLayer } from '../../../redux/actions/items'
 import Sound from "./items/sound"
 import store from '../../../redux/store'
 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
+
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
+import { addLayer, removeAudio } from '../../../redux/actions/items'
+
 
 
 class ThreeCanvas extends Component {
@@ -83,7 +85,6 @@ class ThreeCanvas extends Component {
         const { width, height }= this.config
         this.setSize(width, height, true)
         this.renderScene(this.props.time)
-
     }
 
     encoderLoaded = () => {
@@ -104,7 +105,13 @@ class ThreeCanvas extends Component {
     componentWillReceiveProps(props) {
         switch(store.getState().lastAction.type) {
             case "REMOVE_ITEM":
-                this.removeItem(props.selectedItem)
+                if(props.selectedItem.type === "SOUND") {
+                    removeAudio(null)
+                    this.sound.stop()
+                    this.sound = undefined
+                }else {
+                    this.removeItem(props.selectedItem)
+                }
                 break;
             case "EDIT_SELECTED_ITEM":
                 this.updateConfig(props.selectedItem);
@@ -117,7 +124,7 @@ class ThreeCanvas extends Component {
                 this.add(name, props.selectedItem)
                 break; 
             case "ADD_SOUND":
-                this.sound = new Sound(props.audio, () => { this.audioLoaded = true; })
+                this.sound = new Sound(props.audio)
                 break;
             default:
         }
@@ -140,7 +147,7 @@ class ThreeCanvas extends Component {
 
     play = (time) => {
         this.scenes.forEach(e => e.play(time, this.props.fps))
-        if(this.audioLoaded)
+        if(this.sound)
             this.sound.play(time, this.props.fps)
     }
 
@@ -152,7 +159,7 @@ class ThreeCanvas extends Component {
 
     renderScene = (time) => { 
         var frequencyBins = []
-        if(this.audioLoaded) {
+        if(this.sound) {
             frequencyBins = this.sound.getFrequencyBins(this.props.time)               
         }
         
@@ -184,8 +191,7 @@ class ThreeCanvas extends Component {
 
     setTime = (time, playing) => {
         this.scenes.forEach(e => e.setTime(time, playing))
-        if(playing)
-            this.play(time)
+        if(playing)this.sound.play(time, playing)
     }
 
     render() {

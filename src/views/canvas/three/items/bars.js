@@ -45,7 +45,6 @@ export default class Bars extends MeshItem {
             e.translateZ(z);
         })
 
-        console.log(x, y, z)
         this.centerY = y
     }
 

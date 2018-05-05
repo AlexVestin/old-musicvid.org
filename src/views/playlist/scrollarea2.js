@@ -52,8 +52,6 @@ class ScrollArea2 extends PureComponent {
     componentDidMount() {
         window.addEventListener('resize', this.updateWindowDimensions);
         this.setState({ width: this.panelRef.offsetWidth, height: this.wrapperRef.offsetHeight})
-
-        console.log(this.wrapperRef.offsetWidth, this.wrapperRef.offsetHeight)
     }
 
 
@@ -190,7 +188,6 @@ class ScrollArea2 extends PureComponent {
                 <div className={classes.group1} ref={ref => this.panelRef = ref} >
                     <div className={classes.button}></div>
                     <div className={classes.horizontalTrack}  onClick={this.onClickHorizontal}>
-
                         <Draggable
                             axis="x"
                             bounds={{ left: 0, right: width - (thumbWidth + 30)}}

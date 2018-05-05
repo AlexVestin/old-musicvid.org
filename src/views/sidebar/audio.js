@@ -55,31 +55,7 @@ class Audio extends React.Component {
             <div className={classes.root}>
             <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
              
-            {audioInfo !== null ?
-            <div>
-                <AppBar position="static" color="default">
-                    <Toolbar>
-                        <Typography variant="title" color="inherit">
-                            {audioInfo.name}
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-
-                <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
-                    {Object.keys(audioInfo).map((key, index) => {
-                        return <div key={key}>{key + " : " + String(audioInfo[key])}</div>
-                    })}
-                </div>
-            
-                <Button className={classes.button} style={{marginLeft: "auto"}} onClick={this.removeItem} variant="raised" color="secondary">
-                    Delete Sound
-                    <Delete className={classes.rightIcon} />
-                </Button>
-            </div>:
-            <div>
-                <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
-
-            </div>
+            {audioInfo !== null ? null : <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
         }
         </div>
         );
