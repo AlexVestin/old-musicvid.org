@@ -67,8 +67,9 @@ class Canvas extends Component {
 
     play = () => {
       this.lastTime = performance.now()
+      this.displayRenderer.play(this.props.time, !this.props.playing)
       togglePlaying()
-      this.displayRenderer.play(this.props.time)
+      
     }
 
     openEncodeModal = () => {

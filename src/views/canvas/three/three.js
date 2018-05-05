@@ -151,10 +151,11 @@ class ThreeCanvas extends Component {
         if(this.sound)this.sound.stop()
     }
 
-    play = (time) => {
+    play = (time, play) => {
         this.scenes.forEach(e => e.play(time, this.props.fps))
+        console.log("stop")
         if(this.sound && !this.encoding)
-            this.sound.play(time, this.props.fps)
+            this.sound.play(time)
     }
 
     saveBlob = (vid) => {
