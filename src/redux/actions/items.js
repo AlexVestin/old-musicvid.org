@@ -20,14 +20,33 @@ export function addSound(item){
         type: "ADD_SOUND",
         payload: item
         } 
-    );  
+    ); 
+}
+
+export function selectRenderTarget(item){
+    store.dispatch({
+        type: "SELECT_RENDER_TARGET",
+        payload: item
+    } 
+)};  
+
+export function addRenderTarget(item){
+    store.dispatch({
+        type: "ADD_RENDER_TARGET",
+        payload: item
+    } 
+)};  
+
+export function createRenderTarget(){
+    store.dispatch({
+        type: "CREATE_RENDER_TARGET",
+    });  
 }
 export function selectLayer(index){
     store.dispatch({
         type: "SELECT_LAYER",
         payload: index
-        } 
-    );  
+    });  
 }
 
 

@@ -42,6 +42,8 @@ class ThreeCanvas extends Component {
         
         addLayer(background.config)
         addLayer(graphics.config)
+
+        const uns = store.subscribe(() => console.log("hello"))
         
         mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
@@ -109,6 +111,7 @@ class ThreeCanvas extends Component {
     }
 
     componentWillReceiveProps(props) {
+        console.log("[three.js] action: ", store.getState().lastAction.type)
         switch(store.getState().lastAction.type) {
             case "REMOVE_ITEM":
                 if(props.selectedItem.type === "SOUND") {
@@ -226,7 +229,9 @@ const mapStateToProps = state => {
         playing: state.globals.playing,
         selectedLayer: state.items.selectedLayer,
         audio: state.items.audioInfo,
-        encoding: state.globals.encoding
+        encoding: state.globals.encoding,
+        renderTargets: state.items.renderTargets,
+        sideBarWindowIndex: state.items.sideBarWindowIndex
     }
 }
 

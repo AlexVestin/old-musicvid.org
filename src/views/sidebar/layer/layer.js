@@ -9,10 +9,10 @@ import TextField from 'material-ui/TextField';
 
 import AppBar from 'material-ui/AppBar';
 
-
+import Options from '../../canvas/options'
 
 import { connect } from 'react-redux'
-import { editItem, setSidebarWindowIndex, removeItem } from '../../redux/actions/items'
+import { editItem, setSidebarWindowIndex, removeItem } from '../../../redux/actions/items'
 
 const styles = theme => ({
   root: {
@@ -67,7 +67,8 @@ class Layer extends React.Component {
                 <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
                     Scene
                 </Button>
-            
+
+                <Options fullWidth onchange={format => this.format = format} name="format" labels={["Render target 1", "Render target 2"]}></Options>
                 </div>
                 <Button variant="raised" fullWidth onClick={this.back}>
                     Back

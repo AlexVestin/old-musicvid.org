@@ -4,10 +4,10 @@ import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
-import { createItem, setSidebarWindowIndex } from '../../redux/actions/items'
+import { createItem, setSidebarWindowIndex } from '../../../redux/actions/items'
 import { connect } from 'react-redux'
 
-import Modal from './modal'
+import Modal from '../modal'
 
 const styles = theme => ({
   root: {

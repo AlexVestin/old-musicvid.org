@@ -131,12 +131,12 @@ export default class TessellatedText extends AudioreactiveItem {
     update = () => {
         this.mesh.position.x = this.config.centerX
         this.mesh.position.y = this.config.centerY
-        this.scale = this.config.scale 
     }
 
     updateConfig = (config) => {
         const { text, fontSize } = this.config
         this.config = config
+
 
         if(text !== config.text || fontSize !== config.fontSize) {
             this.createTextMesh().then((mesh) => {this.mesh = mesh; this.update()})
@@ -146,15 +146,8 @@ export default class TessellatedText extends AudioreactiveItem {
     }
 
     animate = (time, frequencyBins) => {
-        if(frequencyBins[0]) {
-            const newAmp = frequencyBins[2] / this.config.scale; 
-            if(Math.abs(newAmp - this.amplitude) > this.config.threshold) {
-                this.amplitude = newAmp
-            }else {
-                this.amplitude = this.amplitude - 0.03 > 0 ? this.amplitude - 0.03 : 0
-            }
-
-            this.uniforms.amplitude.value =  this.amplitude
+        if(frequencyBins[this.config.barIndex]) {
+            this.uniforms.amplitude.value = frequencyBins[this.config.barIndex] / this.config.scale
         }
     }
 }

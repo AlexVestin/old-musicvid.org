@@ -56,7 +56,7 @@ export class MeshItem extends BaseItem {
 }
 
 
-export class AudioreactiveItem extends BaseItem {
+export class AudioreactiveItem extends MeshItem {
     constructor(config) {
         super(config)
         this.defaultConfig.threshold = {value: 15, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true}

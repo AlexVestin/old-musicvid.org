@@ -42,11 +42,6 @@ export default class Water extends BaseItem{
         this.addItem()
     }
 
-
-    updateConfig = (config) => {
-        this.getConfig(config)
-    }
-
     animate = (time, frequencyBins) => {
         let { water, parameters } = this
         water.material.uniforms.time.value += 1.0 / 60.0;

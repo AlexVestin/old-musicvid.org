@@ -8,10 +8,16 @@ export default function itemsReducer(state = {
     sideBarWindowIndex: 0,
     layers: [],
     selectedLayer: 0,
-    audioInfo: null
-
+    audioInfo: null,
+    renderTargets:  [],
     }, action){
-        switch(action.type){
+        switch(action.type){            
+            case "CREATE_RENDER_TARGET": 
+                return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.RENDERTARGET}
+            case "SELECT_RENDER_TARGET":
+                return {...state, selectedLayer: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
+            case "ADD_RENDER_TARGET":
+                return {...state, renderTargets: [...state.renderTargets, action.payload]}
             case "REMOVE_AUDIO":
                 return {...state, audioInfo: null, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO}
             case "ADD_SOUND": 

@@ -12,15 +12,16 @@ import { setSidebarWindowIndex } from '../../redux/actions/items'
 
 import Audio from './audio'
 
-import AddResourceOptions from './newitem'
-import AddLayerOptions from './newlayer'
+import AddResourceOptions from './item/newitem'
+import AddLayerOptions from './layer/newlayer'
 
-import AudioReactiveTypeList from './audioreactivetypes'
-import ResourceList from "./items"
-import LayerList from './layers'
+import AudioReactiveTypeList from './item/audioreactivetypes'
+import ResourceList from "./item/items"
+import LayerList from './layer/layers'
+import RenderTargetList from './rendertarget/rendertargets'
 
-import Item from './item'
-import Layer from './layer'
+import Item from './item/item'
+import Layer from './layer/layer'
 
 function TabContainer(props) {
   return (
@@ -46,7 +47,7 @@ const styles = theme => ({
 class SidebarContainer extends React.Component {
     static INDEXES = {
         
-        EFFECTSCONTAINER: 1,
+        RENDERTARGETS: 2,
         LAYERS: 0,
         LAYER: 7,
         ADDRESOURCEOPTIONS: 3,
@@ -54,7 +55,7 @@ class SidebarContainer extends React.Component {
         AUDIOREACTIVETYPELIST: 6,
         ITEMS: 8,
         ITEM: 5,
-        AUDIO: 2,
+        AUDIO: 1,
     }
     
     state = {
@@ -69,7 +70,7 @@ class SidebarContainer extends React.Component {
     render() {
         const { classes } = this.props;
         const value = this.props.sideBarWindowIndex
-        const tabStyle = { minWidth: "30px", maxWidth: "100px" }
+        const tabStyle = { minWidth: "30px", maxWidth: "120px" }
         if(value <= 2)
             this.tabValue = value
 
@@ -79,8 +80,8 @@ class SidebarContainer extends React.Component {
                 <AppBar position="static" >
                     <Tabs value={this.tabValue} onChange={this.handleChange} fullWidth>
                         <Tab label="Layers" style={tabStyle} href="#basic-tabs" />
-                        <Tab label="Effects" style={tabStyle}/>
                         <Tab label="Audio" style={tabStyle}/>
+                        <Tab label="Postprocessing" style={tabStyle}/>
                     </Tabs>
                 </AppBar>
 
@@ -93,7 +94,7 @@ class SidebarContainer extends React.Component {
             }
                 
 
-                {value === INDEXES.EFFECTSCONTAINER &&     <TabContainer  idxs={INDEXES}>effects will go here</TabContainer>}
+                {value === INDEXES.RENDERTARGETS &&     <RenderTargetList  idxs={INDEXES}></RenderTargetList>}
                 {value === INDEXES.ADDRESOURCEOPTIONS &&   <AddResourceOptions idxs={INDEXES}></AddResourceOptions>}
                 {value === INDEXES.ADDLAYEROPTIONS &&      <AddLayerOptions idxs={INDEXES}></AddLayerOptions>}
                 {value === INDEXES.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idxs={INDEXES}></AudioReactiveTypeList>}

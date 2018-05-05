@@ -11,6 +11,8 @@ import TessellatedText from './items/tessellatedtext'
 import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
+import RenderTarget from './renderingtargets/rendertarget';
+
 export default class SceneContainer {
     constructor(name, width, height, renderer){
 
@@ -30,6 +32,8 @@ export default class SceneContainer {
             width,
             height
         }
+
+        this.renderTarget = new RenderTarget(name + " - rendertarget", width, height)
     }
 
     addItem = (name, info, time) => {

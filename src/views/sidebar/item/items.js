@@ -11,7 +11,7 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
 import { connect } from 'react-redux'
-import { selectItem, setSidebarWindowIndex } from '../../redux/actions/items'
+import { selectItem, setSidebarWindowIndex } from '../../../redux/actions/items'
 import { O_NONBLOCK } from 'constants';
 
 

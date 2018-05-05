@@ -14,7 +14,7 @@ import Tooltip from 'material-ui/Tooltip';
 
 
 import { connect } from 'react-redux'
-import { editItem, setSidebarWindowIndex, removeItem } from '../../redux/actions/items'
+import { editItem, setSidebarWindowIndex, removeItem } from '../../../redux/actions/items'
 
 const styles = theme => ({
   root: {
