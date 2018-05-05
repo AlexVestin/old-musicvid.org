@@ -34,7 +34,7 @@ export default class Sphere extends AudioreactiveItem {
 
         this.camera = config.sceneConfig.camera 
         this.config.strength = 20
-        this.config.threshold = 0.5
+        this.config.threshold = 0.01
 
 
         var radius = 30, segments = 68, rings = 38;
@@ -145,12 +145,12 @@ export default class Sphere extends AudioreactiveItem {
 
         const newDiff = (frequencyBins[barIndex] / strength) - this.lastDiff
         if(Math.abs(newDiff) > threshold && newDiff > 0 ) {
-            const diff = 1 + frequencyBins[barIndex] / strength
-            sphere.scale.set(diff, diff, diff)
+            const diff =  frequencyBins[barIndex] / strength
+            sphere.scale.set(1+ diff,1 + diff, 1+ diff)
             this.lastDiff = diff
         }else {
-            this.lastDiff =  this.lastDiff - 0.001 >= 1 ? this.lastDiff - 0.01 : 1
-            sphere.scale.set(this.lastDiff, this.lastDiff, this.lastDiff)
+            this.lastDiff =  this.lastDiff - 0.001 >= 0 ? this.lastDiff - 0.01 : 0
+            sphere.scale.set(1 +this.lastDiff, 1 +this.lastDiff,1 +this.lastDiff)
         }
         
         var geometry = sphere.geometry;

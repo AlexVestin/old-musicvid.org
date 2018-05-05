@@ -52,7 +52,6 @@ class Timeline extends PureComponent {
         const l =  (time * zoomWidth * unitSize) - 6 - left
         const m = l+6; const r = m +6;
 
-
         let numbers = []
         const nNrs = 20
         const between = maxNrUnits / nNrs
@@ -88,7 +87,6 @@ class Timeline extends PureComponent {
                             {this.convertTime(e.val)}
                         </div>
                         <div style={{backgroundColor:"white", width:1, height: 5, top:15, position:"absolute", zIndex: 10000, pointerEvents: "none", left: e.x}}></div>
-                        <div style={{backgroundColor:"white", width:1, height: 3, top:17, position:"absolute", zIndex: 10000, pointerEvents: "none", left: e.x + zoomWidth*between*2}}></div>
                     </div>
                     )}
                     
