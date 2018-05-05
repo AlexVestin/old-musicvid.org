@@ -13,6 +13,16 @@ import { setEncoding, incrementTime } from '../../../redux/actions/globals';
 
 
 class ThreeCanvas extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            width: props.width,
+            height: props.height,
+            hidden: false
+        }
+    }
+
     componentDidMount() {    
         const mount = this.mountRef
         this.width = mount.clientWidth
@@ -45,14 +55,14 @@ class ThreeCanvas extends Component {
         this.unsubscribe()
     }
 
-    setSize(w, h) {
-        this.height = h
-        this.width = w
-        this.renderer.setSize(w, h)        
+    setSize(width, height, hidden) {
+        this.scenes.forEach(e => e.setSize(width, height))
+        this.setState({width, height, hidden})
+        this.renderer.setSize( width, height );     
     }
 
-    shouldComponentUpdate() {
-        return false;
+    shouldComponentUpdate(props) {
+        return props.encoding != this.state.hidden;
     }
 
     add = (name, info) => {
@@ -69,7 +79,11 @@ class ThreeCanvas extends Component {
         setEncoding(true)
         this.encoding = true
         this.play(0)
+
+        const { width, height }= this.config
+        this.setSize(width, height, true)
         this.renderScene(this.props.time)
+
     }
 
     encoderLoaded = () => {
@@ -84,7 +98,6 @@ class ThreeCanvas extends Component {
         }
   
         let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate }
-
         this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.renderScene)
     }
 
@@ -150,16 +163,20 @@ class ThreeCanvas extends Component {
             this.renderer.clearDepth()
         }))
         
-        if(this.encoding && this.encodedFrames < this.duration*this.config.fps  && this.encodedFrames !== -1) {
+        if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) {
+            const { width, height} = this.state
             const gl = this.renderer.getContext();
-            this.pixels = new Uint8Array(this.width*this.height*4)
-            gl.readPixels(0,0,this.width,this.height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
+            this.pixels = new Uint8Array(width*height*4)
+            gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
             this.videoEncoder.addFrame(this.pixels, this.renderScene)
+    
             incrementTime(this.props.time + (1 / this.config.fps))
             this.pixels = null
-        }else if(this.encoding && this.encodedFrames >= this.duration*this.config.fps) {
+            this.encodedFrames++
+        }else if(this.encoding && this.encodedFrames >=  this.duration*this.config.fps) {
             this.encoding = false
             setEncoding(false)
+            this.setSize(this.props.width, this.props.height, false)
             this.videoEncoder.close(this.saveBlob)
             this.encodedFrames = -1
         }
@@ -172,12 +189,15 @@ class ThreeCanvas extends Component {
     }
 
     render() {
+        const {width, height, hidden} = this.state
+        const hideCanvas = this.props.encoding || hidden
         return(
-            <div
-                ref={ref => this.mountRef = ref } 
-                style={{ width: String(this.props.width) +'px',  height: String(this.props.height) +'px'}}                
-            />
-            
+            <div style={{ minWidth: String(this.props.width) +'px',  minHeight: String(this.props.height), backgroundColor: "black"} } >
+                <div
+                    ref={ref => this.mountRef = ref } 
+                    style={{ width: String(width) +'px',  height: String(height) +'px', display: hideCanvas ? "none" :  ""}}                
+                />
+            </div>
         )
     }
 }

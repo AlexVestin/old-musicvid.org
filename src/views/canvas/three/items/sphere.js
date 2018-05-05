@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import { MeshItem } from './item';
+import { AudioreactiveItem } from './item';
 
 
 const vertexShader = [
@@ -27,13 +27,16 @@ const fragmentShader = [
 
 
 
-export default class Sphere extends MeshItem {
+export default class Sphere extends AudioreactiveItem {
     constructor(config) {
         super(config)
         this.bins = new THREE.Group()
 
         this.camera = config.sceneConfig.camera 
-        this.defaultConfig.strength = {value: 20, type: "Number", tooltip: "Exaggeration in the y axis", editable: true}
+        this.config.strength = 20
+        this.config.threshold = 0.5
+
+
         var radius = 30, segments = 68, rings = 38;
         var geometry1 = new THREE.SphereGeometry( radius, segments, rings );
         var geometry2 = new THREE.BoxGeometry( 0.8 * radius, 0.8 * radius, 0.8 * radius, 10, 10, 10 );
@@ -78,7 +81,8 @@ export default class Sphere extends MeshItem {
         //
         this.sphere = new THREE.Points( geometry, material );
         this.mesh = this.sphere
-        this.getConfig(this.defaultConfig)
+
+        this.lastDiff = 0
         this.addItem()
 
     }
@@ -126,18 +130,27 @@ export default class Sphere extends MeshItem {
     }
 
     updateConfig = (config) => {
+        config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
+        config.barIndex = config.barIndex < 0 ?  0 : config.barIndex
         this.config = config
     }
 
     animate = (time, frequencyBins) => {
         const {sphere, vertices1} = this
+        const { barIndex, strength, threshold } = this.config
+
         const t = time * 4
         sphere.rotation.y = 0.02 * t;
         sphere.rotation.z = 0.02 * t;
 
-        if(frequencyBins[0]) {
-            const diff = 1 + frequencyBins[2] / this.config.strength
+        const newDiff = (frequencyBins[barIndex] / strength) - this.lastDiff
+        if(Math.abs(newDiff) > threshold && newDiff > 0 ) {
+            const diff = 1 + frequencyBins[barIndex] / strength
             sphere.scale.set(diff, diff, diff)
+            this.lastDiff = diff
+        }else {
+            this.lastDiff =  this.lastDiff - 0.001 >= 1 ? this.lastDiff - 0.01 : 1
+            sphere.scale.set(this.lastDiff, this.lastDiff, this.lastDiff)
         }
         
         var geometry = sphere.geometry;

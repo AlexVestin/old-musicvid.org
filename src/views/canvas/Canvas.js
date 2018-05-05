@@ -98,7 +98,8 @@ class Canvas extends Component {
                   time={time} play={this.play} 
                   stop={this.stop} 
                   encode={this.openEncodeModal}
-              ></PlaybackPanel>
+              >
+              </PlaybackPanel>
               <a aria-label="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
             </div>
         </div>

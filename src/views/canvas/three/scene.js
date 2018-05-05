@@ -89,6 +89,12 @@ export default class SceneContainer {
         
     }
 
+    setSize = (width, height) => {  
+        this.camera.aspect = width / height;
+        if(this.camera.isPerspectiveCamera)
+            this.camera.updateProjectionMatrix();
+    }
+
     setCamera = () => {
         const { width, height } = this.config
         this.camera = new THREE.PerspectiveCamera(55, width / height, 1, 20000)

@@ -1,5 +1,5 @@
 
-importScripts("../wasm/Demux3.js")
+importScripts("Demux3.js")
 let Module = Demuxer()
 
 Module["onRuntimeInitialized"] = () => { 

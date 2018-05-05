@@ -35,7 +35,7 @@ export default class PlaybackPanel extends PureComponent {
                     style={{minHeight: "30px", height:"30px", marginLeft: "auto"}}
                     disabled={!true}
                 >
-                Encode!
+                    Export Video
                 </Button>
 
                 </div>        

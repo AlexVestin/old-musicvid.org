@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 
 import {selectLayer} from '../../redux/actions/items'
 import { withStyles } from 'material-ui/styles';
-import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button'
 import FolderIcon from 'material-ui-icons/Folder';
@@ -42,15 +42,10 @@ class LayerList  extends React.Component {
             <ListItem key={layer.name} dense button className={classes.listItem} onClick={() => this.onClick(layer)}>
               <Avatar> <FolderIcon/></Avatar>
               <ListItemText primary={layer.name} />
-              <ListItemSecondaryAction>
-                    <IconButton aria-label="Delete">
-                        <DeleteIcon />
-                    </IconButton>
-              </ListItemSecondaryAction>
             </ListItem>
           ))}
         </List>
-        <Button variant="raised" fullWidth onClick={this.setWindow} color="secondary">
+        <Button disabled variant="raised" fullWidth onClick={this.setWindow} color="secondary">
             Add New Layer
         </Button>
       </div>

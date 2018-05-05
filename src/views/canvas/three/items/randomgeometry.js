@@ -1,14 +1,17 @@
 
 import * as THREE from 'three'
-import { MeshItem } from './item';
+import { AudioreactiveItem } from './item';
 
-export default class RandomGeometry extends MeshItem {
+export default class RandomGeometry extends AudioreactiveItem {
     constructor(config) {
         super(config)
 
-        this.defaultConfig.threshold = {value: 15, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true}
-        this.defaultConfig.deltaTime = {value: 0.01, type: "Number", tooltip: "Time cooldown before rerendering (in seconds)", editable: true}
+        this.defaultConfig.rotationX = {value: 0, type: "Number", tooltip: "Rotation in X axis per tick", editable: true}
+        this.defaultConfig.rotationY = {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick", editable: true}
+        this.defaultConfig.rotationZ = {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick", editable: true}
         this.getConfig(this.defaultConfig)
+        this.config.strength = 1
+
         this.mesh = new THREE.Mesh()
         var geometry = new THREE.SphereBufferGeometry( 50, Math.random() * 64, Math.random() * 32 );
         var material = new THREE.MeshBasicMaterial( { wireframe: true, color: 0x00ff00 } );
@@ -40,6 +43,8 @@ export default class RandomGeometry extends MeshItem {
             this.move(config.centerX, config.centerY, config.centerZ)
         }
 
+        config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
+        config.barIndex = config.barIndex < 0 ?  0 : config.barIndex
         this.config = config
     }
 
@@ -52,10 +57,10 @@ export default class RandomGeometry extends MeshItem {
         return color;
       }
     
-
-
     animate = (time, frequencyBins) => {
-            if(frequencyBins[0] && frequencyBins[2] > this.config.threshold && this.lastTime + this.config.deltaTime <= time) {
+        const { barIndex, threshold, deltaTime, strength } = this.config
+
+        if(frequencyBins[0] && frequencyBins[barIndex] * strength > threshold && this.lastTime + deltaTime <= time) {
             let c = this.bufferGeometries[Math.floor(Math.random() * this.bufferGeometries.length)]
             var geometry = new c( 50, Math.random() * 64, Math.random() * 32 );
             var material = new THREE.MeshBasicMaterial( { wireframe: true, color: this.getRandomColor() } );
@@ -67,6 +72,10 @@ export default class RandomGeometry extends MeshItem {
             material.dispose();
 
             this.lastTime = time
+        }else {
+            this.mesh.rotation.x += this.config.rotationX
+            this.mesh.rotation.y += this.config.rotationY
+            this.mesh.rotation.z += this.config.rotationZ            
         }
     }
 }

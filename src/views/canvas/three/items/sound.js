@@ -17,8 +17,6 @@ export default class Sound extends BaseItem {
         this.soundDataBuffer = []
         this.startTime = -1
         this.loaded = false
-        this.dest = audioCtx.createMediaStreamDestination()
-        this.stream = this.dest.stream
         this.fftSize = 4096
 
         this.Module  = {};
@@ -79,17 +77,6 @@ export default class Sound extends BaseItem {
                 
             this.playing = false
         }
-
-        /*
-        this.source = audioCtx.createBufferSource();
-        this.source.buffer = this.buffer;
-        //video output
-        this.source.connect(this.dest);
-        //speaker output
-        this.source.connect(audioCtx.destination)
-        this.source.start(0)
-        this.startTime = performance.now();
-        */
     }
 
     getFrequencyData2 = (time) => {
@@ -125,8 +112,6 @@ export default class Sound extends BaseItem {
                 }
             }
         }
-
-
         return bins
     }
 

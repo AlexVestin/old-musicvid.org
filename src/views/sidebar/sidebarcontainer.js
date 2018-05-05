@@ -85,7 +85,7 @@ class SidebarContainer extends React.Component {
                 </AppBar>
 
                 {value > 2 && 
-                <AppBar position="static" color="default" style={{height: 30, minHeight: 30}}>
+                <AppBar position="static" color="default" style={{height: 30, minHeight: 30, textAlign: "center"}}>
                         <Typography variant="title" color="inherit">
                             {this.props.selectedLayer.name}
                         </Typography>

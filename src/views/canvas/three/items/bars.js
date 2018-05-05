@@ -13,6 +13,8 @@ export default class Bars extends MeshItem {
         this.defaultConfig.decreaseSpeed = {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true}
         this.defaultConfig.deltaRequired = {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true}       
         this.defaultConfig.color = {value: "FFFFFF", type: "String", tooltip: "", editable: true}
+        this.defaultConfig.scale = {value: 0.5, type: "Number", tooltip: "", editable: true}
+
 
         for(var i = 0; i < 32; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );

@@ -182,8 +182,7 @@ class ScrollArea2 extends PureComponent {
                 <div style={{display: "flex", flexDirection: "row"}}>
                 <div style={{minWidth: "13%", width: "13%", height: "100%", backgroundColor: "#434343"}}>
                     <div style={{height: 35, backgroundColor: "#666666", width: "100%"}}>
-                       Buttons and stuff
-                        Track info
+  
                     </div>
 
                 </div>

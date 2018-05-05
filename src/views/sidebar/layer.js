@@ -58,13 +58,13 @@ class Layer extends React.Component {
                 <Button variant="raised" fullWidth onClick={this.openItems}>
                     Items
                 </Button>
-                <Button variant="raised" fullWidth onClick={this.setWindow}>
+                <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
                     Camera
                 </Button>
-                <Button variant="raised" fullWidth onClick={this.setWindow}>
+                <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
                     Controls
                 </Button>
-                <Button variant="raised" fullWidth onClick={this.setWindow}>
+                <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
                     Scene
                 </Button>
             

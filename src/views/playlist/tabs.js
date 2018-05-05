@@ -45,16 +45,13 @@ class SimpleTabs extends React.PureComponent {
                             </Tabs>
 
                             <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">1</Button>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">2</Button>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">3</Button>
-                                <Button style={{height: 25, marginRight: 5, minHeight: 25, top: 3, width: 10, minWidth: 10}} variant="raised">4</Button>                                
+                                       
                             </div>
                         </AppBar>
                     </div>
                 </div>
                 <div className={classes.scrollbarWrapper}>
-                    <ScrollArea2 maxNrUnits={300} items={this.props.items}> </ScrollArea2>
+                    <ScrollArea2 maxNrUnits={600} items={this.props.items}> </ScrollArea2>
                 </div>
             </div>
         );

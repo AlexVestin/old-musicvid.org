@@ -50,8 +50,19 @@ export class MeshItem extends BaseItem {
         this.defaultConfig.centerX = {value: 0, type: "Number",  tooltip: "", editable: true}
         this.defaultConfig.centerY = {value: 0, type: "Number", tooltip: "", editable: true}
         this.defaultConfig.centerZ = {value: 0, type: "Number",  tooltip: "", editable: true}
-        this.defaultConfig.layer = {value: "Scene", type: "String", tooltip: "", editable: true}
-        this.defaultConfig.scale = {value: 0.5, type: "Number", tooltip: "", editable: true}
+
+        this.getConfig(this.defaultConfig)
+    }
+}
+
+
+export class AudioreactiveItem extends BaseItem {
+    constructor(config) {
+        super(config)
+        this.defaultConfig.threshold = {value: 15, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true}
+        this.defaultConfig.deltaTime = {value: 0.01, type: "Number", tooltip: "Time cooldown before rerendering (in seconds)", editable: true}
+        this.defaultConfig.barIndex =   {value: 2, type: "Number", tooltip: "Index of audio bin (0-32) that should be the input for triggering a rerender", editable: true}
+        this.defaultConfig.strength = {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true}
 
         this.getConfig(this.defaultConfig)
     }

@@ -108,6 +108,7 @@ class SimpleModal extends React.Component {
                     </Typography>
                         
                     <div style={{display: "flex", flexDirection: "row"}}>
+                        <Options onchange={format => this.format = format} name="format" labels={["mp4"]} disabled></Options>
                         <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720","1920x1080","2048x1080"]}></Options>
                         <Options onchange={v => this.fps = v} name="fps" labels={["25", "30", "60"]}></Options>
                         <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
