@@ -2,19 +2,17 @@
 import * as THREE from 'three'
 import { MeshItem } from './item';
 
-export default class Text3D extends MeshItem{
-    constructor(config, sceneConfig) {
-        super("Text3D")
+export default class Text3D extends MeshItem {
+    constructor(config) {
+        super(config)
         this.bins = []
 
         this.defaultConfig.text = {value: "text", type: "String", tooltip: "", editable: true}
         this.defaultConfig.fontSize = {value: 5, type: "Number", tooltip: "", editable: true}
+        this.defaultConfig.color = {value: "FFFFFF", type: "String", tooltip: "", editable: true}
 
-       
-        this.scene = sceneConfig.scene
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
-        this.scene.add(this.group)
 
         this.getConfig(this.defaultConfig)
         this.mesh = new THREE.Mesh()

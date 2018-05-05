@@ -4,11 +4,14 @@ var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 export default class Sound extends BaseItem {
     constructor(config, onload){
-        super(config.file.name)
+        super(config)
 
         this.defaultConfig.sampleRate = {value: 0, type: "Number", tooltip: "", editable: false}
         this.defaultConfig.channels = {value: 0, type: "Number",  tooltip: "", editable: false}
-        this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: true}
+        this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: false}
+        this.defaultConfig.start.editable = false
+        this.defaultConfig.name.editable = false
+        this.config.movable = false
 
         this.onload = onload
         this.soundDataBuffer = []
@@ -172,7 +175,6 @@ export default class Sound extends BaseItem {
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
-                    
                     that.addItem()
                     if(that.onload !== undefined)
                         that.onload()

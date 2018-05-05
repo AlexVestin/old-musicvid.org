@@ -180,7 +180,13 @@ class ScrollArea2 extends PureComponent {
         return (
             <div ref={ref => this.wrapperRef = ref} style={{height: "100%", position: "relative"}}>
                 <div style={{display: "flex", flexDirection: "row"}}>
-                <div style={{minWidth: "13%", width: "13%", height: "100%", backgroundColor: "#434343"}}></div>
+                <div style={{minWidth: "13%", width: "13%", height: "100%", backgroundColor: "#434343"}}>
+                    <div style={{height: 35, backgroundColor: "#666666", width: "100%"}}>
+                       Buttons and stuff
+                        Track info
+                    </div>
+
+                </div>
                 <div style={{width: "100%"}}>
                 <div className={classes.group1} ref={ref => this.panelRef = ref} >
                     <div className={classes.button}></div>
@@ -244,8 +250,7 @@ class ScrollArea2 extends PureComponent {
                                         </div>
                                     </div>
                                     <div style={{marginTop: 5}}>
-                                        <button style={{width: 30, height:20}}>1</button>
-                                        <button style={{width: 30, height:20}}>2</button>
+          
                                     </div>
                                 </div>
                            )

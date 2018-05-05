@@ -4,8 +4,9 @@ import ThreeCanvas from './three/three';
 
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
+import ExportModal from './export'
 
-import { setTime, togglePlaying, setPlaying, incrementTime } from '../../redux/actions/globals' 
+import { setTime, togglePlaying, setPlaying, incrementTime, setEncoding, setDisabled } from '../../redux/actions/globals' 
 import { connect } from 'react-redux';
 
 class Canvas extends Component {
@@ -16,6 +17,7 @@ class Canvas extends Component {
         width: 720,
         height: 480,
         info: "",
+        modalOpen: false
       };
 
       this.frames = 60
@@ -37,21 +39,24 @@ class Canvas extends Component {
   
     renderScene = () => {
       var time = this.props.time
-      if(this.props.playing) {
-        //const time = frameId / fps
-        if(this.props.playing) {
-          let now = performance.now()
-          time = (now - this.lastTime) / 1000 + this.props.time
-        
-          incrementTime(time)
-          this.lastTime = now
+      if(!this.props.encoding) {
+        if(this.props.playing ) {
+          //const time = frameId / fps
+          if(this.props.playing) {
+            let now = performance.now()
+            time = (now - this.lastTime) / 1000 + this.props.time
+          
+            incrementTime(time)
+            this.lastTime = now
+          }
         }
+        
+        this.displayRenderer.renderScene(time)
       }
-      
-      this.displayRenderer.renderScene(time)
       if(!this.state.encoding || !this.videoEncoder.isWorker)
           window.requestAnimationFrame(this.renderScene)
     }
+
     
     stop = () => {
       this.frameId = 0
@@ -65,6 +70,17 @@ class Canvas extends Component {
       togglePlaying()
       this.displayRenderer.play(this.props.time)
     }
+
+    openEncodeModal = () => {
+      this.setState({modalOpen: true})
+    }
+
+    startEncoding = (config) => {
+      this.stop()
+      setDisabled(true)
+      this.setState({modalOpen: false})
+      this.displayRenderer.initEncoder(config)
+    }
   
     render() {
       const {width} = this.state
@@ -72,10 +88,17 @@ class Canvas extends Component {
 
       return (
         <div className={classes.canvas_wrapper}>
+          {this.state.modalOpen && <ExportModal open={this.state.modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
         	 <div className={classes.center_canvas}>
               <b>{this.state.info}</b>
               <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
-              <PlaybackPanel disabled={this.props.disabled} width={width} playing={playing} time={time} play={this.play} stop={this.stop} ></PlaybackPanel>
+              <PlaybackPanel 
+                  disabled={this.props.disabled} 
+                  width={width} playing={playing} 
+                  time={time} play={this.play} 
+                  stop={this.stop} 
+                  encode={this.openEncodeModal}
+              ></PlaybackPanel>
               <a aria-label="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
             </div>
         </div>
@@ -89,7 +112,8 @@ const mapStateToProps = state => {
     playing: state.globals.playing,
     frameId: state.globals.frameId,
     fps: state.globals.fps,
-    disabled: state.globals.disabled
+    disabled: state.globals.disabled,
+    encoding: state.globals.encoding
   }
 }
 

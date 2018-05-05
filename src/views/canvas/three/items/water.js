@@ -6,10 +6,9 @@ import ThreeWater from "./waterclass"
 import BaseItem from './item';
 
 export default class Water extends BaseItem{
-    constructor(config, sceneConfig) {
-        super("Water")
-        this.scene = sceneConfig.scene
-        this.light = sceneConfig.light
+    constructor(config) {
+        super(config)
+        this.light = config.sceneConfig.light
 
         let parameters = {
             oceanSide: 2000,
@@ -32,7 +31,7 @@ export default class Water extends BaseItem{
                 sunColor: 0xffffff,
                 waterColor: 0x001e0f,
                 distortionScale: parameters.distortionScale,
-                fog: this.scene.fog !== undefined
+                fog: false
             }
         );
 

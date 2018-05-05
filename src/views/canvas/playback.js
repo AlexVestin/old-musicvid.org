@@ -26,10 +26,23 @@ export default class PlaybackPanel extends PureComponent {
                     <div style={{marginLeft: 85}}>
                         <Button disabled={this.props.disabled} onClick={this.props.play}>{this.props.playing ? "Pause" : "Play"}</Button> 
                         <Button disabled={this.props.disabled} onClick={this.props.stop}>Stop</Button>      
-                    </div>         
+                    </div>    
+
+                <Button 
+                    onClick={this.props.encode} 
+                    variant="raised" 
+                    color="secondary"
+                    style={{minHeight: "30px", height:"30px", marginLeft: "auto"}}
+                    disabled={!true}
+                >
+                Encode!
+                </Button>
+
                 </div>        
             </div>
 
         )
     }
 }
+
+//disabled={!this.props.encoderLoaded || this.props.encoding || this.props.streamClosed}

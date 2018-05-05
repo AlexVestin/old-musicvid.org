@@ -4,7 +4,7 @@ export default class VideoEncoder {
     constructor(onload){
 
         // in the public folder
-        this.worker = new Worker("worker.js")
+        this.worker = new Worker("workers/worker.js")
         this.worker.onmessage = this.onmessage;
 
         this.onload = onload
@@ -28,10 +28,12 @@ export default class VideoEncoder {
     sendFrame = (pixels) => {
         this.encoding = true
         this.worker.postMessage(pixels, [pixels.buffer])
+        pixels = null
     }
 
     addFrame = (pixels, frame) => {
         this.requested = false
+
         if(!this.encoding){
             if(!this.bufferSet) {
                 this.sendFrame(pixels)
@@ -56,10 +58,7 @@ export default class VideoEncoder {
         }        
     }
 
-    close = (onsuccess) => {
-        if(this.bufferSet)
-            this.worker.postMessage(this.buffer, [this.buffer.buffer])
-                
+    close = (onsuccess) => {                
         this.worker.postMessage({action: "close"})
         this.onsuccess = onsuccess
     }
@@ -80,7 +79,6 @@ export default class VideoEncoder {
                     this.sendFrame(this.buffer)
                 }
                     
-
                 if(!this.requested)
                     requestAnimationFrame(this.getPixels)
                 break;

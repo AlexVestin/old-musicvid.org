@@ -10,10 +10,21 @@ html, body {
   box-sizing: border-box;
   height: 100%;
   width: 100%;
+  margin: 0;
   top: 0;
   overflow: hidden; 
 }
 
+
+.header {
+  position: relative;
+  top: 0;
+  margin: 0;
+  height: 2vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #888888;
+}
 
 .footer {
   position: absolute;

@@ -16,6 +16,15 @@ export function setTime(item){
     );  
 }
 
+
+export function setEncoding(item){
+    store.dispatch({
+        type: "SET_ENCODING",
+        payload: item
+        } 
+    );  
+}
+
 export function setSidebarWindowIndex(item) {
     store.dispatch({
         type: "SET_FPS",

@@ -7,6 +7,30 @@ export function selectItem(item){
     );  
 }
 
+export function addLayer(item){
+    store.dispatch({
+        type: "ADD_LAYER",
+        payload: item
+        } 
+    );  
+}
+
+export function addSound(item){
+    store.dispatch({
+        type: "ADD_SOUND",
+        payload: item
+        } 
+    );  
+}
+export function selectLayer(index){
+    store.dispatch({
+        type: "SELECT_LAYER",
+        payload: index
+        } 
+    );  
+}
+
+
 
 export function setSidebarWindowIndex(item) {
     store.dispatch({

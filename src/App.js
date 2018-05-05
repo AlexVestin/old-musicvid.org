@@ -9,6 +9,7 @@ class App extends Component {
   render() {
     return (
         <div className={classes.wrapper}>
+          <header className={classes.header}></header>
           <div className={classes.content_wrapper}>
             <Sidebar></Sidebar>
             <Canvas className={classes.canvas}></Canvas>
@@ -16,7 +17,7 @@ class App extends Component {
           <Playlist className={classes.content_footer}></Playlist>
           <footer className={classes.footer}></footer>
        </div>
-      
+
     );
   }
 }

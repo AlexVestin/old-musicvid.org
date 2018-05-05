@@ -5,8 +5,8 @@ import Demuxer from '../../../../videoencoder/demuxer.js'
 
 
 export default class Video extends BaseItem {
-    constructor(name, config, sceneConfig) {
-        super(name) 
+    constructor(config) {
+        super(config) 
         var fr = new FileReader()
         this.bytesLoaded = false
         fr.onload = () => {            

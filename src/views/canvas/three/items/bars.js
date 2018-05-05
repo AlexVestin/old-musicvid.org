@@ -3,8 +3,8 @@ import * as THREE from 'three'
 import { MeshItem } from './item';
 
 export default class Bars extends MeshItem {
-    constructor(config, sceneConfig) {
-        super("Bars")
+    constructor(config) {
+        super(config)
         this.bins = new THREE.Group()
 
         this.config.type = "BARS"
@@ -12,6 +12,7 @@ export default class Bars extends MeshItem {
         this.defaultConfig.strength = {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true}
         this.defaultConfig.decreaseSpeed = {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true}
         this.defaultConfig.deltaRequired = {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true}       
+        this.defaultConfig.color = {value: "FFFFFF", type: "String", tooltip: "", editable: true}
 
         for(var i = 0; i < 32; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -36,11 +37,13 @@ export default class Bars extends MeshItem {
     }
 
 
-    move = (x, y) => {
+    move = (x, y, z) => {
         this.bins.children.forEach((e, i) => {
             e.position.x = x + i+(i*0.5) - 24;
+            e.translateZ(z);
         })
 
+        console.log(x, y, z)
         this.centerY = y
     }
 
@@ -49,8 +52,8 @@ export default class Bars extends MeshItem {
             e.material.color.setHex("0x" + config.color)
         })
 
-        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY) {
-            this.move(config.centerX, config.centerY)
+        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY ||  this.config.centerZ !== config.centerZ) {
+            this.move(config.centerX, config.centerY, config.centerZ)
         }
 
         this.config = config

@@ -5,10 +5,6 @@ import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 import Button from 'material-ui/Button';
 
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
-
 const style= {
     top: `30%`,
     left: `50%`,
@@ -40,13 +36,13 @@ class SimpleModal extends React.Component {
                 onClose={this.handleClose}
             >
                 <div style={style} className={classes.paper}>
-                <Typography variant="title" id="modal-title">
-                    Keeping audio
-                </Typography>
-                <Typography variant="subheading" id="simple-modal-description">
-                    Currently importing audio along with the video is very slow. Longer videos
-                    (5mins and up), can take several minutes or even crash the application
-                </Typography>
+                    <Typography variant="title" id="modal-title">
+                        Keeping audio
+                    </Typography>
+                    <Typography variant="subheading" id="simple-modal-description">
+                        Currently importing audio along with the video is very slow. Longer videos
+                        (5mins and up), can take several minutes or even crash the application
+                    </Typography>
                     <Button onClick={() => this.props.onChoice(false)}>Discard audio </Button>
                     <Button onClick={() => this.props.onChoice(true)} >Keep audio</Button>
 

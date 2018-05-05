@@ -19,35 +19,40 @@ export default class Clip extends PureComponent {
     }
 
     onMouseDown = (e) => {
-        selectItem(this.props.item)
-        this.mouseDown = true
-        this.startX = e.clientX
+        if(this.props.item.movable) {
+            selectItem(this.props.item)
+            this.mouseDown = true
+            this.startX = e.clientX
+        }
     }
 
     onMouseUp = (e) => {
-        this.mouseDown = false
-        const { item, rOffset } = this.props
-        this.endX = e.clientX
+        if(this.props.item.movable) {
+            this.mouseDown = false
+            const { item, rOffset } = this.props
+            this.endX = e.clientX
 
-        if(item.start + (this.endX  - this.startX) / rOffset >= 0) {
-            editItem({key: "start", value: item.start + (this.endX-this.startX) / rOffset })
-        }else {
-            editItem({key: "start", value: 0 })
+            if(item.start + (this.endX  - this.startX) / rOffset >= 0) {
+                editItem({key: "start", value: item.start + (this.endX-this.startX) / rOffset })
+            }else {
+                editItem({key: "start", value: 0 })
+            }
+                
+            this.setState({dx: 0})
+            this.startX = this.endX = 0
         }
-            
-        this.setState({dx: 0})
-        this.startX = this.endX = 0
     }
 
     onMouseMove = (e) => {
-        const { item, rOffset, left } = this.props
-        if(this.mouseDown) {
-            if(item.start + (e.clientX  - this.startX) / rOffset >= 0) {
-                this.setState({dx: e.clientX  - this.startX})
-            }else {
-                this.setState({dx: -left})
+        if(this.props.item.movable) {
+            const { item, rOffset, left } = this.props
+            if(this.mouseDown) {
+                if(item.start + (e.clientX  - this.startX) / rOffset >= 0) {
+                    this.setState({dx: e.clientX  - this.startX})
+                }else {
+                    this.setState({dx: -left})
+                } 
             }
-                
         }
     }
 
@@ -57,9 +62,11 @@ export default class Clip extends PureComponent {
     }
 
     onStop = (e, b) => {
-        if(this.props.item.start !== b.x) {
-            selectItem(this.props.item)
-            editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
+        if(this.props.item.movable) {
+            if(this.props.item.start !== b.x) {
+                selectItem(this.props.item)
+                editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
+            }
         }
     }
  
@@ -72,23 +79,28 @@ export default class Clip extends PureComponent {
     }
 
     onDragStart = (e) => {
-        this.startX = e.clientX
-
-        e.dataTransfer.setData('text',''); 
+        if(this.props.item.movable) {
+            this.startX = e.clientX
+            e.dataTransfer.setData('text',''); 
+        }
     }
 
     onDragEnd = (e) => {
-        const { item, rOffset } = this.props
-        this.endX = e.clientX
+        if(this.props.item.movable) {
+            const { item, rOffset } = this.props
+            this.endX = e.clientX
 
-        editItem({key: "start", value: item.start + (this.endX-this.startX) / rOffset })
-        this.setState({dx : 0})
-        this.startX = this.endX = 0
+            editItem({key: "start", value: item.start + (this.endX-this.startX) / rOffset })
+            this.setState({dx : 0})
+            this.startX = this.endX = 0
+        }
     }
 
     onDrag = (e) => {
-        const x = e.clientX
-        this.setState({dx: x - this.startX})
+        if(this.props.item.movable) {
+            const x = e.clientX
+            this.setState({dx: x - this.startX})
+        }
     }
 
     clipDragged = (e, b) => {

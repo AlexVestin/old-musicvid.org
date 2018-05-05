@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import SimpleTabs from "./tabs"
+import SimpleTabs from "./sidebarcontainer"
 import classes from "./sidebar.css"
 
 export default class Sidebar extends PureComponent {

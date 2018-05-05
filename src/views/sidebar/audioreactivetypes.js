@@ -3,12 +3,17 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import List, { ListItem,  ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button'
-
 import { setSidebarWindowIndex, createItem } from '../../redux/actions/items'
+
 import {connect} from 'react-redux'
 
 const styles = theme => ({
   root: {
+    height: "calc(100% - 78px)", // height of the header/appbar
+    width: '100%',
+    display: "flex", 
+    flexDirection: "column",
+    justifyContent: "space-between",
     width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
@@ -24,26 +29,25 @@ class AudioReactiveTypeList extends React.Component {
   }
 
   back = () => {
-    setSidebarWindowIndex(3)
+    setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)
   }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
+        <div>
         <List>
-          {["Bars", "Text3D", "Water"].map(value => (
+          {["Bars", "Text3D", "Water", "Tesselated Text", "Sphere", "Random Geometry"].map(value => (
             <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add(value)}>
               <ListItemText primary={value} />
             </ListItem>
           ))}
-
-          <ListItem dense button className={classes.listItem}>
-            <Button variant="raised" fullWidth onClick={this.back}>
-                Back
-            </Button>
-            </ListItem>
         </List>
+        </div>
+        <Button variant="raised" fullWidth onClick={this.back}>
+            Back
+        </Button>
       </div>
     );
   }

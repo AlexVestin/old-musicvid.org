@@ -18,6 +18,11 @@ import { editItem, setSidebarWindowIndex, removeItem } from '../../redux/actions
 
 const styles = theme => ({
   root: {
+    height: "calc(100% - 78px)", // height of the header/appbar
+    width: '100%',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
     width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
@@ -45,26 +50,29 @@ class Item extends React.Component {
     };
 
     back = () => {
-        setSidebarWindowIndex(0)
+        setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
     handleChange = input => event => {
         var value = event.target.value
-        var numberValue = -1
-        if(input.type === "Number") {
-            if(value[value.length -1] !== "." && value[0] !== "-")
-                if(isNaN(value) || value.length > 12){
-                return
+        var numberValue = null
+        if(input.type === "Number" && value !== "") {
+            if(value === "" || value === ".") {
+                numberValue = 0
+            }else {
+                if(value[value.length -1] !== "." && value[0] !== "-" ){
+                    if(isNaN(value) || value.length > 12)
+                        return
+                    } 
+                // if only a '-' set value to zero and allow it to be set to state
+                numberValue = ( value[0] === "-" && value.length === 1) ? 0 : Number(value)
             }
-            
-            // if only a '-' set value to zero and allow it to be set to state
-            numberValue =( value[0] === "-" && value.length === 1) ? 0 : Number(value)
         }
 
         let values = {...this.state.values}
         values[input.key] = value
         this.setState({values}, () => {
-            let val = numberValue !== -1 ? numberValue : value
+            let val = numberValue !== null ? numberValue : value
             editItem({key: input.key, value: val})
         })   
     }
@@ -72,13 +80,28 @@ class Item extends React.Component {
     setInputValues = (props) => {
         let values = {}
         const si = props.selectedItem
-        
+        const conf = si.defaultConfig
 
-        Object.keys(si).map((key, index) => 
-            values[key] = this.state.values[key] !== (String(si[key]) + ".") ? si[key] : values[key] 
-        )
-        this.setState({values})
-    
+
+        Object.keys(conf).map((key, index) => {
+            // check if is negative or decimal
+            const val = this.state.values[key]
+            if (conf[key].type === "Number" && val !== undefined) {
+                if (val === "-" || val === ".") {
+                    if (si[key] !== 0) {
+                        values[key] = si[key]
+                    }
+                } else {
+                    values[key] = (val !== (String(si[key]) + ".") && val[val.length-1] !== "0") ? si[key] : values[key]
+                }
+
+            } else {
+                values[key] = si[key]
+            }
+
+        })
+
+        this.setState({ values })
     }
 
     removeItem = () => {
@@ -100,42 +123,38 @@ class Item extends React.Component {
 
         return (
             <div className={classes.root}>
-            <AppBar position="static" color="default">
-                <Toolbar>
-                    <Typography variant="title" color="inherit">
-                        {this.props.selectedItem.name}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-
-            <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
-                    {Object.keys(conf).map((key, index) => (
-                        <div key={key}>
-                            {conf[key].show !== false &&
-                            <Tooltip id="tooltip-top-start" title={conf[key].tooltip} placement="right-end">
-                                <TextField
-                                    id={key}
-                                    label={key}
-                                    className={classes.textField}
-                                    value={this.state.values[key]}
-                                    margin="normal"
-                                    onChange={this.handleChange({type: conf[key].type, key: key})}
-                                    disabled={!conf[key].editable}
-                                />
-                            </Tooltip>
-                            }
-                        </div>
-                    ))}
+            <div>
+                <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
+                        {Object.keys(conf).map((key, index) => (
+                            <div key={key}>
+                                {conf[key].show !== false &&
+                                <Tooltip id="tooltip-top-start" title={conf[key].tooltip} placement="right-end">
+                                    <TextField
+                                        id={key}
+                                        label={key}
+                                        className={classes.textField}
+                                        value={this.state.values[key]}
+                                        margin="normal"
+                                        onChange={this.handleChange({type: conf[key].type, key: key})}
+                                        disabled={!conf[key].editable}
+                                    />
+                                </Tooltip>
+                                }
+                            </div>
+                        ))}
+                    </div>
+                    
+               
                 </div>
-                <Button className={classes.button} style={{marginLeft: "auto"}} onClick={this.removeItem} variant="raised" color="secondary">
+                <div> 
+                <Button className={classes.button} style={{marginLeft: "auto"}} fullWidth onClick={this.removeItem} variant="raised" color="secondary">
                     Delete item
                     <Delete className={classes.rightIcon} />
-                </Button>
-               
-                
+                </Button>               
                 <Button variant="raised" fullWidth onClick={this.back}>
                     Back
                 </Button>
+                </div>
             </div>
         );
     }
