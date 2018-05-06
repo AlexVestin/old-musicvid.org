@@ -28,7 +28,7 @@ class Canvas extends Component {
   
     componentDidMount() {
       this.encodedFrames = 0;
-      this.displayRenderer = this.ThreeRenderer.getWrappedInstance()
+      this.displayRenderer = this.ThreeRenderer
       window.requestAnimationFrame(this.renderScene)
     }
   
@@ -94,7 +94,7 @@ class Canvas extends Component {
               <b>{this.state.info}</b>
               <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
               <PlaybackPanel 
-                  disabled={this.props.audioInfo === null} 
+                  encodeDisabled={this.props.audioInfo === null} 
                   width={width} playing={playing} 
                   time={time} play={this.play} 
                   stop={this.stop} 

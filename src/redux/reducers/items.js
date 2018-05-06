@@ -10,12 +10,13 @@ export default function itemsReducer(state = {
     selectedLayer: 0,
     audioInfo: null,
     renderTargets:  [],
+    selectedRenderTarget: null
     }, action){
         switch(action.type){            
             case "CREATE_RENDER_TARGET": 
-                return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.RENDERTARGET}
+                return {...state }
             case "SELECT_RENDER_TARGET":
-                return {...state, selectedLayer: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
+                return {...state, selectedRenderTarget: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.RENDERTARGET}
             case "ADD_RENDER_TARGET":
                 return {...state, renderTargets: [...state.renderTargets, action.payload]}
             case "REMOVE_AUDIO":
@@ -30,7 +31,8 @@ export default function itemsReducer(state = {
                 return {...state, sideBarWindowIndex: action.payload}
             case "SELECT_ITEM":
                 const item = state.items.find((e) => action.payload.id === e.id)
-                return {...state, selectedItem: item, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM}
+                const layer = state.layers.find((e) => action.payload.sceneId === e.id)
+                return {...state, selectedItem: item, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM, selectedLayer: layer}
             case "CREATE_ITEM":
                 return {...state, selectedItem: action.payload}
             case "ADD_ITEM":

@@ -5,14 +5,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Sound from "./items/sound"
 import store from '../../../redux/store'
-
+import {OrthographicCamera, Scene, Mesh, PlaneBufferGeometry } from 'three' 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
 
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
 import { addLayer, removeAudio } from '../../../redux/actions/items'
-
-
+import RenderTarget from './postprocessing/rendertarget';
 
 class ThreeCanvas extends Component {
 
@@ -29,21 +28,13 @@ class ThreeCanvas extends Component {
         const mount = this.mountRef
         this.width = mount.clientWidth
         this.height = mount.clientHeight
-        const renderer = new WebGLRenderer({antialias: true})
+        const renderer = new WebGLRenderer({antialias: true, alpha: true})
         renderer.setClearColor('#000000')
         renderer.setSize(this.width, this.height)
         renderer.autoClear = false;
         this.renderer = renderer
         
-        const background = new SceneContainer("background", this.width, this.height, renderer)
-        const graphics = new SceneContainer("graphics", this.width, this.height, renderer)
-        graphics.setCamera()
-        graphics.setControls()
-        
-        addLayer(background.config)
-        addLayer(graphics.config)
-
-        const uns = store.subscribe(() => console.log("hello"))
+        this.unsubscribe = store.subscribe(this.handleChange)
         
         mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
@@ -52,6 +43,22 @@ class ThreeCanvas extends Component {
         this.mount = mount 
 
         this.encodedFrames = 0
+        this.setupScene()
+    }
+
+    setupScene = () =>  {
+        const background = new SceneContainer("background", this.width, this.height, this.renderer)
+        const graphics = new SceneContainer("graphics", this.width, this.height, this.renderer)
+        graphics.setCamera()
+        graphics.setControls()
+
+        this.mainCamera = new OrthographicCamera(-1,1,1,-1,0,1);
+        this.mainScene = new Scene();
+
+        this.mainScene.add(background.quad) 
+        this.mainScene.add(graphics.quad)               
+        
+        //this.mainScene.add(background.quad, graphics.quad);
         this.scenes = [background, graphics]
     }
 
@@ -69,9 +76,9 @@ class ThreeCanvas extends Component {
         return props.encoding != this.state.hidden;
     }
 
-    add = (name, info) => {
-        const scene = this.scenes.find(e => e.config.id === this.props.selectedLayer.id)
-        scene.addItem(name, info, this.props.time)
+    add = (info) => {
+        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
+        scene.addItem(info.type, info, this.time)
     }
 
     initEncoder = (config, useAudio) => {
@@ -83,18 +90,20 @@ class ThreeCanvas extends Component {
     encoderInitialized = () => {
         setEncoding(true)
         this.encoding = true
+        this.encodedFrames = 0
         this.play(0)
 
         const { width, height } = this.config
         this.setSize(width, height, true)
-        this.renderScene(this.props.time)
+        this.renderScene(this.time)
     }
 
     encoderLoaded = () => {
         let audioConfig = null
-        if(!this.useAudio.useAudioDuration) {
+        if(!this.useAudio.useSongDuration ) {
             this.duration = this.useAudio.value
         }else {
+
             this.duration = this.sound.duration
         }
 
@@ -110,42 +119,52 @@ class ThreeCanvas extends Component {
         this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.renderScene)
     }
 
-    componentWillReceiveProps(props) {
-        console.log("[three.js] action: ", store.getState().lastAction.type)
-        switch(store.getState().lastAction.type) {
+    handleChange = () => {
+        const state         = store.getState()
+        this.time           = state.globals.time
+        const selectedItem  = state.items.selectedItem
+        const audioInfo     = state.items.audioInfo
+        const type          = state.lastAction.type
+
+        this.fps            = state.globals.fps
+        this.playing        = state.globals.playing
+        this.selectedLayer  = state.items.selectedLayer
+
+        switch(type) {
             case "REMOVE_ITEM":
-                if(props.selectedItem.type === "SOUND") {
+                if(selectedItem.type === "SOUND") {
                     removeAudio(null)
                     this.sound.stop()
                     this.sound = undefined
                 }else {
-                    this.removeItem(props.selectedItem)
+                    this.removeItem(selectedItem)
                 }
                 break;
             case "EDIT_SELECTED_ITEM":
-                this.updateConfig(props.selectedItem);
+                this.updateConfig(selectedItem);
                 break
             case "SET_TIME":
-                this.setTime(props.time, props.playing)
+                this.setTime(this.time, this.playing)
                 break;
             case "CREATE_ITEM":
-                let name = props.selectedItem.type
-                this.add(name, props.selectedItem)
+                this.add(selectedItem)
                 break; 
             case "ADD_SOUND":
-                this.sound = new Sound(props.audio, () => {if(this.props.playing)this.sound.play(this.props.time)})
+                this.sound = new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)})
                 break;
+            case "CREATE_RENDER_TARGET":
+
             default:
         }
     }
 
     updateConfig = (config) => {
-        const scene = this.scenes.find(e => e.config.id === this.props.selectedLayer.id)
+        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
         scene.updateItem(config)
     }
 
     removeItem = (config) => {
-        const scene = this.scenes.find(e => e.config.id === this.props.selectedLayer.id)
+        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
         scene.removeItem(config)
     }
 
@@ -155,8 +174,7 @@ class ThreeCanvas extends Component {
     }
 
     play = (time, play) => {
-        this.scenes.forEach(e => e.play(time, this.props.fps))
-        console.log("stop")
+        this.scenes.forEach(e => e.play(time))
         if(this.sound && !this.encoding)
             this.sound.play(time)
     }
@@ -165,21 +183,8 @@ class ThreeCanvas extends Component {
         const blob = new Blob([vid], { type: 'video/mp4' });
         FileSaver.saveAs(blob)
     }
-    
 
-    renderScene = (time) => { 
-        var frequencyBins = []
-        if(this.sound) {
-            frequencyBins = this.sound.getFrequencyBins(this.props.time)               
-        }
-        
-        this.renderer.clear()
-        this.scenes.forEach((scene => {
-            scene.animate(this.props.time, frequencyBins)
-            scene.render(this.renderer)
-            this.renderer.clearDepth()
-        }))
-        
+    handleEncode = (time) => {
         if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) {
             const { width, height} = this.state
             const gl = this.renderer.getContext();
@@ -187,7 +192,7 @@ class ThreeCanvas extends Component {
             gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
             this.videoEncoder.addFrame(this.pixels, this.renderScene)
     
-            incrementTime(this.props.time + (1 / this.config.fps))
+            incrementTime(this.time + (1 / this.config.fps))
             this.pixels = null
             this.encodedFrames++
         }else if(this.encoding && this.encodedFrames >=  this.duration*this.config.fps) {
@@ -198,10 +203,27 @@ class ThreeCanvas extends Component {
             this.encodedFrames = -1
         }
     }
+    
+
+    renderScene = (time) => { 
+        var frequencyBins = []
+        this.renderer.clear()
+        if(this.sound) {
+            frequencyBins = this.sound.getFrequencyBins(this.time)               
+        }
+
+        this.scenes.forEach((scene => {
+            scene.animate(this.time, frequencyBins)
+            scene.render(this.renderer, time)
+        }))
+
+        this.renderer.render(this.mainScene, this.mainCamera)
+        this.handleEncode(time)
+    }
 
     setTime = (time, playing) => {
         this.scenes.forEach(e => e.setTime(time, playing))
-        if(playing)this.sound.play(time, playing)
+        if(playing && this.sound)this.sound.play(time, playing)
     }
 
     render() {
@@ -218,21 +240,6 @@ class ThreeCanvas extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        items: state.items.items,
-        selectedItem: state.items.selectedItem,
-        lastAction: state.items.lastAction,
-        fps: state.globals.fps,
-        frameId: state.globals.frameId,
-        time: state.globals.time,
-        playing: state.globals.playing,
-        selectedLayer: state.items.selectedLayer,
-        audio: state.items.audioInfo,
-        encoding: state.globals.encoding,
-        renderTargets: state.items.renderTargets,
-        sideBarWindowIndex: state.items.sideBarWindowIndex
-    }
-}
 
-export default connect(mapStateToProps, null, null,  { withRef: true })(ThreeCanvas)
+
+export default ThreeCanvas

@@ -11,33 +11,45 @@ import TessellatedText from './items/tessellatedtext'
 import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
-import RenderTarget from './renderingtargets/rendertarget';
+import RenderTarget from './postprocessing/rendertarget';
+import EffectComposer from './postprocessing/effectcomposer';
+import {addLayer} from '../../../redux/actions/items'
 
 export default class SceneContainer {
-    constructor(name, width, height, renderer){
+    constructor(name, width, height, renderer) {
 
         this.scene = new THREE.Scene()
         this.camera = new THREE.Camera()
         this.renderer = renderer
         this.setLight(this.scene)
 
-        this.items      = []
-        this.toRender   = []
-        this.rendering  = []
+        this.items = []
+        this.toRender = []
+        this.rendering = []
 
         this.config = {
-            id:  Math.floor(Math.random() * 100000000),
+            id: Math.floor(Math.random() * 100000000),
             name: name,
             items: this.items,
             width,
             height
         }
 
-        this.renderTarget = new RenderTarget(name + " - rendertarget", width, height)
+        const sceneConfig = {
+            scene: this.scene,
+            camera: this.camera,
+            renderer
+        }
+
+        this.renderTarget = new RenderTarget(name + " - rendertarget", width, height, sceneConfig)
+        this.texture = this.renderTarget.buffer.texture
+        this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
+        this.quad.frustumCulled = false; // Avoid getting clipped
+        this.renderTarget.setCamera(this.camera)
+        addLayer(this.config)
     }
 
     addItem = (name, info, time) => {
-        
         info.name = name
         info.sceneId = this.config.id
         info.sceneConfig = {
@@ -46,7 +58,7 @@ export default class SceneContainer {
         }
 
         let item;
-        switch(info.type) {
+        switch (info.type) {
             case "IMAGE":
                 item = new BackgroundImage(info)
                 break;
@@ -77,7 +89,7 @@ export default class SceneContainer {
 
         this.items.push(item)
         const { start, duration } = item.config
-        if(start >= time || (start < time && (start + duration) > time)) {
+        if (start >= time || (start < time && (start + duration) > time)) {
             this.toRender.push(item)
         }
     }
@@ -85,54 +97,55 @@ export default class SceneContainer {
     removeItem = (config) => {
         let idx = this.items.findIndex((e) => e.config.id === config.id)
 
-        if(idx !== -1) {
+        if (idx !== -1) {
             this.scene.remove(this.items[idx].mesh)
-            this.items = this.items.filter((_,i) => i !== idx)
+            this.items = this.items.filter((_, i) => i !== idx)
             this.toRender = this.toRender.filter(e => e.config.id !== config.id)
             this.rendering = this.rendering.filter(e => e.config.id !== config.id)
-           
-        }else {
+
+        } else {
             console.log("unable to remove item")
         }
-        
+
     }
 
-    setSize = (width, height) => {  
+    setSize = (width, height) => {
         this.camera.aspect = width / height;
-        if(this.camera.isPerspectiveCamera)
+        if (this.camera.isPerspectiveCamera)
             this.camera.updateProjectionMatrix();
     }
 
     setCamera = () => {
         const { width, height } = this.config
         this.camera = new THREE.PerspectiveCamera(55, width / height, 1, 20000)
-        this.camera.position.set( 30, 30, 100 );
-        
+        this.camera.position.set(30, 30, 100);
+        this.renderTarget.setCamera(this.camera)
+
     }
 
     setLight = (scene) => {
-        let light = new THREE.DirectionalLight( 0xffffff, 0.8 );
-        light.position.set( - 30, 30, 30 );
+        let light = new THREE.DirectionalLight(0xffffff, 0.8);
+        light.position.set(- 30, 30, 30);
         light.castShadow = true;
         light.shadow.camera.top = 45;
         light.shadow.camera.right = 40;
         light.shadow.camera.left = light.shadow.camera.bottom = -40;
         light.shadow.camera.near = 1;
         light.shadow.camera.far = 200;
-        scene.add( light );
+        scene.add(light);
         this.light = light
     }
 
     setControls = (config) => {
-        const { camera, renderer } = this 
+        const { camera, renderer } = this
 
-        let controls = new OrbitControls( camera, renderer.domElement );
+        let controls = new OrbitControls(camera, renderer.domElement);
         controls.maxPolarAngle = Math.PI * 0.495;
-        controls.target.set( 0, 10, 0 );
+        controls.target.set(0, 10, 0);
         controls.panningMode = 1;
         controls.minDistance = 40.0;
         controls.maxDistance = 200.0;
-        camera.lookAt( controls.target );
+        camera.lookAt(controls.target);
         this.controls = controls
         this.scene.add(this.camera)
 
@@ -140,11 +153,11 @@ export default class SceneContainer {
 
     updateItem = (config) => {
         let it = this.items.find((e) => e.config.id === config.id)
-        if(it) {
+        if (it) {
             it.updateConfig(config)
         } else {
             console.log("[scene.js] can't find id", config, this.items)
-        } 
+        }
     }
 
     addOrRemove(toRender, rendering, scene, time) {
@@ -152,18 +165,18 @@ export default class SceneContainer {
         while (i--) {
             const e = rendering[i]
             const { start, duration } = e.config
-            if (time >= start+duration) { 
+            if (time >= start + duration) {
                 rendering.splice(i, 1);
                 scene.remove(e.mesh)
                 e.stop()
-            } 
+            }
         }
         i = toRender.length
         while (i--) {
             const e = toRender[i]
             const { start } = e.config
 
-            if(time >= start && scene.getObjectByName(e.mesh.name) === undefined) {
+            if (time >= start && scene.getObjectByName(e.mesh.name) === undefined) {
                 toRender.splice(i, 1);
                 rendering.push(e)
                 scene.add(e.mesh)
@@ -173,12 +186,13 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
-        this.addOrRemove(this.toRender,  this.rendering, this.scene, time)
+        this.addOrRemove(this.toRender, this.rendering, this.scene, time)
         this.rendering.forEach(e => e.animate(time, frequencyBins))
+        this.freqNr = frequencyBins[2]
     }
 
-    render = (renderer) => {
-       renderer.render(this.scene, this.camera)
+    render = (renderer, time) => {
+        this.renderTarget.render( renderer, time, this.freqNr)
     }
 
     setTime = (time, playing) => {
@@ -187,25 +201,25 @@ export default class SceneContainer {
 
     play = (time, fps) => {
         this.items.forEach(e => {
-            const { start, duration} = e.config
-            if(start >= time || (start < time && (start + duration) > time)) {
+            const { start, duration } = e.config
+            if (start >= time || (start < time && (start + duration) > time)) {
                 this.toRender.push(e)
                 //e.play(time)
             }
-        })        
+        })
     }
 
     stop = () => {
-        while(this.scene.children.length > 0){ 
-            this.scene.remove(this.scene.children[0]); 
+        while (this.scene.children.length > 0) {
+            this.scene.remove(this.scene.children[0]);
         }
 
-        this.items.forEach(e => {e.stop()})
+        this.items.forEach(e => { e.stop() })
         this.rendering = []
         this.toRender = []
     }
 
-    
+
     dispose = () => {
         let { camera, scene, light, controls } = this
         camera.dispose()
@@ -213,5 +227,5 @@ export default class SceneContainer {
         light.dispose()
         controls.dispose()
     }
-} 
+}
 

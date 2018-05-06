@@ -42,7 +42,7 @@ export default class PlaybackPanel extends PureComponent {
                                 variant="raised" 
                                 color="secondary"
                                 
-                                disabled={this.props.disabled}
+                                disabled={this.props.encodeDisabled}
                             >
                                 Export Video
                             </Button>

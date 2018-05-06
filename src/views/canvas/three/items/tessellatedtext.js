@@ -40,7 +40,7 @@ export default class TessellatedText extends AudioreactiveItem {
         this.defaultConfig.text = {value: "text", type: "String", tooltip: "", editable: true}
         this.defaultConfig.fontSize = {value: 5, type: "Number", tooltip: "", editable: true}
         this.defaultConfig.threshold = {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true}
-        this.defaultConfig.scale = {value: 200, type: "Number", tooltip: "", editable: true}
+        this.defaultConfig.scale = {value: 50, type: "Number", tooltip: "", editable: true}
 
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
@@ -147,7 +147,7 @@ export default class TessellatedText extends AudioreactiveItem {
 
     animate = (time, frequencyBins) => {
         if(frequencyBins[this.config.barIndex]) {
-            this.uniforms.amplitude.value = frequencyBins[this.config.barIndex] / this.config.scale
+            this.uniforms.amplitude.value = Math.random() * frequencyBins[this.config.barIndex] / this.config.scale
         }
     }
 }

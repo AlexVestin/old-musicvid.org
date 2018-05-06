@@ -14,11 +14,14 @@ export default class BackgroundImage extends BaseItem {
                 new THREE.MeshBasicMaterial({map: texture})
             );
 
+            
             this.mesh = backgroundMesh
+            console.log(this.mesh)
             this.config.name = config.name
             this.addItem()
         }
         
+        console.log(config)
         fr.readAsDataURL(config.file) 
     }
 

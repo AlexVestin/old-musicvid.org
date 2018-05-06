@@ -24,6 +24,8 @@ class ScrollArea2 extends PureComponent {
         this.lastScrollY = 0
         this.lastScrollX = 0
         this.viewport = [0, 0, 1, 1]
+
+        this.i = 0
     }
 
 
@@ -37,12 +39,14 @@ class ScrollArea2 extends PureComponent {
 
 
     onDragHorizontal = (e, b) => {
-        const pos = b.x / (this.state.width - 30)
-        const diff = this.viewport[2] - this.viewport[0]
 
-        this.viewport[0] = pos 
-        this.viewport[2] = pos + diff
-        this.setState({horizontalPosition: { x: b.x, y: 0}})
+            const pos = b.x / (this.state.width - 30)
+            const diff = this.viewport[2] - this.viewport[0]
+            this.viewport[0] = pos 
+            this.viewport[2] = pos + diff
+            this.setState({horizontalPosition: { x: b.x, y: 0}})
+        
+        
     }
 
     updateWindowDimensions = () => {

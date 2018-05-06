@@ -29,7 +29,7 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
-    width: 80,
+    width: 75,
   },
 
   listItem: {
