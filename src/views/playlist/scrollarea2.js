@@ -5,6 +5,10 @@ import classes from "./scrollarea.css"
 import Clip from './clip'
 import Timeline from './timeline'
 
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
+
+
 import { connect } from 'react-redux'
 
 class ScrollArea2 extends PureComponent {
@@ -37,18 +41,6 @@ class ScrollArea2 extends PureComponent {
         this.setState({dragging: false })
     }
 
-
-    onDragHorizontal = (e, b) => {
-
-            const pos = b.x / (this.state.width - 30)
-            const diff = this.viewport[2] - this.viewport[0]
-            this.viewport[0] = pos 
-            this.viewport[2] = pos + diff
-            this.setState({horizontalPosition: { x: b.x, y: 0}})
-        
-        
-    }
-
     updateWindowDimensions = () => {
         this.setState({ width: this.panelRef.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
@@ -58,12 +50,22 @@ class ScrollArea2 extends PureComponent {
         this.setState({ width: this.panelRef.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
+    onDragHorizontal = (e, b) => {
+        const width = this.state.width -30
+
+        const pos = b.x / width
+        const diff = this.viewport[2] - this.viewport[0]
+        this.viewport[0] = pos 
+        this.viewport[2] = pos + diff
+        this.setState({horizontalPosition: { x: b.x, y: 0}})
+    }
+
 
     onDragVertical = (e, b) => {
         const { gridHeight } = this.state
         this.setState({verticalPosition: { x: 0, y: b.y}})
         const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
-        const pos = b.y / (this.state.height -  115)
+        const pos = b.y / (this.state.height -  95)
         this.scrollAreaRef.scrollTop = pos * scrollMax
     }
 
@@ -76,19 +78,27 @@ class ScrollArea2 extends PureComponent {
     }
 
     onClickVertical = (evt) => {
-        const { gridHeight } = this.state
         var [, y] = this.getRelativeCoordinates(evt)
         y = y >= 25 ? y - 25 : 0;
-        y = y < this.state.width ? y : this.state.width
-        
-        this.scrollAreaRef.scrollTop = (y/this.state.height)
+        y = y < this.state.height ? y : this.state.height
+
+        const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
+        const pos = ((y / (this.state.height - 95)) * scrollMax)
+        this.scrollAreaRef.scrollTop = (y /(this.state.height - 95)) * scrollMax
+        this.setState({verticalPosition: { x: 0, y: y}})
     }
 
     onClickHorizontal = (evt) => {
-        var [x, ] = this.getRelativeCoordinates(evt)
-        x = x >= 25 ? x - 25 : 0;
-        x = x < this.state.width ? x : this.state.width
+        const width = this.state.width - 30
+        var [x,] = this.getRelativeCoordinates(evt)
+        const diff = this.viewport[2] - this.viewport[0]
+        x = x + (diff * width) > width ? x + (width - (x + (diff * width))) : x
 
+        const pos = x / width
+        
+        this.viewport[0] = pos 
+        this.viewport[2] = pos + diff
+        this.setState({horizontalPosition: { x: x, y: 0}})
     }
 
     onControlledDragStop(e, position) {
@@ -97,6 +107,7 @@ class ScrollArea2 extends PureComponent {
     }
 
     zoomOut = (pos) => {
+        const width = this.state.width - 30
         let z = this.state.zoomWidth - 1 
         z = z < 1 ? 1 : z
         
@@ -119,9 +130,9 @@ class ScrollArea2 extends PureComponent {
             }
         }
 
-        const tw = ((this.state.width - 30) * (this.viewport[2] - this.viewport[0]))
+        const tw = this.state.width * (this.viewport[2] - this.viewport[0])
 
-        const thumbX = Math.floor(this.viewport[0] *( this.state.width - 30))
+        const thumbX = Math.floor(this.viewport[0] * width)
         this.setState({
             zoomWidth: z,
             horizontalPosition: {x: thumbX, y: 0}
@@ -131,7 +142,7 @@ class ScrollArea2 extends PureComponent {
     zoomIn = (pos) => {
         const maxZoom = 50
         if(this.state.zoomWidth !== maxZoom) {
-            const { width } = this.state
+            const width = this.state.width - 30
             let z = this.state.zoomWidth + 1
             z = z > maxZoom ? maxZoom : z
             const viewWidth  = 1 / z;
@@ -148,13 +159,35 @@ class ScrollArea2 extends PureComponent {
         }
     }
 
+    move = (delta) => {
+        const width = this.state.width - 30
+        var x = this.state.horizontalPosition.x + delta * 2 
+        const diff = this.viewport[2] - this.viewport[0]
+        x = x > 0 ? x : 0
+        //check > width + thumbwidth
+        x = x + (diff * width) > width ? x + (width - (x + (diff * width))) : x
+
+        const pos = x  / width
+        this.viewport[0] = pos 
+        this.viewport[2] = pos + diff
+        this.setState({horizontalPosition: { x: pos * width, y: 0}})
+    }
+
+    moveHorizontal = (delta) => {
+        this.timer = window.setInterval(() => this.move(delta), 20)
+    }
+
+    stopMovingHorizontally = () => {
+        if(this.timer)window.clearInterval(this.timer)
+    }
+
     gridScrolled = (e) => {
         e.preventDefault()
 
         this.scrollAreaRef.scrollTop += e.deltaY / 10
         const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
         const s = this.scrollAreaRef.scrollTop
-        const pos = (s /scrollMax) * (this.state.height -  115)
+        const pos = (s /scrollMax) * (this.state.height -  95)
         this.setState({verticalPosition: { x: 0, y:pos}})
     }
 
@@ -183,14 +216,11 @@ class ScrollArea2 extends PureComponent {
             <div ref={ref => this.wrapperRef = ref} style={{height: "100%", position: "relative"}}>
                 <div style={{display: "flex", flexDirection: "row"}}>
                 <div style={{minWidth: "13%", width: "13%", height: "100%", backgroundColor: "#434343"}}>
-                    <div style={{height: 35, backgroundColor: "#666666", width: "100%"}}>
-  
-                    </div>
-
+                    <div style={{height: 35, backgroundColor: "#666666", width: "100%", borderBottom: "2px solid #232323"}}></div>
                 </div>
                 <div style={{width: "100%"}}>
                 <div className={classes.group1} ref={ref => this.panelRef = ref} >
-                    <div className={classes.button}></div>
+                    <KeyboardArrowLeft onMouseUp={this.stopMovingHorizontally} onMouseDown={() => this.moveHorizontal(-1)} className={classes.button}></KeyboardArrowLeft>
                     <div className={classes.horizontalTrack}  onClick={this.onClickHorizontal}>
                         <Draggable
                             axis="x"
@@ -202,7 +232,7 @@ class ScrollArea2 extends PureComponent {
                             <div name="thumb" style={{width: thumbWidth }} className={classes.horizontalThumb} onClick={(e) => e.stopPropagation()}></div>
                         </Draggable>
                     </div>
-                    <div className={classes.button}></div>
+                    <KeyboardArrowRight onMouseUp={this.stopMovingHorizontally} onMouseDown={() => this.moveHorizontal(1)} className={classes.button}></KeyboardArrowRight>
                 </div>
 
                 <div style={{display: "flex", flexDirection: "row"}}>
@@ -222,13 +252,13 @@ class ScrollArea2 extends PureComponent {
                 </div>
                 </div>
                 <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} >
-                    <div style={{width: "15%", zIndex: 3, backgroundColor: "#434343", boxSizing: "border-box", borderRight: "solid #232323 1px"}} >
+                    <div style={{width: "15%", zIndex: 3, backgroundColor: "#434343", overflow: "hidden"}} >
                         
                        {[...Array(20)].map((e,i ) => {
                             const item = this.props.items[i]
                             var str = null
                             if(item)
-                                str = item.name.length  < 10 ? item.name : item.name.substring(0, 10) + "..."
+                                str = item.name.length  < 10 ? item.name : item.name.substring(0, 25) + "..."
                             return (
                                <div key={i} 
                                     style={{
@@ -299,7 +329,7 @@ class ScrollArea2 extends PureComponent {
                 <div className={classes.verticalTrack} onClick={this.onClickVertical}>
                     <Draggable
                         axis="y"
-                        bounds={{ top: 0, bottom: this.state.height - 115}}
+                        bounds={{ top: 0, bottom: this.state.height - 95}}
                         onDrag={this.onDragVertical}
                         position={this.state.verticalPosition}
                         {...dragHandlers}

@@ -59,12 +59,14 @@ export default class Text3D extends MeshItem {
 
     update = () => {
         this.mesh.material.color.setHex("0x" + this.config.color)
-        this.mesh.position.x = this.config.centerX
-        this.mesh.position.y = this.config.centerY
+        this.mesh.position.x = this.config.X
+        this.mesh.position.y = this.config.Y
+        this.mesh.position.z = this.config.Z
+        
         this.scale = this.config.scale 
     }
 
-    updateConfig = (config) => {
+    editConfig = (config) => {
         const { text, fontSize } = this.config
         this.config = config
 

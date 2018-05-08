@@ -28,6 +28,13 @@ export default class BaseItem {
 
     updateConfig = (config) => {
         this.config = config
+        Object.keys( this.config).map((key, index) => {
+            if( this.config[key].type === "Number") {
+                this.config[key] = isNaN( this.config[key]) ? 0 :  Number(this.config[key])
+            }
+        })
+
+        this.editConfig(this.config)
     } 
 
     getConfig = (config) => {
@@ -39,6 +46,7 @@ export default class BaseItem {
     }
 
     //TODO remove // find better use
+    editConfig = () => {}
     stop = () => {}
     play = () => {}
     setTime = () => {}
@@ -47,9 +55,9 @@ export default class BaseItem {
 export class MeshItem extends BaseItem {
     constructor(config) {
         super(config)
-        this.defaultConfig.centerX = {value: 0, type: "Number",  tooltip: "", editable: true}
-        this.defaultConfig.centerY = {value: 0, type: "Number", tooltip: "", editable: true}
-        this.defaultConfig.centerZ = {value: 0, type: "Number",  tooltip: "", editable: true}
+        this.defaultConfig.X = {value: 0, type: "Number",  tooltip: "", editable: true}
+        this.defaultConfig.Y = {value: 0, type: "Number", tooltip: "", editable: true}
+        this.defaultConfig.Z = {value: 0, type: "Number",  tooltip: "", editable: true}
 
         this.getConfig(this.defaultConfig)
     }

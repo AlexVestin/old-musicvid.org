@@ -52,7 +52,6 @@ class ResourceList extends React.Component {
           {this.props.items.map(obj => {
             return obj.sceneId === this.props.selectedLayer.id ?          
             <ListItem key={obj.id} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
-              <Avatar> <FolderIcon/></Avatar>
               <ListItemText primary={obj.name} />
               <ListItemSecondaryAction>
                     <IconButton aria-label="Delete">
@@ -62,15 +61,17 @@ class ResourceList extends React.Component {
             </ListItem>
           : null})}
 
-            <Button variant="raised" fullWidth onClick={this.setWindow}>
-                Add New Item
-            </Button>
-
+            
              
         </List>
-        <Button variant="raised" fullWidth onClick={this.back}>
-            Back
-        </Button>
+        <div>
+          <Button variant="raised" color="primary" fullWidth onClick={this.setWindow}>
+                  Add New Item
+          </Button>
+          <Button variant="raised" fullWidth onClick={this.back}>
+              Back
+          </Button>
+        </div>
       </div>
     );
   }

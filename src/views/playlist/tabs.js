@@ -41,7 +41,7 @@ class SimpleTabs extends React.PureComponent {
                         <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 30, height: 30}} >
                             <Tabs style={{marginLeft: "13%"}} value={this.state.tabValue} onChange={this.handleChange} >
                                 <Tab label="Items" style={tabStyle}/>
-                                <Tab label="Automations" style={tabStyle}/>
+                                <Tab disabled label="Automations" style={tabStyle}/>
                             </Tabs>
 
                             <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>

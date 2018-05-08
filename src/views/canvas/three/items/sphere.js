@@ -129,7 +129,7 @@ export default class Sphere extends AudioreactiveItem {
 
     }
 
-    updateConfig = (config) => {
+    editConfig = (config) => {
         config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
         config.barIndex = config.barIndex < 0 ?  0 : config.barIndex
         this.config = config

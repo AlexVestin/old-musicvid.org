@@ -10,11 +10,17 @@ class App extends Component {
     return (
         <div className={classes.wrapper}>
           <header className={classes.header}></header>
-          <div className={classes.content_wrapper}>
-            <Sidebar></Sidebar>
-            <Canvas className={classes.canvas}></Canvas>
-          </div>
-          <Playlist className={classes.content_footer}></Playlist>
+          <div className={classes.middlewrapper}>
+            <div className={classes.sidepanel}></div>
+
+            <div style={{width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
+              <div className={classes.content_wrapper}>
+                <Sidebar></Sidebar>
+                <Canvas className={classes.canvas}></Canvas>
+              </div>
+              <Playlist className={classes.content_footer}></Playlist>
+              </div>
+            </div>
           <footer className={classes.footer}></footer>
        </div>
 

@@ -48,13 +48,13 @@ export default class Bars extends MeshItem {
         this.centerY = y
     }
 
-    updateConfig = (config) => {
+    editConfig = (config) => {
         this.bins.children.forEach(e => {
             e.material.color.setHex("0x" + config.color)
         })
 
-        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY ||  this.config.centerZ !== config.centerZ) {
-            this.move(config.centerX, config.centerY, config.centerZ)
+        if(this.config.X !== config.X || this.config.Y !== config.Y ||  this.config.Z !== config.Z) {
+            this.move(config.X, config.Y, config.Z)
         }
 
         this.config = config

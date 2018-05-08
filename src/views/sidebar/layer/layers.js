@@ -23,10 +23,6 @@ const styles = theme => ({
 
 class LayerList  extends React.Component {
 
-  setWindow = () => {
-
-  };
-
   onClick = (e) => {
     selectLayer(e)
   }
@@ -40,7 +36,6 @@ class LayerList  extends React.Component {
         <List>
           {this.props.layers.map(layer => (
             <ListItem key={layer.name} dense button className={classes.listItem} onClick={() => this.onClick(layer)}>
-              <Avatar> <FolderIcon/></Avatar>
               <ListItemText primary={layer.name} />
             </ListItem>
           ))}

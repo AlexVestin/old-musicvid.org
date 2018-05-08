@@ -38,10 +38,8 @@ export default class RandomGeometry extends AudioreactiveItem {
         this.lastTime = 0
     }
 
-    updateConfig = (config) => {
-        if(this.config.centerX !== config.centerX || this.config.centerY !== config.centerY ||  this.config.centerZ !== config.centerZ) {
-            this.move(config.centerX, config.centerY, config.centerZ)
-        }
+    editConfig = (config) => {
+        this.move(config.X, config.Y, config.Z)
 
         config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
         config.barIndex = config.barIndex < 0 ?  0 : config.barIndex

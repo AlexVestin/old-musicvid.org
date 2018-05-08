@@ -79,8 +79,6 @@ class Layer extends React.Component {
 }
 
 
-
-
 Layer.propTypes = {
   classes: PropTypes.object.isRequired,
 };

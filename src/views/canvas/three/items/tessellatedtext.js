@@ -129,11 +129,13 @@ export default class TessellatedText extends AudioreactiveItem {
     }
 
     update = () => {
-        this.mesh.position.x = this.config.centerX
-        this.mesh.position.y = this.config.centerY
+        this.mesh.position.x = this.config.X
+        this.mesh.position.y = this.config.Y
+        this.mesh.position.z = this.config.Y
+        
     }
 
-    updateConfig = (config) => {
+    editConfig = (config) => {
         const { text, fontSize } = this.config
         this.config = config
 
