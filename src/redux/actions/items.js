@@ -23,25 +23,7 @@ export function addSound(item){
     ); 
 }
 
-export function selectRenderTarget(item){
-    store.dispatch({
-        type: "SELECT_RENDER_TARGET",
-        payload: item
-    } 
-)};  
 
-export function addRenderTarget(item){
-    store.dispatch({
-        type: "ADD_RENDER_TARGET",
-        payload: item
-    } 
-)};  
-
-export function createRenderTarget(){
-    store.dispatch({
-        type: "CREATE_RENDER_TARGET",
-    });  
-}
 export function selectLayer(index){
     store.dispatch({
         type: "SELECT_LAYER",
@@ -57,6 +39,50 @@ export function removeAudio(){
         } 
     );  
 }
+
+
+export function editEffect(item) {
+    store.dispatch({
+        type: "EDIT_EFFECT",
+        payload: item
+        } 
+    );  
+} 
+
+export function addEffect(item) {
+    store.dispatch({
+        type: "ADD_EFFECT",
+        payload: item
+        } 
+    );  
+} 
+
+export function createEffect(item) {
+    store.dispatch({
+        type: "CREATE_EFFECT",
+        payload: item
+        } 
+    );  
+} 
+
+
+export function removeEffect(item) {
+    store.dispatch({
+        type: "REMOVE_EFFECT",
+        payload: item
+        } 
+    );  
+} 
+
+export function selectEffect(item) {
+    store.dispatch({
+        type: "SELECT_EFFECT",
+        payload: item
+        } 
+    );  
+} 
+
+
 
 export function setSidebarWindowIndex(item) {
     store.dispatch({

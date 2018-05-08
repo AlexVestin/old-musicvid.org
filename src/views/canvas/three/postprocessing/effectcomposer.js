@@ -56,6 +56,11 @@ export default class EffectComposer {
         this.writeBuffer = tmp;
     }
 
+    removePass(pass) {
+        console.log(pass, this.passes)
+        this.passes = this.passes.filter(e => e.config.id !== pass.id)
+    }
+
     addPass(pass) {
         this.passes.push(pass);
         var size = this.renderer.getDrawingBufferSize();

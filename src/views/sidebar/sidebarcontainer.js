@@ -18,11 +18,12 @@ import AddLayerOptions from './layer/newlayer'
 import AudioReactiveTypeList from './item/audioreactivetypes'
 import ResourceList from "./item/items"
 import LayerList from './layer/layers'
-import RenderTargetList from './rendertarget/rendertargets'
 
 import Item from './item/item'
 import Layer from './layer/layer'
-import RenderTarget from './rendertarget/rendertarget'
+import EffectList from './layer/effects'
+import Effect from './layer/effect'
+import NewEffect from './layer/neweffect'
 
 function TabContainer(props) {
   return (
@@ -47,8 +48,7 @@ const styles = theme => ({
 
 class SidebarContainer extends React.Component {
     static INDEXES = {
-        
-        RENDERTARGETS: 2,
+        EFFECTS: 11,
         LAYERS: 0,
         LAYER: 7,
         ADDRESOURCEOPTIONS: 3,
@@ -57,7 +57,8 @@ class SidebarContainer extends React.Component {
         ITEMS: 8,
         ITEM: 5,
         AUDIO: 1,
-        RENDERTARGET: 9
+        EFFECT: 9,
+        NEWEFFECT: 10,
     }
     
     state = {
@@ -83,24 +84,22 @@ class SidebarContainer extends React.Component {
                     <Tabs value={this.tabValue} onChange={this.handleChange} fullWidth>
                         <Tab label="Layers" style={tabStyle} href="#basic-tabs" />
                         <Tab label="Audio" style={tabStyle}/>
-                        <Tab label="Postprocessing" style={tabStyle}/>
                     </Tabs>
                 </AppBar>
 
                 {value > 2 && 
                 <AppBar position="static" color="default" style={{height: 30, minHeight: 30, textAlign: "center"}}>
                         <Typography variant="title" color="inherit">
-                            {value < 8 ? this.props.selectedLayer.name : this.props.selectedRenderTarget ? this.props.selectedRenderTarget.name : null}
+                            {this.props.selectedLayer &&  this.props.selectedLayer.name }
                         </Typography>
                 </AppBar>
             }
-                
-
-                {value === INDEXES.RENDERTARGETS &&     <RenderTargetList  idxs={INDEXES}></RenderTargetList>}
+                {value === INDEXES.NEWEFFECT && <NewEffect idxs={INDEXES}></NewEffect>}
+                {value === INDEXES.EFFECT &&                <Effect idxs={INDEXES}></Effect>}
                 {value === INDEXES.ADDRESOURCEOPTIONS &&   <AddResourceOptions idxs={INDEXES}></AddResourceOptions>}
                 {value === INDEXES.ADDLAYEROPTIONS &&      <AddLayerOptions idxs={INDEXES}></AddLayerOptions>}
                 {value === INDEXES.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idxs={INDEXES}></AudioReactiveTypeList>}
-                {value === INDEXES.RENDERTARGET           && <RenderTarget  idxs={INDEXES}></RenderTarget>                                      }
+                {value === INDEXES.EFFECTS           && <EffectList  idxs={INDEXES}></EffectList>}
                 {value === INDEXES.ITEMS &&         <ResourceList idxs={INDEXES}></ResourceList>}
                 {value === INDEXES.ITEM &&                 <Item idxs={INDEXES} item={this.props.selectedItem}></Item>}
                 {value === INDEXES.LAYERS &&            <LayerList idxs={INDEXES}></LayerList>}
@@ -118,10 +117,8 @@ SidebarContainer.propTypes = {
 const mapStateToProps = state => {
     return {
         selectedItem: state.items.selectedItem,
-        items: state.items.items,
         sideBarWindowIndex: state.items.sideBarWindowIndex,
         selectedLayer: state.items.selectedLayer,
-        selectedRenderTarget: state.items.selectedRenderTarget
     }
 }
 

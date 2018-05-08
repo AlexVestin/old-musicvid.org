@@ -13,7 +13,7 @@ import RandomGeometry from './items/randomgeometry';
 
 import RenderTarget from './postprocessing/rendertarget';
 import EffectComposer from './postprocessing/effectcomposer';
-import {addLayer} from '../../../redux/actions/items'
+import {addLayer, setSidebarWindowIndex} from '../../../redux/actions/items'
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -32,7 +32,8 @@ export default class SceneContainer {
             name: name,
             items: this.items,
             width,
-            height
+            height,
+            passes: []
         }
 
         const sceneConfig = {
@@ -40,13 +41,24 @@ export default class SceneContainer {
             camera: this.camera,
             renderer
         }
-
-        this.renderTarget = new RenderTarget(name + " - rendertarget", width, height, sceneConfig)
+        
+        addLayer(this.config)
+        this.renderTarget = new RenderTarget(name, width, height, sceneConfig)
         this.texture = this.renderTarget.buffer.texture
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
-        this.quad.frustumCulled = false; // Avoid getting clipped
-        this.renderTarget.setCamera(this.camera)
-        addLayer(this.config)
+        this.quad.frustumCulled = false; // Avoid getting clipped 
+    }
+    
+    removeEffect = (config) => {
+        this.renderTarget.removeEffect(config)
+    }
+
+    editEffect = (config) => {
+        this.renderTarget.editEffect(config)
+    }
+
+    createEffect = (type) => {
+        this.renderTarget.createEffect(type)
     }
 
     addItem = (name, info, time) => {

@@ -3,15 +3,14 @@
  */
 
 import Pass from './pass'
-import { ShaderMaterial, UniformsUtils, OrthographicCamera,PlaneBufferGeometry, Scene, Mesh } from 'three'
-
+import * as THREE from 'three' 
 export default class ShaderPass extends Pass  {
 
-    constructor( shader, textureID ) {
-        super( );
+    constructor(shader, textureID, name) {
+        super(name);
         this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
 
-        if ( shader instanceof ShaderMaterial ) {
+        if ( shader instanceof THREE.ShaderMaterial ) {
 
             this.uniforms = shader.uniforms;
 
@@ -19,9 +18,9 @@ export default class ShaderPass extends Pass  {
 
         } else if ( shader ) {
 
-            this.uniforms = UniformsUtils.clone( shader.uniforms );
+            this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-            this.material = new ShaderMaterial( {
+            this.material = new THREE.ShaderMaterial( {
 
                 defines: Object.assign( {}, shader.defines ),
                 uniforms: this.uniforms,
@@ -32,23 +31,35 @@ export default class ShaderPass extends Pass  {
 
         }
 
-        this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-        this.scene = new Scene();
+        this.camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
+        this.scene = new THREE.Scene();
 
-        this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
+        this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), null );
         this.quad.frustumCulled = false; // Avoid getting clipped
         this.scene.add( this.quad );
+
+        if(name)this.addEffect(this.config)
     }
 
     render( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+
 		if ( this.uniforms[ this.textureID ] ) {
+
 			this.uniforms[ this.textureID ].value = readBuffer.texture;
+
 		}
+
 		this.quad.material = this.material;
+
 		if ( this.renderToScreen ) {
+
 			renderer.render( this.scene, this.camera );
+
 		} else {
+
 			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+
 		}
+
 	}
 }

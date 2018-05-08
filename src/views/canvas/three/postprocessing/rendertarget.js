@@ -2,7 +2,6 @@
 
 import * as THREE from 'three'
 import { WebGLRenderTarget } from 'three'
-import {addRenderTarget } from '../../../../redux/actions/items'
 
 import EffectComposer from './effectcomposer'
 import RenderPass from './passes/renderpass'
@@ -26,44 +25,90 @@ export default class RenderTarget {
             minFilter: THREE.LinearFilter,
             magFilter: THREE.LinearFilter,
             format: THREE.RGBAFormat,
-            stencilBuffer: false,
+            stencilBuffer: true,
         };
 
         const { scene, camera, renderer } = sceneConfig
         this.buffer = new WebGLRenderTarget( width, height, rtParameters )
-        this.buffer.id  = "buffer id"
-        /*
-            this.clearMask = new ClearMaskPass();
-            this.renderMask = new MaskPass( scene, camera );
-            var renderMaskInverse = new MaskPass( scene, camera );
-            renderMaskInverse.inverse = true;
-        */
-        const SSAPass = new SSAARenderPass(scene, camera)
         this.effectComposer = new EffectComposer(renderer, this.buffer)
-        this.renderPass = new RenderPass(scene, camera, null, 0xFFFFFF, 0)
-        this.sepiaPass = new ShaderPass(SepiaShader)
+        /*
+        this.clearMask = new ClearMaskPass();
+        this.renderMask = new MaskPass( scene, camera );
+        var renderMaskInverse = new MaskPass( scene, camera );
+        renderMaskInverse.inverse = true;
+        
+        const SSAPass = new SSAARenderPass(scene, camera)
+        
+       
+        this.sepiaPass = new ShaderPass("sepia", SepiaShader)
         this.bloomPass = new BloomPass(0.4)
         this.glitchPass = new GlitchPass(0.4)
         
-        this.antiAliasPass = new ShaderPass(FXAAShader)
+        this.antiAliasPass = new ShaderPass("anti alias", FXAAShader)
         this.antiAliasPass.uniforms[ 'resolution' ].value.set(1/width, 1 / height);
         this.effectComposer.addPass(this.renderPass)
-        if(name === "graphics") {
-
-        }
-        
+        this.effectComposer.addPass(this.antiAliasPass)
         this.effectComposer.addPass(this.glitchPass)
-        this.effectComposer.swapBuffers()
         
-        addRenderTarget(this.config)
+        */
+        this.renderPass = new RenderPass(scene, camera, null, 0xFFFFFF, 0)
+        this.effectComposer.addPass(this.renderPass)
+        this.effectComposer.swapBuffers()
+
+        this.nShaderPasses = 0
+        //this.effectComposer.addPass(new ShaderPass(SepiaShader, undefined, "sepia",))
+        this.passes = [ this.renderPass ]
     }
+
     setCamera = (camera) => {
         this.renderPass.camera = camera
     }
 
     render = (renderer, time, amp) => {
-        this.glitchPass.amp = amp
-        this.effectComposer.render(time)
+        this.passes.forEach(e => e.amp = amp)
         
+        this.effectComposer.render(time)
+        if(this.nShaderPasses % 2 === 1)this.effectComposer.swapBuffers()
+    }
+
+    createEffect = (type) =>  {
+        var fx;
+        switch(type) {
+            case "SEPIA":
+                fx = new ShaderPass(SepiaShader, undefined, "sepia")
+                this.nShaderPasses++
+                break;
+            case "GLITCH":
+                fx = new GlitchPass(0.4)
+                this.nShaderPasses++
+                break;
+            case "ANTI ALIAS":
+                fx = new ShaderPass(FXAAShader, undefined, "anti alias")
+                this.nShaderPasses++
+                break;
+            default:
+                console.log("unknown EFFECTS type")
+                return
+        }
+
+        this.passes.push(fx)
+        this.effectComposer.addPass(fx)
+        this.effectComposer.swapBuffers()
+
+    }
+
+    removeEffect = (config) =>  {
+        this.effectComposer.removePass(config)
+        this.nShaderPasses--
+        this.effectComposer.swapBuffers()
+        console.log("??????????????????????????", config, this.effectComposer.passes)
+    }
+
+    editEffect = (config) => {
+        const pass = this.passes.find(e => e.config.id === config.id)
+        if(!pass)
+            console.log("[rendertarget.js] failed to find pass")
+        
+        pass.config = config
     }
 }

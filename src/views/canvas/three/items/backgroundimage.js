@@ -16,12 +16,10 @@ export default class BackgroundImage extends BaseItem {
 
             
             this.mesh = backgroundMesh
-            console.log(this.mesh)
             this.config.name = config.name
             this.addItem()
         }
         
-        console.log(config)
         fr.readAsDataURL(config.file) 
     }
 

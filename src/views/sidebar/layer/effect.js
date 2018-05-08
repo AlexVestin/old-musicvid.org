@@ -14,7 +14,7 @@ import Tooltip from 'material-ui/Tooltip';
 
 
 import { connect } from 'react-redux'
-import { editItem, setSidebarWindowIndex, removeItem } from '../../../redux/actions/items'
+import { editEffect, setSidebarWindowIndex, removeEffect } from '../../../redux/actions/items'
 
 const styles = theme => ({
   root: {
@@ -38,7 +38,7 @@ const styles = theme => ({
   }
 });
 
-class Item extends React.Component {
+class Effect extends React.PureComponent {
 
     constructor() {
         super()
@@ -50,7 +50,7 @@ class Item extends React.Component {
     };
 
     back = () => {
-        setSidebarWindowIndex(this.props.idxs.ITEMS)
+        setSidebarWindowIndex(this.props.idxs.EFFECTS)
     }
 
     charOccurances = (str, char) =>{
@@ -84,13 +84,18 @@ class Item extends React.Component {
 
         this.setState({values}, () => {
             let val = numberValue !== null ? numberValue : value
-            editItem({key: input.key, value: val})
+            editEffect({key: input.key, value: val})
         })   
     }
 
-    setInputValues = (props) => {
+    checkIfNr = (nr) => {
+        return 
+    }
+
+    setInputValues = (props, mounting) => {
+       
         let values = {}
-        const si = props.selectedItem
+        const si = props.selectedLayer.selectedEffect
         const conf = si.defaultConfig
 
         Object.keys(conf).map((key, index) => {
@@ -98,6 +103,7 @@ class Item extends React.Component {
             const val = this.state.values[key]
             if (conf[key].type === "Number" && val !== undefined) {
                 if (val === "-" || val === "." || val === "") {
+                   
                     if (si[key] !== 0) {
                         values[key] = si[key]
                     }else {
@@ -106,20 +112,22 @@ class Item extends React.Component {
                 } else {
                     values[key] = (val !== (String(si[key]) + ".") && (val[val.length -1] !== "0" && val[val.length -1] !== ".")) ? si[key] : values[key]
                 }
+
             } else {
                 values[key] = si[key]
             }
+            
         })
-
         this.setState({ values })
+        
     }
 
     removeItem = () => {
-        removeItem(this.props.selectedItem)
+        removeEffect(this.props.selectedLayer.selectedEffect)
     }
 
     componentWillMount(props) {
-        this.setInputValues(this.props)
+        this.setInputValues(this.props, true)
     }
         
     componentWillReceiveProps(props) {
@@ -128,9 +136,8 @@ class Item extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const conf = this.props.selectedItem.defaultConfig;
-
-
+        const effect = this.props.selectedLayer.selectedEffect
+        const conf = effect.defaultConfig;
         return (
             <div className={classes.root}>
             <div>
@@ -153,11 +160,10 @@ class Item extends React.Component {
                             </div>
                         ))}
                     </div>
-                    
-               
                 </div>
+
                 <div> 
-                <Button className={classes.button} style={{marginLeft: "auto"}} fullWidth onClick={this.removeItem} variant="raised" color="secondary">
+                <Button disabled={effect.renderPass} className={classes.button} style={{marginLeft: "auto"}} fullWidth onClick={this.removeItem} variant="raised" color="secondary">
                     Delete item
                     <Delete className={classes.rightIcon} />
                 </Button>               
@@ -170,14 +176,14 @@ class Item extends React.Component {
     }
 }
 
-Item.propTypes = {
+Effect.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
     return {
-        selectedItem: state.items.selectedItem
+        selectedLayer: state.items.selectedLayer
     }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(Item)) 
+export default connect(mapStateToProps)(withStyles(styles)(Effect)) 

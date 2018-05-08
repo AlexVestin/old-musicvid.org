@@ -68,7 +68,7 @@ class Layer extends React.Component {
                     Scene
                 </Button>
 
-                <Options fullWidth onchange={format => this.format = format} name="format" labels={["Render target 1", "Render target 2"]}></Options>
+                <Button variant="raised" fullWidth onClick={() => setSidebarWindowIndex(idxs.EFFECTS)}>Effects</Button>
                 </div>
                 <Button variant="raised" fullWidth onClick={this.back}>
                     Back

@@ -1,5 +1,6 @@
 
 import SidebarContainer from '../../views/sidebar/sidebarcontainer'
+import { selectEffect } from '../actions/items';
 
 export default function itemsReducer(state = {
     items: [],
@@ -7,24 +8,50 @@ export default function itemsReducer(state = {
     lastAction: "",
     sideBarWindowIndex: 0,
     layers: [],
-    selectedLayer: 0,
+    selectedLayer: {},
     audioInfo: null,
     renderTargets:  [],
-    selectedRenderTarget: null
+    selectedRenderTarget: null,
+    createEffect: null
     }, action){
-        switch(action.type){            
-            case "CREATE_RENDER_TARGET": 
-                return {...state }
-            case "SELECT_RENDER_TARGET":
-                return {...state, selectedRenderTarget: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.RENDERTARGET}
-            case "ADD_RENDER_TARGET":
-                return {...state, renderTargets: [...state.renderTargets, action.payload]}
+        var idx, scene;
+        switch(action.type){   
+
+            case "REMOVE_EFFECT":
+                scene = state.layers.find(e => e.id === state.selectedLayer.id)
+                idx = state.layers.findIndex(e => e.id === state.selectedLayer.id)
+                const nscene = {...scene,  selectedEffect: action.payload, passes: scene.passes.filter(e => e.id !== action.payload.id)}
+                const nscenes = [...state.layers.slice(0, idx), nscene, ...state.layers.slice(idx+1)]
+                return {...state, layers: nscenes, selectedLayer: nscene, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECTS}
+            case "ADD_EFFECT": 
+                idx = state.layers.findIndex(e => e.id === state.selectedLayer.id)
+                const lay = state.layers[idx]
+                var fg =  {...lay, passes: [...lay.passes, action.payload], selectedEffect: action.payload }
+                return {...state, selectedLayer: fg, layers: [...state.layers.slice(0, idx), fg, ...state.layers.slice(idx+1)], sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT}
+            case "CREATE_EFFECT":   
+                return {...state, createEffect: action.payload} 
+            case "EDIT_EFFECT":
+                idx = state.selectedLayer.passes.findIndex(e => e.id === state.selectedLayer.selectedEffect.id)
+                const updatedEffect  = Object.assign({}, state.selectedLayer.selectedEffect, {
+                    ...state.selectedLayer.selectedEffect,
+                    [action.payload.key]: action.payload.value
+                }) 
+                const passes = state.selectedLayer.passes
+                const ns = {
+                    ...state.selectedLayer, 
+                    passes: [...passes.slice(0, idx), updatedEffect, ...passes.slice(idx+1)],
+                    selectedEffect: updatedEffect
+                }
+                return {...state, selectedLayer: ns}
+            case "SELECT_EFFECT":
+                const newSelectedLayer = {...state.selectedLayer, selectedEffect: action.payload}
+                return {...state, selectedLayer: newSelectedLayer, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT}
             case "REMOVE_AUDIO":
                 return {...state, audioInfo: null, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO}
             case "ADD_SOUND": 
                 return {...state, audioInfo: action.payload}
             case "ADD_LAYER":
-                return {...state, layers: [...state.layers, action.payload]}
+                return {...state, layers: [...state.layers, action.payload], selectedLayer: action.payload}
             case "SELECT_LAYER":
                 return {...state, selectedLayer: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
             case "SET_SIDEBAR_WINDOW_INDEX":
@@ -46,7 +73,7 @@ export default function itemsReducer(state = {
                     [action.key]: action.value
                 })
 
-                const idx = state.items.findIndex((e) => state.selectedItem.id === e.id)
+                idx = state.items.findIndex((e) => state.selectedItem.id === e.id)
                 const prevState = [...state.items]
                 const items = [...prevState.slice(0,idx), updatedItem, ...prevState.slice(idx+1)]
                 return {

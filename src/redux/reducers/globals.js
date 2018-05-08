@@ -9,6 +9,7 @@ export default function playbackReducer(state = {
 
     }, action){
         switch(action.type){
+            
             case "SET_ENCODING":
                 return {...state, encoding: action.payload, frameId: 0, time: 0, disabled: action.payload}
             case "SET_CLIP_LENGTH":

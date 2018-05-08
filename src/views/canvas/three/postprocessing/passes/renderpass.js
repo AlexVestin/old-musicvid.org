@@ -5,7 +5,7 @@ import Pass from './pass'
 export default class RenderPass extends Pass {
 
     constructor ( scene, camera, overrideMaterial, clearColor, clearAlpha=0 ) {
-        super()
+        super("render")
         this.scene = scene;
 		this.camera = camera;
 
@@ -17,6 +17,8 @@ export default class RenderPass extends Pass {
 		this.clear = true;
 		this.clearDepth = false;
 		this.needsSwap = false;
+		this.config.renderPass = true
+		this.addEffect(this.config)
     }
 
 

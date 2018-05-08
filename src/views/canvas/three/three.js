@@ -52,13 +52,14 @@ class ThreeCanvas extends Component {
         graphics.setCamera()
         graphics.setControls()
 
-        this.mainCamera = new OrthographicCamera(-1,1,1,-1,0,1);
+        this.mainCamera = new OrthographicCamera(-1,1,1,-1,0, 100);
         this.mainScene = new Scene();
 
         this.mainScene.add(background.quad) 
+        background.quad.position.z = -1
         this.mainScene.add(graphics.quad)               
         
-        //this.mainScene.add(background.quad, graphics.quad);
+        this.mainScene.add(background.quad, graphics.quad);
         this.scenes = [background, graphics]
     }
 
@@ -98,6 +99,21 @@ class ThreeCanvas extends Component {
         this.renderScene(this.time)
     }
 
+    removeEffect = () => {
+        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
+        scene.removeEffect(this.selectedEffect)
+    }
+
+    editEffect = () => {
+        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
+        scene.editEffect(this.selectedEffect)
+    }
+
+    createEffect = () => {
+        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
+        scene.createEffect(this.createEffectType)
+    }
+
     encoderLoaded = () => {
         let audioConfig = null
         if(!this.useAudio.useSongDuration ) {
@@ -126,10 +142,15 @@ class ThreeCanvas extends Component {
         const audioInfo     = state.items.audioInfo
         const type          = state.lastAction.type
 
+
         this.fps            = state.globals.fps
         this.playing        = state.globals.playing
         this.selectedLayer  = state.items.selectedLayer
-
+        this.createEffectType   = state.items.createEffect
+        if(this.selectedLayer) {
+            this.selectedEffect = this.selectedLayer.selectedEffect
+        }
+           
         switch(type) {
             case "REMOVE_ITEM":
                 if(selectedItem.type === "SOUND") {
@@ -140,20 +161,27 @@ class ThreeCanvas extends Component {
                     this.removeItem(selectedItem)
                 }
                 break;
+            case "REMOVE_EFFECT":
+                this.removeEffect(this.selectedEffect)
+                break;
+            case "EDIT_EFFECT":
+                this.editEffect()
+                break;
+            case "CREATE_EFFECT":
+                this.createEffect()
+                break;
             case "EDIT_SELECTED_ITEM":
                 this.updateConfig(selectedItem);
                 break
-            case "SET_TIME":
-                this.setTime(this.time, this.playing)
-                break;
             case "CREATE_ITEM":
                 this.add(selectedItem)
                 break; 
+            case "SET_TIME":
+                this.setTime(this.time, this.playing)
+                break;
             case "ADD_SOUND":
                 this.sound = new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)})
                 break;
-            case "CREATE_RENDER_TARGET":
-
             default:
         }
     }
@@ -181,7 +209,7 @@ class ThreeCanvas extends Component {
 
     saveBlob = (vid) => {
         const blob = new Blob([vid], { type: 'video/mp4' });
-        FileSaver.saveAs(blob)
+        FileSaver.saveAs(blob, "vid.mp4")
     }
 
     handleEncode = (time) => {
