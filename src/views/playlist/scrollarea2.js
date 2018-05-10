@@ -207,7 +207,7 @@ class ScrollArea2 extends PureComponent {
         const viewport = this.viewport
         const rOffset = this.unitSize * zoomWidth //relative offset to zoom and unitsize
 
-        const info = {width, height, zoomWidth, zoomHeight, unitSize: this.unitSize, viewport, maxNrUnits}
+        const info = {width, height, zoomWidth, zoomHeight, unitSize: this.unitSize, viewport, maxNrUnits, rOffset}
         const gridOffset = -(this.viewport[0]* width * zoomWidth) % rOffset
 
         return (
@@ -223,44 +223,15 @@ class ScrollArea2 extends PureComponent {
                         onWheel={this.onWheel}
                 ></ScrollTopPanel>
                 <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} >
-                    <ClipInfoBar items={this.props.items}></ClipInfoBar>
-
-                    <div style={{width:"100%", display: "flex", flexDirection: "row", height: "100%"}}>
-                        <div className={classes.bars}  onWheel={this.gridScrolled} >
-
-                            <div className={classes.grid} ref={ref => this.gridRef = ref}>
-                                {this.props.items.map((item, i) => {
-                                    const { start, duration } = item
-                                    const right = viewport[2] * maxNrUnits*this.unitSize * zoomWidth
-                                    const left = viewport[0] * maxNrUnits*this.unitSize * zoomWidth
-
-                                    if( ((start * rOffset) < right || (start + duration) * rOffset >= left) && true) {
-                                        return (
-                                            <Clip 
-                                                key={item.id} 
-                                                height={30 * this.state.zoomHeight}
-                                                left={ (start * rOffset) - left}
-                                                top={i * 30 * this.state.zoomHeight}
-                                                zoomWidth={this.state.zoomWidth}
-                                                item={item}
-                                                rOffset={rOffset}
-                                                unitSize={this.unitSize}
-                                                >
-                                            </Clip>
-                                        )
-                                    }
-                                })}
-                                <svg style={{position: "absolute", zIndex: 1}} width={width*2} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
-                                    <defs>
-                                        <pattern id="grid" width={rOffset} height={30 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
-                                            <path d={"M "+String(rOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
-                                        </pattern>
-                                    </defs>
-                                    <rect width="100%" height="100%" fill="url(#grid)" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+                    <ClipInfoBar info={info} items={this.props.items}></ClipInfoBar>
+                    <svg style={{position: "absolute", left: 0, zIndex: 1}} width={width*2} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="grid" width={rOffset} height={30 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
+                                <path d={"M "+String(rOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
                 </div>
 
                 <div className={classes.verticalTrack} onClick={this.onClickVertical}>
