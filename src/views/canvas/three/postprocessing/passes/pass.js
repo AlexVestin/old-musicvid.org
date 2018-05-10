@@ -10,7 +10,6 @@ export default class Pass {
         this.config = {}
         this.config.defaultConfig = {
             name: {value: "", type: "String", editable: true, tooltip: ""},
-            strength: {value: 0, type: "Number", editable: true, toolip: ""}
         }
         
         this.config.strength = 0

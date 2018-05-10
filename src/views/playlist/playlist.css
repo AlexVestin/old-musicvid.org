@@ -5,19 +5,20 @@
     background-color: gray;
     width: 100%;
     height: 32%;
-    border: solid 2px 2px;
 }
 
 .root {
     background-color: "white";
-    min-height: 30px;
-    height: 30px;
+    min-height: 10px;
+    height: 10px;
 }
 
 .header {
     display: flex;
     flex-direction: column;
     background-color: gray;
+    height: 10px;
+    max-height: 10px;
 }
 
 .tabs {

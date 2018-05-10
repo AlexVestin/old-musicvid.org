@@ -35,23 +35,12 @@ class NewEffect extends React.Component {
 
     return (
       <div className={classes.root}>
-            <List>   
-                <ListItem dense button className={classes.listItem}>
-                    <ListItemText primary={`Sepia`} onClick={() => this.createEffect("SEPIA")}/>
-                </ListItem>
-
-                <ListItem dense button className={classes.listItem} onClick={() => this.createEffect("GLITCH")}>
-                    <ListItemText primary={`Glitch`} />
-                </ListItem>
-                
-                <ListItem dense button className={classes.listItem} onClick={() => this.createEffect("ANTI ALIAS")}>
-                    <ListItemText  primary={`Anti Alias`} />
-                </ListItem>
-
-
-                <ListItem dense button disabled className={classes.listItem} onClick={() => this.createEffect("")}>
-                    <ListItemText primary={`3D items`} />
-                </ListItem>
+            <List>  
+                {["Sepia", "Glitch", "Anti Alias", "Bloom"].map(e => (
+                    <ListItem key={e} dense button className={classes.listItem}>
+                        <ListItemText primary={e} onClick={() => this.createEffect(e.toUpperCase())}/>
+                    </ListItem>
+                ))} 
             </List>
 
             <Button variant="raised" fullWidth onClick={this.back}>

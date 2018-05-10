@@ -19,50 +19,6 @@
     background-color: rgba(0,0,0,.5);
 }
 
-.group1 {
-    display: flex;
-    flex-direction: row;
-    height: 15px;
-    width: 100%;
-}
-
-.group1 .horizontalTrack {
-    background-color: gray;
-    height: 15px;
-    width: 100%;
-}
-
-.group1 .horizontalTrack .horizontalThumb {
-    box-sizing: border-box; 
-    width: 50px;
-    height: 15px;
-    background-color: rgb(77, 77, 77);
-    border: solid;
-    border-radius: 0.1rem;
-    border-color: #5c5c5c;
-    border-width: 2px;
-}
-
-.group1 .horizontalTrack .horizontalThumb:hover {
-    background-color: rgb(81, 81, 81);
-}
-
-.group1 .button {
-    width: 15px;
-    height: 15px;
-    background-color: #646464;
-}
-
-.group1 .button:hover {
-    width: 15px;
-    height: 15px;
-    color: white;
-}
-
-.group1 .button:active {
-    background-color: #747474;
-}
-
 .bars {
     width: 100%;
     height: 100%;

@@ -10,7 +10,7 @@ import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
 
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
-import { addLayer, removeAudio } from '../../../redux/actions/items'
+import { addLayer, removeAudio, setSidebarWindowIndex } from '../../../redux/actions/items'
 import RenderTarget from './postprocessing/rendertarget';
 
 class ThreeCanvas extends Component {
@@ -44,6 +44,7 @@ class ThreeCanvas extends Component {
 
         this.encodedFrames = 0
         this.setupScene()
+        
     }
 
     setupScene = () =>  {
@@ -61,6 +62,9 @@ class ThreeCanvas extends Component {
         
         this.mainScene.add(background.quad, graphics.quad);
         this.scenes = [background, graphics]
+
+        setSidebarWindowIndex(0);
+        console.log("???")
     }
 
     componentWillUnmount(){
@@ -151,6 +155,7 @@ class ThreeCanvas extends Component {
             this.selectedEffect = this.selectedLayer.selectedEffect
         }
            
+        console.log(type)
         switch(type) {
             case "REMOVE_ITEM":
                 if(selectedItem.type === "SOUND") {

@@ -6,14 +6,25 @@ export default class Sound extends BaseItem {
     constructor(config, onload){
         super(config)
 
-        this.defaultConfig.sampleRate = {value: 0, type: "Number", tooltip: "", editable: false}
-        this.defaultConfig.channels = {value: 0, type: "Number",  tooltip: "", editable: false}
-        this.defaultConfig.duration = {value: 0, type: "Number", tooltip: "Duration in seconds", editable: false}
-        this.defaultConfig.start.editable = false
-        this.defaultConfig.name.editable = false
+        const audioGroup = {
+            title: "Audio Info",
+            items: {
+                sampleRate: {value: 0, type: "Number", tooltip: "", editable: false},
+                channels: {value: 0, type: "Number",  tooltip: "", editable: false},
+            }
+        }
+        
+        // don't allow editing, TODO fix audio editing
+        console.log(this.config.defaultConfig)
+        //this.config.defaultConfig[0].items.name.editable = false
+        this.config.defaultConfig[1].items.start.editable = false
+        this.config.defaultConfig[1].items.duration.editable = false
+        
         this.config.movable = false
-        this.config.type = "SOUND"
+        this.config.defaultConfig.push(audioGroup)
 
+
+        this.config.type = "SOUND"
         this.onload = onload
         this.soundDataBuffer = []
         this.startTime = -1
@@ -28,7 +39,7 @@ export default class Sound extends BaseItem {
 
         this.loadSound(config.file, (data) => this.fftData = data)
 
-        this.getConfig(this.defaultConfig)
+        this.getConfig(this.config.defaultConfig)
         this.ac = new AudioContext()
         this.lastIdx = -1
     }

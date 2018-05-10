@@ -3,11 +3,10 @@ import Draggable from 'react-draggable'
 import classes from "./scrollarea.css"
 
 import Clip from './clip'
-import Timeline from './timeline'
 
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
 
+import ScrollTopPanel from './scrolltoppanel'
+import ClipInfoBar from './clipinfobar'
 
 import { connect } from 'react-redux'
 
@@ -30,24 +29,21 @@ class ScrollArea2 extends PureComponent {
         this.viewport = [0, 0, 1, 1]
 
         this.i = 0
+
+        window.addEventListener("mouseup", () => {if(this.timer)window.clearInterval(this.timer)})
     }
 
-
-    onDragStart = () => {
-        this.setState({dragging: true})
-    }
-
-    onDragEnd = (e, b) => {
-        this.setState({dragging: false })
-    }
 
     updateWindowDimensions = () => {
-        this.setState({ width: this.panelRef.offsetWidth, height: this.wrapperRef.offsetHeight})
+        const ref = this.scrollTopPanelRef.panelRef
+
+        this.setState({ width: ref.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
     componentDidMount() {
+        const ref = this.scrollTopPanelRef.panelRef
         window.addEventListener('resize', this.updateWindowDimensions);
-        this.setState({ width: this.panelRef.offsetWidth, height: this.wrapperRef.offsetHeight})
+        this.setState({ width: ref.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
     onDragHorizontal = (e, b) => {
@@ -201,92 +197,33 @@ class ScrollArea2 extends PureComponent {
     }
 
     render() {
-        const dragHandlers = {onStart: this.onDragStart, onStop: this.onDragEnd}; 
-        const { horizontalPosition, zoomWidth } = this.state
+        const { horizontalPosition, zoomWidth, zoomHeight } = this.state
         const { maxNrUnits } = this.props
         const { width, height } = this.state
 
         this.unitSize = width / maxNrUnits
+        
+
         const viewport = this.viewport
         const rOffset = this.unitSize * zoomWidth //relative offset to zoom and unitsize
-        const thumbWidth = ((width - 30) * (this.viewport[2] - this.viewport[0])) 
+
+        const info = {width, height, zoomWidth, zoomHeight, unitSize: this.unitSize, viewport, maxNrUnits}
         const gridOffset = -(this.viewport[0]* width * zoomWidth) % rOffset
 
         return (
             <div ref={ref => this.wrapperRef = ref} style={{height: "100%", position: "relative"}}>
-                <div style={{display: "flex", flexDirection: "row"}}>
-                <div style={{minWidth: "13%", width: "13%", height: "100%", backgroundColor: "#434343"}}>
-                    <div style={{height: 35, backgroundColor: "#666666", width: "100%", borderBottom: "2px solid #232323"}}></div>
-                </div>
-                <div style={{width: "100%"}}>
-                <div className={classes.group1} ref={ref => this.panelRef = ref} >
-                    <KeyboardArrowLeft onMouseUp={this.stopMovingHorizontally} onMouseDown={() => this.moveHorizontal(-1)} className={classes.button}></KeyboardArrowLeft>
-                    <div className={classes.horizontalTrack}  onClick={this.onClickHorizontal}>
-                        <Draggable
-                            axis="x"
-                            bounds={{ left: 0, right: width - (thumbWidth + 30)}}
-                            onDrag={this.onDragHorizontal}
-                            position={this.state.horizontalPosition}
-                            {...dragHandlers}
-                        >
-                            <div name="thumb" style={{width: thumbWidth }} className={classes.horizontalThumb} onClick={(e) => e.stopPropagation()}></div>
-                        </Draggable>
-                    </div>
-                    <KeyboardArrowRight onMouseUp={this.stopMovingHorizontally} onMouseDown={() => this.moveHorizontal(1)} className={classes.button}></KeyboardArrowRight>
-                </div>
-
-                <div style={{display: "flex", flexDirection: "row"}}>
-                    <Timeline 
-                        scrollPosition={horizontalPosition.x} 
-                        zoomWidth={zoomWidth} 
+                <ScrollTopPanel
+                        onDragHorizontal={this.onDragHorizontal}
+                        horizontalPosition={this.state.horizontalPosition}
+                        moveHorizontal ={this.moveHorizontal}
+                        onClickHorizontal={this.onClickHorizontal}
+                        onMouseUp={this.stopMovingHorizontally}
+                        info={info}
+                        ref={ref => this.scrollTopPanelRef = ref}
                         onWheel={this.onWheel}
-                        viewport={viewport}
-                        left={viewport[0] * maxNrUnits*this.unitSize * zoomWidth}
-                        unitSize={this.unitSize}
-                        maxNrUnits={maxNrUnits}
-                    >
-                    </Timeline>
-
-                    <div className={classes.button} style={{backgroundColor: "black", width: 15, height: 20}}></div>
-                </div>
-                </div>
-                </div>
+                ></ScrollTopPanel>
                 <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} >
-                    <div style={{width: "15%", zIndex: 3, backgroundColor: "#434343", overflow: "hidden"}} >
-                        
-                       {[...Array(20)].map((e,i ) => {
-                            const item = this.props.items[i]
-                            var str = null
-                            if(item)
-                                str = item.name.length  < 10 ? item.name : item.name.substring(0, 25) + "..."
-                            return (
-                               <div key={i} 
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        justifyContent: "space-between",
-                                        position: "relative",
-                                        fontSize: 10,
-                                        color: "#D9D9D9",
-                                        height: 30,
-                                        backgroundColor:i%2===0?"#838383":"#636363",
-                                    }}>
-                                    <div>
-                                        <div style={{marginLeft: 3}}>
-                                            {i + 1}
-                                        </div>
-                                        <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 16}}>
-                                            {str}
-                                        </div>
-                                    </div>
-                                    <div style={{marginTop: 5}}>
-          
-                                    </div>
-                                </div>
-                           )
-                       })}
-                    
-                    </div>
+                    <ClipInfoBar items={this.props.items}></ClipInfoBar>
 
                     <div style={{width:"100%", display: "flex", flexDirection: "row", height: "100%"}}>
                         <div className={classes.bars}  onWheel={this.gridScrolled} >
@@ -332,7 +269,6 @@ class ScrollArea2 extends PureComponent {
                         bounds={{ top: 0, bottom: this.state.height - 95}}
                         onDrag={this.onDragVertical}
                         position={this.state.verticalPosition}
-                        {...dragHandlers}
                     >
                         <div className={classes.verticalThumb} onClick={(e) => e.stopPropagation()}></div>
                     </Draggable>

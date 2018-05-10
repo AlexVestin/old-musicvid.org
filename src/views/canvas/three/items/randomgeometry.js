@@ -6,10 +6,17 @@ export default class RandomGeometry extends AudioreactiveItem {
     constructor(config) {
         super(config)
 
-        this.defaultConfig.rotationX = {value: 0, type: "Number", tooltip: "Rotation in X axis per tick", editable: true}
-        this.defaultConfig.rotationY = {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick", editable: true}
-        this.defaultConfig.rotationZ = {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick", editable: true}
-        this.getConfig(this.defaultConfig)
+        const rotationGroup = {
+            title: "Rotation",
+            items: {
+               rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick", editable: true},
+               rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick", editable: true},
+               rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick", editable: true},
+            }
+        }
+
+        this.config.defaultConfig.push(rotationGroup)
+        this.getConfig(this.config.defaultConfig)
         this.config.strength = 1
 
         this.mesh = new THREE.Mesh()

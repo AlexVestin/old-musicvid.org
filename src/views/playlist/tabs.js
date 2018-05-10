@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
-import Tabs, { Tab } from 'material-ui/Tabs';
-
 import Button from 'material-ui/Button'
 
 import ScrollArea2 from './scrollarea2'
@@ -36,13 +34,9 @@ class SimpleTabs extends React.PureComponent {
 
         return (
             <div className={classes.wrapper} >
-                <div className={classes.header} style={{minHeight: 30, height: 30}}>
+                <div className={classes.header} style={{minHeight: 20, height: 20}}>
                     <div className={classes.root}>
-                        <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 30, height: 30}} >
-                            <Tabs style={{marginLeft: "13%"}} value={this.state.tabValue} onChange={this.handleChange} >
-                                <Tab label="Items" style={tabStyle}/>
-                                <Tab disabled label="Automations" style={tabStyle}/>
-                            </Tabs>
+                        <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 20, height: 20}} >
 
                             <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>
                                        

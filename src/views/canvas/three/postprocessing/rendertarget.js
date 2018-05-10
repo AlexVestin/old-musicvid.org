@@ -41,7 +41,7 @@ export default class RenderTarget {
         
        
         this.sepiaPass = new ShaderPass("sepia", SepiaShader)
-        this.bloomPass = new BloomPass(0.4)
+        
         this.glitchPass = new GlitchPass(0.4)
         
         this.antiAliasPass = new ShaderPass("anti alias", FXAAShader)
@@ -56,7 +56,6 @@ export default class RenderTarget {
         this.effectComposer.swapBuffers()
 
         this.nShaderPasses = 0
-        //this.effectComposer.addPass(new ShaderPass(SepiaShader, undefined, "sepia",))
         this.passes = [ this.renderPass ]
     }
 
@@ -76,20 +75,22 @@ export default class RenderTarget {
         switch(type) {
             case "SEPIA":
                 fx = new ShaderPass(SepiaShader, undefined, "sepia")
-                this.nShaderPasses++
                 break;
             case "GLITCH":
                 fx = new GlitchPass(0.4)
-                this.nShaderPasses++
                 break;
             case "ANTI ALIAS":
                 fx = new ShaderPass(FXAAShader, undefined, "anti alias")
-                this.nShaderPasses++
+                break;
+            case "BLOOM":
+                fx = new BloomPass(0.5)
                 break;
             default:
-                console.log("unknown EFFECTS type")
+                console.log("unknown EFFECTS type", type)
                 return
         }
+
+        this.nShaderPasses++;
 
         this.passes.push(fx)
         this.effectComposer.addPass(fx)

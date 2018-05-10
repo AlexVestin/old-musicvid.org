@@ -10,7 +10,7 @@ import Pass from './pass'
 
 export default class BloomPass extends Pass {
     constructor( strength, kernelSize, sigma, resolution ) {
-        super()
+        super("Bloom")
 
         this.blurX = new THREE.Vector2( 0.001953125, 0.0 );
         this.blurY = new THREE.Vector2( 0.0, 0.001953125 );
@@ -84,6 +84,8 @@ export default class BloomPass extends Pass {
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), null );
         this.quad.frustumCulled = false; // Avoid getting clipped
         this.scene.add( this.quad );
+
+        this.addEffect(this.config)
     }
 
     render( renderer, writeBuffer, readBuffer, delta, maskActive ) {
