@@ -2,13 +2,8 @@ import React, { PureComponent } from 'react'
 import Draggable from 'react-draggable'
 import classes from "./scrollarea.css"
 
-import Clip from './clip'
-
-
 import ScrollTopPanel from './scrolltoppanel'
 import ClipInfoBar from './clipinfobar'
-
-import { connect } from 'react-redux'
 
 class ScrollArea2 extends PureComponent {
 
@@ -30,7 +25,12 @@ class ScrollArea2 extends PureComponent {
 
         this.i = 0
 
-        window.addEventListener("mouseup", () => {if(this.timer)window.clearInterval(this.timer)})
+        window.addEventListener("mouseup", this.windowMouseUp)
+    }
+
+    windowMouseUp = () => {
+        if(this.timer)
+            window.clearInterval(this.timer)
     }
 
 
@@ -46,6 +46,10 @@ class ScrollArea2 extends PureComponent {
         this.setState({ width: ref.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
+    componentWillUnmount() {
+        window.removeEventListener("mouseup", this.windowMouseUp)
+    }
+
     onDragHorizontal = (e, b) => {
         const width = this.state.width -30
 
@@ -58,7 +62,6 @@ class ScrollArea2 extends PureComponent {
 
 
     onDragVertical = (e, b) => {
-        const { gridHeight } = this.state
         this.setState({verticalPosition: { x: 0, y: b.y}})
         const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
         const pos = b.y / (this.state.height -  95)
@@ -79,7 +82,6 @@ class ScrollArea2 extends PureComponent {
         y = y < this.state.height ? y : this.state.height
 
         const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
-        const pos = ((y / (this.state.height - 95)) * scrollMax)
         this.scrollAreaRef.scrollTop = (y /(this.state.height - 95)) * scrollMax
         this.setState({verticalPosition: { x: 0, y: y}})
     }
@@ -226,7 +228,7 @@ class ScrollArea2 extends PureComponent {
                     <ClipInfoBar info={info} items={this.props.items}></ClipInfoBar>
                     <svg style={{position: "absolute", left: 0, zIndex: 1}} width={width*2} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <pattern id="grid" width={rOffset} height={30 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
+                            <pattern id="grid" width={rOffset} height={40 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
                                 <path d={"M "+String(rOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
                             </pattern>
                         </defs>
@@ -249,10 +251,7 @@ class ScrollArea2 extends PureComponent {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-    }
-}
 
 
-export default connect(mapStateToProps)(ScrollArea2)
+
+export default ScrollArea2

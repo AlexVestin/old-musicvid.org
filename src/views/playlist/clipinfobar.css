@@ -9,3 +9,17 @@
     height: 100%;
     flex-grow: 1;
 }
+
+
+.keyframeInput {
+    box-sizing: border-box;
+    color: white;
+    height: 30px;
+    max-height: 30px;
+    width: 40px;
+    background-color: transparent;
+}
+
+.keyframeInput:focus {
+    outline: none;
+}

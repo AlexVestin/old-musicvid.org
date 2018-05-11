@@ -2,10 +2,20 @@ import React, { PureComponent } from 'react'
 
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp'
+import Add from '@material-ui/icons/Add'
 
-import classes from './clipinfobar'
+
+import classes from './clipinfobar.css'
 import Clip from './clip'
+import KeyFrame from './keyframe'
 import Button from 'material-ui/Button'
+
+
+import { connect } from 'react-redux'
+
+
+
+const pHeight = 40
 
 export default class ClipInfoBar extends PureComponent {
 
@@ -13,12 +23,11 @@ export default class ClipInfoBar extends PureComponent {
         const items = this.props.items
         return (
                 <div style={{width: "100%"}}>
-                    <div style={{position: "absolute", width: "13%", height: "100%", backgroundColor: "#434343"}}></div>
+                    <div style={{position: "absolute", width: "20%", height: "100%", backgroundColor: "#434343"}}></div>
                     {items.map((e,i ) => 
                         <ClipItem key={i} info={this.props.info} item={e} index={i}></ClipItem>
                     )}
                 </div>
-            
         )
     }
 }
@@ -29,14 +38,25 @@ const clipStyle = {
     flexDirection: "row",
     justifyContent: "space-between",
     position: "relative",
-    fontSize: 10,
     color: "#D9D9D9",
-    borderBottom: "1px solid gray"
+    borderBottom: "1px solid gray",
+    width: "100%"
 }
 
 
 class ClipItem extends PureComponent {
     state = {expanded: false}
+
+    //Expand clip view if automation is added
+    componentWillReceiveProps(props) {
+        if(props.item.automations.length !== this.props.item.automations.length) {
+            this.setState({expanded: true})
+        } 
+    }
+
+    addKeyFrame = () => {
+        console.log("add key frame", this.props.time)
+    }
 
     render(){
         const item = this.props.item
@@ -44,7 +64,7 @@ class ClipItem extends PureComponent {
         var str = item.name.length  < 30 ? item.name : item.name.substring(0, 30) + "..."
 
         const i = this.props.index
-        const panelHeight = this.state.expanded ? 120 :  30;
+        const panelHeight = this.state.expanded ? pHeight * (item.automations.length + 1) :  pHeight;
 
         const {viewport, unitSize, zoomWidth, zoomHeight, width, height, rOffset, maxNrUnits } = this.props.info
         const { start, duration } = item
@@ -52,45 +72,94 @@ class ClipItem extends PureComponent {
         const left = viewport[0] * maxNrUnits*unitSize * zoomWidth
         const shouldDrawClip = ((start * rOffset) < right || (start + duration) * rOffset >= left)
 
-        console.log(i)
         return(
             <div style={{width: "100%", display: "flex", flexDirection: "row", height: panelHeight}}>
-                <div style={{width: "13%", zIndex: 3, backgroundColor: "#434343", overflow: "hidden"}} >
+                <div style={{borderBottom: "1px solid gray", width: "20%", zIndex: 3, backgroundColor: "#434343", overflow: "hidden"}} >
                     <div key={i} style={{...clipStyle, height: panelHeight}}>
-                        <div >
-                            <div style={{marginLeft: 3, position: "absolute"}}>
-                                {i + 1}
-                            </div>
-                            <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 10, display: "flex", flexDirection: "row"}}>
+                        <div style={{width: "100%"}}>
+                            <div style={{marginLeft: 3, position: "absolute"}}>{i + 1}</div>
+                            <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 14, display: "flex", flexDirection: "row", height: pHeight}}>
                                 {!this.state.expanded && <KeyboardArrowDown onClick={() => this.setState({expanded: true})} style={{marginTop: -5}}/>}
                                 {this.state.expanded && <KeyboardArrowUp onClick={() => this.setState({expanded: false})} style={{marginTop: -5}}/>}
                                 {str}
                             </div>
-                        </div>
-                        <div style={{marginTop: 5}}>
 
+                             {this.state.expanded && 
+                            <React.Fragment>
+                                {item.automations.map((e, i) => (
+                                    <div style={{
+                                        boxSizing: "border-box",
+                                        justifyContent: "space-between",
+                                        borderTop: "1px solid", 
+                                        width: "calc(100% - 60px)",
+                                        height: pHeight,
+                                        marginLeft: 60, 
+                                        fontSize: 12, 
+                                        textTransform: "uppercase",
+                                        display: "flex",
+                                        flexDirection: "row"
+                                    }}>
+                            
+                                        <div style={{marginTop: 17}}>{e.name}</div>
+
+                                        <div style={{marginRight: 10, marginTop: 2, display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                            <Add onClick={this.addKeyFrame} style={{color: "white", width: 30, height: 30, minWidth: 30, minHeight: 30}}></Add>
+                                            <input type="number" placeholder={item[e.name]} className={classes.keyframeInput}></input>
+                                        </div>
+                                        
+                                    </div>
+                                ))}
+                            </React.Fragment>}
+                           
                         </div>
                     </div>
+                   
                 </div>
 
                 {shouldDrawClip &&
-                <div style={{height: panelHeight}}>
-                    <Clip 
-                        key={item.id} 
-                        height={30 * zoomHeight}
-                        left={ (start * rOffset) - left}
-                        zoomWidth={zoomWidth}
-                        item={item}
-                        rOffset={rOffset}
-                        unitSize={unitSize}
-                        >
-                    </Clip>
-                </div>
-                    
-            }
+                    <div style={{height: panelHeight}}>
+                        <Clip 
+                            key={item.id} 
+                            height={pHeight * zoomHeight}
+                            left={ (start * rOffset) - left}
+                            zoomWidth={zoomWidth}
+                            item={item}
+                            rOffset={rOffset}
+                            unitSize={unitSize}
+                            >
+                        </Clip>
+                        {this.state.expanded && 
+                            <React.Fragment>
+                            {item.automations.map( (e, i) => (
+                                <KeyFrame
+                                    key={item.id} 
+                                    top={(i+1) * pHeight}
+                                    height={pHeight * zoomHeight}
+                                    left={ (e.start * rOffset) - left}
+                                    zoomWidth={zoomWidth}
+                                    item={e}
+                                    rOffset={rOffset}
+                                    unitSize={unitSize}
+                                >
+                                </KeyFrame>
+
+                            ))}
+                            </React.Fragment>
+                        }
+                    </div>    
+                }
+
+
             </div>
         )
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        time: state.globals.time,
+        fps: state.globals.fps
+    }
+}
 
+ClipItem = connect(mapStateToProps)(ClipItem)

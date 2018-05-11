@@ -6,14 +6,12 @@ import Text3D from './items/text3d'
 import Water from './items/water';
 import BackgroundImage from './items/backgroundimage'
 import Video from './items/video'
-import BaseItem from './items/item';
 import TessellatedText from './items/tessellatedtext'
 import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
 import RenderTarget from './postprocessing/rendertarget';
-import EffectComposer from './postprocessing/effectcomposer';
-import {addLayer, setSidebarWindowIndex} from '../../../redux/actions/items'
+import {addLayer } from '../../../redux/actions/items'
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {

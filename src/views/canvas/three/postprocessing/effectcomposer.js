@@ -2,7 +2,7 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import { WebGLRenderTarget, LinearFilter, RGBAFormat, Mesh } from 'three'
+import { WebGLRenderTarget, LinearFilter, RGBAFormat } from 'three'
 import ShaderPass from './passes/shaderpass'
 import MaskPass, {ClearMaskPass} from './passes/maskpass'
 import CopyShader from './shaders/copyshader'

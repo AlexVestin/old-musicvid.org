@@ -6,11 +6,8 @@ import { connect } from 'react-redux'
 import {selectLayer} from '../../../redux/actions/items'
 import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemText } from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
 import Button from 'material-ui/Button'
-import FolderIcon from 'material-ui-icons/Folder';
-import DeleteIcon from 'material-ui-icons/Delete';
-import IconButton from 'material-ui/IconButton';
+
 
 
 const styles = theme => ({

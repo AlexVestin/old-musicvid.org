@@ -1,15 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import List, { ListItem } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
-import Delete from 'material-ui-icons/Delete';
-import TextField from 'material-ui/TextField';
-
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
 
 import { connect } from 'react-redux'
 import { addSound, setSidebarWindowIndex } from '../../redux/actions/items'

@@ -1,7 +1,7 @@
 import React from 'react';
 import ConfigList from '../input'
 import { connect } from 'react-redux'
-import { editItem, setSidebarWindowIndex, removeItem } from '../../../redux/actions/items'
+import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '../../../redux/actions/items'
 
 
 class Item extends React.PureComponent {
@@ -19,6 +19,10 @@ class Item extends React.PureComponent {
         removeItem(this.props.selectedItem)
     }
 
+    addAutomation = (key) => {
+        addAutomation(key)
+    }
+
     render() {
         const item = this.props.selectedItem
         const defaultConfig = item.defaultConfig;
@@ -28,6 +32,7 @@ class Item extends React.PureComponent {
                 defaultConfig={defaultConfig} 
                 item={item} 
                 onDelete={this.removeItem} 
+                addAutomation={this.addAutomation}
                 onBack={this.back}>
             </ConfigList>
         );

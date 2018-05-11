@@ -1,16 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import List, { ListItem } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
 import Delete from 'material-ui-icons/Delete';
-import TextField from 'material-ui/TextField';
-
-import AppBar from 'material-ui/AppBar'; 
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import Tooltip from 'material-ui/Tooltip';
 
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
@@ -26,7 +19,6 @@ const styles = theme => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
   textField: {

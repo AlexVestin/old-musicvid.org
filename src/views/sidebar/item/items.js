@@ -2,17 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
 
 import Button from 'material-ui/Button'
 
-import FolderIcon from 'material-ui-icons/Folder';
 import DeleteIcon from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton';
 
 import { connect } from 'react-redux'
 import { selectItem, setSidebarWindowIndex } from '../../../redux/actions/items'
-import { O_NONBLOCK } from 'constants';
 
 
 
@@ -24,7 +21,6 @@ const styles = theme => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
 });
@@ -59,7 +55,7 @@ class ResourceList extends React.Component {
                     </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
-          : null})}
+          : <React.Fragment></React.Fragment>})}
 
             
              

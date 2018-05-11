@@ -15,7 +15,16 @@ export default class Clip extends PureComponent {
         }
 
         this.color = colors[Math.floor(Math.random() * colors.length)]
-        this.dx
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("mouseup", this.onMouseUp)
+        window.removeEventListener("mousemove", this.onMouseMove)
+        
+    }
+    componentDidMount() {
+        window.addEventListener("mouseup", this.onMouseUp)
+        window.addEventListener("mousemove", this.onMouseMove)
     }
 
     onMouseDown = (e) => {
@@ -27,7 +36,7 @@ export default class Clip extends PureComponent {
     }
 
     onMouseUp = (e) => {
-        if(this.props.item.movable) {
+        if(this.props.item.movable && this.mouseDown) {
             this.mouseDown = false
             const { item, rOffset } = this.props
             this.endX = e.clientX
@@ -44,15 +53,13 @@ export default class Clip extends PureComponent {
     }
 
     onMouseMove = (e) => {
-        if(this.props.item.movable) {
+        if(this.props.item.movable && this.mouseDown) {
             const { item, rOffset, left } = this.props
-            if(this.mouseDown) {
-                if(item.start + (e.clientX  - this.startX) / rOffset >= 0) {
-                    this.setState({dx: e.clientX  - this.startX})
-                }else {
-                    this.setState({dx: -left})
-                } 
-            }
+            if(item.start + (e.clientX  - this.startX) / rOffset >= 0) {
+                this.setState({dx: e.clientX  - this.startX})
+            }else {
+                this.setState({dx: -left})
+            } 
         }
     }
 
@@ -78,73 +85,39 @@ export default class Clip extends PureComponent {
         return [x, y]
     }
 
-    onDragStart = (e) => {
-        if(this.props.item.movable) {
-            this.startX = e.clientX
-            e.dataTransfer.setData('text',''); 
-        }
-    }
-
-    onDragEnd = (e) => {
-        if(this.props.item.movable) {
-            const { item, rOffset } = this.props
-            this.endX = e.clientX
-
-            editItem({key: "start", value: item.start + (this.endX-this.startX) / rOffset })
-            this.setState({dx : 0})
-            this.startX = this.endX = 0
-        }
-    }
-
-    onDrag = (e) => {
-        if(this.props.item.movable) {
-            const x = e.clientX
-            this.setState({dx: x - this.startX})
-        }
-    }
-
-    clipDragged = (e, b) => {
-        this.setState({position: {x:b.x / this.props.unitSize, y: this.state.position.y}})
-    }
-
+    
     componentWillReceiveProps(props) {
-        const { height, top, item, zoomWidth, unitSize } = this.props
+        const { height, top, item, zoomWidth, unitSize } = props
 
-        if(this.state.position.x  !== props.item.start * props.zoomWidth * this.props.unitSize){
-            this.setState({position: {x: Math.floor(props.item.start * props.zoomWidth * this.props.unitSize), y: props.top} })
+        if(this.state.position.x  !== props.item.start * props.zoomWidth * unitSize){
+            this.setState({position: {x: Math.floor(props.item.start * props.zoomWidth * unitSize), y: props.top} })
         }
     }
 
-    render() {        
-        /*
-                 draggable="true"
-                onDrag={this.onDrag}
-                onDragStart={this.onDragStart}
-                onDragEnd={this.onDragEnd}
-        */
-
+    render() {    
         const { height, top, item, zoomWidth, unitSize, left } = this.props
-        let w = this.props.item.duration * zoomWidth * unitSize 
+        let w = item.duration * zoomWidth * unitSize 
 
         let l = left + this.state.dx 
+        console.log(this.state.dx, left, item.start)
         return (
             <div 
                 onClick={this.onClick}
                 style={{position:"relative", display: "flex", flexDirection: "row", zIndex: 2}} 
                 onMouseDown={this.onMouseDown}
-                onMouseUp={this.onMouseUp}
-                onMouseMove={this.onMouseMove}
             >
                 <div 
                     style={{
                         position: "absolute",
                         overflow: "hidden",
+                        whiteSpace: "nowrap",
                         width: w, 
                         top:top, 
                         height:height, 
                         left: l,
                         backgroundColor:this.color, 
                         border: "solid",
+                        boxSizing: "border-box",
                         borderRadius: "0.12rem", 
                         borderWidth: 1,
                         borderColor: '#555555'

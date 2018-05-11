@@ -1,20 +1,19 @@
 
 import React, {PureComponent} from 'react'
 
-import List, { ListItem } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types'
+
+import BrightnessAuto from '@material-ui/icons/BrightnessAuto'
 
 import Button from 'material-ui/Button'
 import Delete from 'material-ui-icons/Delete';
 import TextField from 'material-ui/TextField';
-
-import Typography from 'material-ui/Typography';
 import Tooltip from 'material-ui/Tooltip';
 
 
 const inputStyles = {
-    Number: {marginRight: 25, width: 40, minWidth: 40},
+    Number: {marginRight: 30, width: 40, minWidth: 40},
     String: { minWidth: "95%", marginRight: 20},
     Link: { width: 50 }
 }
@@ -27,7 +26,6 @@ const styles = theme => ({
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
-      width: '100%',
       backgroundColor: theme.palette.background.paper,
       overflowX: "hidden",
     },
@@ -48,9 +46,6 @@ const styles = theme => ({
         height: 50,
         minHeight: 50
     },
-
-
-    
 });
 
 
@@ -65,13 +60,18 @@ class ConfigList extends PureComponent {
             <div className={classes.root}>
                 <div className={classes.groupWrapper}>
                     {defaultConfig.map(group =>     
-                       <GroupContainer item={item} group={group} handleChange={this.props.handleChange}></GroupContainer>
+                       <GroupContainer item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.props.handleChange}></GroupContainer>
                     )}
                 </div>
                 
                 <div>
                     <Button 
-                        disabled={item.renderPass} className={classes.button} style={{marginLeft: "auto"}} fullWidth onClick={this.props.onDelete} variant="raised" color="secondary">
+                        disabled={item.renderPass} 
+                        className={classes.button} 
+                        style={{marginLeft: "auto"}} 
+                        fullWidth onClick={this.props.onDelete} 
+                        variant="raised" 
+                        color="secondary">
                             Delete item
                             <Delete className={classes.rightIcon} />
                         </Button>               
@@ -115,7 +115,7 @@ class GroupContainer extends PureComponent {
                 
                     {Object.keys(group.items).map((key, index) =>{
                         const config = group.items[key]
-                        const props = {key, keyVal: key, item, config, handleChange: this.props.handleChange}
+                        const props = {key, keyVal: key, item, config, handleChange: this.props.handleChange, addAutomation: this.props.addAutomation}
                         return(
                             <div key={key} style={inputStyles[config.type]}>
                                 {(config.type === "Number" || config.type ==="String") && <CustomTextField {...props}></CustomTextField>}
@@ -152,29 +152,34 @@ class LinkField extends PureComponent {
 
 class CustomTextField extends PureComponent {
     render() {
-
-        const {config, item } = this.props
+        const { config, item } = this.props
         const key = this.props.keyVal
 
+        const autoIconWidth = 12
         return(
-            <div key={key} style={inputStyles[config.type]}>
+            <div key={key} style={{...inputStyles[config.type], display: "flex", flexDirection: "row"}}>
+                <Tooltip id="tooltip-top-start" title={config.tooltip ? config.tooltip : ""} placement="right-end">
+                    <TextField
+                        id={key}
+                        type={config.type === "Number" ? "number" : "text"}
+                        label={key.substring(0, 9)}
+                        defaultValue={String(item[key])}
+                        fullWidth={config.type === "String"}
+                        onChange={this.props.handleChange({type: config.type, key: key})}
+                        disabled={!config.editable}
+                        style={inputStyles[config.type]}
+                    />
+                
+                </Tooltip>
 
-            {config.show !== false &&
-            <Tooltip id="tooltip-top-start" title={config.tooltip ? config.tooltip : ""} placement="right-end">
-            <TextField
-                id={key}
-                type={config.type === "Number" ? "number" : "text"}
-                label={key.substring(0, 9)}
-                defaultValue={String(item[key])}
-                fullWidth={config.type === "String"}
-                margin="normal"
-                onChange={this.props.handleChange({type: config.type, key: key})}
-                disabled={!config.editable}
-                style={inputStyles[config.type]}
-            />
-        </Tooltip>
-            }
-        </div> 
+                {config.type === "Number" && config.editable &&
+                    <Button 
+                    onClick={() => this.props.addAutomation(key) }
+                    style={{marginLeft: 30, marginTop: 25, position: "absolute", minWidth: autoIconWidth, minHeight: autoIconWidth, width: autoIconWidth, height: autoIconWidth}}>
+                        <BrightnessAuto style={{marginTop: -autoIconWidth / 2}}></BrightnessAuto>
+                    </Button>
+                }
+            </div> 
         )
     }
 }

@@ -22,12 +22,12 @@ export default class BaseItem {
         }
 
         this.config = {}
+        this.config.automations = []
         this.config.defaultConfig = []
         this.config.defaultConfig.push(headerGroup)
         this.config.defaultConfig.push(timeGroup)
 
-        
-
+        //TODO UUID ?
         this.config.id = Math.floor(Math.random() * 10000000)
         this.config.name = config.name
         this.config.movable = true
@@ -45,7 +45,7 @@ export default class BaseItem {
 
     updateConfig = (config) => {
         this.config = config
-        Object.keys( this.config).map((key, index) => {
+        Object.keys(this.config).forEach(key => {
             if( this.config[key].type === "Number") {
                 this.config[key] = isNaN( this.config[key]) ? 0 :  Number(this.config[key])
             }

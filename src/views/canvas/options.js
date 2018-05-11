@@ -4,10 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Input, { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
-import { ListItemText } from 'material-ui/List';
 import Select from 'material-ui/Select';
-import Checkbox from 'material-ui/Checkbox';
-import Chip from 'material-ui/Chip';
 
 const styles = theme => ({
   root: {

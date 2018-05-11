@@ -2,15 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
-import Button from 'material-ui/Button'
 
 import ScrollArea2 from './scrollarea2'
 
 import classes from './playlist.css'
 import { connect } from 'react-redux'
-
-
-const offset = 65
 
 class SimpleTabs extends React.PureComponent {
     state = {
@@ -24,7 +20,6 @@ class SimpleTabs extends React.PureComponent {
     };
 
     
-
     render() {
         const value = this.props.sideBarWindowIndex
         const tabStyle = { minWidth: "30px", maxWidth: "100px", minHeight: "30px", height: "20px", maxHeight: "20px" }

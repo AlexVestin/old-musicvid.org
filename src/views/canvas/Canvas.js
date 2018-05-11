@@ -6,7 +6,7 @@ import classes from './canvas.css'
 import PlaybackPanel from './playback'
 import ExportModal from './export'
 
-import { setTime, togglePlaying, setPlaying, incrementTime, setEncoding, setDisabled } from '../../redux/actions/globals' 
+import { setTime, togglePlaying, setPlaying, incrementTime, setDisabled } from '../../redux/actions/globals' 
 import { connect } from 'react-redux';
 
 class Canvas extends Component {

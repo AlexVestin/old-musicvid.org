@@ -14,7 +14,7 @@ export default class ScrollTopPane extends PureComponent {
 
         return (
             <div style={{ display: "flex", flexDirection: "row" }}>
-                <div style={{ minWidth: "13%", width: "13%", height: "100%", backgroundColor: "#434343" }}>
+                <div style={{ minWidth: "20%", width: "20%", height: "100%", backgroundColor: "#434343" }}>
                     <div style={{ height: 35, backgroundColor: "#666666", width: "100%", borderBottom: "2px solid #232323" }}></div>
                 </div>
                 <div style={{ width: "100%" }}>

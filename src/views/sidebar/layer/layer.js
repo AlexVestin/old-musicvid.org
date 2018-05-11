@@ -1,18 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import List, { ListItem } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
-import Delete from 'material-ui-icons/Delete';
-import TextField from 'material-ui/TextField';
-
-import AppBar from 'material-ui/AppBar';
-
-import Options from '../../canvas/options'
 
 import { connect } from 'react-redux'
-import { editItem, setSidebarWindowIndex, removeItem } from '../../../redux/actions/items'
+import { setSidebarWindowIndex } from '../../../redux/actions/items'
 
 const styles = theme => ({
   root: {

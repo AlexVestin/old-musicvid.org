@@ -5,7 +5,6 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
 import { setSidebarWindowIndex, createEffect } from '../../../redux/actions/items'
-import { connect } from 'react-redux'
 
 const styles = theme => ({
   root: {
@@ -14,7 +13,6 @@ const styles = theme => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
 });

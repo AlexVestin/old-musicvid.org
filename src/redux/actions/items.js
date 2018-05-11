@@ -7,6 +7,15 @@ export function selectItem(item){
     );  
 }
 
+
+export function addAutomation(item){
+    store.dispatch({
+        type: "ADD_AUTOMATION",
+        payload: item
+        } 
+    );  
+}
+
 export function addLayer(item){
     store.dispatch({
         type: "ADD_LAYER",

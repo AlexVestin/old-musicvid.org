@@ -10,13 +10,22 @@ export default function itemsReducer(state = {
     layers: [],
     selectedLayer: {},
     audioInfo: null,
-    renderTargets:  [],
     selectedRenderTarget: null,
     createEffect: null
     }, action){
-        var idx, scene;
-        switch(action.type){   
+        var idx, scene, item, newItem, newItems;
+        switch(action.type){  
+            case "ADD_AUTOMATION_POINT":
+                return {...state}
 
+            case "ADD_AUTOMATION":
+                idx = state.items.findIndex(e => e.id === state.selectedItem.id)
+                item = state.items[idx]
+                const automation = {name: action.payload, points: [{time: item.start, value: item[action.payload]}], interpolationPoints: {}, start: item.start }
+                newItem = {...item, automations: [...item.automations, automation]}
+                newItems = [...state.items.slice(0, idx), newItem, ...state.items.slice(idx+1)]
+                return {...state, items: newItems, selectedItem: newItem }
+    
             case "REMOVE_EFFECT":
                 scene = state.layers.find(e => e.id === state.selectedLayer.id)
                 idx = state.layers.findIndex(e => e.id === state.selectedLayer.id)
@@ -57,7 +66,7 @@ export default function itemsReducer(state = {
             case "SET_SIDEBAR_WINDOW_INDEX":
                 return {...state, sideBarWindowIndex: action.payload}
             case "SELECT_ITEM":
-                const item = state.items.find((e) => action.payload.id === e.id)
+                item = state.items.find((e) => action.payload.id === e.id)
                 const layer = state.layers.find((e) => action.payload.sceneId === e.id)
                 return {...state, selectedItem: item, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM, selectedLayer: layer}
             case "CREATE_ITEM":

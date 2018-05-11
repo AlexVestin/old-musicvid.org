@@ -6,8 +6,6 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux'
 
-import Toolbar from 'material-ui/Toolbar';
-
 import { setSidebarWindowIndex } from '../../redux/actions/items'
 
 import Audio from './audio'
