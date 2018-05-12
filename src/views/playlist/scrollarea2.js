@@ -21,6 +21,7 @@ class ScrollArea2 extends PureComponent {
                
         this.lastScrollY = 0
         this.lastScrollX = 0
+        this.maxZoom = 400
         this.viewport = [0, 0, 1, 1]
 
         this.i = 0
@@ -52,7 +53,6 @@ class ScrollArea2 extends PureComponent {
 
     onDragHorizontal = (e, b) => {
         const width = this.state.width -30
-
         const pos = b.x / width
         const diff = this.viewport[2] - this.viewport[0]
         this.viewport[0] = pos 
@@ -106,7 +106,7 @@ class ScrollArea2 extends PureComponent {
 
     zoomOut = (pos) => {
         const width = this.state.width - 30
-        let z = this.state.zoomWidth - 1 
+        let z = this.state.zoomWidth - 1 - (this.state.zoomWidth * 4 / this.maxZoom)
         z = z < 1 ? 1 : z
         
         const viewWidth  = 1 / z;
@@ -128,8 +128,6 @@ class ScrollArea2 extends PureComponent {
             }
         }
 
-        const tw = this.state.width * (this.viewport[2] - this.viewport[0])
-
         const thumbX = Math.floor(this.viewport[0] * width)
         this.setState({
             zoomWidth: z,
@@ -138,11 +136,13 @@ class ScrollArea2 extends PureComponent {
     }
 
     zoomIn = (pos) => {
-        const maxZoom = 50
-        if(this.state.zoomWidth !== maxZoom) {
+    
+        
+
+        if(this.state.zoomWidth !== this.maxZoom) {
             const width = this.state.width - 30
-            let z = this.state.zoomWidth + 1
-            z = z > maxZoom ? maxZoom : z
+            let z = this.state.zoomWidth + 0.5 + (this.state.zoomWidth * 8 / this.maxZoom)
+            z = z > this.maxZoom ? this.maxZoom : z
             const viewWidth  = 1 / z;
             const diff =  -(viewWidth - (this.viewport[2] - this.viewport[0]))
 
@@ -181,7 +181,7 @@ class ScrollArea2 extends PureComponent {
 
     gridScrolled = (e) => {
         e.preventDefault()
-
+       
         this.scrollAreaRef.scrollTop += e.deltaY / 10
         const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
         const s = this.scrollAreaRef.scrollTop
@@ -210,7 +210,6 @@ class ScrollArea2 extends PureComponent {
         const rOffset = this.unitSize * zoomWidth //relative offset to zoom and unitsize
 
         const info = {width, height, zoomWidth, zoomHeight, unitSize: this.unitSize, viewport, maxNrUnits, rOffset}
-        const gridOffset = -(this.viewport[0]* width * zoomWidth) % rOffset
 
         return (
             <div ref={ref => this.wrapperRef = ref} style={{height: "100%", position: "relative"}}>
@@ -224,11 +223,11 @@ class ScrollArea2 extends PureComponent {
                         ref={ref => this.scrollTopPanelRef = ref}
                         onWheel={this.onWheel}
                 ></ScrollTopPanel>
-                <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref} >
-                    <ClipInfoBar info={info} items={this.props.items}></ClipInfoBar>
+                <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref } onWheel={this.gridScrolled}>
+                    <ClipInfoBar info={info} items={this.props.items} ></ClipInfoBar>
                     <svg style={{position: "absolute", left: 0, zIndex: 1}} width={width*2} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <pattern id="grid" width={rOffset} height={40 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
+                            <pattern id="grid" width={rOffset} height={35 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
                                 <path d={"M "+String(rOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
                             </pattern>
                         </defs>

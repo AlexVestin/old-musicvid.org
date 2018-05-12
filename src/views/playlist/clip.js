@@ -53,6 +53,7 @@ export default class Clip extends PureComponent {
     }
 
     onMouseMove = (e) => {
+        
         if(this.props.item.movable && this.mouseDown) {
             const { item, rOffset, left } = this.props
             if(item.start + (e.clientX  - this.startX) / rOffset >= 0) {
@@ -99,7 +100,6 @@ export default class Clip extends PureComponent {
         let w = item.duration * zoomWidth * unitSize 
 
         let l = left + this.state.dx 
-        console.log(this.state.dx, left, item.start)
         return (
             <div 
                 onClick={this.onClick}

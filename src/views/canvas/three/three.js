@@ -10,7 +10,7 @@ import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
 
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
-import { addLayer, removeAudio, setSidebarWindowIndex } from '../../../redux/actions/items'
+import { addLayer, removeAudio, setSidebarWindowIndex, updateItemConfig } from '../../../redux/actions/items'
 import RenderTarget from './postprocessing/rendertarget';
 
 class ThreeCanvas extends Component {
@@ -64,7 +64,6 @@ class ThreeCanvas extends Component {
         this.scenes = [background, graphics]
 
         setSidebarWindowIndex(0);
-        console.log("???")
     }
 
     componentWillUnmount(){
@@ -154,8 +153,6 @@ class ThreeCanvas extends Component {
         if(this.selectedLayer) {
             this.selectedEffect = this.selectedLayer.selectedEffect
         }
-           
-        console.log(type)
         switch(type) {
             case "REMOVE_ITEM":
                 if(selectedItem.type === "SOUND") {
@@ -175,6 +172,8 @@ class ThreeCanvas extends Component {
             case "CREATE_EFFECT":
                 this.createEffect()
                 break;
+            case "EDIT_AUTOMATION_POINT":
+            case "ADD_AUTOMATION":
             case "EDIT_SELECTED_ITEM":
                 this.updateConfig(selectedItem);
                 break
@@ -252,10 +251,17 @@ class ThreeCanvas extends Component {
 
         this.renderer.render(this.mainScene, this.mainCamera)
         this.handleEncode(time)
+        this.lastTime = time
     }
 
     setTime = (time, playing) => {
-        this.scenes.forEach(e => e.setTime(time, playing))
+        var configs = []
+        this.scenes.forEach(e => configs = configs.concat(e.setTime(time, playing)))
+        
+        if(configs.length > 0 && this.lastTime !== time) {
+            if(this.sound)configs=[...configs, this.sound.config]
+            updateItemConfig(configs)
+            }
         if(playing && this.sound)this.sound.play(time, playing)
     }
 

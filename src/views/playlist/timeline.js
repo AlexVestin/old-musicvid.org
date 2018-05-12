@@ -49,8 +49,9 @@ class Timeline extends PureComponent {
 
     render() {
         const { maxNrUnits, zoomWidth, time, scrollOffset, unitSize, left, viewport } = this.props
-        const l =  (time * zoomWidth * unitSize) - 6 - left
-        const m = l+6; const r = m +6;
+        const l =  (time * zoomWidth * unitSize) - 6 - left - 1
+        const m = l+6; 
+        const r = m +6;
 
         let numbers = []
         const nNrs = 20

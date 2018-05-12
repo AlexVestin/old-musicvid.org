@@ -197,7 +197,7 @@ export default class SceneContainer {
 
     animate = (time, frequencyBins) => {
         this.addOrRemove(this.toRender, this.rendering, this.scene, time)
-        this.rendering.forEach(e => e.animate(time, frequencyBins))
+        this.rendering.forEach(e =>  e.animate(time, frequencyBins))
         this.freqNr = frequencyBins[2]
     }
 
@@ -206,7 +206,9 @@ export default class SceneContainer {
     }
 
     setTime = (time, playing) => {
-        this.items.forEach(e => e.setTime(time, playing))
+        var configs = []
+        this.items.forEach(e => configs.push(e.setTime(time, playing)))
+        return configs
     }
 
     play = (time, fps) => {

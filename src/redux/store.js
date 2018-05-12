@@ -8,6 +8,9 @@ function lastAction(state = null, action) {
     return action;
 }
 const rootReducer = combineReducers({globals: playbackReducer, items: itemReducer, lastAction: lastAction})
-const store = createStore(rootReducer)
+const store = createStore(
+    rootReducer, 
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
 
 export default store

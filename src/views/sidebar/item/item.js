@@ -3,7 +3,6 @@ import ConfigList from '../input'
 import { connect } from 'react-redux'
 import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '../../../redux/actions/items'
 
-
 class Item extends React.PureComponent {
     back = () => {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
@@ -11,8 +10,7 @@ class Item extends React.PureComponent {
 
     handleChange = input => event => {
         var value = event.target.value
-        if(input.type === "Number")value=isNaN(value) ? 0 : Number(value)
-        editItem({key: input.key, value })
+        editItem({key: input.key, value: value})
     }
 
     removeItem = () => {

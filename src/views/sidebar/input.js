@@ -18,7 +18,6 @@ const inputStyles = {
     Link: { width: 50 }
 }
 
-
 const styles = theme => ({
     root: {
       height: "calc(100% - 78px)", // height of the header/appbar
@@ -60,7 +59,7 @@ class ConfigList extends PureComponent {
             <div className={classes.root}>
                 <div className={classes.groupWrapper}>
                     {defaultConfig.map(group =>     
-                       <GroupContainer item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.props.handleChange}></GroupContainer>
+                       <GroupContainer key={group.title} item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.props.handleChange}></GroupContainer>
                     )}
                 </div>
                 
@@ -86,11 +85,13 @@ class ConfigList extends PureComponent {
 
 
 const groupContainerStyle = {
-    width: "100%",       
+    width: "95%",       
     marginLeft: 10, 
-    marginRight: 10, 
+    marginRight: 20, 
     marginBottom: 10,
+    marginTop: 10,
     overflowX: "hidden",
+    boxShadow: "1px 1px 1px 2px #ccc"
 }
 
 const inputContainer = {
@@ -105,7 +106,7 @@ const inputContainer = {
 class GroupContainer extends PureComponent {
 
     render() {
-        const {group, item, handleChange } = this.props
+        const {group, item } = this.props
 
         return(
             <div key={group.title} style={groupContainerStyle}>
@@ -151,33 +152,37 @@ class LinkField extends PureComponent {
 
 
 class CustomTextField extends PureComponent {
+    state= {mouseOver: false}
+
     render() {
         const { config, item } = this.props
         const key = this.props.keyVal
 
-        const autoIconWidth = 12
+        const autoIconWidth = 18
         return(
-            <div key={key} style={{...inputStyles[config.type], display: "flex", flexDirection: "row"}}>
+            <div key={key} style={{...inputStyles[config.type], display: "flex", flexDirection: "row", marginTop: 10}}>
+
+                <div style={{position: "absolute", marginTop: -12, fontSize: 10}}>{key}</div>
                 <Tooltip id="tooltip-top-start" title={config.tooltip ? config.tooltip : ""} placement="right-end">
-                    <TextField
-                        id={key}
-                        type={config.type === "Number" ? "number" : "text"}
-                        label={key.substring(0, 9)}
-                        defaultValue={String(item[key])}
-                        fullWidth={config.type === "String"}
-                        onChange={this.props.handleChange({type: config.type, key: key})}
-                        disabled={!config.editable}
+                   <input 
+                        onChange={this.props.handleChange({type: config.type, key: key})} 
+                        value={item[key]} 
                         style={inputStyles[config.type]}
-                    />
-                
+                        disabled={!config.editable}    
+                        type={config.type === "Number" ? "number" : "text"}
+                    ></input>
                 </Tooltip>
 
-                {config.type === "Number" && config.editable &&
-                    <Button 
-                    onClick={() => this.props.addAutomation(key) }
-                    style={{marginLeft: 30, marginTop: 25, position: "absolute", minWidth: autoIconWidth, minHeight: autoIconWidth, width: autoIconWidth, height: autoIconWidth}}>
-                        <BrightnessAuto style={{marginTop: -autoIconWidth / 2}}></BrightnessAuto>
-                    </Button>
+                {config.type === "Number" && config.editable && !config.disableAutomations &&
+                    
+                        <BrightnessAuto 
+                            onClick={() => this.props.addAutomation(key) }
+                            style={{marginLeft: 36, marginTop:-6, position: "absolute",  width: autoIconWidth, height: autoIconWidth, 
+                            color: this.state.mouseOver ? "gray" : "black" }}
+                            onMouseOver={() => this.setState({mouseOver: true})}
+                            onMouseOut={() => this.setState({mouseOver: false})}
+                            
+                            ></BrightnessAuto>
                 }
             </div> 
         )
@@ -192,3 +197,4 @@ ConfigList.propTypes = {
   
 
 export default withStyles(styles)(ConfigList)
+

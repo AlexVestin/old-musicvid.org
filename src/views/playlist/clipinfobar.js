@@ -4,25 +4,22 @@ import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp'
 import Add from '@material-ui/icons/Add'
 
-
 import classes from './clipinfobar.css'
 import Clip from './clip'
 import KeyFrame from './keyframe'
-import Button from 'material-ui/Button'
-
-
 import { connect } from 'react-redux'
 
 
+import { addAutomationPoint, editAutomationPoint, editItem } from '../../redux/actions/items'
 
-const pHeight = 40
+const pHeight = 35
 
 export default class ClipInfoBar extends PureComponent {
 
     render(){
         const items = this.props.items
         return (
-                <div style={{width: "100%"}}>
+                <div style={{width: "100%"}} >
                     <div style={{position: "absolute", width: "20%", height: "100%", backgroundColor: "#434343"}}></div>
                     {items.map((e,i ) => 
                         <ClipItem key={i} info={this.props.info} item={e} index={i}></ClipItem>
@@ -31,7 +28,6 @@ export default class ClipInfoBar extends PureComponent {
         )
     }
 }
-
 
 const clipStyle = {
     display: "flex",
@@ -54,8 +50,15 @@ class ClipItem extends PureComponent {
         } 
     }
 
-    addKeyFrame = () => {
-        console.log("add key frame", this.props.time)
+    addKeyFrame = (key) => {
+        let id = Math.floor(Math.random() * 10000000)
+        console.log("add????", this.props.item.automations)
+        addAutomationPoint({key, point: {time: this.props.time, value: 0, id}})
+    }
+
+    editAutomationPoint = (value, key, time) => {
+        editItem({key, value})
+        editAutomationPoint({key, time, value})
     }
 
     render(){
@@ -66,7 +69,7 @@ class ClipItem extends PureComponent {
         const i = this.props.index
         const panelHeight = this.state.expanded ? pHeight * (item.automations.length + 1) :  pHeight;
 
-        const {viewport, unitSize, zoomWidth, zoomHeight, width, height, rOffset, maxNrUnits } = this.props.info
+        const {viewport, unitSize, zoomWidth, zoomHeight, rOffset, maxNrUnits } = this.props.info
         const { start, duration } = item
         const right = viewport[2] * maxNrUnits*unitSize * zoomWidth
         const left = viewport[0] * maxNrUnits*unitSize * zoomWidth
@@ -85,26 +88,35 @@ class ClipItem extends PureComponent {
                             </div>
 
                              {this.state.expanded && 
+
                             <React.Fragment>
                                 {item.automations.map((e, i) => (
-                                    <div style={{
-                                        boxSizing: "border-box",
-                                        justifyContent: "space-between",
-                                        borderTop: "1px solid", 
-                                        width: "calc(100% - 60px)",
-                                        height: pHeight,
-                                        marginLeft: 60, 
-                                        fontSize: 12, 
-                                        textTransform: "uppercase",
-                                        display: "flex",
-                                        flexDirection: "row"
-                                    }}>
+                                    <div 
+                                        key={e.name}
+                                        style={{
+                                            
+                                            boxSizing: "border-box",
+                                            justifyContent: "space-between",
+                                            borderTop: "1px solid", 
+                                            width: "calc(100% - 60px)",
+                                            height: pHeight,
+                                            marginLeft: 60, 
+                                            fontSize: 12, 
+                                            textTransform: "uppercase",
+                                            display: "flex",
+                                            flexDirection: "row"
+                                        }}>
                             
                                         <div style={{marginTop: 17}}>{e.name}</div>
 
                                         <div style={{marginRight: 10, marginTop: 2, display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                            <Add onClick={this.addKeyFrame} style={{color: "white", width: 30, height: 30, minWidth: 30, minHeight: 30}}></Add>
-                                            <input type="number" placeholder={item[e.name]} className={classes.keyframeInput}></input>
+                                            <Add onClick={() =>this.addKeyFrame(e.name)} style={{color: "white", width: 30, height: 30, minWidth: 30, minHeight: 30}}></Add>
+                                            <input 
+                                                onChange={(evt) => this.editAutomationPoint(evt.target.value, e.name, this.props.time)} 
+                                                type="number" 
+                                                value={item[e.name]} 
+                                                className={classes.keyframeInput}
+                                            ></input>
                                         </div>
                                         
                                     </div>
@@ -130,16 +142,19 @@ class ClipItem extends PureComponent {
                         </Clip>
                         {this.state.expanded && 
                             <React.Fragment>
-                            {item.automations.map( (e, i) => (
+                            {item.automations.map( (automation, i) => 
+                                automation.points.map(point => 
                                 <KeyFrame
-                                    key={item.id} 
+                                    key={point.time} 
+                                    keyVal={automation.name}
                                     top={(i+1) * pHeight}
                                     height={pHeight * zoomHeight}
-                                    left={ (e.start * rOffset) - left}
+                                    left={  (point.time * rOffset) - left}
                                     zoomWidth={zoomWidth}
-                                    item={e}
+                                    item={point}
                                     rOffset={rOffset}
                                     unitSize={unitSize}
+
                                 >
                                 </KeyFrame>
 

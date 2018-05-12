@@ -7,6 +7,22 @@ export function selectItem(item){
     );  
 }
 
+export function editAutomationPoint(item) {
+    store.dispatch({
+        type: "EDIT_AUTOMATION_POINT",
+        payload: item
+        } 
+    );
+}
+
+export function addAutomationPoint(item) {
+    store.dispatch({
+        type: "ADD_AUTOMATION_POINT",
+        payload: item
+        } 
+    );
+}
+
 
 export function addAutomation(item){
     store.dispatch({
@@ -106,6 +122,14 @@ export function addItem(item, itemType){
         type: "ADD_ITEM",
         payload: item,
         itemType
+        } 
+    );  
+}
+
+export function updateItemConfig(item){
+    store.dispatch({
+        type: "UPDATE_ITEM_CONFIG",
+        payload: item
         } 
     );  
 }

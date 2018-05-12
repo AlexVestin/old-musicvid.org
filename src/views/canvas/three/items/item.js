@@ -1,5 +1,6 @@
-import {addItem} from '../../../../redux/actions/items'
+import { addItem } from '../../../../redux/actions/items'
 import {setDisabled} from '../../../../redux/actions/globals'
+
 
 export default class BaseItem {
     constructor(config) {
@@ -16,8 +17,8 @@ export default class BaseItem {
         }
 
         const timeGroup = {title: "Time configurations", items: {
-                start: {value: 0, type: "Number", tooltip: "Time in millisecond when item will be rendered", editable:  true},
-                duration: {value: 20, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true}
+                start: {value: 0, type: "Number", tooltip: "Time in millisecond when item will be rendered", editable: true, disableAutomations: true},
+                duration: {value: 20, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true, disableAutomations: true}
             }
         }
 
@@ -35,6 +36,7 @@ export default class BaseItem {
         
         this.mesh = {}
         this.getConfig(this.config.defaultConfig)
+        this.lastTime = -1
     }
 
     addItem = () => {
@@ -44,14 +46,16 @@ export default class BaseItem {
     }
 
     updateConfig = (config) => {
-        this.config = config
-        Object.keys(this.config).forEach(key => {
-            if( this.config[key].type === "Number") {
-                this.config[key] = isNaN( this.config[key]) ? 0 :  Number(this.config[key])
-            }
+        this.config = {...config}
+        this.config.defaultConfig.forEach(group => {
+            Object.keys(group.items).forEach(key => {
+                if( group.items[key].type === "Number") {
+                    this.config[key] = this.checkNum(this.config[key])
+                }
+            })
         })
 
-        this.editConfig(this.config)
+        this._updateConfig(this.config)
     } 
 
     getConfig = (config) => {
@@ -62,11 +66,55 @@ export default class BaseItem {
         })
     }
 
+    animate = (time, frequencyBins) => {
+        const ret = this.updateAutomations(time)
+        this._animate(time, frequencyBins)
+        this.lastTime = time
+    }
+    checkNum = (nr) => isNaN(nr) ? 0 :  Number(nr)
+
+    updateAutomations = (time) => {
+        const automations = this.config.automations
+        let changed = false
+        let config = {...this.config}
+        if(automations.length > 0 && time != this.lastTime) {
+            automations.forEach(e => {
+                const index = e.points.findIndex(p => p.time >= time) 
+                var newVal = 0
+                if(index > 0 ) {
+                    const tx = (time - e.points[index - 1].time) / (e.points[index].time - e.points[index-1].time)
+                    const valueRange = this.checkNum(e.points[index].value) - this.checkNum(e.points[index-1].value)
+                    newVal = this.checkNum(e.points[index - 1].value) + (tx * valueRange)
+                }else {
+                    newVal = this.checkNum(e.points[e.points.length -1].value)
+                }
+
+                if(config[e.name] !== newVal)changed = true
+                config[e.name] = newVal
+               
+            })
+
+            if(changed) {
+                this._updateConfig(config)
+            }
+        }
+        
+        return config
+    }
+
+    incrementTime = (time) => {
+
+    }
+
+    setTime = (time) => {
+        return this.updateAutomations(time)
+    }
+
     //TODO remove // find better use
     editConfig = () => {}
     stop = () => {}
     play = () => {}
-    setTime = () => {}
+    
 } 
 
 export class MeshItem extends BaseItem {

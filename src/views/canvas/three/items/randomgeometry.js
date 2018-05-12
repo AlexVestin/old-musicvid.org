@@ -45,7 +45,7 @@ export default class RandomGeometry extends AudioreactiveItem {
         this.lastTime = 0
     }
 
-    editConfig = (config) => {
+    _updateConfig = (config) => {
         this.move(config.X, config.Y, config.Z)
 
         config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
@@ -62,8 +62,9 @@ export default class RandomGeometry extends AudioreactiveItem {
         return color;
       }
     
-    animate = (time, frequencyBins) => {
+    _animate = (time, frequencyBins) => {
         const { barIndex, threshold, deltaTime, strength } = this.config
+        
 
         if(frequencyBins[0] && frequencyBins[barIndex] * strength > threshold && this.lastTime + deltaTime <= time) {
             let c = this.bufferGeometries[Math.floor(Math.random() * this.bufferGeometries.length)]

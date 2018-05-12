@@ -1,11 +1,11 @@
 
 import SidebarContainer from '../../views/sidebar/sidebarcontainer'
 import { selectEffect } from '../actions/items';
+import update from 'immutability-helper'
 
 export default function itemsReducer(state = {
     items: [],
     selectedItem: null,
-    lastAction: "",
     sideBarWindowIndex: 0,
     layers: [],
     selectedLayer: {},
@@ -13,18 +13,34 @@ export default function itemsReducer(state = {
     selectedRenderTarget: null,
     createEffect: null
     }, action){
-        var idx, scene, item, newItem, newItems;
+        var idx, scene, item, newItem, newItems, automation, itemIdx, automationIdx, pointIdx;
         switch(action.type){  
+            case "EDIT_AUTOMATION_POINT":
+                itemIdx = state.items.findIndex(e => e.id === state.selectedItem.id)
+                automationIdx = state.items[itemIdx].automations.findIndex(e => e.name === action.payload.key)
+            
+                const points = state.items[itemIdx].automations[automationIdx].points
+                pointIdx = points.findIndex(e => e.id === action.payload.id)
+                if(pointIdx < 0)pointIdx = points.findIndex(e => e.time === action.payload.time)
+                if(pointIdx < 0){console.log("COULD NOT FIND ID IN REDUCER/ADD POINT FIRST"); return state}
+                
+                const newPoint = {time: Number(action.payload.time), value: action.payload.value, id: points[pointIdx].id}
+                newItems = update(state.items, {[itemIdx]: { automations: { [automationIdx]: {points: {[pointIdx]: {$set: newPoint} }}}}})
+                return {...state, items: newItems, item: newItems[itemIdx], selectedItem: newItems[itemIdx]}
             case "ADD_AUTOMATION_POINT":
-                return {...state}
+                itemIdx = state.items.findIndex(e => e.id === state.selectedItem.id)
+                automationIdx = state.items[itemIdx].automations.findIndex(e => e.name === action.payload.key)
+                newItems = update(state.items, {[itemIdx]: { automations: { [automationIdx]: {points:  {$push: [action.payload.point] }}}}})
 
+                console.log(newItems)
+                return {...state, items: newItems, item: newItems[itemIdx], selectedItem: newItems[itemIdx]}
             case "ADD_AUTOMATION":
-                idx = state.items.findIndex(e => e.id === state.selectedItem.id)
-                item = state.items[idx]
-                const automation = {name: action.payload, points: [{time: item.start, value: item[action.payload]}], interpolationPoints: {}, start: item.start }
-                newItem = {...item, automations: [...item.automations, automation]}
-                newItems = [...state.items.slice(0, idx), newItem, ...state.items.slice(idx+1)]
-                return {...state, items: newItems, selectedItem: newItem }
+                itemIdx = state.items.findIndex(e => e.id === state.selectedItem.id)
+            
+                let p = {time: state.items[itemIdx].start, value: state.items[itemIdx][action.payload], id: Math.floor(Math.random() * 1000000)}
+                automation = {name: action.payload, points: [p], interpolationPoints: [] }
+                newItems = update(state.items, {[itemIdx]: {automations: {$push: [automation]}} })
+                return {...state, items: newItems, selectedItem: newItems[itemIdx] }
     
             case "REMOVE_EFFECT":
                 scene = state.layers.find(e => e.id === state.selectedLayer.id)
@@ -76,6 +92,10 @@ export default function itemsReducer(state = {
             case "REMOVE_ITEM":
                 let index = state.items.findIndex((e) => state.selectedItem.name === e.name)
                 return {...state, items: state.items.filter((_, i) => i !== index), sideBarWindowIndex: SidebarContainer.INDEXES.ITEMS}
+            case "UPDATE_ITEM_CONFIG":
+                itemIdx = state.items.findIndex(e => e.id === state.selectedItem.id)
+                newItems = [...action.payload]
+                return {...state, items: newItems, selectedItem: newItems[itemIdx]}
             case "EDIT_SELECTED_ITEM": 
                 const updatedItem = Object.assign({}, state.selectedItem, {
                     ...state.selectedItem,

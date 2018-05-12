@@ -15,7 +15,6 @@ export default class Sound extends BaseItem {
         }
         
         // don't allow editing, TODO fix audio editing
-        console.log(this.config.defaultConfig)
         //this.config.defaultConfig[0].items.name.editable = false
         this.config.defaultConfig[1].items.start.editable = false
         this.config.defaultConfig[1].items.duration.editable = false

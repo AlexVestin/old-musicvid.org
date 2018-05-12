@@ -1,5 +1,8 @@
 import React, { PureComponent } from 'react'
 
+import { editAutomationPoint } from '../../redux/actions/items'
+import { setTime } from '../../redux/actions/globals'
+
 
 export default class KeyFrame extends PureComponent {
     constructor(props) {
@@ -22,32 +25,32 @@ export default class KeyFrame extends PureComponent {
     }
 
     onMouseDown = (e) => {
-        if(this.props.item.movable) {
-            //selectItem(this.props.item)
-            this.mouseDown = true
-            this.startX = e.clientX
-        }
+        //selectItem(this.props.item)
+        this.mouseDown = true
+        this.startX = e.clientX
     }
 
     onMouseUp = (e) => {
-        this.mouseDown = false
-        const { item, rOffset } = this.props
-        this.endX = e.clientX
+        if(this.mouseDown) {
+            this.mouseDown = false
+            const { item, rOffset } = this.props
+            this.endX = e.clientX
 
-        if(item.start + (this.endX  - this.startX) / rOffset >= 0) {
-            //editItem({key: "start", value: item.start + (this.endX-this.startX) / rOffset })
-        }else {
-            //editItem({key: "start", value: 0 })
+            if(item.time + (this.endX  - this.startX) / rOffset >= 0) {
+                editAutomationPoint({id: item.id, key: this.props.keyVal, time: item.time + (this.endX-this.startX) / rOffset, value: item.value})
+            }else {
+                //editItem({key: "start", value: 0 })
+            }
+            console.log("mouseup") 
+            this.setState({dx: 0})
+            this.startX = this.endX = 0
         }
-            
-        this.setState({dx: 0})
-        this.startX = this.endX = 0
     }
 
     onMouseMove = (e) => {
         if( this.mouseDown) {
             const { item, rOffset, left } = this.props
-            if(item.start + (e.clientX  - this.startX) / rOffset >= 0) {
+            if(item.time + (e.clientX  - this.startX) / rOffset >= 0) {
                 this.setState({dx: e.clientX  - this.startX})
             }else {
                 this.setState({dx: -left})
@@ -57,14 +60,12 @@ export default class KeyFrame extends PureComponent {
 
 
     onClick = (e) => {
-        console.log("keyframe clicked")
+        setTime(this.props.item.time)
     }
 
     onStop = (e, b) => {
-        if(this.props.item.movable) {
-            if(this.props.item.start !== b.x) {
-                //editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
-            }
+        if(this.props.item.time !== b.x) {
+            //editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
         }
     }
  
@@ -80,8 +81,8 @@ export default class KeyFrame extends PureComponent {
     componentWillReceiveProps(props) {
         const { top, item, zoomWidth, unitSize } = props
 
-        if(this.state.position.x  !== item.start * zoomWidth * unitSize){
-            this.setState({position: {x: Math.floor(item.start * zoomWidth * unitSize), y: top} })
+        if(this.state.position.x  !== item.time * zoomWidth * unitSize){
+            this.setState({position: {x: Math.floor(item.time * zoomWidth * unitSize), y: top} })
         }
     }
 
@@ -92,24 +93,21 @@ export default class KeyFrame extends PureComponent {
         return (
             <div 
                 onClick={this.onClick}
-                style={{position:"relative", display: "flex", flexDirection: "row", zIndex: 2}} 
+                style={{position:"relative", zIndex: 2}} 
                 onMouseDown={this.onMouseDown}
             >
                 <div 
                     style={{
                         position: "absolute",
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
-                        width: 2, 
+                        width: 9, 
                         top:top, 
-                        height: height, 
+                        height: 9,
+                        transform: "translateY(12px) translateX(-50%)",
                         left: l,
-                        backgroundColor:"red", 
-                        border: "solid",
+                        backgroundColor: "red", 
                         boxSizing: "border-box",
-                        borderRadius: "0.12rem", 
-                        borderWidth: 1,
-                        borderColor: '#555555'
+                        display: "inline-block",
+                        borderRadius: "50%", 
                     }}>
 
                 </div>
