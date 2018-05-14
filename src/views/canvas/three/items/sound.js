@@ -1,4 +1,6 @@
 import BaseItem from "./item";
+import { addSound } from '../../../../redux/actions/items'
+import { setDisabled } from '../../../../redux/actions/globals'
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -179,7 +181,10 @@ export default class Sound extends BaseItem {
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
-                    that.addItem()
+                    
+                    addSound(that.config)
+                    setDisabled(false)
+
                     if(that.onload !== undefined)
                         that.onload()
                 });

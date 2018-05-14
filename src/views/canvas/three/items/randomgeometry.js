@@ -64,7 +64,7 @@ export default class RandomGeometry extends AudioreactiveItem {
     
     _animate = (time, frequencyBins) => {
         const { barIndex, threshold, deltaTime, strength } = this.config
-        
+        console.log(this.config)
 
         if(frequencyBins[0] && frequencyBins[barIndex] * strength > threshold && this.lastTime + deltaTime <= time) {
             let c = this.bufferGeometries[Math.floor(Math.random() * this.bufferGeometries.length)]
@@ -83,5 +83,7 @@ export default class RandomGeometry extends AudioreactiveItem {
             this.mesh.rotation.y += this.config.rotationY
             this.mesh.rotation.z += this.config.rotationZ            
         }
+
+        
     }
 }

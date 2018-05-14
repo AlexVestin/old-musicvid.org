@@ -11,13 +11,14 @@ import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
 import RenderTarget from './postprocessing/rendertarget';
-import {addLayer } from '../../../redux/actions/items'
+import { addLayer, replaceCamera } from '../../../redux/actions/items'
+import Camera from './cameras/camera'
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
 
         this.scene = new THREE.Scene()
-        this.camera = new THREE.Camera()
+        this.camera = new THREE.OrthographicCamera(-1,1,1,-1,0, 1)
         this.renderer = renderer
         this.setLight(this.scene)
 
@@ -25,13 +26,15 @@ export default class SceneContainer {
         this.toRender = []
         this.rendering = []
 
+        this.cameraConfig = new Camera().config
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
-            items: this.items,
+            items:[],
             width,
             height,
-            passes: []
+            passes: [],
+            camera: this.cameraConfig
         }
 
         const sceneConfig = {
@@ -45,6 +48,13 @@ export default class SceneContainer {
         this.texture = this.renderTarget.buffer.texture
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
         this.quad.frustumCulled = false; // Avoid getting clipped 
+    }
+
+    editCamera = (key, value) => {
+        if(key === "x" || key  === "y" || key === "z") {
+            this.camera.position[key] = value; 
+            this.controls.update()
+        }
     }
     
     removeEffect = (config) => {
@@ -128,9 +138,10 @@ export default class SceneContainer {
     setCamera = () => {
         const { width, height } = this.config
         this.camera = new THREE.PerspectiveCamera(55, width / height, 1, 20000)
-        this.camera.position.set(30, 30, 100);
+        this.camera.position.set(30,30,100)
+        replaceCamera({...this.cameraConfig, x: 30, y: 30, z: 100, type: "perspective", aspect: width / height, near: 1, far: 2000})
+        
         this.renderTarget.setCamera(this.camera)
-
     }
 
     setLight = (scene) => {
@@ -148,7 +159,6 @@ export default class SceneContainer {
 
     setControls = (config) => {
         const { camera, renderer } = this
-
         let controls = new OrbitControls(camera, renderer.domElement);
         controls.maxPolarAngle = Math.PI * 0.495;
         controls.target.set(0, 10, 0);
@@ -157,8 +167,6 @@ export default class SceneContainer {
         controls.maxDistance = 200.0;
         camera.lookAt(controls.target);
         this.controls = controls
-        this.scene.add(this.camera)
-
     }
 
     updateItem = (config) => {
@@ -223,9 +231,9 @@ export default class SceneContainer {
         this.renderTarget.render( renderer, time, this.freqNr)
     }
 
-    setTime = (time, playing) => {
+    setTime = (time, playing, sItemId) => {
         var configs = []
-        this.items.forEach(e => configs.push(e.setTime(time, playing)))
+        this.items.forEach(e => e.setTime(time, playing, sItemId))
         return configs
     }
 

@@ -32,15 +32,13 @@ class SimpleTabs extends React.PureComponent {
                 <div className={classes.header} style={{minHeight: 20, height: 20}}>
                     <div className={classes.root}>
                         <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 20, height: 20}} >
-
-                            <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>
-                                       
+                            <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>    
                             </div>
                         </AppBar>
                     </div>
                 </div>
                 <div className={classes.scrollbarWrapper}>
-                    <ScrollArea2 maxNrUnits={600} items={this.props.items}> </ScrollArea2>
+                    <ScrollArea2 maxNrUnits={this.props.clipDuration} items={this.props.items}> </ScrollArea2>
                 </div>
             </div>
         );
@@ -55,6 +53,7 @@ const mapStateToProps = state => {
     return {
         selectedItem: state.items.selectedItem,
         items: state.items.items,
+        clipDuration: state.globals.clipDuration
     }
 }
 

@@ -1,6 +1,6 @@
 export default function playbackReducer(state = {
     time: 0,
-    clipLength: 300,
+    clipDuration: 300,
     fps: 60,
     playing: false,
     frameId: 0,
@@ -12,8 +12,8 @@ export default function playbackReducer(state = {
             
             case "SET_ENCODING":
                 return {...state, encoding: action.payload, frameId: 0, time: 0, disabled: action.payload}
-            case "SET_CLIP_LENGTH":
-                return {...state, clipLength: action.payload}
+            case "SET_CLIP_DURATION":
+                return {...state, clipDuration: action.payload}
             case "SET_DISABLED":
                 return {...state, disabled: action.payload}
             case "INCREMENT_FRAME":

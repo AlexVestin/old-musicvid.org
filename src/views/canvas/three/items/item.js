@@ -1,4 +1,4 @@
-import { addItem } from '../../../../redux/actions/items'
+import { addItem, updateItemConfig } from '../../../../redux/actions/items'
 import {setDisabled} from '../../../../redux/actions/globals'
 
 
@@ -6,25 +6,25 @@ export default class BaseItem {
     constructor(config) {
         setDisabled(true)
         const headerGroup = { 
-                title: "Item Information", 
-                hide: false,
+                title: "Author Information", 
+                hide: true,
                 items: {
-                    author: {value: "AlexVestin", type: "String", editable: false},
-                    website: {value: "http://musicvid.org", type: "Link", editable: false},
-                    github: {value: "https://github.com/alexvestin/WasmVideoEncoder", type: "Link", editable: false},
-                    description: {value: "Description of item", type: "String", tooltip: "",  editable: false}
+                    author: {value: "example", type: "String", editable: false},
+                    website: {value: "http://example.org", type: "Link", editable: false},
+                    github: {value: "https://github.com/example", type: "Link", editable: false},
             }
         }
 
-        const timeGroup = {title: "Time configurations", items: {
-                start: {value: 0, type: "Number", tooltip: "Time in millisecond when item will be rendered", editable: true, disableAutomations: true},
-                duration: {value: 20, type: "Number", tooltip: "Time in millisecond when item won't be rendered any more", editable:  true, disableAutomations: true}
+        const timeGroup = {
+            title: "Time configurations", 
+            items: {
+                start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", editable: true, disableAutomations: true},
+                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", editable:  true, disableAutomations: true}
             }
         }
 
         this.config = {}
         this.config.defaultConfig = [headerGroup, timeGroup]
-        
 
         //TODO UUID ?
         this.config.id          = Math.floor(Math.random() * 10000000)
@@ -37,7 +37,7 @@ export default class BaseItem {
         this.mesh = {}
         this.automations = []
         this.getConfig(this.config.defaultConfig)
-        this.lastTime = -1
+        this._lastTime = -1
     }
 
     addItem = () => {
@@ -70,7 +70,7 @@ export default class BaseItem {
     animate = (time, frequencyBins) => {
         this.updateAutomations(time)
         this._animate(time, frequencyBins)
-        this.lastTime = time
+        this._lastTime = time
     }
     checkNum = (nr) => isNaN(nr) ? 0 :  Number(nr)
 
@@ -78,7 +78,7 @@ export default class BaseItem {
         const automations = this.automations
         let changed = false
         let config = {...this.config}
-        if(automations.length > 0 && time != this.lastTime) {
+        if(automations.length > 0 && time !== this._lastTime) {
             automations.forEach(e => {
                 const index = e.points.findIndex(p => p.time >= time) 
                 var newVal = 0
@@ -100,21 +100,22 @@ export default class BaseItem {
             }
         }
         
-        return config
+        return {...config}
     }
 
-    incrementTime = (time) => {
+    incrementTime = (time) => {}
 
-    }
-
-    setTime = (time) => {
-        return this.updateAutomations(time)
+    setTime = (time, _, itemId) => {
+        const config = this.updateAutomations(time)
+        delete config["automations"]
+        if(itemId === config.id && this.automations.length > 0)updateItemConfig(config)
     }
 
     //TODO remove // find better use
-    editConfig = () => {}
     stop = () => {}
     play = () => {}
+    _animate = () => {}
+    _updateConfig = () => {}
     
 } 
 

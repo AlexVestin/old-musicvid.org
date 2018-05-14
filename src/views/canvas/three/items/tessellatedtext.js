@@ -35,17 +35,24 @@ const fragmentShader = [
 export default class TessellatedText extends AudioreactiveItem {
     constructor(config) {
         super(config)
-        this.bins = []
 
-        this.defaultConfig.text = {value: "text", type: "String", tooltip: "", editable: true}
-        this.defaultConfig.fontSize = {value: 5, type: "Number", tooltip: "", editable: true}
-        this.defaultConfig.threshold = {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true}
-        this.defaultConfig.scale = {value: 50, type: "Number", tooltip: "", editable: true}
+        const group = {
+            title: "Text",
+            items: {
+                text: {value: "text", type: "String", tooltip: "", editable: true},
+                fontSize: {value: 5, type: "Number", tooltip: "", editable: true},
+                threshold: {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true},
+                scale: {value: 50, type: "Number", tooltip: "", editable: true},
+            }
+        }
+
+        this.config.defaultConfig.push(group)
+       
 
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
 
-        this.getConfig(this.defaultConfig)
+        this.getConfig(this.config.defaultConfig)
         this.mesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 

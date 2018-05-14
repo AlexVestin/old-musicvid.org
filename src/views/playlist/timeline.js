@@ -30,7 +30,7 @@ class Timeline extends PureComponent {
     }
 
     onClick = (evt) => {
-        const { left, zoomWidth, unitSize, maxNrUnits } = this.props
+        const { left, zoomWidth, unitSize } = this.props
         const [x, ] = this.getRelativeCoordinates(evt)
 
         const t = x/(zoomWidth * unitSize) + left / (zoomWidth * unitSize)
@@ -48,7 +48,7 @@ class Timeline extends PureComponent {
     }
 
     render() {
-        const { maxNrUnits, zoomWidth, time, scrollOffset, unitSize, left, viewport } = this.props
+        const { maxNrUnits, zoomWidth, time, unitSize, left } = this.props
         const l =  (time * zoomWidth * unitSize) - 6 - left - 1
         const m = l+6; 
         const r = m +6;
@@ -99,7 +99,8 @@ class Timeline extends PureComponent {
 
 const mapStateToProps = state => {
     return {
-        time: state.globals.time
+        time: state.globals.time,
+
     }
 }
 

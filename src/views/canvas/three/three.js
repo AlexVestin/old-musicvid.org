@@ -1,17 +1,13 @@
-import {WebGLRenderTarget, WebGLRenderer} from 'three'
-
 import SceneContainer from './scene'
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
 import Sound from "./items/sound"
 import store from '../../../redux/store'
-import {OrthographicCamera, Scene, Mesh, PlaneBufferGeometry } from 'three' 
+import {OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
 
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
-import { addLayer, removeAudio, setSidebarWindowIndex, updateItemConfig } from '../../../redux/actions/items'
-import RenderTarget from './postprocessing/rendertarget';
+import {  setSidebarWindowIndex } from '../../../redux/actions/items'
 
 class ThreeCanvas extends Component {
 
@@ -44,16 +40,15 @@ class ThreeCanvas extends Component {
 
         this.encodedFrames = 0
         this.setupScene()
-        
     }
 
     setupScene = () =>  {
         const background = new SceneContainer("background", this.width, this.height, this.renderer)
-        const graphics = new SceneContainer("graphics", this.width, this.height, this.renderer)
+        const graphics   = new SceneContainer("graphics", this.width, this.height, this.renderer)
         graphics.setCamera()
         graphics.setControls()
 
-        this.mainCamera = new OrthographicCamera(-1,1,1,-1,0, 100);
+        this.mainCamera = new OrthographicCamera(-1,1,1,-1,0,100);
         this.mainScene = new Scene();
 
         this.mainScene.add(background.quad) 
@@ -123,35 +118,31 @@ class ThreeCanvas extends Component {
     handleChange = () => {
         const state             = store.getState()
         this.time               = state.globals.time
-        const infoHolder        = state.items.tempInfoHolder
         
         const audioInfo         = state.items.audioInfo
         const type              = state.lastAction.type
-        const payload            = state.lastAction.payload
-
+        const payload           = {...state.lastAction.payload}
 
         this.fps                = state.globals.fps
         this.playing            = state.globals.playing
         this.selectedLayerId    = state.items.selectedLayerId
         this.createEffectType   = state.items.createEffect
+
         if(this.selectedLayer) {
             this.selectedEffect = this.selectedLayer.selectedEffect
         }
 
-        const selectedItem  = state.items.items[this.selectedLayerId][state.items.selectedItemId]
-
         const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null
-
+        this.selectedItemId = state.items.selectedItemId
         switch(type) {
             case "REMOVE_ITEM":
-                if(payload.type === "SOUND") {
-                    removeAudio(null)
-                    this.sound.stop()
-                    this.sound = undefined
-                }else {
+ 
                     scene.removeItem(payload.id)
-                }
+                
                 break;
+            case "EDIT_CAMERA":
+                scene.editCamera(payload.key, payload.value)
+                break
             case "REMOVE_EFFECT":
                 scene.removeEffect(this.selectedEffect)
                 break;
@@ -162,24 +153,24 @@ class ThreeCanvas extends Component {
                 scene.createEffect(this.selectedEffect)
                 break;
             case "ADD_AUTOMATION_POINT":
-                scene.addAutomationPoint(payload.point, payload.key, state.items.selectedItemId)
+                scene.addAutomationPoint(payload.point, payload.key, this.selectedItemId)
                 break;
             case "EDIT_AUTOMATION_POINT":
-                scene.editAutomationPoint(payload.id, payload.value, payload.key, state.items.selectedItemId)
+                scene.editAutomationPoint(payload.id, payload.value, payload.key, this.selectedItemId)
                 break;
             case "ADD_AUTOMATION":
-                scene.addAutomation(payload.automation, state.items.selectedItemId)
+                scene.addAutomation(payload.automation, this.selectedItemId)
                 break;
             case "EDIT_SELECTED_ITEM":
-                scene.updateItem(selectedItem);
+                scene.updateItem(state.items.items[this.selectedLayerId][this.selectedItemId]);
                 break
             case "CREATE_ITEM":
-                scene.addItem(infoHolder.type, infoHolder, this.time)
+                scene.addItem(payload.type, payload, this.time)
                 break; 
             case "SET_TIME":
                 this.setTime(this.time, this.playing)
                 break;
-            case "ADD_SOUND":
+            case "CREATE_SOUND":
                 this.sound = new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)})
                 break;
             default:
@@ -240,13 +231,7 @@ class ThreeCanvas extends Component {
     }
 
     setTime = (time, playing) => {
-        var configs = []
-        this.scenes.forEach(e => configs = configs.concat(e.setTime(time, playing)))
-        
-        if(configs.length > 0 && this.lastTime !== time) {
-            if(this.sound)configs=[...configs, this.sound.config]
-            updateItemConfig(configs)
-        }
+        this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
         if(playing && this.sound)this.sound.play(time, playing)
     }
 

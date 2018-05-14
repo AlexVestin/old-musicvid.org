@@ -87,9 +87,11 @@ export default class KeyFrame extends PureComponent {
     }
 
     render() {    
-        const { height, top, left } = this.props
+        const { top, left, time, item } = this.props
         let l = left + this.state.dx 
 
+        const borderWidth = time === item.time ? "1px" : "0px"
+        const radius =  10
         return (
             <div 
                 onClick={this.onClick}
@@ -99,15 +101,16 @@ export default class KeyFrame extends PureComponent {
                 <div 
                     style={{
                         position: "absolute",
-                        width: 9, 
+                        width: radius, 
+                        height: radius,
                         top:top, 
-                        height: 9,
-                        transform: "translateY(12px) translateX(-50%)",
+                        transform: "translateY(125%) translateX(-55%)",
                         left: l,
                         backgroundColor: "red", 
                         boxSizing: "border-box",
                         display: "inline-block",
                         borderRadius: "50%", 
+                        border: borderWidth + " solid white"
                     }}>
 
                 </div>

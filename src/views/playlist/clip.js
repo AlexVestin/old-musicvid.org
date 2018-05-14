@@ -28,8 +28,8 @@ export default class Clip extends PureComponent {
     }
 
     onMouseDown = (e) => {
-        if(this.props.item.movable) {
-            selectItem(this.props.item.id)
+        if(this.props.item.movable && !this.mouseDown) {
+            selectItem({itemId: this.props.item.id, layerId: this.props.item.sceneId})
             this.mouseDown = true
             this.startX = e.clientX
         }
@@ -70,7 +70,7 @@ export default class Clip extends PureComponent {
         if(this.props.item.movable) {
             if(this.props.item.start !== b.x) {
                 
-                selectItem(this.props.item.id)
+                selectItem({itemId: this.props.item.id, layerId: this.props.item.sceneId})
                 editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
             }
         }
@@ -86,10 +86,8 @@ export default class Clip extends PureComponent {
 
     
     componentWillReceiveProps(props) {
-        const { height, top, item, zoomWidth, unitSize } = props
-
-        if(this.state.position.x  !== props.item.start * props.zoomWidth * unitSize){
-            this.setState({position: {x: Math.floor(props.item.start * props.zoomWidth * unitSize), y: props.top} })
+        if(this.state.position.x  !== props.item.start * props.zoomWidth * props.unitSize){
+            this.setState({position: {x: Math.floor(props.item.start * props.zoomWidth * props.unitSize), y: props.top} })
         }
     }
 

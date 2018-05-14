@@ -22,10 +22,5 @@ export default class BackgroundImage extends BaseItem {
         
         fr.readAsDataURL(config.file) 
     }
-
-    animate  = (time, freqs) => {
-
-    }
-
 }
 

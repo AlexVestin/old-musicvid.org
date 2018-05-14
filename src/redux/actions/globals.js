@@ -25,9 +25,17 @@ export function setEncoding(item){
     );  
 }
 
-export function setSidebarWindowIndex(item) {
+export function setFps(item) {
     store.dispatch({
         type: "SET_FPS",
+        payload: item,
+        } 
+    ); 
+}
+
+export function setClipDuration(item) {
+    store.dispatch({
+        type: "SET_CLIP_DURATION",
         payload: item,
         } 
     ); 

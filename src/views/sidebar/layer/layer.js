@@ -30,7 +30,6 @@ const styles = theme => ({
 
 class Layer extends React.Component {
 
-
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYERS)
     };
@@ -39,19 +38,21 @@ class Layer extends React.Component {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
+    openCamera = (e) => {
+        setSidebarWindowIndex(this.props.idxs.CAMERA)
+    }
+
         
     render() {
         const { classes } = this.props;
-        const conf = this.props.selectedLayer;
         const idxs = this.props.idxs
-
         return (
             <div className={classes.root}>
             <div>
                 <Button variant="raised" fullWidth onClick={this.openItems}>
                     Items
                 </Button>
-                <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
+                <Button variant="raised" fullWidth onClick={this.openCamera}>
                     Camera
                 </Button>
                 <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
@@ -79,7 +80,7 @@ Layer.propTypes = {
 const mapStateToProps = state => {
     return {
         selectedLayer: state.items.selectedLayer,
-        sideBarWindowIndex: state.items.sideBarWindowIndex
+        sideBarWindowIndex: state.items.sideBarWindowIndex,
     }
 }
 

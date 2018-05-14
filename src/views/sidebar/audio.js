@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button'
-
+import ConfigList from './input'
 import { connect } from 'react-redux'
-import { addSound, setSidebarWindowIndex } from '../../redux/actions/items'
+import { createSound, removeSound, setSidebarWindowIndex } from '../../redux/actions/items'
 
 const styles = theme => ({
   root: {
@@ -30,28 +30,37 @@ class Audio extends React.Component {
         this.fileInputRef.onchange = () => {
             let file = this.fileInputRef.files[0]
             let name =  this.fileInputRef.files[0].name
-            addSound({type:"SOUND", file, name})
+            createSound({type:"SOUND", file, name})
         }
-
-        if(this.props.audioInfo !== null)setSidebarWindowIndex(this.props.idxs.ITEM)
     }
-
-    setWindow = () => {
-        //this.props.setWindow(4)
-    };
 
     back = () => {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
     render() {
-        const { classes, audioInfo } = this.props;
+
+        const { classes, audioItems } = this.props;
+
+        const item = audioItems[0]
         return (
             <div className={classes.root}>
             <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
              
-            {audioInfo !== null ? null : <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
-        }
+            {audioItems.length !== 0 ? 
+                
+                <ConfigList 
+                    handleChange={() => {}} 
+                    defaultConfig={item.defaultConfig} 
+                    item={item} 
+                    onDelete={removeSound} 
+                    addAutomation={() => {}}
+                    onBack={this.back}>
+                </ConfigList>
+                : 
+                <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
+            }
+
         </div>
         );
     }
@@ -63,7 +72,8 @@ Audio.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        audioInfo: state.items.audioInfo,
+        audioItems: state.items.audioItems,
+
     }
 }
 

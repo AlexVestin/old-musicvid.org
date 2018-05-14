@@ -97,7 +97,6 @@ export default class Video extends BaseItem {
 
     play = (time) => {
         this.time = time
-
        
         if(this.playAudio) {
             if(this.bs)

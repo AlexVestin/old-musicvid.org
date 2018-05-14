@@ -17,6 +17,8 @@ import AudioReactiveTypeList from './item/audioreactivetypes'
 import ResourceList from "./item/items"
 import LayerList from './layer/layers'
 
+import ProjectSettings from './project'
+import Camera from './layer/camera'
 import Item from './item/item'
 import Layer from './layer/layer'
 import EffectList from './layer/effects'
@@ -54,9 +56,11 @@ class SidebarContainer extends React.Component {
         AUDIOREACTIVETYPELIST: 6,
         ITEMS: 8,
         ITEM: 5,
+        CAMERA: 12,
         AUDIO: 1,
         EFFECT: 9,
         NEWEFFECT: 10,
+        PROJECTSETTINGS:2,
     }
     
     state = {
@@ -69,7 +73,7 @@ class SidebarContainer extends React.Component {
     };
 
     render() {
-        const { classes, selectedItemId, selectedLayerId, items } = this.props;
+        const { classes } = this.props;
         const value = this.props.sideBarWindowIndex
         const tabStyle = { minWidth: "30px", maxWidth: "120px" }
         if(value <= 2)
@@ -83,6 +87,7 @@ class SidebarContainer extends React.Component {
                     <Tabs value={this.tabValue} onChange={this.handleChange} fullWidth>
                         <Tab label="Layers" style={tabStyle} href="#basic-tabs" />
                         <Tab label="Audio" style={tabStyle}/>
+                        <Tab label="Project" style={tabStyle}/>
                     </Tabs>
                 </AppBar>
 
@@ -93,6 +98,9 @@ class SidebarContainer extends React.Component {
                         </Typography>
                 </AppBar>
             }
+
+                {value === INDEXES.PROJECTSETTINGS && <ProjectSettings idxs={INDEXES}></ProjectSettings>}                                            
+                {value === INDEXES.CAMERA && <Camera idxs={INDEXES}></Camera>}                            
                 {value === INDEXES.NEWEFFECT && <NewEffect idxs={INDEXES}></NewEffect>}
                 {value === INDEXES.EFFECT &&                <Effect idxs={INDEXES}></Effect>}
                 {value === INDEXES.ADDRESOURCEOPTIONS &&   <AddResourceOptions idxs={INDEXES}></AddResourceOptions>}

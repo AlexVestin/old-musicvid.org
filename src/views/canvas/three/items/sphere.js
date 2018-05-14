@@ -145,9 +145,14 @@ export default class Sphere extends AudioreactiveItem {
 
         const newDiff = (frequencyBins[barIndex] / strength) - this.lastDiff
         if(Math.abs(newDiff) > threshold && newDiff > 0 ) {
-            const diff =  frequencyBins[barIndex] / strength
-            sphere.scale.set(1+ diff,1 + diff, 1+ diff)
-            this.lastDiff = diff
+            let diff = frequencyBins[barIndex]
+            if(strength !== 0)
+                diff /= strength
+
+            if(diff<10 && !isNaN(diff)) {
+                sphere.scale.set(1+ diff,1 + diff, 1+ diff)
+                this.lastDiff = diff
+            }
         }else {
             this.lastDiff =  this.lastDiff - 0.001 >= 0 ? this.lastDiff - 0.01 : 0
             sphere.scale.set(1 +this.lastDiff, 1 +this.lastDiff,1 +this.lastDiff)

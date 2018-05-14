@@ -15,6 +15,22 @@ export function editAutomationPoint(item) {
     );
 }
 
+export function editCamera(item) {
+    store.dispatch({
+        type: "EDIT_CAMERA",
+        payload: item
+        } 
+    );
+}
+
+export function replaceCamera(item) {
+    store.dispatch({
+        type: "REPLACE_CAMERA",
+        payload: item
+        } 
+    );
+}
+
 export function addAutomationPoint(item) {
     store.dispatch({
         type: "ADD_AUTOMATION_POINT",
@@ -51,6 +67,15 @@ export function addSound(item){
     ); 
 }
 
+export function createSound(item){
+    store.dispatch({
+        type: "CREATE_SOUND",
+        payload: item
+        } 
+    ); 
+}
+
+
 
 export function selectLayer(index){
     store.dispatch({
@@ -60,9 +85,9 @@ export function selectLayer(index){
 }
 
 
-export function removeAudio(){
+export function removeSound(){
     store.dispatch({
-        type: "REMOVE_AUDIO",
+        type: "REMOVE_SOUND",
 
         } 
     );  

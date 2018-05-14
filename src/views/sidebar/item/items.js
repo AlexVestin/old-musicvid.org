@@ -30,7 +30,7 @@ class ResourceList extends React.Component {
   };
 
   selectItem = (obj) => {
-    selectItem(obj.id)
+    selectItem({itemId: obj.id, layerId: obj.sceneId})
   }
 
   back = () => {

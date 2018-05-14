@@ -5,16 +5,21 @@ import { MeshItem } from './item';
 export default class Bars extends MeshItem {
     constructor(config) {
         super(config)
-        this.bins = new THREE.Group()
+        this.mesh = new THREE.Group()
 
-        this.config.type = "BARS"
-        this.config.name = "Bars"
-        this.defaultConfig.strength = {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true}
-        this.defaultConfig.decreaseSpeed = {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true}
-        this.defaultConfig.deltaRequired = {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true}       
-        this.defaultConfig.color = {value: "FFFFFF", type: "String", tooltip: "", editable: true}
-        this.defaultConfig.scale = {value: 0.5, type: "Number", tooltip: "", editable: true}
-
+        const group = { 
+            title: "Stuff",
+            items: {
+                strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true},
+                decreaseSpeed: {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true},
+                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true},    
+                color : {value: "FFFFFF", type: "String", tooltip: "", editable: true},
+                scale : {value: 0.5, type: "Number", tooltip: "", editable: true}
+            }
+        }
+        
+        this.config.defaultConfig.push(group)
+        this.getConfig(this.config.defaultConfig)
 
         for(var i = 0; i < 32; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -22,25 +27,16 @@ export default class Bars extends MeshItem {
             var cube = new THREE.Mesh( geometry, material );
 
             cube.position.x = i+(i*0.5) - 24;
-            this.bins.add(cube)
+            this.mesh.add(cube)
         }
 
         this.strength = 1
-        this.getConfig(this.defaultConfig)
-        this.mesh = this.bins
         this.addItem()
-    }
-
-    getCompoundBoundingBox = (items) => {
-        var box = null;
-        items.forEach((e) => {});
-
-        return box;
     }
 
 
     move = (x, y, z) => {
-        this.bins.children.forEach((e, i) => {
+        this.mesh.children.forEach((e, i) => {
             e.position.x = x + i+(i*0.5) - 24;
             e.translateZ(z);
         })
@@ -48,8 +44,8 @@ export default class Bars extends MeshItem {
         this.centerY = y
     }
 
-    editConfig = (config) => {
-        this.bins.children.forEach(e => {
+    _updateConfig = (config) => {
+        this.mesh.children.forEach(e => {
             e.material.color.setHex("0x" + config.color)
         })
 
@@ -60,17 +56,17 @@ export default class Bars extends MeshItem {
         this.config = config
     }
 
-    animate = (time, frequencyBins) => {
-        const { deltaRequired, decreaseSpeed, strength, scale, centerY } = this.config
-
-        this.bins.children.forEach( (e,i) => {
+    _animate = (time, frequencyBins) => {
+        const { deltaRequired, decreaseSpeed, strength, scale, Y } = this.config
+        this.mesh.children.forEach( (e,i) => {
             let o = e.scale.y
             let n = (frequencyBins[i] / 3) * strength * scale
 
             o = n > (o + deltaRequired) ? n : (o - decreaseSpeed) >= 0 ? (o-decreaseSpeed) : 0.001;
-      
+            
+            console.log()
             e.scale.set(scale , o, scale); 
-            e.position.y = centerY + o/2 
+            e.position.y = Y + o/2 
         })
     }
 }

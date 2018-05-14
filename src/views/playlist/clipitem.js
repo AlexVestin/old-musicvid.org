@@ -34,19 +34,19 @@ class ClipItem extends PureComponent {
     }
 
     addKeyFrame = (automation) => {
+        const { item, time } = this.props
         let id = Math.floor(Math.random() * 10000000)
-        console.log("ehm", automation.name, {time: this.props.time, id, value: 0 }, automation.id)
-        addAutomationPoint({automationId: automation.id, key: automation.name, point: {time: this.props.time, id}})
+        addAutomationPoint({automationId: automation.id, key: automation.name, point: {time, value: item[automation.name], id}})
     }
 
     editAutomationPoint = (value, key, time, automation) => {
-
         let point = automation.points.find(e => e.time === time) 
         if(point) {
             editItem({key, value})
             editAutomationPoint({key, time, value, id: point.id})
+        }else {
+            this.addKeyFrame(automation)
         }
-        
     }
 
     render(){
@@ -54,14 +54,15 @@ class ClipItem extends PureComponent {
         if(!item) return null
 
         var str = item.name.length  < 30 ? item.name : item.name.substring(0, 30) + "..."
+        str += "    [" + this.props.selectedLayer.name + "]"
 
         const i = this.props.index
         const panelHeight = this.state.expanded ? pHeight * (item.automations.length + 1) :  pHeight;
 
         const {viewport, unitSize, zoomWidth, zoomHeight, rOffset, maxNrUnits } = this.props.info
         const { start, duration } = item
-        const right = viewport[2] * maxNrUnits*unitSize * zoomWidth
-        const left = viewport[0] * maxNrUnits*unitSize * zoomWidth
+        const right = viewport[2] * maxNrUnits * unitSize * zoomWidth
+        const left  = viewport[0] * maxNrUnits * unitSize * zoomWidth
         const shouldDrawClip = ((start * rOffset) < right || (start + duration) * rOffset >= left)
 
 
@@ -75,7 +76,7 @@ class ClipItem extends PureComponent {
                             <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 14, display: "flex", flexDirection: "row", height: pHeight}}>
                                 {!this.state.expanded && <KeyboardArrowDown onClick={() => this.setState({expanded: true})} style={{marginTop: -5}}/>}
                                 {this.state.expanded && <KeyboardArrowUp onClick={() => this.setState({expanded: false})} style={{marginTop: -5}}/>}
-                                {str}
+                                <div style={{userSelect: "none"}}>{str}</div>
                             </div>
 
                              {this.state.expanded && 
@@ -98,7 +99,7 @@ class ClipItem extends PureComponent {
                                             flexDirection: "row"
                                         }}>
                             
-                                        <div style={{marginTop: 17}}>{e.name}</div>
+                                        <div style={{userSelect: "none", marginTop: 17}}>{e.name}</div>
 
                                         <div style={{marginRight: 10, marginTop: 2, display: "flex", flexDirection: "row", alignItems: "center"}}>
                                             <Add onClick={() =>this.addKeyFrame(e)} style={{color: "white", width: 30, height: 30, minWidth: 30, minHeight: 30}}></Add>
@@ -136,6 +137,7 @@ class ClipItem extends PureComponent {
                             {automations.map( (automation, i) => 
                                 automation.points.map(point => 
                                 <KeyFrame
+                                    time={this.props.time}
                                     key={point.time} 
                                     keyVal={automation.name}
                                     top={(i+1) * pHeight}
@@ -145,7 +147,6 @@ class ClipItem extends PureComponent {
                                     item={point}
                                     rOffset={rOffset}
                                     unitSize={unitSize}
-
                                 >
                                 </KeyFrame>
 
@@ -166,7 +167,8 @@ const mapStateToProps = state => {
         time: state.globals.time,
         fps: state.globals.fps,
         automations: state.items.automations,
-        selectedItemId:  state.items.selectedItemId
+        selectedItemId:  state.items.selectedItemId,
+        selectedLayer: state.items.layers[state.items.selectedLayerId]
     }
 }
 

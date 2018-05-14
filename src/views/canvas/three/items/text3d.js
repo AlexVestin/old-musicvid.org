@@ -7,14 +7,21 @@ export default class Text3D extends MeshItem {
         super(config)
         this.bins = []
 
-        this.defaultConfig.text = {value: "text", type: "String", tooltip: "", editable: true}
-        this.defaultConfig.fontSize = {value: 5, type: "Number", tooltip: "", editable: true}
-        this.defaultConfig.color = {value: "FFFFFF", type: "String", tooltip: "", editable: true}
+        const group = {
+            title: "Text",
+            items: {
+                text: {value: "text", type: "String", tooltip: "", editable: true},
+                fontSize: {value: 5, type: "Number", tooltip: "", editable: true},
+                color: {value: "FFFFFF", type: "String", tooltip: "", editable: true},
+            }
+        }
+        this.config.defaultConfig.push(group)
+        this.getConfig(this.config.defaultConfig)
+
 
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
 
-        this.getConfig(this.defaultConfig)
         this.mesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
