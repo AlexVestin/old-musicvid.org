@@ -8,8 +8,6 @@ import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button'
 
-
-
 const styles = theme => ({
   root: {
     height: "calc(100% - 78px)", // height of the header/appbar
@@ -20,8 +18,8 @@ const styles = theme => ({
 
 class LayerList  extends React.Component {
 
-  onClick = (e) => {
-    selectLayer(e)
+  onClick = (layer) => {
+    selectLayer(layer.id)
   }
 
   render() {
@@ -31,9 +29,9 @@ class LayerList  extends React.Component {
       <div className={classes.root}>
       
         <List>
-          {this.props.layers.map(layer => (
-            <ListItem key={layer.name} dense button className={classes.listItem} onClick={() => this.onClick(layer)}>
-              <ListItemText primary={layer.name} />
+          {Object.keys(layers).map(key => (
+            <ListItem key={layers[key].name} dense button className={classes.listItem} onClick={() => this.onClick(layers[key])}>
+              <ListItemText primary={layers[key].name} />
             </ListItem>
           ))}
         </List>

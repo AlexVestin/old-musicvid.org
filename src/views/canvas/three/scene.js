@@ -104,14 +104,14 @@ export default class SceneContainer {
         }
     }
 
-    removeItem = (config) => {
-        let idx = this.items.findIndex((e) => e.config.id === config.id)
+    removeItem = (id) => {
+        let idx = this.items.findIndex((e) => e.config.id === id)
 
         if (idx !== -1) {
             this.scene.remove(this.items[idx].mesh)
             this.items = this.items.filter((_, i) => i !== idx)
-            this.toRender = this.toRender.filter(e => e.config.id !== config.id)
-            this.rendering = this.rendering.filter(e => e.config.id !== config.id)
+            this.toRender = this.toRender.filter(e => e.config.id !== id)
+            this.rendering = this.rendering.filter(e => e.config.id !== id)
 
         } else {
             console.log("unable to remove item")
@@ -193,6 +193,24 @@ export default class SceneContainer {
                 e.play(time)
             }
         }
+    }
+
+    addAutomation = (automation, itemId) => {
+        const item = this.items.find(e=>e.id = itemId)
+        item.automations.push(automation)  
+    }
+
+    editAutomationPoint = ( pointId, value, key, itemId ) => {
+        const item = this.items.find(e=>e.id = itemId)
+        const aIdx =  item.automations.findIndex(e => e.name === key)
+        const pointIdx = item.automations[aIdx].points.findIndex(e => e.id === pointId)
+        item.automations[aIdx].points[pointIdx].value = value
+    }
+
+    addAutomationPoint = ( point, key, itemId, automationId ) => {
+        const item = this.items.find(e => e.id === itemId)
+        const aIdx =  item.automations.findIndex(e => e.name === key)
+        item.automations[aIdx].points.push(point)
     }
 
     animate = (time, frequencyBins) => {

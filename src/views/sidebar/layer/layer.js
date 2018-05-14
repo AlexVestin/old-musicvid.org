@@ -41,7 +41,7 @@ class Layer extends React.Component {
 
         
     render() {
-        const { classes, sideBarWindowIndex } = this.props;
+        const { classes } = this.props;
         const conf = this.props.selectedLayer;
         const idxs = this.props.idxs
 

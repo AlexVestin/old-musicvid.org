@@ -12,8 +12,6 @@ import { connect } from 'react-redux'
 import { selectItem, setSidebarWindowIndex } from '../../../redux/actions/items'
 
 
-
-
 const styles = theme => ({
   root: {
     height: "calc(100% - 78px)", // height of the header/appbar
@@ -32,7 +30,7 @@ class ResourceList extends React.Component {
   };
 
   selectItem = (obj) => {
-    selectItem(obj)
+    selectItem(obj.id)
   }
 
   back = () => {
@@ -40,22 +38,21 @@ class ResourceList extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-
+    const { classes, selectedLayerId } = this.props;
+    const items = this.props.items[selectedLayerId]
     return (
       <div className={classes.root}>
         <List>
-          {this.props.items.map(obj => {
-            return obj.sceneId === this.props.selectedLayer.id ?          
-            <ListItem key={obj.id} dense button className={classes.listItem} onClick={() => this.selectItem(obj)}>
-              <ListItemText primary={obj.name} />
+          {items !== undefined && Object.keys(items).map(key => 
+            <ListItem key={items[key].id} dense button className={classes.listItem} onClick={() => this.selectItem(items[key])}>
+              <ListItemText primary={items[key].name} />
               <ListItemSecondaryAction>
                     <IconButton aria-label="Delete">
                         <DeleteIcon />
                     </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
-          : <React.Fragment></React.Fragment>})}
+         )}
 
             
              
@@ -80,7 +77,8 @@ ResourceList.propTypes = {
 const mapStateToProps = state => {
   return {
     items: state.items.items,
-    selectedLayer: state.items.selectedLayer,
+    selectedLayerId: state.items.selectedLayerId,
+
   }
 }
 

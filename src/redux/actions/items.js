@@ -33,10 +33,13 @@ export function addAutomation(item){
 }
 
 export function addLayer(item){
+    const id = Math.floor(Math.random() * 100000000)
+
     store.dispatch({
         type: "ADD_LAYER",
-        payload: item
-        } 
+        payload: item,
+        id    
+    } 
     );  
 }
 

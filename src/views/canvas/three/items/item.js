@@ -23,18 +23,19 @@ export default class BaseItem {
         }
 
         this.config = {}
-        this.config.automations = []
-        this.config.defaultConfig = []
-        this.config.defaultConfig.push(headerGroup)
-        this.config.defaultConfig.push(timeGroup)
+        this.config.defaultConfig = [headerGroup, timeGroup]
+        
 
         //TODO UUID ?
-        this.config.id = Math.floor(Math.random() * 10000000)
-        this.config.name = config.name
-        this.config.movable = true
-        this.config.sceneId = config.sceneId
+        this.config.id          = Math.floor(Math.random() * 10000000)
+        this.config.name        = config.name
+        this.config.movable     = true
+        this.config.sceneId     = config.sceneId
+        this.config.automations = []
+        
         
         this.mesh = {}
+        this.automations = []
         this.getConfig(this.config.defaultConfig)
         this.lastTime = -1
     }
@@ -67,14 +68,14 @@ export default class BaseItem {
     }
 
     animate = (time, frequencyBins) => {
-        const ret = this.updateAutomations(time)
+        this.updateAutomations(time)
         this._animate(time, frequencyBins)
         this.lastTime = time
     }
     checkNum = (nr) => isNaN(nr) ? 0 :  Number(nr)
 
     updateAutomations = (time) => {
-        const automations = this.config.automations
+        const automations = this.automations
         let changed = false
         let config = {...this.config}
         if(automations.length > 0 && time != this.lastTime) {

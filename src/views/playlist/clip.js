@@ -29,7 +29,7 @@ export default class Clip extends PureComponent {
 
     onMouseDown = (e) => {
         if(this.props.item.movable) {
-            selectItem(this.props.item)
+            selectItem(this.props.item.id)
             this.mouseDown = true
             this.startX = e.clientX
         }
@@ -65,14 +65,12 @@ export default class Clip extends PureComponent {
     }
 
 
-    onClick = (e) => {
-        selectItem(this.props.item)
-    }
 
     onStop = (e, b) => {
         if(this.props.item.movable) {
             if(this.props.item.start !== b.x) {
-                selectItem(this.props.item)
+                
+                selectItem(this.props.item.id)
                 editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
             }
         }

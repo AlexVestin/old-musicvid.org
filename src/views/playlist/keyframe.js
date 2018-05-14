@@ -25,7 +25,7 @@ export default class KeyFrame extends PureComponent {
     }
 
     onMouseDown = (e) => {
-        //selectItem(this.props.item)
+        //selectItem(this.props.item.id)
         this.mouseDown = true
         this.startX = e.clientX
     }

@@ -14,11 +14,14 @@ class Item extends React.PureComponent {
     }
 
     removeItem = () => {
-        removeItem(this.props.selectedItem)
+        removeItem({id: this.props.selectedItem.id, type: this.props.selectedItem.type})
     }
 
     addAutomation = (key) => {
-        addAutomation(key)
+        const {selectedItem} = this.props 
+        const point = {time: selectedItem.start, value: selectedItem[key], id: Math.floor(Math.random() * 1000000)}
+        const automation = {name: key, points: [point], interpolationPoints: [], id: Math.floor(Math.random() * 1000000) }
+        addAutomation({key, automation})
     }
 
     render() {
@@ -37,9 +40,10 @@ class Item extends React.PureComponent {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
-        selectedItem: state.items.selectedItem
+        selectedItem: state.items.items[ownProps.selectedLayerId][ownProps.selectedItemId],
+        items: state.items.items
     }
 }
 

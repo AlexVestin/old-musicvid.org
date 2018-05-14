@@ -69,13 +69,14 @@ class SidebarContainer extends React.Component {
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, selectedItemId, selectedLayerId, items } = this.props;
         const value = this.props.sideBarWindowIndex
         const tabStyle = { minWidth: "30px", maxWidth: "120px" }
         if(value <= 2)
             this.tabValue = value
 
         const INDEXES = SidebarContainer.INDEXES
+
         return (
             <div className={classes.root}>
                 <AppBar position="static" >
@@ -99,7 +100,7 @@ class SidebarContainer extends React.Component {
                 {value === INDEXES.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idxs={INDEXES}></AudioReactiveTypeList>}
                 {value === INDEXES.EFFECTS           && <EffectList  idxs={INDEXES}></EffectList>}
                 {value === INDEXES.ITEMS &&         <ResourceList idxs={INDEXES}></ResourceList>}
-                {value === INDEXES.ITEM &&                 <Item idxs={INDEXES} item={this.props.selectedItem}></Item>}
+                {value === INDEXES.ITEM &&                 <Item idxs={INDEXES} {...this.props}></Item>}
                 {value === INDEXES.LAYERS &&            <LayerList idxs={INDEXES}></LayerList>}
                 {value === INDEXES.LAYER &&                 <Layer idxs={INDEXES} item={this.props.selectedItem}></Layer>}
                 {value === INDEXES.AUDIO &&                 <Audio idxs={INDEXES} ></Audio>}
@@ -114,9 +115,9 @@ SidebarContainer.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        selectedItem: state.items.selectedItem,
+        selectedItemId: state.items.selectedItemId,
         sideBarWindowIndex: state.items.sideBarWindowIndex,
-        selectedLayer: state.items.selectedLayer,
+        selectedLayerId: state.items.selectedLayerId,        
     }
 }
 

@@ -77,13 +77,9 @@ class ThreeCanvas extends Component {
     }
 
     shouldComponentUpdate(props) {
-        return props.encoding != this.state.hidden;
+        return props.encoding !== this.state.hidden;
     }
 
-    add = (info) => {
-        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
-        scene.addItem(info.type, info, this.time)
-    }
 
     initEncoder = (config, useAudio) => {
         this.videoEncoder = new VideoEncoder(this.encoderLoaded)
@@ -102,20 +98,6 @@ class ThreeCanvas extends Component {
         this.renderScene(this.time)
     }
 
-    removeEffect = () => {
-        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
-        scene.removeEffect(this.selectedEffect)
-    }
-
-    editEffect = () => {
-        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
-        scene.editEffect(this.selectedEffect)
-    }
-
-    createEffect = () => {
-        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
-        scene.createEffect(this.createEffectType)
-    }
 
     encoderLoaded = () => {
         let audioConfig = null
@@ -139,46 +121,60 @@ class ThreeCanvas extends Component {
     }
 
     handleChange = () => {
-        const state         = store.getState()
-        this.time           = state.globals.time
-        const selectedItem  = state.items.selectedItem
-        const audioInfo     = state.items.audioInfo
-        const type          = state.lastAction.type
+        const state             = store.getState()
+        this.time               = state.globals.time
+        const infoHolder        = state.items.tempInfoHolder
+        
+        const audioInfo         = state.items.audioInfo
+        const type              = state.lastAction.type
+        const payload            = state.lastAction.payload
 
 
-        this.fps            = state.globals.fps
-        this.playing        = state.globals.playing
-        this.selectedLayer  = state.items.selectedLayer
+        this.fps                = state.globals.fps
+        this.playing            = state.globals.playing
+        this.selectedLayerId    = state.items.selectedLayerId
         this.createEffectType   = state.items.createEffect
         if(this.selectedLayer) {
             this.selectedEffect = this.selectedLayer.selectedEffect
         }
+
+        const selectedItem  = state.items.items[this.selectedLayerId][state.items.selectedItemId]
+
+        const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null
+
         switch(type) {
             case "REMOVE_ITEM":
-                if(selectedItem.type === "SOUND") {
+                if(payload.type === "SOUND") {
                     removeAudio(null)
                     this.sound.stop()
                     this.sound = undefined
                 }else {
-                    this.removeItem(selectedItem)
+                    scene.removeItem(payload.id)
                 }
                 break;
             case "REMOVE_EFFECT":
-                this.removeEffect(this.selectedEffect)
+                scene.removeEffect(this.selectedEffect)
                 break;
             case "EDIT_EFFECT":
-                this.editEffect()
+                scene.editEffect(this.selectedEffect)
                 break;
             case "CREATE_EFFECT":
-                this.createEffect()
+                scene.createEffect(this.selectedEffect)
+                break;
+            case "ADD_AUTOMATION_POINT":
+                scene.addAutomationPoint(payload.point, payload.key, state.items.selectedItemId)
                 break;
             case "EDIT_AUTOMATION_POINT":
+                scene.editAutomationPoint(payload.id, payload.value, payload.key, state.items.selectedItemId)
+                break;
             case "ADD_AUTOMATION":
+                scene.addAutomation(payload.automation, state.items.selectedItemId)
+                break;
             case "EDIT_SELECTED_ITEM":
-                this.updateConfig(selectedItem);
+                scene.updateItem(selectedItem);
                 break
             case "CREATE_ITEM":
-                this.add(selectedItem)
+                scene.addItem(infoHolder.type, infoHolder, this.time)
                 break; 
             case "SET_TIME":
                 this.setTime(this.time, this.playing)
@@ -189,17 +185,6 @@ class ThreeCanvas extends Component {
             default:
         }
     }
-
-    updateConfig = (config) => {
-        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
-        scene.updateItem(config)
-    }
-
-    removeItem = (config) => {
-        const scene = this.scenes.find(e => e.config.id === this.selectedLayer.id)
-        scene.removeItem(config)
-    }
-
     stop = () => {
         this.scenes.forEach(e => e.stop())
         if(this.sound)this.sound.stop()
@@ -261,7 +246,7 @@ class ThreeCanvas extends Component {
         if(configs.length > 0 && this.lastTime !== time) {
             if(this.sound)configs=[...configs, this.sound.config]
             updateItemConfig(configs)
-            }
+        }
         if(playing && this.sound)this.sound.play(time, playing)
     }
 
