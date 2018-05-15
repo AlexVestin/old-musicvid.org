@@ -102,7 +102,6 @@ export default class RenderTarget {
         this.effectComposer.removePass(config)
         this.nShaderPasses--
         this.effectComposer.swapBuffers()
-        console.log("??????????????????????????", config, this.effectComposer.passes)
     }
 
     editEffect = (config) => {

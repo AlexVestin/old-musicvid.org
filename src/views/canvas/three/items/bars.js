@@ -64,7 +64,6 @@ export default class Bars extends MeshItem {
 
             o = n > (o + deltaRequired) ? n : (o - decreaseSpeed) >= 0 ? (o-decreaseSpeed) : 0.001;
             
-            console.log()
             e.scale.set(scale , o, scale); 
             e.position.y = Y + o/2 
         })

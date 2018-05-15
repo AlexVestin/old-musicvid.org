@@ -110,7 +110,7 @@ const inputContainer = {
 
 class GroupContainer extends PureComponent {
 
-    state = {expanded: true}
+    state = {expanded: false}
 
     toggleExpanded = () => this.setState({expanded: !this.state.expanded})
 

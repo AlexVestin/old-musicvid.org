@@ -41,7 +41,7 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-    height: "100%"
+    height: "100%",
   },
 });
 

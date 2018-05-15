@@ -57,7 +57,6 @@ export default class EffectComposer {
     }
 
     removePass(pass) {
-        console.log(pass, this.passes)
         this.passes = this.passes.filter(e => e.config.id !== pass.id)
     }
 

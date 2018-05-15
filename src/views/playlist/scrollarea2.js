@@ -45,12 +45,13 @@ class ScrollArea2 extends PureComponent {
 
     componentDidMount() {
         const ref = this.scrollTopPanelRef.panelRef
-        window.addEventListener('resize', this.updateWindowDimensions);
+        window.addEventListener('resize', this.updateWindowDimensions);        
         this.setState({ width: ref.offsetWidth, height: this.wrapperRef.offsetHeight})
     }
 
     componentWillUnmount() {
         window.removeEventListener("mouseup", this.windowMouseUp)
+        window.removeEventListener('resize', this.updateWindowDimensions);
     }
 
     onDragHorizontal = (e, b) => {
@@ -183,8 +184,9 @@ class ScrollArea2 extends PureComponent {
 
     gridScrolled = (e) => {
         e.preventDefault()
-       
-        this.scrollAreaRef.scrollTop += e.deltaY / 10
+        const deltaY = e.deltaY > 0 ? 100 : -100
+
+        this.scrollAreaRef.scrollTop += deltaY / 10
         const scrollMax = this.scrollAreaRef.scrollHeight - this.scrollAreaRef.clientHeight
         const s = this.scrollAreaRef.scrollTop
         const pos = (s /scrollMax) * (this.state.height -  95)
@@ -209,12 +211,12 @@ class ScrollArea2 extends PureComponent {
         
 
         const viewport = this.viewport
-        const rOffset = this.unitSize * zoomWidth //relative offset to zoom and unitsize
+        const itemRightOffset = this.unitSize * zoomWidth //relative offset to zoom and unitsize
 
-        const info = {width, height, zoomWidth, zoomHeight, unitSize: this.unitSize, viewport, maxNrUnits, rOffset}
+        const info = {width, height, zoomWidth, zoomHeight, unitSize: this.unitSize, viewport, maxNrUnits, itemRightOffset}
 
         return (
-            <div ref={ref => this.wrapperRef = ref} style={{height: "100%", position: "relative"}}>
+            <div ref={ref => this.wrapperRef = ref} style={{height: "100%", position: "relative"}} >
                 <ScrollTopPanel
                         onDragHorizontal={this.onDragHorizontal}
                         horizontalPosition={this.state.horizontalPosition}
@@ -225,12 +227,12 @@ class ScrollArea2 extends PureComponent {
                         ref={ref => this.scrollTopPanelRef = ref}
                         onWheel={this.onWheel}
                 ></ScrollTopPanel>
-                <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref } onWheel={this.gridScrolled}>
+                <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref }  onWheel={this.gridScrolled} >
                     <ClipInfoBar info={info} selectedLayerId={this.props.selectedLayerId} ></ClipInfoBar>
                     <svg style={{position: "absolute", left: 0, zIndex: 1}} width={width*2} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <pattern id="grid" width={rOffset} height={35 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
-                                <path d={"M "+String(rOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
+                            <pattern id="grid" width={itemRightOffset} height={35 * this.state.zoomHeight} patternUnits="userSpaceOnUse">
+                                <path d={"M "+String(itemRightOffset)+" 0 L 0 0 "} fill="none" stroke="#434343" strokeWidth="1" />
                             </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill="url(#grid)" />

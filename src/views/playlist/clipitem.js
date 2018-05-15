@@ -54,16 +54,16 @@ class ClipItem extends PureComponent {
         if(!item) return null
 
         var str = item.name.length  < 30 ? item.name : item.name.substring(0, 30) + "..."
-        str += "    [" + this.props.selectedLayer.name + "]"
+        if(this.props.selectedLayer)str += "    [" + this.props.selectedLayer.name + "]"
 
         const i = this.props.index
         const panelHeight = this.state.expanded ? pHeight * (item.automations.length + 1) :  pHeight;
 
-        const {viewport, unitSize, zoomWidth, zoomHeight, rOffset, maxNrUnits } = this.props.info
+        const {viewport, unitSize, zoomWidth, zoomHeight, itemRightOffset, maxNrUnits } = this.props.info
         const { start, duration } = item
         const right = viewport[2] * maxNrUnits * unitSize * zoomWidth
         const left  = viewport[0] * maxNrUnits * unitSize * zoomWidth
-        const shouldDrawClip = ((start * rOffset) < right || (start + duration) * rOffset >= left)
+        const shouldDrawClip = ((start * itemRightOffset) < right || (start + duration) * itemRightOffset >= left)
 
 
         const automations = this.props.automations[item.id]
@@ -125,10 +125,10 @@ class ClipItem extends PureComponent {
                         <Clip 
                             key={item.id} 
                             height={pHeight * zoomHeight}
-                            left={ (start * rOffset) - left}
+                            left={ (start * itemRightOffset) - left}
                             zoomWidth={zoomWidth}
                             item={item}
-                            rOffset={rOffset}
+                            itemRightOffset={itemRightOffset}
                             unitSize={unitSize}
                             >
                         </Clip>
@@ -142,10 +142,10 @@ class ClipItem extends PureComponent {
                                     keyVal={automation.name}
                                     top={(i+1) * pHeight}
                                     height={pHeight * zoomHeight}
-                                    left={  (point.time * rOffset) - left}
+                                    left={  (point.time * itemRightOffset) - left}
                                     zoomWidth={zoomWidth}
                                     item={point}
-                                    rOffset={rOffset}
+                                    itemRightOffset={itemRightOffset}
                                     unitSize={unitSize}
                                 >
                                 </KeyFrame>
@@ -162,13 +162,13 @@ class ClipItem extends PureComponent {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     return {
         time: state.globals.time,
         fps: state.globals.fps,
         automations: state.items.automations,
         selectedItemId:  state.items.selectedItemId,
-        selectedLayer: state.items.layers[state.items.selectedLayerId]
+        selectedLayer: state.items.layers[ownProps.item.sceneId]
     }
 }
 

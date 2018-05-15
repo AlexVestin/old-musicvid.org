@@ -33,15 +33,14 @@ export default class KeyFrame extends PureComponent {
     onMouseUp = (e) => {
         if(this.mouseDown) {
             this.mouseDown = false
-            const { item, rOffset } = this.props
+            const { item, itemRightOffset } = this.props
             this.endX = e.clientX
 
-            if(item.time + (this.endX  - this.startX) / rOffset >= 0) {
-                editAutomationPoint({id: item.id, key: this.props.keyVal, time: item.time + (this.endX-this.startX) / rOffset, value: item.value})
+            if(item.time + (this.endX  - this.startX) / itemRightOffset >= 0) {
+                editAutomationPoint({id: item.id, key: this.props.keyVal, time: item.time + (this.endX-this.startX) / itemRightOffset, value: item.value})
             }else {
                 //editItem({key: "start", value: 0 })
             }
-            console.log("mouseup") 
             this.setState({dx: 0})
             this.startX = this.endX = 0
         }
@@ -49,8 +48,8 @@ export default class KeyFrame extends PureComponent {
 
     onMouseMove = (e) => {
         if( this.mouseDown) {
-            const { item, rOffset, left } = this.props
-            if(item.time + (e.clientX  - this.startX) / rOffset >= 0) {
+            const { item, itemRightOffset, left } = this.props
+            if(item.time + (e.clientX  - this.startX) / itemRightOffset >= 0) {
                 this.setState({dx: e.clientX  - this.startX})
             }else {
                 this.setState({dx: -left})
