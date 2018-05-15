@@ -1,4 +1,4 @@
-prefix=/home/alex/videoeditor/src/webassembly/build/dependencies/x264/../../reg
+prefix=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/x264/../../reg
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

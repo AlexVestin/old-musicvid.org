@@ -4,12 +4,12 @@
 #include <inttypes.h>
 #include <time.h>
 
-const int SECONDS = 2;
+const int SECONDS = 41;
 
 //DUMMY VIDEO
-const int FPS = 30;
-const int WIDTH = 2048;
-const int HEIGHT = 1080;
+const int FPS = 25;
+const int WIDTH = 720;
+const int HEIGHT = 480;
 const int BIT_RATE = 400000; 
 const int NR_CLS = 4;
 const int PRESET = 0;
@@ -38,35 +38,37 @@ float* get_audio_buf(const char* filename, int *fs){
 
 int main(int argc, char** argv) {
     int i, j, audio_size;
-    double seconds = 10;
 
     open_video(WIDTH,HEIGHT,FPS,BIT_RATE, PRESET);
 
     int leftSize, rightSize;
     float* left = get_audio_buf("./assets/right1.raw", &leftSize);
     float* right = get_audio_buf("./assets/left1.raw", &rightSize);
-    open_audio( left, right, leftSize, 44100, 2, 320000 );
-    seconds = (leftSize+rightSize) / (double) (44100 * 2);
-    
+    //open_audio_pre( left, right, leftSize, 44100, 2, 320000, 1470);
+
+    const int audio_frame_size = (1.0 / (float)FPS) * SAMPLE_RATE;
+    open_audio( 44100, 2, 320000 );
+        
     write_header();
 
-
-    int nr_frames = 1;
+    int nr_frames = 1, added_audio = 0;
 
     clock_t start = clock(), diff;
     int k, frame_size = WIDTH*HEIGHT*NR_CLS;
-    for(i = 0;i < (int)3*FPS; i++){
-        uint8_t* buffer = malloc(frame_size * nr_frames);
-        for(k = 0; k < nr_frames; k++) {
-            for(j = 0; j < frame_size; j++){
-                buffer[j + k*frame_size] = 0;
+    for(i = 0;i < SECONDS*FPS; i++){
+        uint8_t* buffer = malloc(frame_size);
+        for(j = 0; j < frame_size; j++){
+            buffer[j] = 0;
 
-                //Spoof red at half the screen
-                if(j < (frame_size / 2))
-                    buffer[j + k*frame_size] = !(j % NR_CLS) ? 255 : 0;
-            }
+            //red at half the screen
+            if(j < (frame_size / 2))
+                buffer[j] = !(j % NR_CLS) ? 255 : 0;
         }
-        add_frame(buffer, nr_frames);
+        
+
+        add_frame(buffer, 1);
+        //add_audio_frame(left + added_audio, right + added_audio, audio_frame_size /*(1/30)*44100)*/);
+        //added_audio += audio_frame_size;
     }
 
     diff = clock() - start;
@@ -75,7 +77,7 @@ int main(int argc, char** argv) {
     printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
     printf("--\n");
 
-    write_audio_frame();
+    //write_audio_frame();
 
     int size = close_stream();
     uint8_t* out = get_buffer();
@@ -84,5 +86,7 @@ int main(int argc, char** argv) {
     fwrite(out, size, 1, out_file);
     fclose(out_file);
     free_buffer();
+    free(left);
+    free(right);
     return 0;
 }
