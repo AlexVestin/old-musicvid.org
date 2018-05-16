@@ -10,7 +10,7 @@ mp4: ffmpeg.js
 
 ENCODE_FILES = ./C/avio_write.c
 ENCODE_FUNCTIONS = "[ \
-		'_open_audio', '_add_audio_frame', '_add_frame', \
+		'_open_audio', '_add_audio_frame', '_add_video_frame', \
 		'_open_video', '_close_stream', '_free_buffer', '_get_buffer', \
 		'_write_header', '_set_audio']"
 
