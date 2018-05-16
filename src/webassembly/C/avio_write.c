@@ -36,7 +36,7 @@ AVCodecContext *video_ctx, *audio_ctx;
 
 
 const int NR_COLORS = 4;
-int have_audio = 0;
+int have_audio = 0, have_video = 0;
 
 //AUDIO
 int frame_bytes, audio_idx, dst_nb_samples; 
@@ -47,7 +47,7 @@ uint8_t* src_buf_right;
 
 float* audio_buffer_left;
 float* audio_buffer_right;
-int audio_buffer_size;
+int audio_buffer_size, max_audio_buffer_size;
 
 
 static int64_t seek (void *opaque, int64_t offset, int whence) {
@@ -218,23 +218,6 @@ void write_header() {
 }
 
 void open_video(int w, int h, int fps, int br, int preset_idx, int codec_idx, int format_idx){
-    /* initialize libavcodec, and register all codecs and formats */
-    av_register_all();
-
-    /* Enumerate the codecs*/
-    AVCodec * codec = av_codec_next(NULL);
-    while(codec != NULL)
-    {
-        fprintf(stderr, "%s\n", codec->long_name);
-        codec = av_codec_next(codec);
-    }
-
-    AVOutputFormat * oformat = av_oformat_next(NULL);
-    while(oformat != NULL)
-    {
-        fprintf(stderr, "%s\n", oformat->long_name);
-        oformat = av_oformat_next(oformat);
-    }
 
     const char* formats[] = {"webm",  "mp4", "mp3", "aac", "ogg" };
     const char* codecs[] = { "libvpx", "libx264" };
@@ -318,24 +301,31 @@ void open_video(int w, int h, int fps, int br, int preset_idx, int codec_idx, in
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
 
     frame_idx = 0;
+    have_video = 1;
 } 
 
 uint8_t* close_stream(int* size) {
-    encode(NULL, video_ctx, video_stream, pkt);
-    encode(NULL, audio_ctx, audio_stream, pkt);
+    if(have_video)encode(NULL, video_ctx, video_stream, pkt);
+    if(have_audio)encode(NULL, audio_ctx, audio_stream, pkt);
     
     av_write_trailer(ofmt_ctx);
-    /* close output */
-    avcodec_free_context(&video_ctx);
-    avcodec_free_context(&audio_ctx);
     avformat_free_context(ofmt_ctx);
-    av_frame_free(&video_frame);
-    av_frame_free(&audio_frame);
-    swr_free(&audio_swr_ctx);
+    
+    if (have_video) {
+        avcodec_free_context(&video_ctx);    
+        av_frame_free(&video_frame);
+    }
+    
+    if (have_audio) {    
+        avcodec_free_context(&audio_ctx);
+        av_frame_free(&audio_frame);
+        swr_free(&audio_swr_ctx);
+        free(audio_buffer_right);
+        free(audio_buffer_left);
+    }
+    
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
-    free(audio_buffer_right);
-    free(audio_buffer_left);
     
     *size = bd.size - bd.room;
     return bd.buf; 
@@ -380,6 +370,11 @@ static int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt
 
 
 void add_audio_frame(float* left, float* right, int size) {
+    if(size + audio_buffer_size > max_audio_buffer_size) {
+        audio_buffer_left = realloc(audio_buffer_left, (size + audio_buffer_size) * 4);
+        audio_buffer_right = realloc(audio_buffer_right, (size + audio_buffer_size) * 4);
+    }
+
     memcpy(audio_buffer_left + audio_buffer_size, left, size * sizeof(float));
     memcpy(audio_buffer_right + audio_buffer_size, right, size * sizeof(float));
     audio_buffer_size += size;
@@ -471,8 +466,6 @@ void open_audio(int sample_rate, int nr_channels, int bit_rate, int codec_idx) {
     audio_ctx->sample_fmt = ac->sample_fmts[0];
     audio_stream->time_base = (AVRational){1, audio_ctx->sample_rate};
 
-    printf("%d  %d %d\n", audio_ctx->sample_fmt, audio_ctx->bit_rate, audio_ctx->sample_rate);
-
     ret = avcodec_open2(audio_ctx, ac, NULL);
     if (ret < 0) {
         printf(stderr, "Could not open audio codec: %s\n", av_err2str(ret));
@@ -511,8 +504,9 @@ void open_audio(int sample_rate, int nr_channels, int bit_rate, int codec_idx) {
     }
 
     audio_buffer_size = frame_bytes = 0; 
-    audio_buffer_left   = malloc(44100 * 4);
-    audio_buffer_right  = malloc(44100 * 4);
+    audio_buffer_left   = malloc(sample_rate * 4);
+    audio_buffer_right  = malloc(sample_rate * 4);
+    max_audio_buffer_size = sample_rate;
 
     have_audio = 1;
 }

@@ -18,7 +18,7 @@ const int PRESET = 3;
 const int SAMPLE_RATE = 44100;
 const int CHANNELS = 2;
 
-const int fmt_type = 0;
+const int fmt_type = 1;
 
 float* get_audio_buf(const char* filename, int *fs){
     FILE* f = fopen(filename, "rb");
@@ -67,10 +67,11 @@ int main(int argc, char** argv) {
         
 
         add_video_frame(buffer);
-        add_audio_frame(left + added_audio, right + added_audio, audio_frame_size );
-        added_audio += audio_frame_size;
+        //add_audio_frame(left + added_audio, right + added_audio, audio_frame_size );
+        //added_audio += audio_frame_size;
     }
 
+    add_audio_frame(left + added_audio, right + added_audio, leftSize );
     diff = clock() - start;
     int msec = diff * 1000 / CLOCKS_PER_SEC;
     printf("--\n");
