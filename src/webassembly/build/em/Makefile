@@ -1,36 +1,56 @@
-MP4_ENCODERS = libx264 libmp3lame
-MP4_MUXERS = mp4
-
-FFMPEG_MP4_BC = build/ffmpeg/ffmpeg.bc
-FFMPEG_MP4_PC_PATH = ../../em/lib/pkgconfig
 
 
-COMMON_DEMUXERS = matroska ogg avi mov flv mpegps image2 mp3 concat
-COMMON_DECODERS = \
-	vp8 vp9 theora \
-	mpeg2video mpeg4 h264 hevc \
-	png mjpeg \
-	vorbis opus \
-	mp3 ac3 aac \
-ass ssa srt webvtt
 
+ENCODERS = libx264 libmp3lame aac libvpx_vp8 libopus mjpeg
+MUXERS = mp4 mp3 null webm ogg null image2
 
-all: encode.bc decode.bc
+SHARED_DEPS = libmp3lame libx264 libopus libvpx
+FFMPEG_PC_PATH = ../../em/lib/pkgconfig
 
-clean: clean-js \
-	clean-lame clean-x264 clean-ffmpeg lib include
-lib:
-	rm -rf build/lib/*
-include: 
-	rm -rf build/include/*
-clean-js:
-	rm -f -- ffmpeg*.js
-clean-lame:
-	-cd build/lame && rm -rf dist && make clean
-clean-x264:
-	-cd build/x264 && rm -rf dist && make clean
-clean-ffmpeg:
-	-cd build/ffmpeg && rm -f ffmpeg.bc && make clean
+all: ffmpeg
+
+build/opus/configure:
+	cd ../dependencies/opus && ./autogen.sh
+
+libopus: build/opus/configure
+	cd ../dependencies/opus && \
+	git reset --hard && \
+	emconfigure ./configure \
+		CFLAGS=-O3 \
+		--prefix="$$(pwd)/../../em" \
+		--disable-static \
+		--disable-doc \
+		--disable-extra-programs \
+		--disable-asm \
+		--disable-rtcd \
+		--disable-intrinsics \
+		&& \
+	emmake make -j8 && \
+	emmake make install
+
+libvpx:
+	cd ../dependencies/libvpx && \
+	git reset --hard && \
+	emconfigure ./configure \
+		--prefix="$$(pwd)/../../em" \
+		--target=generic-gnu \
+		--disable-dependency-tracking \
+		--disable-multithread \
+		--disable-runtime-cpu-detect \
+		--enable-shared \
+		--disable-static \
+		\
+		--disable-examples \
+		--disable-docs \
+		--disable-unit-tests \
+		--disable-webm-io \
+		--disable-libyuv \
+		--disable-vp8-decoder \
+		--disable-vp9 \
+		&& \
+	emmake make -j8 && \
+	emmake make install
+
 
 libmp3lame:
 	cd ../dependencies/lame && \
@@ -38,15 +58,12 @@ libmp3lame:
 	patch -p1 < ../../lame-configure.patch && \
 	emconfigure ./configure \
 		--prefix="$$(pwd)/../../em" \
-		--host=x86-none-linux \
 		--disable-static \
 		\
 		--disable-gtktest \
 		--disable-analyzer-hooks \
 		--disable-decoder \
-		--disable-largefile \
 		--disable-frontend \
-		--disable-decoder \
 		&& \
 	emmake make -j8 && \
 	emmake make install
@@ -58,13 +75,11 @@ libx264:
 	emconfigure ./configure \
 		--prefix="$$(pwd)/../../em" \
 		--extra-cflags="-Wno-unknown-warning-option" \
-		--host=x86-none-linux \
 		--disable-cli \
 		--enable-shared \
 		--disable-opencl \
 		--disable-thread \
 		--disable-asm \
-		--chroma-format="420" \
 		\
 		--disable-avs \
 		--disable-swscale \
@@ -97,7 +112,7 @@ FFMPEG_COMMON_ARGS = \
 	--enable-avutil \
 	--enable-swresample \
 	--enable-swscale \
-	--disable-avfilter \
+	--enable-avfilter \
 	--disable-network \
 	--disable-d3d11va \
 	--disable-dxva2 \
@@ -113,35 +128,21 @@ FFMPEG_COMMON_ARGS = \
 	--disable-xlib \
 	--disable-zlib
 
-decode.bc: 
+ffmpeg:
 	cd ../dependencies/ffmpeg && \
 	git reset --hard && \
-	EM_PKG_CONFIG_PATH=$(FFMPEG_MP4_PC_PATH) emconfigure ./configure \
+	EM_PKG_CONFIG_PATH=../../em/lib/pkgconfig emconfigure ./configure \
 		--prefix="$$(pwd)/../../em" \
 		$(FFMPEG_COMMON_ARGS) \
-		$(addprefix --enable-decoder=,$(COMMON_DECODERS)) \
-		$(addprefix --enable-demuxer=,$(COMMON_DEMUXERS)) \
+		$(addprefix --enable-encoder=,$(ENCODERS)) \
+		$(addprefix --enable-muxer=,$(MUXERS)) \
 		--enable-gpl \
-		--extra-cflags="-I../../em/include" \
-		--extra-ldflags="-L../../em/lib" \
-		&& \
-	emmake make -j8 && \
-	emmake make install && \
-	cp ffmpeg ~/videoeditor/src/webassembly/ffmpeg_prod_demux.bc 
-
-encode.bc: $(MP4_SHARED_DEPS)
-	cd ../dependencies/ffmpeg && \
-	git reset --hard && \
-	EM_PKG_CONFIG_PATH=$(FFMPEG_MP4_PC_PATH) emconfigure ./configure \
-		--prefix="$$(pwd)/../../em" \
-		$(FFMPEG_COMMON_ARGS) \
-		$(addprefix --enable-encoder=,$(MP4_ENCODERS)) \
-		$(addprefix --enable-muxer=,$(MP4_MUXERS)) \
-		--enable-gpl \
+		--enable-libmp3lame \
 		--enable-libx264 \
+		--enable-libopus \
+		--enable-libvpx \
 		--extra-cflags="-I../../em/include" \
 		--extra-ldflags="-L../../em/lib" \
 		&& \
 	emmake make -j8 && \
-	emmake make install && \
-cp ffmpeg ~/videoeditor/src/webassembly/ffmpeg_prod.bc 
+	emmake make install

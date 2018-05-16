@@ -1,12 +1,12 @@
-prefix=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em
+prefix=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/ffmpeg/../../em
 exec_prefix=${prefix}
-libdir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/lib
-includedir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/include
+libdir=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/ffmpeg/../../em/lib
+includedir=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/ffmpeg/../../em/include
 
 Name: libavformat
 Description: FFmpeg container format library
 Version: 58.10.100
-Requires: libavcodec >= 58.13.102, libswresample >= 3.0.101, libavutil >= 56.8.100
+Requires: libavcodec >= 58.13.102, libavutil >= 56.8.100
 Requires.private: 
 Conflicts:
 Libs: -L${libdir}  -lavformat -lm

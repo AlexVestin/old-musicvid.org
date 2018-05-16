@@ -1,22 +1,56 @@
-MP4_ENCODERS = libx264 libmp3lame
-MP4_MUXERS = mp4 mp3 null
 
-FFMPEG_MP4_PC_PATH = ../../reg/lib/pkgconfig
-MP4_SHARED_DEPS = libmp3lame libx264
+
+
+ENCODERS = libx264 libmp3lame aac libvpx_vp8 libopus mjpeg
+MUXERS = mp4 mp3 null webm ogg null image2
+
+SHARED_DEPS = libmp3lame libx264 libopus libvpx
+FFMPEG_PC_PATH = ../../reg/lib/pkgconfig
 
 all: ffmpeg
 
-clean: clean-lame clean-x264 clean-ffmpeg lib include
-lib:
-	rm -rf lib/*
-include: 
-	rm -rf include/*
-clean-lame:
-	-cd ../dependencies/lame && make clean
-clean-x264:
-	-cd ../dependencies/x264 && make clean
-clean-ffmpeg:
-	-cd ../dependencies/ffmpeg && make clean
+build/opus/configure:
+	cd ../dependencies/opus && ./autogen.sh
+
+libopus: build/opus/configure
+	cd ../dependencies/opus && \
+	git reset --hard && \
+	./configure \
+		CFLAGS=-O3 \
+		--prefix="$$(pwd)/../../reg" \
+		--disable-static \
+		--disable-doc \
+		--disable-extra-programs \
+		--disable-asm \
+		--disable-rtcd \
+		--disable-intrinsics \
+		&& \
+	make -j8 && \
+	make install
+
+libvpx:
+	cd ../dependencies/libvpx && \
+	git reset --hard && \
+	./configure \
+		--prefix="$$(pwd)/../../reg" \
+		--target=generic-gnu \
+		--disable-dependency-tracking \
+		--disable-multithread \
+		--disable-runtime-cpu-detect \
+		--enable-shared \
+		--disable-static \
+		\
+		--disable-examples \
+		--disable-docs \
+		--disable-unit-tests \
+		--disable-webm-io \
+		--disable-libyuv \
+		--disable-vp8-decoder \
+		--disable-vp9 \
+		&& \
+	make -j8 && \
+	make install
+
 
 libmp3lame:
 	cd ../dependencies/lame && \
@@ -92,17 +126,19 @@ FFMPEG_COMMON_ARGS = \
 	--disable-xlib \
 	--disable-zlib
 
-ffmpeg: $(MP4_SHARED_DEPS)
+ffmpeg: $(SHARED_DEPS)
 	cd ../dependencies/ffmpeg && \
 	git reset --hard && \
-	PKG_CONFIG_PATH=$(FFMPEG_MP4_PC_PATH) ./configure \
+	PKG_CONFIG_PATH=$(FFMPEG_PC_PATH) ./configure \
 		--prefix="$$(pwd)/../../reg" \
 		$(FFMPEG_COMMON_ARGS) \
-		$(addprefix --enable-encoder=,$(MP4_ENCODERS)) \
-		$(addprefix --enable-muxer=,$(MP4_MUXERS)) \
+		$(addprefix --enable-encoder=,$(ENCODERS)) \
+		$(addprefix --enable-muxer=,$(MUXERS)) \
 		--enable-gpl \
 		--enable-libmp3lame \
 		--enable-libx264 \
+		--enable-libopus \
+		--enable-libvpx \
 		--extra-cflags="-I../../reg/include" \
 		--extra-ldflags="-L../../reg/lib" \
 		&& \

@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://AlexVestin.github.io/WasmVideoEncoder",
   "dependencies": {
-    "@material-ui/icons": "^1.0.0-beta.43",
+    "@material-ui/icons": "^1.0.0-rc.0",
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",

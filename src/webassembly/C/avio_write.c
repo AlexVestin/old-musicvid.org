@@ -21,18 +21,16 @@ size_t avio_ctx_buffer_size = 4096;
 int i, ret = 0;
 struct buffer_data bd = { 0 };
 const size_t bd_buf_size = 1024;
-const char* codec_name = "libx264";
+const char* codec_name = "libvpx";
 
 //VIDEO
 AVFrame *video_frame, *audio_frame;
-int frameIdx = 0;
+int frame_idx;
 AVStream *video_stream = NULL;
 AVStream *audio_stream = NULL;
 
 AVPacket *pkt;
-AVPacket *audio_pkt;
 
-static struct SwsContext *sws_context = NULL;
 static struct SwsContext *audio_swr_ctx = NULL;
 AVCodecContext *video_ctx, *audio_ctx;
 
@@ -40,19 +38,16 @@ AVCodecContext *video_ctx, *audio_ctx;
 const int NR_COLORS = 4;
 int have_audio = 0;
 
-int samples_per_frame = 0;
-
 //AUDIO
-int frame_bytes, audio_idx, bytes_read, dst_nb_samples; 
+int frame_bytes, audio_idx, dst_nb_samples; 
 int src_sample_rate, src_bit_rate, src_nr_channels, src_size;
 uint8_t* src_buf_left;
 uint8_t* src_buf_right;
 
 
-
 float* audio_buffer_left;
 float* audio_buffer_right;
-int audio_buffer_size = 0;
+int audio_buffer_size;
 
 
 static int64_t seek (void *opaque, int64_t offset, int whence) {
@@ -189,35 +184,27 @@ void rgb2yuv420p(uint8_t *destination, uint8_t *rgb, size_t width, size_t height
     }  
 }
 
-void add_frame(uint8_t* frames, int nr_frames){ 
-    int i, frame_size = video_ctx->width*video_ctx->height*NR_COLORS;
-    uint8_t* buffer = frames;
-    for(i = 0; i < nr_frames; i++) {
-        flip_vertically(buffer);
-        ret = av_frame_make_writable(video_frame);
+void add_video_frame(uint8_t* frame){ 
+    flip_vertically(frame);
+    ret = av_frame_make_writable(video_frame);
 
-        // ~15% faster than sws_scale
-        int size = (video_ctx->width * video_ctx->height * 3) / 2;
-        uint8_t* yuv_buffer = malloc(size);
-        rgb2yuv420p(yuv_buffer, buffer, video_ctx->width, video_ctx->height);
-        av_image_fill_arrays (
-            (AVPicture*)video_frame->data,
-            video_frame->linesize, 
-            yuv_buffer, 
-            video_frame->format, 
-            video_frame->width, 
-            video_frame->height, 
-            1
-        );
+    // ~15% faster than sws_scale
+    int size = (video_ctx->width * video_ctx->height * 3) / 2;
+    uint8_t* yuv_buffer = malloc(size);
+    rgb2yuv420p(yuv_buffer, frame, video_ctx->width, video_ctx->height);
+    av_image_fill_arrays (
+        (AVPicture*)video_frame->data,
+        video_frame->linesize, 
+        yuv_buffer, 
+        video_frame->format, 
+        video_frame->width, 
+        video_frame->height, 
+        1
+    );
 
-        video_frame->pts = frameIdx++;
-        encode(video_frame, video_ctx, video_stream, pkt);
-
-        free(yuv_buffer);
-        buffer += frame_size;
-    }
-
-    free(frames);
+    video_frame->pts = frame_idx++;
+    encode(video_frame, video_ctx, video_stream, pkt);
+    free(yuv_buffer);
 }
 
 
@@ -230,8 +217,28 @@ void write_header() {
     } 
 }
 
-void open_video(int w, int h, int fps, int br, int preset_idx){
-    AVOutputFormat* of = av_guess_format("mp4", 0, 0);
+void open_video(int w, int h, int fps, int br, int preset_idx, int codec_idx, int format_idx){
+    /* initialize libavcodec, and register all codecs and formats */
+    av_register_all();
+
+    /* Enumerate the codecs*/
+    AVCodec * codec = av_codec_next(NULL);
+    while(codec != NULL)
+    {
+        fprintf(stderr, "%s\n", codec->long_name);
+        codec = av_codec_next(codec);
+    }
+
+    AVOutputFormat * oformat = av_oformat_next(NULL);
+    while(oformat != NULL)
+    {
+        fprintf(stderr, "%s\n", oformat->long_name);
+        oformat = av_oformat_next(oformat);
+    }
+
+    const char* formats[] = {"webm",  "mp4", "mp3", "aac", "ogg" };
+    const char* codecs[] = { "libvpx", "libx264" };
+    AVOutputFormat* of = av_guess_format(formats[format_idx], 0, 0);
     bd.ptr  = bd.buf = av_malloc(bd_buf_size);
 
     if (!bd.buf) {
@@ -256,7 +263,7 @@ void open_video(int w, int h, int fps, int br, int preset_idx){
         exit(1);
     }
     
-    AVCodec* video_codec = avcodec_find_encoder_by_name(codec_name);
+    AVCodec* video_codec = avcodec_find_encoder_by_name(codecs[codec_idx]);
     if (!video_codec) {
         //printf(stderr, "Codec '%s' not found\n", codec_name);
         exit(1);
@@ -273,15 +280,7 @@ void open_video(int w, int h, int fps, int br, int preset_idx){
     video_ctx->max_b_frames = 1;
     video_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
 
-    const char *presets[] = {
-        "ultrafast",
-        "veryfast",
-        "fast",
-        "medium",
-        "slow",
-        "veryslow"
-    };
-
+    const char *presets[] = { "ultrafast", "veryfast", "fast", "medium", "slow", "veryslow" };
 
     av_opt_set(video_ctx->priv_data, "preset", presets[preset_idx], 0);
     if(avcodec_open2(video_ctx, video_codec, NULL) < 0) {
@@ -317,27 +316,30 @@ void open_video(int w, int h, int fps, int br, int preset_idx){
     video_stream->time_base = video_ctx->time_base;
     video_stream->id = ofmt_ctx->nb_streams-1;
     ret = avcodec_parameters_from_context(video_stream->codecpar, video_ctx);
+
+    frame_idx = 0;
 } 
 
-int close_stream() {
+uint8_t* close_stream(int* size) {
     encode(NULL, video_ctx, video_stream, pkt);
-    //encode(NULL, audio_ctx, audio_stream, pkt);
+    encode(NULL, audio_ctx, audio_stream, pkt);
     
     av_write_trailer(ofmt_ctx);
     /* close output */
+    avcodec_free_context(&video_ctx);
+    avcodec_free_context(&audio_ctx);
     avformat_free_context(ofmt_ctx);
+    av_frame_free(&video_frame);
+    av_frame_free(&audio_frame);
+    swr_free(&audio_swr_ctx);
     av_freep(&avio_ctx->buffer);
     av_free(avio_ctx);
     free(audio_buffer_right);
     free(audio_buffer_left);
     
-
-    return bd.size - bd.room;
+    *size = bd.size - bd.room;
+    return bd.buf; 
 }   
-
-uint8_t* get_buffer() {
-    return bd.buf;
-}
 
 void free_buffer(){
     av_free(bd.buf);
@@ -420,7 +422,7 @@ void add_audio_frame(float* left, float* right, int size) {
         );
 
         frame_bytes += dst_nb_samples;
-        encode(audio_frame, audio_ctx, audio_stream, audio_pkt);
+        encode(audio_frame, audio_ctx, audio_stream, pkt);
 
         //Shift array buffer
         memcpy(audio_buffer_left,  audio_buffer_left  + audio_frame->nb_samples, audio_buffer_size*sizeof(float));
@@ -429,58 +431,19 @@ void add_audio_frame(float* left, float* right, int size) {
     }
 }
 
-/*
-int count = 0; 
-void write_audio_frame() {
-    while(bytes_read + (audio_frame->nb_samples * sizeof(float) + 1) < src_size ) { 
-        int ret;
-        ret = av_frame_make_writable(audio_frame);
-        if(ret < 0){
-            //printf("error\n");
-            exit(1);
-        }
-        
-        audio_frame->data[0] = src_buf_left + bytes_read;
-        audio_frame->data[1] = src_buf_right + bytes_read;
-        bytes_read += audio_frame->nb_samples * 4;
-
-        dst_nb_samples = av_rescale_rnd (
-            swr_get_delay(audio_swr_ctx, audio_ctx->sample_rate) + audio_frame->nb_samples, 
-            src_sample_rate, 
-            audio_ctx->sample_rate,
-            AV_ROUND_UP
-        );   
-
-        ret = swr_convert (
-            audio_swr_ctx,
-            audio_frame->data, 
-            dst_nb_samples,
-            (const uint8_t **)audio_frame->data,  
-            audio_frame->nb_samples
-        );
-
-        if(ret < 0){
-            //printf("error converting \n");
-            exit(1);
-        }
-            
-        audio_frame->pts = av_rescale_q(
-            frame_bytes, 
-            (AVRational){1, audio_ctx->sample_rate}, 
-            audio_ctx->time_base
-        );
-
-        frame_bytes += dst_nb_samples;
-        encode(audio_frame, audio_ctx, audio_stream, audio_pkt);
-    }
-}
-*/
-void open_audio(int sample_rate, int nr_channels, int bit_rate) {
+void open_audio(int sample_rate, int nr_channels, int bit_rate, int codec_idx) {
     src_sample_rate     = sample_rate;
     src_bit_rate        = bit_rate;
     src_nr_channels     = nr_channels;
 
-    AVCodec* ac = avcodec_find_encoder(AV_CODEC_ID_MP3);
+    const int codecs[] = { AV_CODEC_ID_OPUS, AV_CODEC_ID_AAC, AV_CODEC_ID_MP3 };    
+    
+    AVCodec* ac = avcodec_find_encoder(codecs[codec_idx]);
+    if(!ac) {
+        printf("error making audio codec context\n");
+        exit(-1);
+    }
+
     audio_stream = avformat_new_stream(ofmt_ctx, NULL);
     audio_stream->id = ofmt_ctx->nb_streams-1;
     audio_ctx = avcodec_alloc_context3(ac);
@@ -503,15 +466,16 @@ void open_audio(int sample_rate, int nr_channels, int bit_rate) {
                 audio_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
         }
     }
-    audio_ctx->channels  = av_get_channel_layout_nb_channels(audio_ctx->channel_layout);
-    audio_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
-    audio_ctx->sample_fmt = AV_SAMPLE_FMT_S16P;
 
+    audio_ctx->channels  = av_get_channel_layout_nb_channels(audio_ctx->channel_layout);    
+    audio_ctx->sample_fmt = ac->sample_fmts[0];
     audio_stream->time_base = (AVRational){1, audio_ctx->sample_rate};
+
+    printf("%d  %d %d\n", audio_ctx->sample_fmt, audio_ctx->bit_rate, audio_ctx->sample_rate);
 
     ret = avcodec_open2(audio_ctx, ac, NULL);
     if (ret < 0) {
-        //printf(stderr, "Could not open audio codec: %s\n", av_err2str(ret));
+        printf(stderr, "Could not open audio codec: %s\n", av_err2str(ret));
         exit(1);
     }
 
@@ -519,13 +483,13 @@ void open_audio(int sample_rate, int nr_channels, int bit_rate) {
 
     ret = avcodec_parameters_from_context(audio_stream->codecpar, audio_ctx);
     if (ret < 0) {
-        //printf(stderr, "Could not copy the stream parameters\n");
+        printf(stderr, "Could not copy the stream parameters\n");
         exit(1);
     }
 
     audio_swr_ctx = swr_alloc();
     if (!audio_swr_ctx) {
-        //printf(stderr, "Could not allocate resampler context\n");
+        printf(stderr, "Could not allocate resampler context\n");
         exit(1);
     }
 
@@ -537,15 +501,16 @@ void open_audio(int sample_rate, int nr_channels, int bit_rate) {
     av_opt_set_sample_fmt(audio_swr_ctx, "out_sample_fmt",     audio_ctx->sample_fmt,     0);
 
     if ((ret = swr_init(audio_swr_ctx)) < 0) {
-        //printf(stderr, "Failed to initialize the resampling context\n");
+        printf(stderr, "Failed to initialize the resampling context\n");
         exit(1);
     }
-    audio_pkt = av_packet_alloc();
+    if(!pkt)pkt = av_packet_alloc();
 
-    if(!audio_pkt){
+    if(!pkt){
         exit(1);
     }
 
+    audio_buffer_size = frame_bytes = 0; 
     audio_buffer_left   = malloc(44100 * 4);
     audio_buffer_right  = malloc(44100 * 4);
 

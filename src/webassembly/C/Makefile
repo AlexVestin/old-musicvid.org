@@ -1,9 +1,9 @@
 
-FLAGS = `pkg-config --libs libavcodec libavformat libswscale libswresample x264` \
+FLAGS = `pkg-config --libs libavcodec libavformat libswscale libswresample vpx opus x264` \
 
 FILES = avio_write.c avio_write.h \
-	-I/home/alex/ff/reg/include \
-	-L/home/alex/ff/reg/lib \
+	-I../build/reg/include \
+	-L../build/reg/lib \
 
 main:
 	gcc -g maintest.c $(FILES) $(FLAGS) 

@@ -1,11 +1,20 @@
 .vscode/
 /build
 node_modules/
-src/webassembly/build/dependencies
+
+*.a.out
+*.bc
+
 src/webassembly/C/a.out
 src/webassembly/C/assets/
 src/assets/
-src/webassembly/build/
-src/webassembly/build/em/
-src/webassembly/build/reg/
 
+src/webassembly/build/em/lib/
+src/webassembly/build/em/include/
+src/webassembly/build/em/share/
+src/webassembly/build/reg/lib/
+src/webassembly/build/reg/include/
+src/webassembly/build/reg/share/
+src/webassembly/build/dependencies/
+
+debug.log

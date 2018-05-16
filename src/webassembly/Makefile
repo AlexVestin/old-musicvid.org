@@ -1,14 +1,16 @@
-ENCODE_BC = ffmpeg_prod.bc
+ENCODE_BC = ffmpeg_new.bc
 ENCODE_DEPS = \
-	/home/alex/ff/em/lib/libmp3lame.so \
-	/home/alex/ff/em/lib/libx264.so
+	./build/em/lib/libmp3lame.so \
+	./build/em/lib/libx264.so \
+	./build/em/lib/libopus.so \
+	./build/em/lib/libvpx.so
 
 all: mp4
 mp4: ffmpeg.js
 
 ENCODE_FILES = ./C/avio_write.c
 ENCODE_FUNCTIONS = "[ \
-		'_open_audio', '_write_audio_frame', '_add_frame', \
+		'_open_audio', '_add_audio_frame', '_add_frame', \
 		'_open_video', '_close_stream', '_free_buffer', '_get_buffer', \
 		'_write_header', '_set_audio']"
 
@@ -16,12 +18,12 @@ ENCODE_COMMON = \
 	--llvm-lto 1 \
 	-Oz --memory-init-file 0 \
 	--closure 1 \
-	-o  ../../public/WasmVideoEncoderTest2.js\
+	-o  ../../public/WasmEncoder.js\
 	-s WASM=1 \
 	-s ALLOW_MEMORY_GROWTH=1 \
 	-s EXPORTED_FUNCTIONS=$(ENCODE_FUNCTIONS) \
 	-s MODULARIZE=1 \
-	-s EXPORT_NAME="'WasmVideoEncoderTest2'" \
+	-s EXPORT_NAME="'WasmEncoder'" \
 	-s NO_FILESYSTEM=1 \
 	-s DISABLE_EXCEPTION_CATCHING=1 \
 

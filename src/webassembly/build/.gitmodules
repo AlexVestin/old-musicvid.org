@@ -7,3 +7,10 @@
 [submodule "dependencies/lame"]
 	path = dependencies/lame
 	url = https://github.com/rbrito/lame.git
+[submodule "dependencies/libvpx"]
+	path = build/libvpx
+	url = https://chromium.googlesource.com/webm/libvpx
+[submodule "dependencies/opus"]
+	path = build/opus
+	url = https://github.com/xiph/opus.git
+

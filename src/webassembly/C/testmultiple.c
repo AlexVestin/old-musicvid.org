@@ -4,7 +4,7 @@
 #include <inttypes.h>
 #include <time.h>
 
-const int SECONDS = 41;
+const int SECONDS = 4;
 
 //DUMMY VIDEO
 const int FPS = 25;
@@ -12,11 +12,13 @@ const int WIDTH = 720;
 const int HEIGHT = 480;
 const int BIT_RATE = 400000; 
 const int NR_CLS = 4;
-const int PRESET = 0;
+const int PRESET = 3;
 
 //DUMMY AUDIO
 const int SAMPLE_RATE = 44100;
 const int CHANNELS = 2;
+
+const int fmt_type = 0;
 
 float* get_audio_buf(const char* filename, int *fs){
     FILE* f = fopen(filename, "rb");
@@ -39,19 +41,17 @@ float* get_audio_buf(const char* filename, int *fs){
 int main(int argc, char** argv) {
     int i, j, audio_size;
 
-    open_video(WIDTH,HEIGHT,FPS,BIT_RATE, PRESET);
+    open_video(WIDTH,HEIGHT,FPS,BIT_RATE, PRESET, fmt_type, fmt_type);
 
     int leftSize, rightSize;
     float* left = get_audio_buf("./assets/right1.raw", &leftSize);
     float* right = get_audio_buf("./assets/left1.raw", &rightSize);
-    //open_audio_pre( left, right, leftSize, 44100, 2, 320000, 1470);
-
     const int audio_frame_size = (1.0 / (float)FPS) * SAMPLE_RATE;
-    open_audio( 44100, 2, 320000 );
+    open_audio( 44100, 2, 128000, fmt_type );
         
     write_header();
 
-    int nr_frames = 1, added_audio = 0;
+    int added_audio = 0;
 
     clock_t start = clock(), diff;
     int k, frame_size = WIDTH*HEIGHT*NR_CLS;
@@ -66,9 +66,9 @@ int main(int argc, char** argv) {
         }
         
 
-        add_frame(buffer, 1);
-        //add_audio_frame(left + added_audio, right + added_audio, audio_frame_size /*(1/30)*44100)*/);
-        //added_audio += audio_frame_size;
+        add_video_frame(buffer);
+        add_audio_frame(left + added_audio, right + added_audio, audio_frame_size );
+        added_audio += audio_frame_size;
     }
 
     diff = clock() - start;
@@ -77,15 +77,14 @@ int main(int argc, char** argv) {
     printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
     printf("--\n");
 
-    //write_audio_frame();
-
-    int size = close_stream();
-    uint8_t* out = get_buffer();
+    int size;
+    uint8_t* out = close_stream(&size);
     
-    FILE* out_file = fopen("fi1.mp4", "w");
+    FILE* out_file = fopen( fmt_type == 0 ? "fil.webm" : "fil.mp4", "wb");
     fwrite(out, size, 1, out_file);
     fclose(out_file);
     free_buffer();
+    
     free(left);
     free(right);
     return 0;

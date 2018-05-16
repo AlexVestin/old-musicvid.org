@@ -1,7 +1,7 @@
-prefix=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em
+prefix=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/ffmpeg/../../em
 exec_prefix=${prefix}
-libdir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/lib
-includedir=/home/alex/videoeditor/src/webassembly/build/dependencies/ffmpeg/../../em/include
+libdir=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/ffmpeg/../../em/lib
+includedir=/home/alex/WasmVideoEncoder/src/webassembly/build/dependencies/ffmpeg/../../em/include
 
 Name: libswscale
 Description: FFmpeg image rescaling library
