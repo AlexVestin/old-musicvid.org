@@ -20,25 +20,35 @@ openVideo = (config) => {
     frameSize = w*h*4
 }
 
-addAudioFrame = (config) => {
-    const { bitrate, left, right, samplerate, duration } = config; 
-    let durationInBytes = Math.floor(duration * samplerate)
-    left = left.subarray(0, durationInBytes)
-    right = right.subarray(0, durationInBytes)
-    var left_p = Module._malloc(left.length * 4)
-    Module.HEAPF32.set(left, left_p >> 2)
-    var right_p = Module._malloc(right.length * 4)
-    Module.HEAPF32.set(right, right_p >> 2)
+
+let wLeft, wRight, durationInSamples
+
+addAudioFrame = () => {
+    console.log(wLeft, wRight, durationInSamples)
+    wLeft = wLeft.subarray(0, durationInSamples)
+    wRight = wRight.subarray(0, durationInSamples )
+    var left_p = Module._malloc(wLeft.length * 4)
+    Module.HEAPF32.set(wLeft, left_p >> 2)
+    var right_p = Module._malloc(wRight.length * 4)
+    Module.HEAPF32.set(wRight, right_p >> 2)
+
+    console.log("?????")
+    Module._add_audio_frame(left_p, right_p, wLeft.length)
+    console.log("added audio")
 }
+
+
+
 
 openAudio = (config) => {
     const { bitrate, left, right, samplerate, duration } = config; 
-    
-    
+    durationInSamples = Math.floor(duration * samplerate )
+    wLeft = left
+    wRight = right
     try {
-
+        
       Module._open_audio(samplerate, 2, bitrate, 1)
-
+      console.log("opened audio")
     }catch(err) {
       console.log(err)
     }
@@ -72,7 +82,7 @@ addFrame = (buffer) => {
 }
 
 close = () => {
-    if(useAudio)Module._write_audio_frame()
+    if(useAudio) addAudioFrame()
     let vid = close_stream()
     Module._free_buffer();
     postMessage({action:"return", data: vid.buffer})
