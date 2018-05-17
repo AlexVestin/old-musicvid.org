@@ -9,20 +9,25 @@ export default class AudioManager {
    
         this.audioCtx = new AudioContext()
         this.bufferSources = [{}, {}]
-        this.scheduledEndTimes = [0, 0]
         this.sounds = []
         this.frameIdx = 0
 
         this.sampleWindowSize = 0.05
 
+        this.sampleBuffer = new Float32Array() 
+        this.sliceIndex = 0
+        this.fftSize = 2048
+        this.lastBins = []
+        this.lastFFTIdx  = 0;
+
+
         this.metronome = new Worker("audioworker.js")
         this.metronome.onmessage = (e) => {
-            this.schedule(this.frameIdx % 2)
+            if(e.data === "tick")
+                this.schedule(this.frameIdx % 2)
         }
         this.metronome.postMessage({interval: this.sampleWindowSize * 1000})
         
-
-        this.fftSize = this.sampleWindowSize * 48000
         this.Module  = {};
         window.KissFFT(this.Module)
         this.Module["onRuntimeInitialized"] = () => { 
@@ -32,6 +37,15 @@ export default class AudioManager {
 
     removeSound = (idx) => {
         this.sounds.splice(idx, 1)
+    }
+
+    float32Concat(first, second){
+        var firstLength = first.length, result = new Float32Array(firstLength + second.length);
+
+        result.set(first);
+        result.set(second, firstLength);
+
+        return result;
     }
 
     addAudioFrame = (frames, fps) => {
@@ -57,6 +71,7 @@ export default class AudioManager {
                 buffersToSchedule.forEach(buffer => buffer.start()) 
                 that.offlineCtx.startRendering().then((renderedBuffer => {
                     that.buffers.push(renderedBuffer)
+                    that.sampleBuffer = that.float32Concat(that.sampleBuffer, renderedBuffer.getChannelData(0))
                     resolve()
                     return
                 })) 
@@ -74,16 +89,36 @@ export default class AudioManager {
                 this.bufferSources[index] = this.audioCtx.createBufferSource()
                 this.bufferSources[index].buffer = buffer
                 this.bufferSources[index].connect(this.audioCtx.destination)
-                this.bufferSources[index].onended = () => this.schedule(index)
-    
-                this.scheduledEndTimes[index] = (buffer.length / this.sampleRate)
+                //this.bufferSources[index].onended = () => this.schedule(index)
+
                 this.bufferSources[index].start(this.startTime + this.sampleWindowSize * this.frameIdx++)
             }else {
-                setTimeout(() => this.schedule(index), this.sampleWindowSize * 2000)
+                //setTimeout(() => this.schedule(index), this.sampleWindowSize * 2000)
                 this.frameIdx++
             }
+
             this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
         }
+    }
+
+    encodingStarted = () => {
+        this.stop()
+        this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
+        this.frameIdx++
+    }
+
+    getEncodingFrame = () => {
+        this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
+        this.frameIdx++
+        var buffer = this.buffers.pop()
+
+        if(buffer === EMPTY_BUFFER) {
+            const left =  new Float32Array(Math.floor(this.sampleWindowSize *this.sampleRate))
+            const right =  new Float32Array(Math.floor(this.sampleWindowSize *this.sampleRate))
+            return {type: "audio", left, right, sampleRate: this.sampleRate }
+        }
+
+        return {type: "audio", left: buffer.getChannelData(0), right: buffer.getChannelData(1), sampleRate: buffer.sampleRate }
     }
 
     add = (sound) => {
@@ -97,12 +132,17 @@ export default class AudioManager {
 
     getBins = (time) => {
         let bins = []
-        if(this.left !== undefined && this.dfdf === undefined) {
+
+        if(this.sampleBuffer.length > this.fftSize) {
 
             let windowSize = this.fftSize, nr_bins = 64;
-            let idx = Math.floor(time * this.sampleRate)
-
-            let data = this.left.subarray(idx, idx + windowSize)
+            const idx = Math.floor((time - this.time + this.sampleWindowSize)* this.sampleRate)
+            const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
+            
+            this.sampleBuffer = this.sampleBuffer.slice(idx - this.lastFFTIdx)
+            this.sliceIndex += idx - this.lastFFTIdx
+            this.lastFFTIdx = idx
+            
             let audio_p;
 
             try {   
@@ -116,7 +156,6 @@ export default class AudioManager {
                 this.Module._free(audio_p)
             }
         }
-
         return bins
     }
 
@@ -127,6 +166,7 @@ export default class AudioManager {
     editSound = (soundConfig) => {
         const sound = this.sounds.find(e => e.config.id === soundConfig.id)
         sound.config = soundConfig
+        sound.setTime(this.time + this.sampleWindowSize * this.frameIdx )
         this.buffers = []
     }
 
@@ -137,9 +177,9 @@ export default class AudioManager {
     }
 
     play = (time, playing) => {
-        //this.sounds.forEach(e => e.play(time, playing))
+        this.time = time
         if(this.playing){
-            this.playing = false
+            this.stop()
         }else {
             this.playing = true 
             this.tmpTime = 0
@@ -156,9 +196,12 @@ export default class AudioManager {
     }
 
     stop = () => {
-        this.frameIdx = 0
+        //this.bufferSources.forEach(e => e.stop())
         this.playing = false
+        this.sampleBuffer = []
+        this.slicedIndex = 0
+        this.metronome.postMessage("stop")
+        this.frameIdx = 0
         this.buffers = []
-        this.sounds.forEach(e => e.stop())
     }
 }

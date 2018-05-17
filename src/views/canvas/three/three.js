@@ -5,10 +5,8 @@ import store from '../../../redux/store'
 import {OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
-
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
 import {  setSidebarWindowIndex } from '../../../redux/actions/items'
-
 import AudioManager from './audiomanager'
 
 
@@ -79,7 +77,6 @@ class ThreeCanvas extends Component {
         return props.encoding !== this.state.hidden;
     }
 
-
     initEncoder = (config, useAudio) => {
         this.videoEncoder = new VideoEncoder(this.encoderLoaded)
         this.config = config
@@ -94,7 +91,11 @@ class ThreeCanvas extends Component {
 
         const { width, height } = this.config
         this.setSize(width, height, true)
-        this.renderScene(this.time)
+        
+        this.encodeVideoFrame(this.time)
+        this.videoEncoder.sendFrame()
+        
+        this.audioManager.encodingStarted()
     }
 
 
@@ -115,7 +116,7 @@ class ThreeCanvas extends Component {
         }
   
         let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate }
-        this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.renderScene)
+        this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.encode)
     }
 
     handleChange = () => {
@@ -201,18 +202,18 @@ class ThreeCanvas extends Component {
         FileSaver.saveAs(blob, "vid.mp4")
     }
 
-    handleEncode = (time) => {
-        if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) {
-            const { width, height} = this.state
-            const gl = this.renderer.getContext();
-            this.pixels = new Uint8Array(width*height*4)
-            gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
-            this.videoEncoder.addFrame(this.pixels, this.renderScene)
-    
-            incrementTime(this.time + (1 / this.config.fps))
-            this.pixels = null
-            this.encodedFrames++
-        }else if(this.encoding && this.encodedFrames >=  this.duration*this.config.fps) {
+
+    encode = (time) => {
+        this.renderScene(time)
+        if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) { 
+            const videoTs = this.encodedFrames / this.config.fps
+            const audioTs = (this.audioManager.frameIdx * this.audioManager.sampleWindowSize) 
+            if( videoTs > audioTs ) {
+                this.encodeAudioFrame(time)
+            }else{
+                this.encodeVideoFrame(time)
+            }
+        }else if(this.encoding && this.encodedFrames >= this.duration * this.config.fps) {
             this.encoding = false
             setEncoding(false)
             this.setSize(this.props.width, this.props.height, false)
@@ -220,10 +221,29 @@ class ThreeCanvas extends Component {
             this.encodedFrames = -1
         }
     }
+
+
+    encodeAudioFrame = (time) => {
+        const frame = this.audioManager.getEncodingFrame()
+        this.videoEncoder.queueFrame( frame )
+    }
+
+    encodeVideoFrame = (time) => {
+        const { width, height} = this.state
+        const gl = this.renderer.getContext();
+        this.pixels = new Uint8Array(width*height*4)
+        gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
+        this.videoEncoder.queueFrame( {type: "video", pixels: this.pixels} )
+
+        
+        incrementTime(this.time + (1 / this.config.fps))
+        this.pixels = null
+        this.encodedFrames++
+    }
     
 
     renderScene = (time) => { 
-        var frequencyBins = this.audioManager.getBins()
+        var frequencyBins = this.audioManager.getBins(time)
         this.renderer.clear()
         
         this.scenes.forEach((scene => {
@@ -232,7 +252,6 @@ class ThreeCanvas extends Component {
         }))
 
         this.renderer.render(this.mainScene, this.mainCamera)
-        this.handleEncode(time)
         this.lastTime = time
     }
 

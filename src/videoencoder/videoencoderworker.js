@@ -10,8 +10,7 @@ export default class VideoEncoder {
         this.onload = onload
         this.isWorker = true
 
-        this.bufferSize = 1
-        this.framesInBuffer = -1
+        this.frames = []
         this.buffer = new Uint8Array()
         this.encoding = false
     }
@@ -19,48 +18,32 @@ export default class VideoEncoder {
     init = (videoConfig, audioConfig, oninit, getPixels) => {
         this.worker.postMessage({action: "init", data: {audioConfig, videoConfig}})
         this.oninit = oninit
-        this.getPixels = getPixels
-
-        this.requested = false
-        this.count = 0
+        this.getFrame = getPixels
+        this.closed = false
     }
 
-    sendFrame = (pixels) => {
+    sendFrame = () => {
         this.encoding = true
-        this.worker.postMessage(pixels, [pixels.buffer])
-        pixels = null
-    }
-
-    addFrame = (pixels, frame) => {
-        this.requested = false
-
-        if(!this.encoding){
-            if(!this.bufferSet) {
-                this.sendFrame(pixels)
+        const frame = this.frames.pop()
+        if(frame && !this.closed) {
+            this.worker.postMessage({action: frame.type})
+            if(frame.type === "audio") {
+                this.worker.postMessage(frame.left, [frame.left.buffer])
+                this.worker.postMessage(frame.right, [frame.right.buffer])
             }else {
-                this.sendFrame(this.buffer)
-                this.buffer = pixels
-            }
-            
-            if(!this.requested) {
-                requestAnimationFrame(this.getPixels)
-                this.requested = true
-            }
-
-        }else{
-            if(this.bufferSet){
-                this.bufferSet = false
-                this.sendFrame(this.buffer)
-            }
-            
-            this.bufferSet = true
-            this.buffer = pixels
-        }        
+                this.worker.postMessage(frame.pixels, [frame.pixels.buffer])
+            }   
+        }
     }
 
-    close = (onsuccess) => {                
-        this.worker.postMessage({action: "close"})
+    queueFrame = (frame) => {
+        this.frames.push(frame)
+    }
+
+    close = (onsuccess) => {
+        this.closed = true
         this.onsuccess = onsuccess
+        setTimeout(e => this.worker.postMessage({action: "close"}), 500)                        
     }
     
     onmessage = (e) => {
@@ -73,14 +56,10 @@ export default class VideoEncoder {
                 this.oninit()
                 break;
             case "ready":
-                this.encoding = false
-                if(this.bufferSet) {
-                    this.bufferSet = false
-                    this.sendFrame(this.buffer)
+                if(!this.closed) {
+                    this.getFrame()
+                    this.sendFrame()
                 }
-                    
-                if(!this.requested)
-                    requestAnimationFrame(this.getPixels)
                 break;
             case "return":
                 this.onsuccess(data.data)
@@ -89,7 +68,7 @@ export default class VideoEncoder {
                 break;
             default:
                 
-                
+        
         }
     }
 }

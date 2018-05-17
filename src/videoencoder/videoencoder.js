@@ -22,7 +22,11 @@ export default class VideoEncoder {
         oninit()
     }
 
-    addFrame = (pixels) => {
+    addAudioFrame = (samples) => {
+
+    }
+
+    addVideoFrame = (pixels) => {
         this.add_frame(pixels)
     }
 
@@ -59,7 +63,6 @@ export default class VideoEncoder {
     writeHeader = () => {
         this.Module._write_header();
         this.initialized = true
-
     } 
     
     close_stream = () => {

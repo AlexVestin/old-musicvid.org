@@ -23,7 +23,6 @@ export default class Sound extends BaseItem {
         
         this.config.defaultConfig.push(audioGroup)
 
-
         this.config.type = "SOUND"
         this.onload = onload
         this.soundDataBuffer = []
@@ -32,10 +31,14 @@ export default class Sound extends BaseItem {
         this.fftSize = 4096
 
         this.loadSound(config.file, (data) => this.fftData = data)
-
         this.getConfig(this.config.defaultConfig)
+
         this.ac = new AudioContext()
         this.lastIdx = -1
+    }
+
+    getEncodeFrame = (time, fps) => {
+
     }
 
     setTime = (time) => {
@@ -53,7 +56,6 @@ export default class Sound extends BaseItem {
         const length = Math.floor(this.windowSize * this.sampleRate)
         if(this.offset >=  this.config.offsetLeft * this.sampleRate) {
             const buffer = {}
-
             buffer.left =  this.left.subarray(this.offset, this.offset + length)
             buffer.right =  this.right.subarray(this.offset, this.offset + length)
 
@@ -64,7 +66,6 @@ export default class Sound extends BaseItem {
             this.offset += length
             return
         }
-        
     }
 
     loadSound = (file, callback) => {
@@ -84,8 +85,7 @@ export default class Sound extends BaseItem {
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
-                    
-                    
+                
                     addSound(that.config)
                     setDisabled(false)
 

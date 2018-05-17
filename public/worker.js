@@ -4,9 +4,6 @@ let Module = {}
 WasmEncoder(Module)
 
 console.log("nw ")
-let encodedFrames = 0
-let initialized = false
-let startTime, frameSize
 let useAudio = false
 
 const fileType = 1
@@ -22,28 +19,21 @@ openVideo = (config) => {
 }
 
 
-let wLeft, wRight, durationInSamples
+let audioFramesRecv = 1,  left, encodeVideo
 
-addAudioFrame = () => {
-    wLeft = wLeft.subarray(0, durationInSamples)
-    wRight = wRight.subarray(0, durationInSamples )
-    var left_p = Module._malloc(wLeft.length * 4)
-    Module.HEAPF32.set(wLeft, left_p >> 2)
-    var right_p = Module._malloc(wRight.length * 4)
-    Module.HEAPF32.set(wRight, right_p >> 2)
-    Module._add_audio_frame(left_p, right_p, wLeft.length)
+addAudioFrame = (buffer) => {
+    var left_p = Module._malloc(left.length * 4)
+    Module.HEAPF32.set(left, left_p >> 2)
+    var right_p = Module._malloc(buffer.length * 4)
+    Module.HEAPF32.set(buffer, right_p >> 2)
+    Module._add_audio_frame(left_p, right_p, left.length)
+    postMessage({action: "ready"})
 }
 
 
-
-
 openAudio = (config) => {
-    const { bitrate, left, right, samplerate, duration } = config; 
-    durationInSamples = Math.floor(duration * samplerate )
-    wLeft = left
-    wRight = right
+    const { bitrate, samplerate } = config; 
     try {
-        
       Module._open_audio(samplerate, 2, bitrate, fileType)
     }catch(err) {
       console.log(err)
@@ -63,14 +53,15 @@ close_stream = () => {
     return  new Uint8Array(Module.HEAPU8.subarray(video_p, video_p + size))
 }
 
-addFrame = (buffer) => {
+
+
+addVideoFrame = (buffer) => {
     try {
         var encodedBuffer_p = Module._malloc(buffer.length)
         Module.HEAPU8.set(buffer, encodedBuffer_p)
         Module._add_video_frame(encodedBuffer_p)
     }finally {
         Module._free(encodedBuffer_p)
-        encodedFrames++;
     }
     //hack to avoid memory leaks
    postMessage(buffer.buffer, [buffer.buffer])
@@ -78,20 +69,33 @@ addFrame = (buffer) => {
 }
 
 close = () => {
-    if(useAudio) addAudioFrame()
     let vid = close_stream()
     Module._free_buffer();
     postMessage({action:"return", data: vid.buffer})
 }
 
 onmessage = (e) => {
+    
     const { data } = e
     if(data.action === undefined){
-        addFrame(data)
+        if(encodeVideo) {
+            addVideoFrame(data)
+        }else {
+            if(audioFramesRecv === 1)left = data
+            if(audioFramesRecv === 0)addAudioFrame(data)
+            audioFramesRecv--;
+        }
         return
     }
     
     switch(data.action) {
+        case "audio":
+            encodeVideo = false;
+            audioFramesRecv = 1
+            break;
+        case "video":
+            encodeVideo = true;
+            break;
         case "init":
             openVideo(data.data.videoConfig)
             if(data.data.audioConfig !== null){
