@@ -52,11 +52,42 @@ export default class Sound extends BaseItem {
 
     stop = () => {
         this.playing = false
+        this.offset = 0
         if(this.bs)
             this.bs.stop()
     }
 
+
+    getFirstFrame = (time) => {
+        
+        const buffer = {}
+        buffer.left =  this.left.subarray(this.offset, this.offset + this.sampleRate)
+        buffer.right =  this.right.subarray(this.offset, this.offset + this.sampleRate)
+        buffer.length = this.sampleRate
+        this.offset += this.sampleRate
+        return { buffer, sampleRate: this.sampleRate, channels: this.channels }
+    }
+
+    getAudioFrame = (time, first = false) => {
+        if(!this.left || !this.right)return
+
+        if(first) {
+            this.offset = Math.floor(time * this.sampleRate ) 
+        }
+        const t = performance.now()
+        const length = first ? this.sampleRate : Math.floor((t - this.lastTime) / 1000 * this.sampleRate)
+        const buffer = {}
+        buffer.left =  this.left.subarray(this.offset, this.offset + length)
+        buffer.right =  this.right.subarray(this.offset, this.offset + length)
+        buffer.length = length
+        this.lastTime = t
+        this.offset += length
+        return { buffer, sampleRate: this.sampleRate, channels: this.channels }
+    }
+
     load = (time) => {
+        
+
         const idx = Math.floor(time*this.sampleRate)
         const left = this.left.subarray(idx, idx + this.sampleRate)
         const right = this.right.subarray(idx, idx + this.sampleRate)
@@ -69,10 +100,12 @@ export default class Sound extends BaseItem {
     }
 
     play = (time, playing) => {
+        
 
         if(!this.playing || playing) {
             if(this.bs) {
                 this.bs.stop()
+                this.offset = 0
             }
 
             const idx = Math.floor(time*this.sampleRate)
@@ -170,6 +203,7 @@ export default class Sound extends BaseItem {
         var reader = new FileReader();
             reader.onload = function(ev) {
                 audioCtx.decodeAudioData(ev.target.result, function(buffer) {
+                    console.log(buffer)
                     that.buffer = buffer; 
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))

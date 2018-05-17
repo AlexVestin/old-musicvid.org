@@ -9,6 +9,9 @@ import VideoEncoder from '../../../videoencoder/videoencoderworker'
 import { setEncoding, incrementTime } from '../../../redux/actions/globals';
 import {  setSidebarWindowIndex } from '../../../redux/actions/items'
 
+import AudioManager from './audiomanager'
+
+
 class ThreeCanvas extends Component {
 
     constructor(props) {
@@ -40,6 +43,7 @@ class ThreeCanvas extends Component {
 
         this.encodedFrames = 0
         this.setupScene()
+        this.audioManager = new AudioManager()
     }
 
     setupScene = () =>  {
@@ -99,12 +103,11 @@ class ThreeCanvas extends Component {
         if(!this.useAudio.useSongDuration ) {
             this.duration = this.useAudio.value
         }else {
-
-            this.duration = this.sound.duration
+            this.duration = this.audioManager.sounds[0].duration
         }
 
-        if(this.sound) {
-            let sound = this.sound
+        if(this.audioManager.sounds[0]) {
+            let sound = this.audioManager.sounds[0]
             let samplerate = sound.sampleRate
             let channels = sound.channels
             let { left, right } = sound
@@ -171,20 +174,19 @@ class ThreeCanvas extends Component {
                 this.setTime(this.time, this.playing)
                 break;
             case "CREATE_SOUND":
-                this.sound = new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)})
+                this.audioManager.add(new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)}))
                 break;
             default:
         }
     }
     stop = () => {
         this.scenes.forEach(e => e.stop())
-        if(this.sound)this.sound.stop()
+        this.audioManager.stop()
     }
 
     play = (time, play) => {
         this.scenes.forEach(e => e.play(time))
-        if(this.sound && !this.encoding)
-            this.sound.play(time)
+        this.audioManager.play(this.state.encoding)
     }
 
     saveBlob = (vid) => {
@@ -214,12 +216,9 @@ class ThreeCanvas extends Component {
     
 
     renderScene = (time) => { 
-        var frequencyBins = []
+        var frequencyBins = this.audioManager.getBins()
         this.renderer.clear()
-        if(this.sound) {
-            frequencyBins = this.sound.getFrequencyBins(this.time)               
-        }
-
+        
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
             scene.render(this.renderer, time)
@@ -232,7 +231,7 @@ class ThreeCanvas extends Component {
 
     setTime = (time, playing) => {
         this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
-        if(playing && this.sound)this.sound.play(time, playing)
+        if(this.playing)this.audioManager.play()
     }
 
     render() {

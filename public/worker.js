@@ -9,6 +9,7 @@ let initialized = false
 let startTime, frameSize
 let useAudio = false
 
+const fileType = 1
 Module["onRuntimeInitialized"] = () => { 
     postMessage({action: "loaded"})
 };
@@ -16,7 +17,7 @@ Module["onRuntimeInitialized"] = () => {
 openVideo = (config) => {
     let { w, h, fps, bitrate, presetIdx } = config
 
-    Module._open_video(w, h, fps, bitrate, presetIdx, 1, 1 );
+    Module._open_video(w, h, fps, bitrate, presetIdx, fileType, fileType );
     frameSize = w*h*4
 }
 
@@ -24,17 +25,13 @@ openVideo = (config) => {
 let wLeft, wRight, durationInSamples
 
 addAudioFrame = () => {
-    console.log(wLeft, wRight, durationInSamples)
     wLeft = wLeft.subarray(0, durationInSamples)
     wRight = wRight.subarray(0, durationInSamples )
     var left_p = Module._malloc(wLeft.length * 4)
     Module.HEAPF32.set(wLeft, left_p >> 2)
     var right_p = Module._malloc(wRight.length * 4)
     Module.HEAPF32.set(wRight, right_p >> 2)
-
-    console.log("?????")
     Module._add_audio_frame(left_p, right_p, wLeft.length)
-    console.log("added audio")
 }
 
 
@@ -47,8 +44,7 @@ openAudio = (config) => {
     wRight = right
     try {
         
-      Module._open_audio(samplerate, 2, bitrate, 1)
-      console.log("opened audio")
+      Module._open_audio(samplerate, 2, bitrate, fileType)
     }catch(err) {
       console.log(err)
     }

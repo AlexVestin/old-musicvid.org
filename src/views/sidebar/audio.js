@@ -1,30 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button'
-import ConfigList from './input'
 import { connect } from 'react-redux'
 import { createSound, removeSound, setSidebarWindowIndex } from '../../redux/actions/items'
 
-const styles = theme => ({
-  root: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-  },
-  textField: {
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    width: 80,
-  },
+import AudioItem from './audioitem'
+import List, { ListItem, ListItemText } from 'material-ui/List';
+import { withStyles } from 'material-ui/styles';
 
-  listItem: {
-      height: 50,
-      minHeight: 50
-  }
-});
+const styles = theme => ({
+
+})
 
 class Audio extends React.Component {
+    state = { selected: 0, itemView: false }
 
     componentDidMount() {
         this.fileInputRef.onchange = () => {
@@ -34,47 +23,51 @@ class Audio extends React.Component {
         }
     }
 
+    itemBack = () => {
+        this.setState({selected: 0, itemView: false})
+    }
+
+    onClick = (index) => {
+        this.setState({selected: index, itemView: true})
+    }
+
     back = () => {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
     render() {
 
-        const { classes, audioItems } = this.props;
+        const { audioItems, classes } = this.props;
 
-        const item = audioItems[0]
+        const item = audioItems[this.state.selected]
         return (
-            <div className={classes.root}>
+            <div>
             <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
-             
-            {audioItems.length !== 0 ? 
-                
-                <ConfigList 
-                    handleChange={() => {}} 
-                    defaultConfig={item.defaultConfig} 
-                    item={item} 
-                    onDelete={removeSound} 
-                    addAutomation={() => {}}
-                    onBack={this.back}>
-                </ConfigList>
-                : 
-                <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
-            }
 
-        </div>
+            {this.state.itemView  ? 
+                <AudioItem item={item} onBack={this.itemBack}></AudioItem>
+                : 
+                <div>
+                    <List>
+                        {audioItems.map((item, i) => (
+                        <ListItem key={item.name} dense button className={classes.listItem} onClick={() => this.onClick(i)}>
+                            <ListItemText primary={item.name} />
+                        </ListItem>
+                        ))}
+                    </List>
+                    <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
+                </div>
+                }
+            </div>
         );
     }
 }
 
-Audio.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = state => {
     return {
         audioItems: state.items.audioItems,
-
     }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(Audio)) 
+export default connect(mapStateToProps)(withStyles(styles)(Audio))
