@@ -203,7 +203,7 @@ class ScrollArea2 extends PureComponent {
     }
 
     render() {
-        const { horizontalPosition, zoomWidth, zoomHeight } = this.state
+        const { zoomWidth, zoomHeight } = this.state
         const { maxNrUnits } = this.props
         const { width, height } = this.state
 

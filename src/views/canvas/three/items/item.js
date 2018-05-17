@@ -19,7 +19,7 @@ export default class BaseItem {
             title: "Time configurations", 
             items: {
                 start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", editable: true, disableAutomations: true},
-                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", editable:  true, disableAutomations: true}
+                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", editable:  true, disableAutomations: true},
             }
         }
 
@@ -28,6 +28,7 @@ export default class BaseItem {
 
         //TODO UUID ?
         this.config.id          = Math.floor(Math.random() * 10000000)
+        this.config.offsetLeft  = 0
         this.config.name        = config.name
         this.config.movable     = true
         this.config.sceneId     = config.sceneId

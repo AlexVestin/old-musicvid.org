@@ -1,7 +1,4 @@
 import React, { PureComponent } from 'react'
-import Draggable from 'react-draggable'
-
-import { editItem, selectItem } from '../../redux/actions/items'
 
 const colors = ["green", "red", "brown", "blue"]
 
@@ -31,9 +28,8 @@ export default class Clip extends PureComponent {
     }
 
     onMouseDown = (e) => {
-        console.log("ppp")
         if(this.props.item.movable && !this.mouseDown && !this.resizeMouseDown) {
-            selectItem({itemId: this.props.item.id, layerId: this.props.item.sceneId})
+            this.props.selectItem({itemId: this.props.item.id, layerId: this.props.item.sceneId})
             this.mouseDown = true
             this.startX = e.clientX
         }
@@ -45,7 +41,7 @@ export default class Clip extends PureComponent {
         if(this.props.item.movable && this.mouseDown ) {
             this.mouseDown = false
             
-            editItem({key: "start", value: item.start + (this.state.dx) / itemRightOffset })
+            this.props.edit({key: "start", value: item.start + (this.state.dx) / itemRightOffset })
             this.setState({dx: 0})
         }
 
@@ -53,10 +49,12 @@ export default class Clip extends PureComponent {
             this.resizeMouseDown = false
             const left = item.start + ((this.state.dx + this.state.resizeLeftDx) / itemRightOffset)
             const duration = item.duration + (this.state.resizeRightDx - this.state.resizeLeftDx) / itemRightOffset
+            const offsetLeft = this.state.resizeLeftDx / itemRightOffset
             
+            this.props.edit({key: "start", value: left})
+            this.props.edit({key: "duration", value: duration})
+            this.props.edit({key: "offsetLeft", value: offsetLeft})
             
-            editItem({key: "start", value: left})
-            editItem({key: "duration", value: duration})
 
             this.setState({resizeLeftDx: 0, resizeRightDx: 0})
         }
@@ -75,15 +73,32 @@ export default class Clip extends PureComponent {
         }
 
         if(this.resizeMouseDown){
-
+            const newDx = e.clientX - this.startX
             if(this.resizeLeft) {
-                if(item.start + (e.clientX  - this.startX) / itemRightOffset >= 0) {
-                    this.setState({resizeLeftDx: e.clientX  - this.startX})
-                }else {
-                    this.setState({resizeLeftDx: -left})
+               
+                const duration = item.duration + (this.state.resizeRightDx - newDx) / itemRightOffset
+                if(item.maxDuration && item.maxDuration > duration && (newDx / itemRightOffset) + item.offsetLeft >= 0) {
+                    
+                    if(item.start + (e.clientX  - this.startX) / itemRightOffset >= 0 ) {
+                        this.setState({resizeLeftDx: newDx})
+                    }else {
+                        this.setState({resizeLeftDx: -left})
+                    } 
+                } else {
+                    const newd = -item.offsetLeft * itemRightOffset
+                    console.log(newd)
+                    this.setState({resizeLeftDx: newd})
                 } 
             }else {
-                this.setState({resizeRightDx: e.clientX  - this.startX})
+                const duration = item.duration + (newDx - this.state.resizeLeftDx) / itemRightOffset
+                if(item.maxDuration && item.maxDuration > duration + item.offsetLeft) {
+                    this.setState({resizeRightDx: newDx})
+                }else {
+                    const newd = ((item.maxDuration - item.duration - item.offsetLeft) * itemRightOffset) - this.state.resizeLeftDx 
+                    console.log(item.offsetLeft)
+                    this.setState({resizeRightDx: newd})
+                }
+                    
             }
         }
     }
@@ -92,7 +107,7 @@ export default class Clip extends PureComponent {
         evt.preventDefault()
         evt.stopPropagation()
         if( !this.resizeMouseDown && !this.mouseDown) {
-            selectItem({itemId: this.props.item.id, layerId: this.props.item.sceneId})
+            this.props.selectItem({itemId: this.props.item.id, layerId: this.props.item.sceneId})
             this.startX = evt.clientX
             this.resizeMouseDown = true
             this.resizeLeft = resizeLeft
@@ -104,7 +119,7 @@ export default class Clip extends PureComponent {
     onStop = (e, b) => {
         if(this.props.item.movable) {
             if(this.props.item.start !== b.x) {
-                editItem({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
+                this.props.edit({key: "start", value: b.x / ( this.props.zoomWidth * this.props.unitSize)})
             }
         }
     }
@@ -127,9 +142,7 @@ export default class Clip extends PureComponent {
     render() {    
         const { height, top, item, zoomWidth, unitSize, left } = this.props
         let w = (item.duration * zoomWidth * unitSize) + this.state.resizeRightDx - this.state.resizeLeftDx
-
         let l = left + this.state.dx + this.state.resizeLeftDx
-
 
         const resizeWidth = w  > 24 ? 12 : Math.floor(w / 4)
         const resizeStyle = {

@@ -7,6 +7,14 @@ export function selectItem(item){
     );  
 }
 
+export function selectAudio(item){
+    store.dispatch({
+        type: "SELECT_AUDIO_ITEM",
+        payload: item
+        } 
+    );  
+}
+
 export function editAutomationPoint(item) {
     store.dispatch({
         type: "EDIT_AUTOMATION_POINT",
@@ -85,10 +93,17 @@ export function selectLayer(index){
 }
 
 
-export function removeSound(){
+export function setAudioItemView(item) {
+    store.dispatch({
+        type: "SET_AUDIO_WINDOW",
+        payload: item
+    }); 
+}
+
+export function removeSound(item){
     store.dispatch({
         type: "REMOVE_SOUND",
-
+        payload: item
         } 
     );  
 }
@@ -178,6 +193,16 @@ export function removeItem(item){
         } 
     );  
 }
+
+
+export function editAudio(item){
+    store.dispatch({
+        type: "EDIT_AUDIO_ITEM",
+        key: item.key,
+        value: item.value,
+    });  
+}
+
 
 export function editItem(item){
     store.dispatch({

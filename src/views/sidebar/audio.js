@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from 'material-ui/Button'
 import { connect } from 'react-redux'
-import { createSound, removeSound, setSidebarWindowIndex } from '../../redux/actions/items'
+import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio } from '../../redux/actions/items'
 
 import AudioItem from './audioitem'
 import List, { ListItem, ListItemText } from 'material-ui/List';
@@ -24,11 +24,12 @@ class Audio extends React.Component {
     }
 
     itemBack = () => {
-        this.setState({selected: 0, itemView: false})
+        setAudioItemView(false)
     }
 
     onClick = (index) => {
-        this.setState({selected: index, itemView: true})
+        selectAudio({itemId: this.props.audioItems[index].id})
+        //this.setState({selected: index, itemView: true})
     }
 
     back = () => {
@@ -36,15 +37,13 @@ class Audio extends React.Component {
     }
 
     render() {
-
         const { audioItems, classes } = this.props;
-
-        const item = audioItems[this.state.selected]
+        const item = audioItems[this.props.audioIdx]
         return (
             <div>
             <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
 
-            {this.state.itemView  ? 
+            {this.props.audioItemView  ? 
                 <AudioItem item={item} onBack={this.itemBack}></AudioItem>
                 : 
                 <div>
@@ -67,6 +66,8 @@ class Audio extends React.Component {
 const mapStateToProps = state => {
     return {
         audioItems: state.items.audioItems,
+        audioIdx: state.items.audioIdx,
+        audioItemView: state.items.audioItemView
     }
 }
 

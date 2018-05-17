@@ -17,6 +17,9 @@ export default function itemsReducer(state = {
     audioItems: [],
     createEffect: null,
     itemIdx: 0,
+    audioIDx: 0,
+    audioItemView: false
+    
     }, action){
 
         var items, passes, layers, automations, id, idx, key, cameras, audioItems
@@ -56,8 +59,9 @@ export default function itemsReducer(state = {
             case "SELECT_EFFECT":
                 return state
             case "REMOVE_SOUND":
-                audioItems  = update(state.audioItems, {$set: []})
-                return {...state, audioInfo: null, audioItems, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO}
+                idx         = state.audioItems.findIndex(e => e.id === action.payload) 
+                audioItems  = [...state.audioItems.slice(0, idx), ...state.audioItems.slice(idx+1)]
+                return {...state, audioItems, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: false}
             case "CREATE_SOUND":
                 return {...state, audioInfo: action.payload}
             case "ADD_SOUND": 
@@ -92,8 +96,24 @@ export default function itemsReducer(state = {
                 const newItem = {...state.items[action.payload.sceneId][action.payload.id], ...action.payload}
                 items   = update(state.items, {[action.payload.sceneId]: {[action.payload.id]: {$set: newItem }}})
                 return {...state, items}
+            case "SET_AUDIO_WINDOW":
+                return {...state, audioItemView: action.payload}
+            case "SELECT_AUDIO_ITEM": 
+                idx = state.audioItems.findIndex(e => e.id === action.payload.itemId)
+                return {...state, audioIdx: idx, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: true}
+            case "EDIT_AUDIO_ITEM": 
+                var value = action.value
+                if(action.key === "offsetLeft")
+                    value +=  state.audioItems[state.audioIdx].offsetLeft
+                
+                audioItems   = update(state.audioItems, {[state.audioIdx]: {[action.key]: {$set: value}}} )
+                return {...state, audioItems}
             case "EDIT_SELECTED_ITEM":
-                items   = update(state.items, {[state.selectedLayerId]: {[state.selectedItemId]: {[action.key]: {$set: action.value}}}} )
+                value = action.value
+                if(action.key === "offsetLeft")
+                    value +=  state.items[state.selectedLayerId][state.selectedItemId].offsetLeft
+                
+                items   = update(state.items, {[state.selectedLayerId]: {[state.selectedItemId]: {[action.key]: {$set: value}}}} )
                 return {...state, items}
             default:
                 return state;

@@ -123,6 +123,8 @@ class ThreeCanvas extends Component {
         this.time               = state.globals.time
         
         const audioInfo         = state.items.audioInfo
+        const audioItems        = state.items.audioItems
+        const audioIdx          = state.items.audioIdx
         const type              = state.lastAction.type
         const payload           = {...state.lastAction.payload}
 
@@ -139,9 +141,7 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
         switch(type) {
             case "REMOVE_ITEM":
- 
-                    scene.removeItem(payload.id)
-                
+                scene.removeItem(payload.id)
                 break;
             case "EDIT_CAMERA":
                 scene.editCamera(payload.key, payload.value)
@@ -176,7 +176,14 @@ class ThreeCanvas extends Component {
             case "CREATE_SOUND":
                 this.audioManager.add(new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)}))
                 break;
+            case "EDIT_AUDIO_ITEM":
+                this.audioManager.editSound(audioItems[audioIdx])
+                break
+            case "REMOVE_SOUND":
+                this.audioManager.removeSound(audioIdx)
+                break;
             default:
+
         }
     }
     stop = () => {
@@ -186,7 +193,7 @@ class ThreeCanvas extends Component {
 
     play = (time, play) => {
         this.scenes.forEach(e => e.play(time))
-        this.audioManager.play(this.state.encoding)
+        this.audioManager.play(time, this.state.encoding)
     }
 
     saveBlob = (vid) => {
@@ -231,7 +238,7 @@ class ThreeCanvas extends Component {
 
     setTime = (time, playing) => {
         this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
-        if(this.playing)this.audioManager.play()
+        this.audioManager.setTime(time)
     }
 
     render() {

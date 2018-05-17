@@ -6,7 +6,7 @@ import Add from '@material-ui/icons/Add'
 import classes from './clipinfobar.css'
 import Clip from './clip'
 import KeyFrame from './keyframe'
-import { addAutomationPoint, editAutomationPoint, editItem } from '../../redux/actions/items'
+import { addAutomationPoint, editAutomationPoint, editItem, editAudio, selectItem, selectAudio } from '../../redux/actions/items'
 import { connect } from 'react-redux'
 
 const pHeight = 35
@@ -54,7 +54,7 @@ class ClipItem extends PureComponent {
         if(!item) return null
 
         var str = item.name.length  < 30 ? item.name : item.name.substring(0, 30) + "..."
-        if(this.props.selectedLayer)str += "    [" + this.props.selectedLayer.name + "]"
+        if(this.props.selectedLayer)str += "  [" + this.props.selectedLayer.name + "]"
 
         const i = this.props.index
         const panelHeight = this.state.expanded ? pHeight * (item.automations.length + 1) :  pHeight;
@@ -73,6 +73,7 @@ class ClipItem extends PureComponent {
                     <div key={i} style={{...clipStyle, height: panelHeight}}>
                         <div style={{width: "100%"}}>
                             <div style={{marginLeft: 3, position: "absolute"}}>{i + 1}</div>
+                            
                             <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 14, display: "flex", flexDirection: "row", height: pHeight}}>
                                 {!this.state.expanded && <KeyboardArrowDown onClick={() => this.setState({expanded: true})} style={{marginTop: -5}}/>}
                                 {this.state.expanded && <KeyboardArrowUp onClick={() => this.setState({expanded: false})} style={{marginTop: -5}}/>}
@@ -123,6 +124,8 @@ class ClipItem extends PureComponent {
                 {shouldDrawClip &&
                     <div style={{height: panelHeight}}>
                         <Clip 
+                            selectItem={item.type === "SOUND" ? selectAudio : selectItem}
+                            edit={item.type === "SOUND" ? editAudio : editItem}
                             key={item.id} 
                             height={pHeight * zoomHeight}
                             left={ (start * itemRightOffset) - left}

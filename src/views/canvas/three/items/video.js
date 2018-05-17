@@ -66,6 +66,8 @@ export default class Video extends BaseItem {
         this.decoderReady = true
 
         this.config.duration = this.info.duration
+        this.config.maxDuration = this.info.duration
+        
         this.addItem() 
     }
 

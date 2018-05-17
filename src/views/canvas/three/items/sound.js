@@ -21,7 +21,6 @@ export default class Sound extends BaseItem {
         this.config.defaultConfig[1].items.start.editable = false
         this.config.defaultConfig[1].items.duration.editable = false
         
-        this.config.movable = false
         this.config.defaultConfig.push(audioGroup)
 
 
@@ -32,12 +31,6 @@ export default class Sound extends BaseItem {
         this.loaded = false
         this.fftSize = 4096
 
-        this.Module  = {};
-        window.KissFFT(this.Module)
-        this.Module["onRuntimeInitialized"] = () => { 
-            this.onModuleLoaded()
-        };
-
         this.loadSound(config.file, (data) => this.fftData = data)
 
         this.getConfig(this.config.defaultConfig)
@@ -45,157 +38,33 @@ export default class Sound extends BaseItem {
         this.lastIdx = -1
     }
 
-    onModuleLoaded = () => {
-        this.moduleLoaded = true
-        this.Module._init_r(this.fftSize)
+    setTime = (time) => {
+        this.offset =  Math.floor((time - this.config.start  + this.config.offsetLeft) * this.sampleRate)
     }
 
-    stop = () => {
-        this.playing = false
-        this.offset = 0
-        if(this.bs)
-            this.bs.stop()
-    }
-
-
-    getFirstFrame = (time) => {
-        
-        const buffer = {}
-        buffer.left =  this.left.subarray(this.offset, this.offset + this.sampleRate)
-        buffer.right =  this.right.subarray(this.offset, this.offset + this.sampleRate)
-        buffer.length = this.sampleRate
-        this.offset += this.sampleRate
-        return { buffer, sampleRate: this.sampleRate, channels: this.channels }
-    }
-
-    getAudioFrame = (time, first = false) => {
+    getAudioFrame = (time, first = false, sampleWindowSize) => {
         if(!this.left || !this.right)return
 
         if(first) {
-            this.offset = Math.floor(time * this.sampleRate ) 
+            this.offset = Math.floor( (time - this.config.start + this.config.offsetLeft) * this.sampleRate)
+            this.windowSize = sampleWindowSize
         }
-        const t = performance.now()
-        const length = first ? this.sampleRate : Math.floor((t - this.lastTime) / 1000 * this.sampleRate)
-        const buffer = {}
-        buffer.left =  this.left.subarray(this.offset, this.offset + length)
-        buffer.right =  this.right.subarray(this.offset, this.offset + length)
-        buffer.length = length
-        this.lastTime = t
-        this.offset += length
-        return { buffer, sampleRate: this.sampleRate, channels: this.channels }
-    }
 
-    load = (time) => {
+        const length = Math.floor(this.windowSize * this.sampleRate)
+        if(this.offset >=  this.config.offsetLeft * this.sampleRate) {
+            const buffer = {}
+
+            buffer.left =  this.left.subarray(this.offset, this.offset + length)
+            buffer.right =  this.right.subarray(this.offset, this.offset + length)
+
+            buffer.length = length
+            this.offset += length
+            return { buffer, sampleRate: this.sampleRate, channels: this.channels }
+        }else{
+            this.offset += length
+            return
+        }
         
-
-        const idx = Math.floor(time*this.sampleRate)
-        const left = this.left.subarray(idx, idx + this.sampleRate)
-        const right = this.right.subarray(idx, idx + this.sampleRate)
-
-        var ab = this.ac.createBuffer(2, left.length, this.sampleRate)
-        this.bs = this.ac.createBufferSource();
-        ab.getChannelData(0).set(left);
-        ab.getChannelData(1).set(right);
-        this.bs.buffer = ab
-    }
-
-    play = (time, playing) => {
-        
-
-        if(!this.playing || playing) {
-            if(this.bs) {
-                this.bs.stop()
-                this.offset = 0
-            }
-
-            const idx = Math.floor(time*this.sampleRate)
-            if (idx > this.left.length)
-                return
-                
-            const left = this.left.subarray(idx, this.left.length -1)
-            const right = this.right.subarray(idx, this.right.length-1)
-            
-            var ab = this.ac.createBuffer(2, left.length, this.sampleRate)
-            this.bs = this.ac.createBufferSource();
-            ab.getChannelData(0).set(left);
-            ab.getChannelData(1).set(right);
-            
-            this.bs.buffer = ab;
-            this.bs.connect(this.ac.destination);
-            this.bs.start(0);
-
-            this.playing = true
-        }else {
-            if(this.bs)
-                this.bs.stop()
-                
-            this.playing = false
-        }
-    }
-
-    getFrequencyData2 = (time) => {
-        let  bins = []
-
-        if(this.left !== undefined) {
-            let windowSize = this.fftSize;
-            let idx = Math.floor(time * this.sampleRate)
-            let data = this.left.subarray(idx, idx + windowSize)
-            let audio_p, size = 0;
-            let fftData
-            try {   
-                audio_p = this.Module._malloc(windowSize*4);
-                this.Module.HEAPF32.set(data, audio_p >> 2)
-                let buf_p = this.Module._fft_r(audio_p, windowSize, 1)
-                fftData = new Float32Array(this.Module.HEAPU8.buffer, buf_p, windowSize/2)  
-            }finally {
-                this.Module._free(audio_p)
-                bins = new Array(size)
-                let last_upper = 0
-                let lower, upper, avg
-
-                for(var i = 0; i < size; i++) {
-                    lower = last_upper
-                    upper = (i+1)*(i+1)
-                    avg = 0
-                    for(var j = lower; j < upper; j++) {
-                        avg += fftData[j] 
-                    }
-
-                    bins[i] = avg / (upper-lower)
-                    last_upper = upper  
-                }
-            }
-        }
-        return bins
-    }
-
-    getFrequencyBins = (time) => {
-        return this.getFrequencyData(time)
-    }
-
-    getFrequencyData = (time) => {
-        let bins = []
-        if(this.left !== undefined && this.dfdf === undefined) {
-
-            let windowSize = this.fftSize, nr_bins = 64;
-            let idx = Math.floor(time * this.sampleRate)
-
-            let data = this.left.subarray(idx, idx + windowSize)
-            let audio_p;
-
-            try {   
-                audio_p = this.Module._malloc(windowSize*4);
-                this.Module.HEAPF32.set(data, audio_p >> 2)
-                
-                let buf_p = this.Module._fft_r_bins(audio_p, windowSize, nr_bins, 1)
-                bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, nr_bins)  
-
-            }finally {
-                this.Module._free(audio_p)
-            }
-        }
-
-        return bins
     }
 
     loadSound = (file, callback) => {
@@ -203,7 +72,6 @@ export default class Sound extends BaseItem {
         var reader = new FileReader();
             reader.onload = function(ev) {
                 audioCtx.decodeAudioData(ev.target.result, function(buffer) {
-                    console.log(buffer)
                     that.buffer = buffer; 
                     that.left = new Float32Array(buffer.getChannelData(0))
                     that.right = new Float32Array(buffer.getChannelData(1))
@@ -211,10 +79,12 @@ export default class Sound extends BaseItem {
                     that.config.sampleRate = buffer.sampleRate
                     that.config.channels = buffer.numberOfChannels
                     that.config.duration = buffer.duration
+                    that.config.maxDuration = buffer.duration
                                         
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
+                    
                     
                     addSound(that.config)
                     setDisabled(false)

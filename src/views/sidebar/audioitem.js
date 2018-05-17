@@ -2,13 +2,12 @@
 
 import React, {PureComponent} from 'react'
 import ConfigList from './input'
-import { removeSound, setSidebarWindowIndex } from '../../redux/actions/items'
-import Button from 'material-ui/Button'
+import { removeSound } from '../../redux/actions/items'
 
 export default class AudioItem extends PureComponent {
 
     removeSound = () => {
-
+        removeSound(this.props.item.id)
     }
 
     render() {
