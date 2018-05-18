@@ -68,6 +68,7 @@ class ConfigList extends PureComponent {
                 </div>
                 
                 <div>
+                    {this.props.onDelete &&
                     <Button 
                         disabled={item.renderPass} 
                         className={classes.button} 
@@ -77,7 +78,8 @@ class ConfigList extends PureComponent {
                         color="secondary">
                             Delete item
                             <Delete className={classes.rightIcon} />
-                        </Button>               
+                        </Button>  
+                    }             
                         <Button variant="raised" fullWidth onClick={this.props.onBack}>
                             Back
                     </Button>
@@ -120,10 +122,10 @@ class GroupContainer extends PureComponent {
         return(
             <div key={group.title} style={groupContainerStyle}>
                 <div>
-                    <div style={{backgroundColor: "#eee", display: "flex", flexDirection: "row", justifyContent:"space-between"}}>
+                    <div style={{backgroundColor: "#eee", display: "flex", flexDirection: "row", justifyContent:"space-between"}} onClick={this.toggleExpanded}>
                         <p style={{ height: 20, margin: 5, fontSize: 16}}>{group.title} </p>
-                        {this.state.expanded && <KeyboardArrowUp style={{marginTop: 3}} onClick={this.toggleExpanded}></KeyboardArrowUp>}
-                        {!this.state.expanded && <KeyboardArrowDown style={{marginTop: 3}} onClick={this.toggleExpanded}></KeyboardArrowDown>}
+                        {this.state.expanded && <KeyboardArrowUp style={{marginTop: 3}} ></KeyboardArrowUp>}
+                        {!this.state.expanded && <KeyboardArrowDown style={{marginTop: 3}} ></KeyboardArrowDown>}
                     </div>
 
                 {this.state.expanded && <div style={inputContainer}>

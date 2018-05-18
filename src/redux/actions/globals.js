@@ -16,6 +16,22 @@ export function setTime(item){
     );  
 }
 
+export function editFFT(item){
+    store.dispatch({
+            type: "EDIT_FFT",
+            payload: item
+        } 
+    );  
+}
+
+export function addFFTSettings(item){
+    store.dispatch({
+        type: "ADD_FFT_SETTINGS",
+        payload: item
+        } 
+    );  
+}
+
 
 export function setEncoding(item){
     store.dispatch({

@@ -7,29 +7,28 @@ import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio } fro
 import AudioItem from './audioitem'
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
+import FFTSettings from './fftsettings'
 
-const styles = theme => ({
-
-})
+const styles = theme => ({})
 
 class Audio extends React.Component {
-    state = { selected: 0, itemView: false }
 
     componentDidMount() {
         this.fileInputRef.onchange = () => {
             let file = this.fileInputRef.files[0]
-            let name =  this.fileInputRef.files[0].name
-            createSound({type:"SOUND", file, name})
+            if(file) {
+                let name =  this.fileInputRef.files[0].name
+                createSound({type:"SOUND", file, name})
+            }
         }
     }
 
     itemBack = () => {
-        setAudioItemView(false)
+        setAudioItemView(0)
     }
 
     onClick = (index) => {
         selectAudio({itemId: this.props.audioItems[index].id})
-        //this.setState({selected: index, itemView: true})
     }
 
     back = () => {
@@ -39,14 +38,11 @@ class Audio extends React.Component {
     render() {
         const { audioItems, classes } = this.props;
         const item = audioItems[this.props.audioIdx]
-        console.log("=?=????")
+
         return (
             <div>
             <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
-
-            {this.props.audioItemView  ? 
-                <AudioItem item={item} onBack={this.itemBack}></AudioItem>
-                : 
+            {this.props.audioItemView === 0 &&
                 <div>
                     <List>
                         {audioItems.map((item, i) => (
@@ -56,9 +52,14 @@ class Audio extends React.Component {
                         ))}
                     </List>
                     <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
+                    <Button fullWidth variant="raised" onClick={() => setAudioItemView(2)}>fft settings</Button>
                 </div>
-                }
+            } 
+            {this.props.audioItemView === 1  && <AudioItem item={item} onBack={this.itemBack}></AudioItem>} 
+            {this.props.audioItemView === 2  && <FFTSettings onBack={this.itemBack}>hello</FFTSettings>}
+
             </div>
+            
         );
     }
 }

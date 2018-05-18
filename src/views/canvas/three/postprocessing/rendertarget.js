@@ -70,6 +70,10 @@ export default class RenderTarget {
         if(this.nShaderPasses % 2 === 1)this.effectComposer.swapBuffers()
     }
 
+    setSize = (width, height) => {
+        this.effectComposer.setSize(width, height)
+    }
+
     createEffect = (type) =>  {
         var fx;
         switch(type) {
@@ -105,11 +109,12 @@ export default class RenderTarget {
     }
 
     editEffect = (config, id) => {
-        console.log(config, id)
+        
         const pass = this.passes.find(e => e.config.id === id)
         if(!pass)
             console.log("[rendertarget.js] failed to find pass")
         
         pass.config = {...pass.config, [config.key]: config.value }
+        
     }
 }

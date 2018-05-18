@@ -77,10 +77,10 @@ class ThreeCanvas extends Component {
         return props.encoding !== this.state.hidden;
     }
 
-    initEncoder = (config, useAudio) => {
+    initEncoder = (config, duration) => {
         this.videoEncoder = new VideoEncoder(this.encoderLoaded)
         this.config = config
-        this.useAudio = useAudio
+        this.duration = duration
     }
 
     encoderInitialized = () => {
@@ -102,21 +102,9 @@ class ThreeCanvas extends Component {
 
 
     encoderLoaded = () => {
-        let audioConfig = null
-        if(!this.useAudio.useSongDuration ) {
-            this.duration = this.useAudio.value
-        }else {
-            this.duration = this.audioManager.sounds[0].duration
-        }
-
-        if(this.audioManager.sounds[0]) {
-            let sound = this.audioManager.sounds[0]
-            let samplerate = sound.sampleRate
-            let channels = sound.channels
-            let { left, right } = sound
-            audioConfig = { left, right, channels, samplerate, bitrate: 320000, duration: this.duration }
-        }
-  
+        const samplerate = this.audioManager.sampleRate
+        const channels = this.audioManager.channles
+        const audioConfig = {  channels, samplerate, bitrate: 320000 }
         let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate }
         this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.encode)
     }
@@ -140,6 +128,9 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
 
         switch(type) {
+            case "EDIT_FFT":    
+                this.audioManager.editFFT(state.globals.fftSettings)
+                break;
             case "REMOVE_ITEM":
                 scene.removeItem(payload.id)
                 break;
@@ -222,7 +213,9 @@ class ThreeCanvas extends Component {
             console.log("ENCODING FINISHED ----- ",t, " seconds and ",  this.encodedFrames / t , " fps" )
             this.setSize(this.props.width, this.props.height, false)
             this.videoEncoder.close(this.saveBlob)
+            this.audioManager.encoding = false
             this.encodedFrames = -1
+            this.setTime(0)
         }
     }
 

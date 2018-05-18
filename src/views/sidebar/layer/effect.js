@@ -11,7 +11,6 @@ class Effect extends React.PureComponent {
 
     handleChange = input => event => {
         var value = event.target.value
-        if(input.type === "Number")value = isNaN(value) ? 0 : Number(value)
         editEffect({key: input.key, value})
     }
 
@@ -21,6 +20,7 @@ class Effect extends React.PureComponent {
 
     render() {
         const {  passes, effectId } = this.props
+
         const item = passes.find(e => e.id == effectId)
         const defaultConfig = item.defaultConfig;
         return (

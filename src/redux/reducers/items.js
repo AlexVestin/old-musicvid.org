@@ -18,16 +18,15 @@ export default function itemsReducer(state = {
     createEffect: null,
     itemIdx: 0,
     audioIDx: 0,
-    audioItemView: false,
+    audioItemView: 0,
     effectId: 0,
     postProcessingEnabled: false,
     
     }, action){
 
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems, passes
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems
         switch(action.type){  
             case "SET_POST_PROCESSING_ENABLED":
-               
                 return {...state, postProcessingEnabled: action.payload}
             case "EDIT_CAMERA": 
                 cameras =  update(state.cameras, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
@@ -76,7 +75,7 @@ export default function itemsReducer(state = {
             case "REMOVE_SOUND":
                 idx         = state.audioItems.findIndex(e => e.id === action.payload) 
                 audioItems  = [...state.audioItems.slice(0, idx), ...state.audioItems.slice(idx+1)]
-                return {...state, audioItems, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: false}
+                return {...state, audioItems, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: 0}
             case "CREATE_SOUND":
                 return {...state, audioInfo: action.payload}
             case "ADD_SOUND": 
@@ -115,7 +114,7 @@ export default function itemsReducer(state = {
                 return {...state, audioItemView: action.payload}
             case "SELECT_AUDIO_ITEM": 
                 idx = state.audioItems.findIndex(e => e.id === action.payload.itemId)
-                return {...state, audioIdx: idx, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: true}
+                return {...state, audioIdx: idx, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: 1}
             case "EDIT_AUDIO_ITEM": 
                 var value = action.value
                 if(action.key === "offsetLeft")

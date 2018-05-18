@@ -6,10 +6,14 @@ export default function playbackReducer(state = {
     frameId: 0,
     disabled: false,
     encoding: false,
+    fftSettings: {}
 
     }, action){
         switch(action.type){
-            
+            case "EDIT_FFT": 
+                return {...state, fftSettings: {...state.fftSettings, [action.payload.key] : action.payload.value}}
+            case "ADD_FFT_SETTINGS":
+                return {...state, fftSettings: action.payload}
             case "SET_ENCODING":
                 return {...state, encoding: action.payload, frameId: 0, time: 0, disabled: action.payload}
             case "SET_CLIP_DURATION":

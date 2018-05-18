@@ -48,7 +48,7 @@ class Input extends PureComponent {
         return(
             <div style={listItemStyle}>
                 <div style={{fontSize: 14, marginTop: 8}}>{label}</div>
-                <div><input value={value} onChange={onChange} style={{height: 12, width: 40, marginTop: 6}} type={type}></input></div>
+                <div><input value={value} onChange={onChange} style={{height: 18, width: 40}} type={type}></input></div>
             </div>
         )
     }

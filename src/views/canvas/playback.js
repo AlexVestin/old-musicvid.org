@@ -18,7 +18,7 @@ class PlaybackPanel extends PureComponent {
     }
     render() {
         return(
-            <div style={{display: "flex", flexDirection: "column", backgroundColor: "c3c3c3"}}>
+            <div style={{display: "flex", flexDirection: "column"}}>
                 <svg viewBox= {"0 0 "+String(this.props.width) +" 20"} xmlns="http://www.w3.org/2000/svg" style={{height: 20}}>
                     <line x1="0" y1="10" x2={String((this.props.time / this.props.clipDuration) * this.props.width)} y2="10" stroke="black" />
                 </svg>
@@ -31,25 +31,16 @@ class PlaybackPanel extends PureComponent {
                         <Button disabled={this.props.disabled} onClick={this.props.play}>{this.props.playing ? "Pause" : "Play"}</Button> 
                         <Button disabled={this.props.disabled} onClick={this.props.stop}>Stop</Button>      
                     </div>    
-                
-                    <Tooltip 
-                            style={{minHeight: "30px", height:"30px", marginLeft: "auto"}} 
-                            id="tooltip-top-start" 
-                            title={"A sound needs to be loaded before exporting"} 
-                            placement="right-end"
-                        >
-                        <div>
-                            <Button 
-                                onClick={this.props.encode} 
-                                variant="raised" 
-                                color="secondary"
-                                
-                                disabled={this.props.encodeDisabled}
-                            >
-                                Export Video
-                            </Button>
-                        </div>
-                </Tooltip>
+          
+                    <div style={{minHeight: "30px", height:"30px", marginLeft: "auto"}} >
+                        <Button 
+                            onClick={this.props.encode} 
+                            variant="raised" 
+                            color="secondary"
+                                                        >
+                            Export Video
+                        </Button>
+                    </div>
                 
                 </div>        
             </div>

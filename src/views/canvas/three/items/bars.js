@@ -58,14 +58,11 @@ export default class Bars extends MeshItem {
 
     _animate = (time, frequencyBins) => {
         const { deltaRequired, decreaseSpeed, strength, scale, Y } = this.config
-        this.mesh.children.forEach( (e,i) => {
-            let o = e.scale.y
-            let n = (frequencyBins[i] / 3) * strength * scale
 
-            o = n > (o + deltaRequired) ? n : (o - decreaseSpeed) >= 0 ? (o-decreaseSpeed) : 0.001;
-            
-            e.scale.set(scale , o, scale); 
-            e.position.y = Y + o/2 
+        this.mesh.children.forEach( (e,i) => {
+
+            e.scale.set(scale , frequencyBins[i], scale); 
+            e.position.y = Y + frequencyBins[i]/2 
         })
     }
 }

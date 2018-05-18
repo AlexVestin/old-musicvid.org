@@ -94,7 +94,6 @@ export default class Clip extends PureComponent {
                     this.setState({resizeRightDx: newDx})
                 }else {
                     const newd = ((item.maxDuration - item.duration - item.offsetLeft) * itemRightOffset) - this.state.resizeLeftDx 
-                    console.log(item.offsetLeft)
                     this.setState({resizeRightDx: newd})
                 }
                     

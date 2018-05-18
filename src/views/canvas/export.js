@@ -6,9 +6,7 @@ import Modal from 'material-ui/Modal';
 import Button from 'material-ui/Button';
 import Options from './options'
 import TextField from 'material-ui/TextField';
-import Checkbox from 'material-ui/Checkbox';
-import {  FormControlLabel } from 'material-ui/Form';
-
+import { connect } from 'react-redux'
 
 const presetLookup = [
     "ultrafast",
@@ -37,10 +35,14 @@ const styles = theme => ({
 
 class SimpleModal extends React.Component {
 
-    state = {
-        useSongDuration: true,
-        duationValue: 1
+    constructor(props) {
+        super(props)
+        this.state = {
+            useProjectDuration: true,
+            duationValue: props.duration
+        }
     }
+    
 
     handleClose = () => {
         this.props.onCancel()
@@ -89,7 +91,7 @@ class SimpleModal extends React.Component {
             presetIdx: presetIdx
         }
 
-        this.props.startEncoding(config, {useSongDuration: this.state.useSongDuration, value: Number(this.state.durationValue)})
+        this.props.startEncoding(config, Number(this.state.durationValue))
     }
 
     stopEncoding = ()  => {
@@ -104,12 +106,12 @@ class SimpleModal extends React.Component {
         this.setState({encoderLoaded: true, info: "Module loaded"})
     }
 
-    toggleDurationButton  = () => this.setState({useSongDuration: !this.state.useSongDuration})
+    toggleDurationButton  = () => this.setState({useProjectDuration: !this.state.useProjectDuration})
     
     
     render() {
         const { classes } = this.props;
-        const { durationValue, useSongDuration } = this.state
+        const { durationValue } = this.state
         return (
             <Modal
                 aria-labelledby="simple-modal-title"
@@ -136,30 +138,23 @@ class SimpleModal extends React.Component {
                                 style={{width: 100, marginTop: 9, marginRight: 15}}
                                 label={"duration (sec)"}
                                 value={this.state.durationValue}
-                                margin="normal"
                                 onChange={this.handleChange}
-                                disabled={this.state.useSongDuration}
+                                type="number"
+                                margin="normal"
                             />
-
-                            <FormControlLabel
-                                style={{marginTop: 15}}
-                                control={
-                                    <Checkbox
-                                        checked={this.state.useSongDuration}
-                                        onChange={this.toggleDurationButton}
-                                        value="0"
-                                        color="primary"
-                                    />
-                                }
-                                label="Use song duration"
-                                />
 
                         </div>
                     </div>
+
+                    <div style={{display: "flex", flexDirection: "row"}}>
+                        <Options onchange={f => this.audioEncoding = f} name="Audio format" labels={["aac", "mp3"]} disabled></Options>
+                        <Options onchange={f => this.bitrate = f} name="Audio bitrate" labels={["64000", "86000", "128000", "320000"]} disabled></Options>
+                    </div>
+
                     <Button 
                         variant="raised" 
                         color="primary" 
-                        disabled={!useSongDuration && durationValue < 1} 
+                        disabled={durationValue < 1 || isNaN(durationValue)} 
                     onClick={this.encode}>Start encoding</Button>
                 </div>
             </Modal>
@@ -174,4 +169,10 @@ SimpleModal.propTypes = {
 // We need an intermediary variable for handling the recursive nesting.
 const ModalS = withStyles(styles)(SimpleModal);
 
-export default ModalS;
+const mapStateToProps = state => {
+    return {
+        duration: state.globals.duration
+    }
+}
+
+export default connect(mapStateToProps)(ModalS);

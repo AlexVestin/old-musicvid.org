@@ -1,3 +1,4 @@
+import FFTTransformer from './ffttransformer'
 
 const EMPTY_BUFFER = -1
 
@@ -11,6 +12,7 @@ export default class AudioManager {
         this.bufferSources = [{}, {}]
         this.sounds = []
         this.frameIdx = 0
+        this.channels = 2
 
         this.sampleWindowSize = 0.05
 
@@ -33,6 +35,7 @@ export default class AudioManager {
         this.Module["onRuntimeInitialized"] = () => { 
             this.onModuleLoaded()
         };
+        this.fftTransformer = new FFTTransformer(this.fftSize, 32)
     }
 
     removeSound = (idx) => {
@@ -44,7 +47,6 @@ export default class AudioManager {
 
         result.set(first);
         result.set(second, firstLength);
-
         return result;
     }
 
@@ -82,6 +84,10 @@ export default class AudioManager {
         })
     }
 
+    editFFT = (config) => {
+        this.fftTransformer.editConfig(config)
+    }
+
     schedule = (index) => {
         if(this.playing) {
             const buffer = this.buffers.pop()
@@ -105,6 +111,7 @@ export default class AudioManager {
         this.stop()
         this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
         this.frameIdx++
+        this.encoding = true
     }
 
     getEncodingFrame = () => {
@@ -131,11 +138,13 @@ export default class AudioManager {
     }
 
     getBins = (time) => {
-        let bins = []
+        let bins = [...new Array(32)].map(e => 0)
 
         if(this.sampleBuffer.length > this.fftSize) {
-            let windowSize = this.fftSize, nr_bins = 64;
-            const idx = Math.floor((time - this.time + this.sampleWindowSize)* this.sampleRate)
+            let windowSize = this.fftSize;
+
+            const encodeOffset = this.encoding ? this.buffers.length * this.sampleWindowSize : 0 
+            const idx = Math.floor((time - this.time + this.sampleWindowSize + encodeOffset)* this.sampleRate)
             const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
             
             this.sampleBuffer = this.sampleBuffer.slice(idx - this.lastFFTIdx)
@@ -148,9 +157,8 @@ export default class AudioManager {
                 audio_p = this.Module._malloc(windowSize*4);
                 this.Module.HEAPF32.set(data, audio_p >> 2)
                 
-                let buf_p = this.Module._fft_r_bins(audio_p, windowSize, nr_bins, 1)
-                bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, nr_bins)  
-
+                let buf_p = this.Module._fft_r(audio_p, windowSize, 0)
+                bins = this.fftTransformer.getTransformedSpectrum(new Float32Array(this.Module.HEAPU8.buffer, buf_p, windowSize / 2))  
             }finally {
                 this.Module._free(audio_p)
             }

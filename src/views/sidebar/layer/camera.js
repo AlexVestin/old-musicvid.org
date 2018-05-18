@@ -23,7 +23,6 @@ class Camera extends React.PureComponent {
 
     render() {
         const item = this.props.cameras[this.props.selectedLayerId]
-        console.log(this.props.cameras, this.props.selectedLayerId)
         const defaultConfig = item.defaultConfig;
 
         return (

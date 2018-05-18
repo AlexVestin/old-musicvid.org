@@ -108,10 +108,15 @@ export default class SceneContainer {
         }
 
         this.items.push(item)
-        const { start, duration } = item.config
         this.scene.add(item.mesh)
-        if (start >= time || (start < time && (start + duration) > time)) {
-            this.toRender.push(item)
+        
+        const { start, duration } = item.config
+        item.mesh.visible = false
+        if(time - start > 0 && time - start < duration ) {
+            this.rendering.push(it)
+            it.mesh.visible = true
+        }else if (start > time) {
+            this.toRender.push(it)
         }
     }
 
@@ -132,6 +137,7 @@ export default class SceneContainer {
 
     setSize = (width, height) => {
         this.camera.aspect = width / height;
+        this.renderTarget.setSize(width, height)
         if (this.camera.isPerspectiveCamera)
             this.camera.updateProjectionMatrix();
     }
@@ -189,8 +195,6 @@ export default class SceneContainer {
         }else if (start > time) {
             this.toRender.push(it)
         }
-
-        console.log(this.toRender)
     }
 
     addOrRemove(toRender, rendering, scene, time) {
@@ -260,7 +264,7 @@ export default class SceneContainer {
     play = (time, fps) => {
         this.items.forEach(e => {
             const { start, duration } = e.config
-            if(time - start > 0 && time - start < duration ) {
+            if(time - start >= 0 && time - start < duration ) {
                 this.rendering.push(e)
                 e.mesh.visible = true
             }else if (start > time) {
@@ -274,6 +278,7 @@ export default class SceneContainer {
         this.items.forEach(e => { e.stop() })
         this.rendering = []
         this.toRender = []
+        this.play(0)
     }
 
 
