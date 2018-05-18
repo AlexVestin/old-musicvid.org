@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button'
+import Tooltip from 'material-ui/Tooltip'
 
 import { connect } from 'react-redux'
 import { setSidebarWindowIndex } from '../../../redux/actions/items'
@@ -61,9 +62,14 @@ class Layer extends React.Component {
                 <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
                     Scene
                 </Button>
-
-                <Button variant="raised" fullWidth onClick={() => setSidebarWindowIndex(idxs.EFFECTS)}>Effects</Button>
-                </div>
+                {this.props.postProcessingEnabled ? 
+                <Button variant="raised" fullWidth onClick={() => setSidebarWindowIndex(idxs.EFFECTS)}>Effects</Button> : 
+                <Tooltip id="tooltip-top-start" title="Post processing must be enabled in the project settings" placement="right-end">
+                    <div style={{height: 36, width: "100%", backgroundColor: "#E0E0E0", textAlign: "center", color: "#A6A6A6", verticalAlign: "middle", lineHeight: 2}}>Effects</div>
+                </Tooltip>
+            }
+                
+                </div> 
                 <Button variant="raised" fullWidth onClick={this.back}>
                     Back
                 </Button>
@@ -71,6 +77,8 @@ class Layer extends React.Component {
         );
     }
 }
+
+
 
 
 Layer.propTypes = {
@@ -81,6 +89,7 @@ const mapStateToProps = state => {
     return {
         selectedLayer: state.items.selectedLayer,
         sideBarWindowIndex: state.items.sideBarWindowIndex,
+        postProcessingEnabled: state.items.postProcessingEnabled
     }
 }
 

@@ -104,11 +104,12 @@ export default class RenderTarget {
         this.effectComposer.swapBuffers()
     }
 
-    editEffect = (config) => {
-        const pass = this.passes.find(e => e.config.id === config.id)
+    editEffect = (config, id) => {
+        console.log(config, id)
+        const pass = this.passes.find(e => e.config.id === id)
         if(!pass)
             console.log("[rendertarget.js] failed to find pass")
         
-        pass.config = config
+        pass.config = {...pass.config, [config.key]: config.value }
     }
 }

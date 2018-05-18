@@ -8,9 +8,13 @@ export default class Pass {
         this.renderToScreen = false;
 
         this.config = {}
-        this.config.defaultConfig = {
-            name: {value: "", type: "String", editable: true, tooltip: ""},
-        }
+        this.config.defaultConfig = [
+            {
+                title: "config",
+                items: {
+                    name: {value: "", type: "String", editable: true, tooltip: ""},
+                }
+            }]
         
         this.config.strength = 0
         this.config.name = name

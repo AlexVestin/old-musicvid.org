@@ -54,7 +54,7 @@ export default class Sound extends BaseItem {
         }
 
         const length = Math.floor(this.windowSize * this.sampleRate)
-        if(this.offset >=  this.config.offsetLeft * this.sampleRate) {
+        if(this.offset >=  this.config.offsetLeft * this.sampleRate && this.offset < (this.config.duration + this.config.offsetLeft) * this.sampleRate) {
             const buffer = {}
             buffer.left =  this.left.subarray(this.offset, this.offset + length)
             buffer.right =  this.right.subarray(this.offset, this.offset + length)

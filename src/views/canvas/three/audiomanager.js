@@ -134,7 +134,6 @@ export default class AudioManager {
         let bins = []
 
         if(this.sampleBuffer.length > this.fftSize) {
-
             let windowSize = this.fftSize, nr_bins = 64;
             const idx = Math.floor((time - this.time + this.sampleWindowSize)* this.sampleRate)
             const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)

@@ -20,7 +20,8 @@ class Effect extends React.PureComponent {
     }
 
     render() {
-        const item = this.props.selectedLayer.selectedEffect
+        const {  passes, effectId } = this.props
+        const item = passes.find(e => e.id == effectId)
         const defaultConfig = item.defaultConfig;
         return (
             <ConfigList 
@@ -36,7 +37,8 @@ class Effect extends React.PureComponent {
 
 const mapStateToProps = state => {
     return {
-        selectedLayer: state.items.selectedLayer
+        passes: state.items.passes[state.items.selectedLayerId],
+        effectId: state.items.effectId,
     }
 }
 

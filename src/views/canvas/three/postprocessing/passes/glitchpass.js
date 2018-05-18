@@ -9,10 +9,16 @@ import DigitalGlitch from '../shaders/glitchshader'
 export default class GlitchPass extends Pass {
     constructor( dt_size ) {
 		super("glitch")
+		const group = {
+			title: "audio reactive settings",
+			items: {
+				ampThreshold: {value: 20, type: "Number", tooltip: "Amount needed to trigger a glitch effect", editable: true},
+				amount: {value: 40, type: "Number", tooltip: "How strong the glitch will be", editable: true},
+			}
+		}
 		
-		this.config.defaultConfig.ampThreshold = {value: 40, type: "Number", tooltip: "Amount needed to trigger a glitch effect", editable: true} 
-		this.config.defaultConfig.amount = {value: 40, type: "Number", tooltip: "How strong the glitch will be", editable: true} 
-		this.config.ampThreshold = 40
+		this.config.defaultConfig.push(group)
+		this.config.ampThreshold = 20
 		this.config.amount = 1
 		
 
@@ -21,7 +27,7 @@ export default class GlitchPass extends Pass {
         var shader = DigitalGlitch;
         this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-        if ( dt_size == undefined ) dt_size = 64;
+        if ( dt_size === undefined ) dt_size = 64;
 
 
         this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );

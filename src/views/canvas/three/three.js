@@ -91,10 +91,12 @@ class ThreeCanvas extends Component {
 
         const { width, height } = this.config
         this.setSize(width, height, true)
-        
+
+        this.startTime = performance.now()
+        this.audioTimeSum = 0;
+        this.audioFramesEncoded = 0
         this.encodeVideoFrame(this.time)
         this.videoEncoder.sendFrame()
-        
         this.audioManager.encodingStarted()
     }
 
@@ -134,12 +136,9 @@ class ThreeCanvas extends Component {
         this.selectedLayerId    = state.items.selectedLayerId
         this.createEffectType   = state.items.createEffect
 
-        if(this.selectedLayer) {
-            this.selectedEffect = this.selectedLayer.selectedEffect
-        }
-
         const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null
         this.selectedItemId = state.items.selectedItemId
+
         switch(type) {
             case "REMOVE_ITEM":
                 scene.removeItem(payload.id)
@@ -147,14 +146,17 @@ class ThreeCanvas extends Component {
             case "EDIT_CAMERA":
                 scene.editCamera(payload.key, payload.value)
                 break
+            case "SET_POST_PROCESSING_ENABLED":
+                this.postProcessingEnabled = state.lastAction.payload
+                break;
             case "REMOVE_EFFECT":
-                scene.removeEffect(this.selectedEffect)
+                scene.removeEffect(payload)
                 break;
             case "EDIT_EFFECT":
-                scene.editEffect(this.selectedEffect)
+                scene.editEffect(payload, state.items.effectId)
                 break;
             case "CREATE_EFFECT":
-                scene.createEffect(this.selectedEffect)
+                scene.createEffect(state.lastAction.payload)
                 break;
             case "ADD_AUTOMATION_POINT":
                 scene.addAutomationPoint(payload.point, payload.key, this.selectedItemId)
@@ -166,7 +168,7 @@ class ThreeCanvas extends Component {
                 scene.addAutomation(payload.automation, this.selectedItemId)
                 break;
             case "EDIT_SELECTED_ITEM":
-                scene.updateItem(state.items.items[this.selectedLayerId][this.selectedItemId]);
+                scene.updateItem(state.items.items[this.selectedLayerId][this.selectedItemId], this.time);
                 break
             case "CREATE_ITEM":
                 scene.addItem(payload.type, payload, this.time)
@@ -204,7 +206,7 @@ class ThreeCanvas extends Component {
 
 
     encode = (time) => {
-        this.renderScene(time)
+        this.renderScene(this.time)
         if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) { 
             const videoTs = this.encodedFrames / this.config.fps
             const audioTs = (this.audioManager.frameIdx * this.audioManager.sampleWindowSize) 
@@ -216,6 +218,8 @@ class ThreeCanvas extends Component {
         }else if(this.encoding && this.encodedFrames >= this.duration * this.config.fps) {
             this.encoding = false
             setEncoding(false)
+            const t =  (performance.now() - this.startTime) / 1000
+            console.log("ENCODING FINISHED ----- ",t, " seconds and ",  this.encodedFrames / t , " fps" )
             this.setSize(this.props.width, this.props.height, false)
             this.videoEncoder.close(this.saveBlob)
             this.encodedFrames = -1
@@ -224,8 +228,16 @@ class ThreeCanvas extends Component {
 
 
     encodeAudioFrame = (time) => {
+        const t = performance.now()
         const frame = this.audioManager.getEncodingFrame()
         this.videoEncoder.queueFrame( frame )
+        
+        const delta = performance.now() - t
+        this.audioTimeSum += delta
+        if((this.audioFramesEncoded++ % 50) === 0 && false) {
+            console.log("audio loaded, last: ", delta, " average: ", this.audioTimeSum / this.audioFramesEncoded) 
+            console.log(this.audioManager.buffers.length, this.audioManager.sampleBuffer.length)
+        }
     }
 
     encodeVideoFrame = (time) => {
@@ -235,10 +247,10 @@ class ThreeCanvas extends Component {
         gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
         this.videoEncoder.queueFrame( {type: "video", pixels: this.pixels} )
 
-        
-        incrementTime(this.time + (1 / this.config.fps))
+        //incrementTime(this.time + (1 / this.config.fps))
+        this.time += (1/this.config.fps)
         this.pixels = null
-        this.encodedFrames++
+        if(this.encodedFrames++ % 99 === 0) console.log(this.encodedFrames, this.time, this.encodedFrames / ((performance.now() - this.startTime) / 1000) ) 
     }
     
 
@@ -248,10 +260,14 @@ class ThreeCanvas extends Component {
         
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
-            scene.render(this.renderer, time)
+            scene.render(this.renderer, time, this.postProcessingEnabled)
+            this.renderer.clearDepth()
         }))
 
-        this.renderer.render(this.mainScene, this.mainCamera)
+        if(this.postProcessingEnabled) {
+            this.renderer.render(this.mainScene, this.mainCamera)
+        }
+       
         this.lastTime = time
     }
 

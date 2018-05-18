@@ -7,6 +7,14 @@ export function selectItem(item){
     );  
 }
 
+export function setPostProcessingEnabled(item){
+    store.dispatch({
+        type: "SET_POST_PROCESSING_ENABLED",
+        payload: item
+        } 
+    );  
+}
+
 export function selectAudio(item){
     store.dispatch({
         type: "SELECT_AUDIO_ITEM",

@@ -39,6 +39,7 @@ class Audio extends React.Component {
     render() {
         const { audioItems, classes } = this.props;
         const item = audioItems[this.props.audioIdx]
+        console.log("=?=????")
         return (
             <div>
             <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />

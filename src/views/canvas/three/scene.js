@@ -30,11 +30,11 @@ export default class SceneContainer {
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
-            items:[],
+            items: [],
             width,
             height,
             passes: [],
-            camera: this.cameraConfig
+            camera: this.cameraConfig,
         }
 
         const sceneConfig = {
@@ -61,8 +61,8 @@ export default class SceneContainer {
         this.renderTarget.removeEffect(config)
     }
 
-    editEffect = (config) => {
-        this.renderTarget.editEffect(config)
+    editEffect = (config, id) => {
+        this.renderTarget.editEffect(config, id)
     }
 
     createEffect = (type) => {
@@ -109,6 +109,7 @@ export default class SceneContainer {
 
         this.items.push(item)
         const { start, duration } = item.config
+        this.scene.add(item.mesh)
         if (start >= time || (start < time && (start + duration) > time)) {
             this.toRender.push(item)
         }
@@ -169,13 +170,27 @@ export default class SceneContainer {
         this.controls = controls
     }
 
-    updateItem = (config) => {
+    updateItem = (config, time) => {
         let it = this.items.find((e) => e.config.id === config.id)
         if (it) {
             it.updateConfig(config)
         } else {
             console.log("[scene.js] can't find id", config, this.items)
+            return
         }
+
+        this.toRender = this.toRender.filter(e => e.config.id !== it.config.id)
+        this.rendering = this.rendering.filter(e => e.config.id !== it.config.id)
+        it.mesh.visible = false
+        const { start, duration } = it.config
+        if(time - start > 0 && time - start < duration ) {
+            this.rendering.push(it)
+            it.mesh.visible = true
+        }else if (start > time) {
+            this.toRender.push(it)
+        }
+
+        console.log(this.toRender)
     }
 
     addOrRemove(toRender, rendering, scene, time) {
@@ -185,7 +200,7 @@ export default class SceneContainer {
             const { start, duration } = e.config
             if (time >= start + duration) {
                 rendering.splice(i, 1);
-                scene.remove(e.mesh)
+                e.mesh.visible = false
                 e.stop()
             }
         }
@@ -194,10 +209,10 @@ export default class SceneContainer {
             const e = toRender[i]
             const { start } = e.config
 
-            if (time >= start && scene.getObjectByName(e.mesh.name) === undefined) {
+            if (time >= start) {
                 toRender.splice(i, 1);
                 rendering.push(e)
-                scene.add(e.mesh)
+                e.mesh.visible = true
                 e.play(time)
             }
         }
@@ -227,31 +242,35 @@ export default class SceneContainer {
         this.freqNr = frequencyBins[2]
     }
 
-    render = (renderer, time) => {
-        this.renderTarget.render( renderer, time, this.freqNr)
+    render = (renderer, time, postProcessingEnabled) => {
+        //if(this.config.name === "graphics")console.log(this.config.postProcessingEnabled)
+        if(postProcessingEnabled) {
+            this.renderTarget.render( renderer, time, this.freqNr)
+        }else {
+            renderer.render(this.scene, this.camera)
+        }
     }
 
     setTime = (time, playing, sItemId) => {
-        var configs = []
         this.items.forEach(e => e.setTime(time, playing, sItemId))
-        return configs
+        this.stop()
+        this.play(time)
     }
 
     play = (time, fps) => {
         this.items.forEach(e => {
             const { start, duration } = e.config
-            if (start >= time || (start < time && (start + duration) > time)) {
+            if(time - start > 0 && time - start < duration ) {
+                this.rendering.push(e)
+                e.mesh.visible = true
+            }else if (start > time) {
                 this.toRender.push(e)
-                //e.play(time)
             }
         })
     }
 
     stop = () => {
-        while (this.scene.children.length > 0) {
-            this.scene.remove(this.scene.children[0]);
-        }
-
+        this.scene.children.forEach(e => e.visible = false)
         this.items.forEach(e => { e.stop() })
         this.rendering = []
         this.toRender = []

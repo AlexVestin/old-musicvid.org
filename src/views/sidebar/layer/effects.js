@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button'
 import Delete from 'material-ui-icons/Delete';
-
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 
@@ -34,16 +33,6 @@ const styles = theme => ({
 });
 
 class EffectList extends React.Component {
-
-    constructor() {
-        super()
-        this.state = {values: {}}
-    }
-
-    setWindow = () => {
-        //this.props.setWindow(4)
-    };
-
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYER)
     }
@@ -53,18 +42,17 @@ class EffectList extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
-        const passes = this.props.selectedLayer.passes
+        const { classes, passes } = this.props;
         const idxs = this.props.idxs
-
         return (
             <div className={classes.root}>
                 <div>
+                  
                     <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
-                        {passes.map( (e, i) => {
+                        {passes.map( (pass, i) => {
                             return( 
-                                <div key={e.id} style={{width: "100%", display: "flex", flexDirection: "row", textAlign: "right", overflow: "hidden",}}>
-                                    <Button variant="raised" fullWidth onClick={() => selectEffect(e)}> {e.name} </Button>
+                                <div key={pass.id} style={{width: "100%", display: "flex", flexDirection: "row", textAlign: "right", overflow: "hidden",}}>
+                                    <Button variant="raised" fullWidth onClick={() => selectEffect(pass.id)}> {pass.name} </Button>
                                         <div style={{display: "flex", flexDirection: "row"}}>
 
                                             <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || passes[i-1].renderPass}>
@@ -74,12 +62,11 @@ class EffectList extends React.Component {
                                                 <KeyboardArrowDown ></KeyboardArrowDown>
                                             </Button>
 
-                                            <Button style={{minWidth: 10, width: 10}} disabled={e.renderPass} >
-                                                <Delete onClick={() => this.removeItem(e)}></Delete>
+                                            <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} >
+                                                <Delete onClick={() => this.removeItem(pass)}></Delete>
                                             </Button>
                                         </div>
-                                
-                                    
+    
                                 </div>
                             )
                         } 
@@ -103,7 +90,8 @@ EffectList.propTypes = {
 
 const mapStateToProps = state => {
     return {
-        selectedLayer: state.items.selectedLayer
+        passes: state.items.passes[state.items.selectedLayerId],
+        postProcessingEnabled: state.items.layers[state.items.selectedLayerId].postProcessingEnabled
     }
 }
 

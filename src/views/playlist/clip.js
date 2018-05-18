@@ -77,7 +77,7 @@ export default class Clip extends PureComponent {
             if(this.resizeLeft) {
                
                 const duration = item.duration + (this.state.resizeRightDx - newDx) / itemRightOffset
-                if(item.maxDuration && item.maxDuration > duration && (newDx / itemRightOffset) + item.offsetLeft >= 0) {
+                if(!item.maxDuration || (item.maxDuration > duration && (newDx / itemRightOffset) + item.offsetLeft >= 0)) {
                     
                     if(item.start + (e.clientX  - this.startX) / itemRightOffset >= 0 ) {
                         this.setState({resizeLeftDx: newDx})
@@ -86,12 +86,11 @@ export default class Clip extends PureComponent {
                     } 
                 } else {
                     const newd = -item.offsetLeft * itemRightOffset
-                    console.log(newd)
                     this.setState({resizeLeftDx: newd})
                 } 
             }else {
                 const duration = item.duration + (newDx - this.state.resizeLeftDx) / itemRightOffset
-                if(item.maxDuration && item.maxDuration > duration + item.offsetLeft) {
+                if(!item.maxDuration || item.maxDuration > duration + item.offsetLeft) {
                     this.setState({resizeRightDx: newDx})
                 }else {
                     const newd = ((item.maxDuration - item.duration - item.offsetLeft) * itemRightOffset) - this.state.resizeLeftDx 

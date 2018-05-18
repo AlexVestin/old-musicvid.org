@@ -18,12 +18,17 @@ export default function itemsReducer(state = {
     createEffect: null,
     itemIdx: 0,
     audioIDx: 0,
-    audioItemView: false
+    audioItemView: false,
+    effectId: 0,
+    postProcessingEnabled: false,
     
     }, action){
 
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems, passes
         switch(action.type){  
+            case "SET_POST_PROCESSING_ENABLED":
+               
+                return {...state, postProcessingEnabled: action.payload}
             case "EDIT_CAMERA": 
                 cameras =  update(state.cameras, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return {...state, cameras}
@@ -49,15 +54,25 @@ export default function itemsReducer(state = {
                 items       = update(state.items,       {[state.selectedLayerId]: {[state.selectedItemId]: {automations: {$push: [id]}}}})
                 return {...state, automations, items}
             case "REMOVE_EFFECT":
-                return state
+
+                const lId = state.selectedLayerId
+                idx = state.passes[state.selectedLayerId].findIndex(e => e.id === action.payload.id)
+                //passes = [...state.passes[state.selectedLayerId].slice(0, idx), ...state.passes[state.selectedLayerId].slice(idx+1)]
+                passes =    update(state.passes, {[lId]: {$splice: [[idx, 1]]  }})
+                layers =    update(state.layers, {[lId]: {passes: {$splice: [[idx, 1]] }}})
+                return {...state, layers, passes}
             case "ADD_EFFECT":
-                return state
-            case "CREATE_EFFECT":
-                return state
+                passes       = update(state.passes, {[state.selectedLayerId]: {$push: [action.payload] }})
+                layers       = update(state.layers, {[state.selectedLayerId]: {passes: {$push: [action.payload.id]}}})
+                return {...state, layers, passes, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT, effectId: action.payload.id} 
+
             case "EDIT_EFFECT":
-                return state
+                idx = state.passes[state.selectedLayerId].findIndex(e => e.id === state.effectId)
+                const pass = state.passes[state.selectedLayerId][idx]                
+                passes   = update(state.passes, {[state.selectedLayerId]: {$splice: [[idx, 1, {...pass, [action.payload.key]: action.payload.value}]] }})
+                return {...state, passes }
             case "SELECT_EFFECT":
-                return state
+                return { ...state, effectId: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT }
             case "REMOVE_SOUND":
                 idx         = state.audioItems.findIndex(e => e.id === action.payload) 
                 audioItems  = [...state.audioItems.slice(0, idx), ...state.audioItems.slice(idx+1)]
@@ -69,8 +84,8 @@ export default function itemsReducer(state = {
                 return {...state, audioInfo: action.payload, audioItems, itemIdx: state.itemIdx + 1}
             case "ADD_LAYER":
                 id      = action.payload.id
-                items   = update(state.items,  {[id]: {$set: {}}})
-                passes  = update(state.passes, {[id]: {$set: {}}})
+                items   = update(state.items,  {[id]: {$set: {} }})
+                passes  = update(state.passes, {[id]: {$set: [] }})
                 layers  = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: [], camera: undefined }}})
                 cameras = update(state.cameras, {[id]: {$set: action.payload.camera }})
                 return {...state, items, layers, passes, cameras, selectedLayerId: id}
@@ -79,7 +94,7 @@ export default function itemsReducer(state = {
             case "SET_SIDEBAR_WINDOW_INDEX":
                 return {...state, sideBarWindowIndex: action.payload }
             case "SELECT_ITEM":
-                return {...state, selectedItemId: action.payload.itemId, selectedLayerId: action.payload.layerId, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM}
+                return {...state, selectedItemId: action.payload.itemId, selectedLayerId: action.payload.layerId, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM }
             case "ADD_ITEM":
                 id          = action.payload.id
                 items       = update(state.items,  {[state.selectedLayerId]: {[id]: {$set: {...action.payload, index: state.itemIdx}}}})
