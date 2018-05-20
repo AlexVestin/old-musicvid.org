@@ -52,7 +52,7 @@ class Audio extends React.Component {
                         ))}
                     </List>
                     <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
-                    <Button fullWidth variant="raised" onClick={() => setAudioItemView(2)}>fft settings</Button>
+                    <Button disabled fullWidth variant="raised" onClick={() => setAudioItemView(2)}>fft settings</Button>
                 </div>
             } 
             {this.props.audioItemView === 1  && <AudioItem item={item} onBack={this.itemBack}></AudioItem>} 

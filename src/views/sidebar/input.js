@@ -19,7 +19,8 @@ import Tooltip from 'material-ui/Tooltip';
 const inputStyles = {
     Number: {marginRight: 10, width: 40, minWidth: 40, marginLeft: 5},
     String: { minWidth: "25%", marginRight: 10, marginLeft: 5},
-    Link: { width: 50, marginLeft: 10 }
+    Link: { width: 50, marginLeft: 10 },
+    Boolean: {marginLeft: 10, height: 12, width: 12, marginTop: 5, marginRight: 20 - 6}
 }
 
 const styles = theme => ({
@@ -53,6 +54,11 @@ const styles = theme => ({
 
 
 class ConfigList extends PureComponent {
+    handleChange = input => event =>  {
+        var value = event.target.value
+        if(input.type === "Boolean")value = !input.prev
+        this.props.handleChange({key: input.key, value: value })
+    }
 
     render(){
         const { classes } = this.props;
@@ -63,7 +69,7 @@ class ConfigList extends PureComponent {
             <div className={classes.root}>
                 <div className={classes.groupWrapper}>
                     {defaultConfig.map(group =>     
-                       <GroupContainer key={group.title} item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.props.handleChange}></GroupContainer>
+                       <GroupContainer key={group.title} item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange}></GroupContainer>
                     )}
                 </div>
                 
@@ -112,7 +118,7 @@ const inputContainer = {
 
 class GroupContainer extends PureComponent {
 
-    state = {expanded: false}
+    state = {expanded: true}
 
     toggleExpanded = () => this.setState({expanded: !this.state.expanded})
 
@@ -134,9 +140,34 @@ class GroupContainer extends PureComponent {
                         const props = {key, keyVal: key, item, config, handleChange: this.props.handleChange, addAutomation: this.props.addAutomation}
                         return(
                             <div key={key} style={{width: "100%"}}>
-                                {(config.type === "Number" || config.type ==="String") && <CustomTextField {...props}></CustomTextField>}
-                                {(config.type === "Link") && <LinkField {...props}></LinkField>}
+                                {(config.type === "Number" || config.type ==="String") && <LabeledFieldWrapper {...props}>
+                                     <input 
+                                        onChange={this.props.handleChange({type: config.type, key: key})} 
+                                        value={item[key]} 
+                                        disabled={config.editable === false}    
+                                        style={inputStyles[config.type]}
+                                        type={config.type === "Number" ? "number" : "text"}
+                                    ></input>
+                                </LabeledFieldWrapper>}
 
+                                {(config.type === "Link") && <LinkField {...props}></LinkField>}
+                                {config.type === "List" && <LabeledFieldWrapper {...props} >
+                                <select onChange={this.props.handleChange({type: config.type, key: key})}>
+                                    {config.options.map(e => <option key={e} value={e}>{e}</option>)}
+                                </select>
+
+                                </LabeledFieldWrapper>}
+
+                                {(config.type === "Boolean") && 
+                                <LabeledFieldWrapper {...props}>
+                                    <input 
+                                        type="checkbox"
+                                        checked={item[key]}
+                                        onChange={this.props.handleChange({type: config.type, key: key, prev: item[key]})} 
+                                        disabled={config.editable === false}    
+                                        style={inputStyles[config.type]}>
+                                    </input>
+                                </LabeledFieldWrapper>}
                             </div>
                          )
                         }
@@ -163,8 +194,8 @@ class LinkField extends PureComponent {
 }
 
 
-class CustomTextField extends PureComponent {
-    state= {mouseOver: false}
+class LabeledFieldWrapper extends PureComponent {
+    state= { mouseOver: false }
 
     render() {
         let { config, item } = this.props
@@ -195,22 +226,14 @@ class CustomTextField extends PureComponent {
                         </Tooltip>
                     }
 
-                   <input 
-                        onChange={this.props.handleChange({type: config.type, key: key})} 
-                        value={item[key]} 
-                        disabled={config.editable === false}    
-                        style={inputStyles[config.type]}
-                        type={config.type === "Number" ? "number" : "text"}
-                    ></input>
 
-
+                    {this.props.children}
+                
                      </div>
             </div> 
         )
     }
 }
-
-CustomTextField = withStyles(styles)(CustomTextField)
 
 ConfigList.propTypes = {
     classes: PropTypes.object.isRequired,

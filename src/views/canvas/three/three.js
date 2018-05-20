@@ -5,7 +5,7 @@ import store from '../../../redux/store'
 import {OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '../../../videoencoder/videoencoderworker'
-import { setEncoding, incrementTime } from '../../../redux/actions/globals';
+import { setEncoding } from '../../../redux/actions/globals';
 import {  setSidebarWindowIndex } from '../../../redux/actions/items'
 import AudioManager from './audiomanager'
 
@@ -42,6 +42,14 @@ class ThreeCanvas extends Component {
         this.encodedFrames = 0
         this.setupScene()
         this.audioManager = new AudioManager()
+    }
+
+    incrementTime = () => {
+
+    }
+
+    decrementFrame = () => {
+
     }
 
     setupScene = () =>  {
@@ -97,7 +105,7 @@ class ThreeCanvas extends Component {
         this.audioFramesEncoded = 0
         this.encodeVideoFrame(this.time)
         this.videoEncoder.sendFrame()
-        this.audioManager.encodingStarted()
+        this.audioManager.encodingStarted(1 / this.config.fps)
     }
 
 
@@ -105,7 +113,7 @@ class ThreeCanvas extends Component {
         const samplerate = this.audioManager.sampleRate
         const channels = this.audioManager.channles
         const audioConfig = {  channels, samplerate, bitrate: 320000 }
-        let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate }
+        let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate, presetIdx: this.config.presetIdx }
         this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.encode)
     }
 
@@ -128,8 +136,8 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
 
         switch(type) {
-            case "EDIT_FFT":    
-                this.audioManager.editFFT(state.globals.fftSettings)
+            case "EDIT_CONTROLS": 
+                scene.editControls(payload.key, payload.value)
                 break;
             case "REMOVE_ITEM":
                 scene.removeItem(payload.id)
@@ -199,7 +207,7 @@ class ThreeCanvas extends Component {
     encode = (time) => {
         this.renderScene(this.time)
         if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) { 
-            const videoTs = this.encodedFrames / this.config.fps
+            const videoTs = (this.encodedFrames / this.config.fps )+ 0.1 
             const audioTs = (this.audioManager.frameIdx * this.audioManager.sampleWindowSize) 
             if( videoTs > audioTs ) {
                 this.encodeAudioFrame(time)
@@ -213,7 +221,7 @@ class ThreeCanvas extends Component {
             console.log("ENCODING FINISHED ----- ",t, " seconds and ",  this.encodedFrames / t , " fps" )
             this.setSize(this.props.width, this.props.height, false)
             this.videoEncoder.close(this.saveBlob)
-            this.audioManager.encoding = false
+            this.audioManager.encodingFinished()
             this.encodedFrames = -1
             this.setTime(0)
         }
@@ -247,8 +255,8 @@ class ThreeCanvas extends Component {
     }
     
 
-    renderScene = (time) => { 
-        var frequencyBins = this.audioManager.getBins(time)
+    renderScene = (time, stepping) => { 
+        var frequencyBins = this.audioManager.getBins(time, stepping)
         this.renderer.clear()
         
         this.scenes.forEach((scene => {
@@ -260,8 +268,9 @@ class ThreeCanvas extends Component {
         if(this.postProcessingEnabled) {
             this.renderer.render(this.mainScene, this.mainCamera)
         }
+        
        
-        this.lastTime = time
+        
     }
 
     setTime = (time, playing) => {

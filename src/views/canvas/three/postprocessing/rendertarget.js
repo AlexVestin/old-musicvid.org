@@ -8,9 +8,7 @@ import RenderPass from './passes/renderpass'
 import BloomPass from './passes/bloompass'
 import SepiaShader from './shaders/sepiashader'
 import ShaderPass from './passes/shaderpass';
-import MaskPass, { ClearMaskPass } from './passes/maskpass'
 import FXAAShader from './shaders/fxaa'
-import SSAARenderPass from './passes/ssaapass'
 
 import GlitchPass from './passes/glitchpass'
 

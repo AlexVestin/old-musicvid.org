@@ -12,7 +12,11 @@ import RandomGeometry from './items/randomgeometry';
 
 import RenderTarget from './postprocessing/rendertarget';
 import { addLayer, replaceCamera } from '../../../redux/actions/items'
-import Camera from './cameras/camera'
+import cameraConfigs from './cameras/camera'
+import controlConfigs from './controls/config'
+
+
+import Particles from './items/particles';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -26,7 +30,7 @@ export default class SceneContainer {
         this.toRender = []
         this.rendering = []
 
-        this.cameraConfig = new Camera().config
+        this.cameraConfig = cameraConfigs.orthoConfig
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
@@ -35,6 +39,7 @@ export default class SceneContainer {
             height,
             passes: [],
             camera: this.cameraConfig,
+            controls: controlConfigs.config
         }
 
         const sceneConfig = {
@@ -50,11 +55,53 @@ export default class SceneContainer {
         this.quad.frustumCulled = false; // Avoid getting clipped 
     }
 
-    editCamera = (key, value) => {
-        if(key === "x" || key  === "y" || key === "z") {
-            this.camera.position[key] = value; 
-            this.controls.update()
+    editControls = (key, value) => {
+        console.log(key, value)
+        switch(key) {
+            case "maxDistance":
+            case "minDistance":
+            case "maxPolarAngle":
+            case "enabled":
+                this.controls[key] = value
+                break;
+            case "targetX":
+            case "targetY":
+            case "targetZ":
+                this.controls.target[key.substring(key.length - 1).toLowerCase()] =  value
+                this.camera.lookAt(this.controls.target)
+                break;
+            default:   
         }
+        this.controls.update()
+    }
+
+    editCamera = (key, value) => {
+        const { width, height } = this.config
+      
+        if(key === "type") {
+            if(value === "OrthographicCamera") {
+                this.cameraConfig = cameraConfigs.orthoConfig
+                this.camera = new THREE.OrthographicCamera()
+            }else if (value === "PerspectiveCamera") {
+                this.cameraConfig = cameraConfigs.perspectiveConfig
+                this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000)
+                this.camera.position.set(30,30,200)
+            }else {
+                alert("--------ERROR COULD NOT FIND CAMERA PROVIDED ----------")
+                return
+            }
+
+            replaceCamera(this.cameraConfig)
+        }
+
+        if(this.cameraConfig.type === "PerspectiveCamera") {
+            if(key === "x" || key  === "y" || key === "z") {
+                this.camera.position[key] = value; 
+                //this.controls.update()
+            }
+
+
+        }   
     }
     
     removeEffect = (config) => {
@@ -72,13 +119,18 @@ export default class SceneContainer {
     addItem = (name, info, time) => {
         info.name = name
         info.sceneId = this.config.id
+        info.time = time
         info.sceneConfig = {
             light: this.light,
-            camera: this.camera
+            camera: this.camera,
+            scene: this.scene
         }
 
         let item;
         switch (info.type) {
+            case "PARTICLES":
+                item = new Particles(info)
+                break;
             case "IMAGE":
                 item = new BackgroundImage(info)
                 break;
@@ -112,11 +164,11 @@ export default class SceneContainer {
         
         const { start, duration } = item.config
         item.mesh.visible = false
-        if(time - start > 0 && time - start < duration ) {
-            this.rendering.push(it)
-            it.mesh.visible = true
+        if(time - start >= 0 && time - start < duration ) {
+            this.rendering.push(item)
+            item.mesh.visible = true
         }else if (start > time) {
-            this.toRender.push(it)
+            this.toRender.push(item)
         }
     }
 
@@ -144,9 +196,9 @@ export default class SceneContainer {
 
     setCamera = () => {
         const { width, height } = this.config
-        this.camera = new THREE.PerspectiveCamera(55, width / height, 1, 20000)
-        this.camera.position.set(30,30,100)
-        replaceCamera({...this.cameraConfig, x: 30, y: 30, z: 100, type: "perspective", aspect: width / height, near: 1, far: 2000})
+        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000)
+        this.camera.position.set(30,30,200)
+        replaceCamera({...this.cameraConfig, x: 30, y: 30, z: 200, type: "PerspectiveCamera", aspect: width / height, near: 1, far: 20000})
         
         this.renderTarget.setCamera(this.camera)
     }
@@ -171,29 +223,29 @@ export default class SceneContainer {
         controls.target.set(0, 10, 0);
         controls.panningMode = 1;
         controls.minDistance = 40.0;
-        controls.maxDistance = 200.0;
+        controls.maxDistance = 300.0;
         camera.lookAt(controls.target);
         this.controls = controls
     }
 
     updateItem = (config, time) => {
-        let it = this.items.find((e) => e.config.id === config.id)
-        if (it) {
-            it.updateConfig(config)
+        const item = this.items.find((e) => e.config.id === config.id)
+        if (item) {
+            item.updateConfig(config)
         } else {
             console.log("[scene.js] can't find id", config, this.items)
             return
         }
 
-        this.toRender = this.toRender.filter(e => e.config.id !== it.config.id)
-        this.rendering = this.rendering.filter(e => e.config.id !== it.config.id)
-        it.mesh.visible = false
-        const { start, duration } = it.config
+        this.toRender = this.toRender.filter(e => e.config.id !== item.config.id)
+        this.rendering = this.rendering.filter(e => e.config.id !== item.config.id)
+        item.mesh.visible = false
+        const { start, duration } = item.config
         if(time - start > 0 && time - start < duration ) {
-            this.rendering.push(it)
-            it.mesh.visible = true
+            this.rendering.push(item)
+            item.mesh.visible = true
         }else if (start > time) {
-            this.toRender.push(it)
+            this.toRender.push(item)
         }
     }
 
@@ -243,7 +295,7 @@ export default class SceneContainer {
     animate = (time, frequencyBins) => {
         this.addOrRemove(this.toRender, this.rendering, this.scene, time)
         this.rendering.forEach(e =>  e.animate(time, frequencyBins))
-        this.freqNr = frequencyBins[2]
+        this.freqNr = frequencyBins[1]
     }
 
     render = (renderer, time, postProcessingEnabled) => {

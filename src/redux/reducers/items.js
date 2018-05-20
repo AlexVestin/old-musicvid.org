@@ -7,7 +7,6 @@ export default function itemsReducer(state = {
     passes: {},
     items: {},
     automations: {},
-    
     cameras: {},
     controls: {},
     audioInfo: null,
@@ -24,15 +23,18 @@ export default function itemsReducer(state = {
     
     }, action){
 
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls
         switch(action.type){  
             case "SET_POST_PROCESSING_ENABLED":
                 return {...state, postProcessingEnabled: action.payload}
             case "EDIT_CAMERA": 
                 cameras =  update(state.cameras, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return {...state, cameras}
+            case "EDIT_CONTROLS": 
+                controls =  update(state.controls, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
+                return {...state, controls}
             case "REPLACE_CAMERA":
-                cameras =  update(state.cameras, {[state.selectedLayerId]: {$set: action.payload }})
+                cameras =  update(state.cameras, {[state.selectedLayerId]: { $set: action.payload }})
                 return {...state, cameras}
             case "EDIT_AUTOMATION_POINT":
                 key = action.payload.key
@@ -85,9 +87,11 @@ export default function itemsReducer(state = {
                 id      = action.payload.id
                 items   = update(state.items,  {[id]: {$set: {} }})
                 passes  = update(state.passes, {[id]: {$set: [] }})
-                layers  = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: [], camera: undefined }}})
+                layers  = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: [], camera: action.payload.camera.id, controls: action.payload.controls.id }}})
                 cameras = update(state.cameras, {[id]: {$set: action.payload.camera }})
-                return {...state, items, layers, passes, cameras, selectedLayerId: id}
+                controls = update(state.controls, {[id]: {$set: action.payload.controls }})
+                
+                return {...state, items, layers, passes, cameras, controls, selectedLayerId: id}
             case "SELECT_LAYER":
                 return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":

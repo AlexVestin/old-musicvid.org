@@ -1,5 +1,3 @@
-import FFTTransformer from './ffttransformer'
-
 const EMPTY_BUFFER = -1
 
 export default class AudioManager {
@@ -14,7 +12,8 @@ export default class AudioManager {
         this.frameIdx = 0
         this.channels = 2
 
-        this.sampleWindowSize = 0.05
+        this.startSampleWindowSize = 0.1
+        this.sampleWindowSize = this.startSampleWindowSize
 
         this.sampleBuffer = new Float32Array() 
         this.sliceIndex = 0
@@ -22,6 +21,7 @@ export default class AudioManager {
         this.lastBins = []
         this.lastFFTIdx  = 0;
 
+        this.time = 0
 
         this.metronome = new Worker("audioworker.js")
         this.metronome.onmessage = (e) => {
@@ -35,7 +35,7 @@ export default class AudioManager {
         this.Module["onRuntimeInitialized"] = () => { 
             this.onModuleLoaded()
         };
-        this.fftTransformer = new FFTTransformer(this.fftSize, 32)
+        //this.fftTransformer = new FFTTransformer(this.fftSize, 32)
     }
 
     removeSound = (idx) => {
@@ -50,8 +50,10 @@ export default class AudioManager {
         return result;
     }
 
-    addAudioFrame = (frames, fps) => {
+    addAudioFrame = (time, first, windowSize) => {
+        const frames = this.sounds.map(sound => sound.getAudioFrame(time, first, windowSize))
         const that =  this
+
         return new Promise(function(resolve, reject){ 
             let buffersToSchedule = []
             if(frames.length !== 0) {
@@ -73,6 +75,7 @@ export default class AudioManager {
                 buffersToSchedule.forEach(buffer => buffer.start()) 
                 that.offlineCtx.startRendering().then((renderedBuffer => {
                     that.buffers.push(renderedBuffer)
+                   
                     that.sampleBuffer = that.float32Concat(that.sampleBuffer, renderedBuffer.getChannelData(0))
                     resolve()
                     return
@@ -85,7 +88,7 @@ export default class AudioManager {
     }
 
     editFFT = (config) => {
-        this.fftTransformer.editConfig(config)
+        //this.fftTransformer.editConfig(config)
     }
 
     schedule = (index) => {
@@ -96,26 +99,31 @@ export default class AudioManager {
                 this.bufferSources[index].buffer = buffer
                 this.bufferSources[index].connect(this.audioCtx.destination)
                 //this.bufferSources[index].onended = () => this.schedule(index)
-
                 this.bufferSources[index].start(this.startTime + this.sampleWindowSize * this.frameIdx++)
             }else {
                 //setTimeout(() => this.schedule(index), this.sampleWindowSize * 2000)
                 this.frameIdx++
             }
 
-            this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
+            this.addAudioFrame(this.time)
         }
     }
 
-    encodingStarted = () => {
+    encodingStarted = (windowSize) => {
         this.stop()
-        this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
+        this.addAudioFrame(this.time, true, this.sampleWindowSize)
         this.frameIdx++
         this.encoding = true
     }
 
+    encodingFinished = () => {
+        this.stop()
+        this.encoding = true 
+        this.sampleWindowSize = this.startSampleWindowSize
+    }
+
     getEncodingFrame = () => {
-        this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame()))
+        this.addAudioFrame(this.time)
         this.frameIdx++
         var buffer = this.buffers.pop()
 
@@ -129,6 +137,7 @@ export default class AudioManager {
     }
 
     add = (sound) => {
+        sound.windowSize = this.sampleWindowSize
         this.sounds.push(sound)
     }
 
@@ -137,16 +146,14 @@ export default class AudioManager {
         this.Module._init_r(this.fftSize)
     }
 
-    getBins = (time) => {
-        let bins = [...new Array(32)].map(e => 0)
-
-        if(this.sampleBuffer.length > this.fftSize) {
+    getBins = (time, stepping) => {
+        let bins = []
+        if(this.sampleBuffer.length >= this.fftSize) {
             let windowSize = this.fftSize;
 
-            const encodeOffset = this.encoding ? this.buffers.length * this.sampleWindowSize : 0 
-            const idx = Math.floor((time - this.time + this.sampleWindowSize + encodeOffset)* this.sampleRate)
+            const idx = Math.floor((time - this.time + (this.sampleWindowSize * (this.buffers.length - 1)))* this.sampleRate)
             const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
-            
+
             this.sampleBuffer = this.sampleBuffer.slice(idx - this.lastFFTIdx)
             this.sliceIndex += idx - this.lastFFTIdx
             this.lastFFTIdx = idx
@@ -158,29 +165,38 @@ export default class AudioManager {
                 this.Module.HEAPF32.set(data, audio_p >> 2)
                 
                 let buf_p = this.Module._fft_r(audio_p, windowSize, 0)
-                bins = this.fftTransformer.getTransformedSpectrum(new Float32Array(this.Module.HEAPU8.buffer, buf_p, windowSize / 2))  
+                bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, windowSize / 2)  
             }finally {
                 this.Module._free(audio_p)
             }
+        }
+
+        if(stepping && (this.sampleBuffer.length <= this.fftSize)) {
+            this.addAudioFrame()
+            this.buffers.pop()
         }
         return bins
     }
 
     update = (time) => {
-        this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame(time , true, this.sampleWindowSize)))
+        this.addAudioFrame(this.time)
     }
 
     editSound = (soundConfig) => {
         const sound = this.sounds.find(e => e.config.id === soundConfig.id)
         sound.config = soundConfig
         sound.setTime(this.time + this.sampleWindowSize * this.frameIdx )
-        this.buffers = []
     }
 
     setTime = (time) => {
         this.time = time
-        this.sounds.forEach(e => e.setTime(time))
+        this.sounds.forEach(e => e.setTime(time, this.sampleWindowSize))
         this.buffers = []
+
+
+        this.sampleBuffer = new Float32Array()
+        this.sliceIndex = 0
+        this.lastFFTIdx = 0
     }
 
     play = (time, playing) => {
@@ -190,11 +206,12 @@ export default class AudioManager {
         }else {
             this.playing = true 
             this.tmpTime = 0
-            this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame(time , true, this.sampleWindowSize))).then( () => {
+            
+            this.addAudioFrame(time, true, this.sampleWindowSize).then( () => {
                 this.startTime  =  this.audioCtx.currentTime
                 this.schedule(0)
             })
-            this.addAudioFrame(this.sounds.map(sound => sound.getAudioFrame(time, false))).then(() => {
+            this.addAudioFrame().then(() => {
                 this.schedule(1)
             })
 
@@ -205,8 +222,9 @@ export default class AudioManager {
     stop = () => {
         //this.bufferSources.forEach(e => e.stop())
         this.playing = false
-        this.sampleBuffer = []
-        this.slicedIndex = 0
+        this.sampleBuffer = new Float32Array()
+        this.sliceIndex = 0
+        this.lastFFTIdx = 0
         this.metronome.postMessage("stop")
         this.frameIdx = 0
         this.buffers = []

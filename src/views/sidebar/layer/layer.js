@@ -56,7 +56,7 @@ class Layer extends React.Component {
                 <Button variant="raised" fullWidth onClick={this.openCamera}>
                     Camera
                 </Button>
-                <Button disabled variant="raised" fullWidth onClick={this.setWindow}>
+                <Button variant="raised" fullWidth onClick={() => setSidebarWindowIndex(idxs.CONTROLS)}>
                     Controls
                 </Button>
                 <Button disabled variant="raised" fullWidth onClick={this.setWindow}>

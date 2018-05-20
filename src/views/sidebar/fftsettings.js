@@ -1,7 +1,6 @@
 import React from 'react';
 import ConfigList from './input'
 import { connect } from 'react-redux'
-import {  setSidebarWindowIndex } from '../../redux/actions/items'
 import {  editFFT } from '../../redux/actions/globals'
 
 

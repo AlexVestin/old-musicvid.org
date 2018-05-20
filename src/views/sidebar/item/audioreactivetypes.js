@@ -38,7 +38,7 @@ class AudioReactiveTypeList extends React.Component {
       <div className={classes.root}>
         <div>
         <List>
-          {["Bars", "Text3D", "Water", "Tesselated Text", "Sphere", "Random Geometry"].map(value => (
+          {["Bars", "Text3D", "Water", "Tesselated Text", "Sphere", "Random Geometry", "Particles"].map(value => (
             <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add(value)}>
               <ListItemText primary={value} />
             </ListItem>

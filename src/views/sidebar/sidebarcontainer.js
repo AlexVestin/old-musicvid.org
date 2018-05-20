@@ -17,6 +17,8 @@ import AudioReactiveTypeList from './item/audioreactivetypes'
 import ResourceList from "./item/items"
 import LayerList from './layer/layers'
 
+import Controls from './layer/controls'
+
 import ProjectSettings from './project'
 import Camera from './layer/camera'
 import Item from './item/item'
@@ -61,6 +63,7 @@ class SidebarContainer extends React.Component {
         EFFECT: 9,
         NEWEFFECT: 10,
         PROJECTSETTINGS:2,
+        CONTROLS: 13
     }
     
     state = {
@@ -99,19 +102,20 @@ class SidebarContainer extends React.Component {
                 </AppBar>
             }
 
-                {value === INDEXES.PROJECTSETTINGS && <ProjectSettings idxs={INDEXES}></ProjectSettings>}                                            
-                {value === INDEXES.CAMERA && <Camera idxs={INDEXES}></Camera>}                            
+                {value === INDEXES.CONTROLS && <Controls idxs={INDEXES}></Controls>}
+                {value === INDEXES.PROJECTSETTINGS && <ProjectSettings idxs={INDEXES}></ProjectSettings>}
+                {value === INDEXES.CAMERA && <Camera idxs={INDEXES}></Camera>}
                 {value === INDEXES.NEWEFFECT && <NewEffect idxs={INDEXES}></NewEffect>}
-                {value === INDEXES.EFFECT &&                <Effect idxs={INDEXES}></Effect>}
-                {value === INDEXES.ADDRESOURCEOPTIONS &&   <AddResourceOptions idxs={INDEXES}></AddResourceOptions>}
-                {value === INDEXES.ADDLAYEROPTIONS &&      <AddLayerOptions idxs={INDEXES}></AddLayerOptions>}
+                {value === INDEXES.EFFECT && <Effect idxs={INDEXES}></Effect>}
+                {value === INDEXES.ADDRESOURCEOPTIONS && <AddResourceOptions idxs={INDEXES}></AddResourceOptions>}
+                {value === INDEXES.ADDLAYEROPTIONS && <AddLayerOptions idxs={INDEXES}></AddLayerOptions>}
                 {value === INDEXES.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idxs={INDEXES}></AudioReactiveTypeList>}
-                {value === INDEXES.EFFECTS           && <EffectList  idxs={INDEXES}></EffectList>}
-                {value === INDEXES.ITEMS &&         <ResourceList idxs={INDEXES}></ResourceList>}
-                {value === INDEXES.ITEM &&                 <Item idxs={INDEXES} {...this.props}></Item>}
-                {value === INDEXES.LAYERS &&            <LayerList idxs={INDEXES}></LayerList>}
-                {value === INDEXES.LAYER &&                 <Layer idxs={INDEXES} item={this.props.selectedItem}></Layer>}
-                {value === INDEXES.AUDIO &&                 <Audio idxs={INDEXES} ></Audio>}
+                {value === INDEXES.EFFECTS && <EffectList idxs={INDEXES}></EffectList>}
+                {value === INDEXES.ITEMS && <ResourceList idxs={INDEXES}></ResourceList>}
+                {value === INDEXES.ITEM && <Item idxs={INDEXES} {...this.props}></Item>}
+                {value === INDEXES.LAYERS && <LayerList idxs={INDEXES}></LayerList>}
+                {value === INDEXES.LAYER && <Layer idxs={INDEXES} item={this.props.selectedItem}></Layer>}
+                {value === INDEXES.AUDIO && <Audio idxs={INDEXES} ></Audio>}
             </div>
         );
     }

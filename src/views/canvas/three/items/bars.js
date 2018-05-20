@@ -1,8 +1,8 @@
 
 import * as THREE from 'three'
-import { MeshItem } from './item';
+import { AudioreactiveItem } from './item';
 
-export default class Bars extends MeshItem {
+export default class Bars extends AudioreactiveItem {
     constructor(config) {
         super(config)
         this.mesh = new THREE.Group()
@@ -10,17 +10,13 @@ export default class Bars extends MeshItem {
         const group = { 
             title: "Stuff",
             items: {
-                strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true},
-                decreaseSpeed: {value: 0.5, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true},
+                decreaseSpeed: {value: 0.65, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true},
                 deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true},    
                 color : {value: "FFFFFF", type: "String", tooltip: "", editable: true},
                 scale : {value: 0.5, type: "Number", tooltip: "", editable: true}
             }
         }
         
-        this.config.defaultConfig.push(group)
-        this.getConfig(this.config.defaultConfig)
-
         for(var i = 0; i < 32; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
             var material = new THREE.MeshBasicMaterial( {color: "0xFFFFFF"} );
@@ -29,6 +25,10 @@ export default class Bars extends MeshItem {
             cube.position.x = i+(i*0.5) - 24;
             this.mesh.add(cube)
         }
+
+
+        this.config.defaultConfig.push(group)
+        this.getConfig(this.config.defaultConfig)
 
         this.strength = 1
         this.addItem()
@@ -58,11 +58,17 @@ export default class Bars extends MeshItem {
 
     _animate = (time, frequencyBins) => {
         const { deltaRequired, decreaseSpeed, strength, scale, Y } = this.config
+        const bins = this.getTransformedSpectrum(frequencyBins)
+
 
         this.mesh.children.forEach( (e,i) => {
+            var newScale = bins[i] > 1 ? bins[i] : 1 
+            if(newScale < e.scale.y || Math.abs(newScale - e.scale.y) < deltaRequired) {
+                newScale = e.scale.y - decreaseSpeed > 1 ? e.scale.y - decreaseSpeed : 1
+            }
 
-            e.scale.set(scale , frequencyBins[i], scale); 
-            e.position.y = Y + frequencyBins[i]/2 
+            e.scale.set(scale , newScale, scale); 
+            e.position.y = Y + newScale/2 
         })
     }
 }

@@ -1,15 +1,15 @@
 import React from 'react';
 import ConfigList from '../input'
 import { connect } from 'react-redux'
-import { editCamera, setSidebarWindowIndex } from '../../../redux/actions/items'
+import { editControls, setSidebarWindowIndex } from '../../../redux/actions/items'
 
-class Camera extends React.PureComponent {
+class Controls extends React.PureComponent {
     back = () => {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
     handleChange = change => {
-        editCamera(change)
+        editControls(change)
     }
 
 
@@ -21,7 +21,7 @@ class Camera extends React.PureComponent {
     }
 
     render() {
-        const item = this.props.cameras[this.props.selectedLayerId]
+        const item = this.props.controls[this.props.selectedLayerId]
         const defaultConfig = item.defaultConfig;
 
         return (
@@ -39,8 +39,8 @@ class Camera extends React.PureComponent {
 const mapStateToProps = (state, ownProps) => {
     return {
         selectedLayerId: state.items.selectedLayerId,
-        cameras: state.items.cameras
+        controls: state.items.controls
     }
 }
 
-export default connect(mapStateToProps)(Camera)
+export default connect(mapStateToProps)(Controls)

@@ -8,9 +8,8 @@ class Item extends React.PureComponent {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
-    handleChange = input => event => {
-        var value = event.target.value
-        editItem({key: input.key, value: value})
+    handleChange = change => {
+        editItem(change)
     }
 
     removeItem = () => {

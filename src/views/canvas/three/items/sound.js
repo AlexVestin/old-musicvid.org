@@ -35,14 +35,16 @@ export default class Sound extends BaseItem {
 
         this.ac = new AudioContext()
         this.lastIdx = -1
+        this.offset = 0
     }
 
     getEncodeFrame = (time, fps) => {
 
     }
 
-    setTime = (time) => {
-        this.offset =  Math.floor((time - this.config.start  + this.config.offsetLeft) * this.sampleRate)
+    setTime = (time, sampleWindowSize) => {
+        this.offset = Math.floor( (time - this.config.start + this.config.offsetLeft) * this.sampleRate)
+        this.windowSize = sampleWindowSize
     }
 
     getAudioFrame = (time, first = false, sampleWindowSize) => {
@@ -54,6 +56,7 @@ export default class Sound extends BaseItem {
         }
 
         const length = Math.floor(this.windowSize * this.sampleRate)
+        console.log(this.offset )
         if(this.offset >=  this.config.offsetLeft * this.sampleRate && this.offset < (this.config.duration + this.config.offsetLeft) * this.sampleRate) {
             const buffer = {}
             buffer.left =  this.left.subarray(this.offset, this.offset + length)

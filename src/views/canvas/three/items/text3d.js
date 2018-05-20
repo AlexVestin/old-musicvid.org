@@ -5,7 +5,6 @@ import { MeshItem } from './item';
 export default class Text3D extends MeshItem {
     constructor(config) {
         super(config)
-        this.bins = []
 
         const group = {
             title: "Text",
@@ -47,7 +46,7 @@ export default class Text3D extends MeshItem {
             const {color, fontSize, text} = this.config
             var geometry = new THREE.TextGeometry( 
                 text, {
-                color: color,
+                color: "0x" + color,
                 font: this.font,
                 size: fontSize,
                 height: data.height,
@@ -60,6 +59,7 @@ export default class Text3D extends MeshItem {
             
             this.mesh.geometry = geometry
             this.mesh.name = String(this.config.id)
+            this.mesh.material.color.setHex("0x" + this.config.color)
             resolve(this.mesh)
         })
     }
@@ -73,7 +73,7 @@ export default class Text3D extends MeshItem {
         this.scale = this.config.scale 
     }
 
-    editConfig = (config) => {
+    _updateConfig = (config) => {
         const { text, fontSize } = this.config
         this.config = config
 
@@ -84,8 +84,5 @@ export default class Text3D extends MeshItem {
         }
     }
 
-    animate = (time, frequencyBins) => {
-       //TODO effects
-    }
 }
 

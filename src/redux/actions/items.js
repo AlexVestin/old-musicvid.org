@@ -39,6 +39,14 @@ export function editCamera(item) {
     );
 }
 
+export function editControls(item) {
+    store.dispatch({
+        type: "EDIT_CONTROLS",
+        payload: item
+        } 
+    );
+}
+
 export function replaceCamera(item) {
     store.dispatch({
         type: "REPLACE_CAMERA",

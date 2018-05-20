@@ -9,9 +9,8 @@ class Effect extends React.PureComponent {
         setSidebarWindowIndex(this.props.idxs.EFFECTS)
     }
 
-    handleChange = input => event => {
-        var value = event.target.value
-        editEffect({key: input.key, value})
+    handleChange =  change => {
+        editEffect(change)
     }
 
     removeItem = () => {

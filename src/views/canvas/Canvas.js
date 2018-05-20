@@ -30,6 +30,35 @@ class Canvas extends Component {
       this.encodedFrames = 0;
       this.displayRenderer = this.ThreeRenderer
       window.requestAnimationFrame(this.renderScene)
+
+      window.onkeyup = (e) => {
+        var key = e.keyCode ? e.keyCode : e.which;
+        switch(key) {
+
+          case 83:
+            this.stop()
+            break;
+
+          //SPACE
+          case 32:
+            this.play()
+            break
+          
+            // .
+          case 190:
+            if(!this.props.playing)
+              this.incrementFrame()
+            break;
+          
+          // ,
+          case 188:
+            if(!this.props.playing)  
+              this.decrementFrame()
+            break
+
+          default:
+        }
+     }
     }
   
     componentWillUnmount() {
@@ -70,6 +99,19 @@ class Canvas extends Component {
       this.displayRenderer.play(this.props.time, !this.props.playing)
       togglePlaying()
       
+    }
+
+    incrementFrame = () => {
+      var time = this.props.time + (1 / this.displayRenderer.fps)
+      this.displayRenderer.renderScene(time, true)
+      incrementTime(time)
+    }
+
+    decrementFrame = () => {
+      var time = this.props.time - (1 / this.displayRenderer.fps)
+      time = time > 0 ? time : 0
+      this.displayRenderer.renderScene(time, true)
+      incrementTime(time)
     }
 
     openEncodeModal = () => {
