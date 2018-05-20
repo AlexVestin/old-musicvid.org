@@ -27,6 +27,20 @@ ENCODE_COMMON = \
 	-s NO_FILESYSTEM=1 \
 	-s DISABLE_EXCEPTION_CATCHING=1 \
 
+ENCODE_COMMON_JS = \
+	--llvm-lto 1 \
+	-O3 --memory-init-file 0 \
+	--closure 1 \
+	-o  ../../public/WasmEncoderJS.js\
+	-s TOTAL_MEMORY=67108864 \
+	-s EXPORTED_FUNCTIONS=$(ENCODE_FUNCTIONS) \
+	-s MODULARIZE=1 \
+	-s EXPORT_NAME="'WasmEncoderJS'" \
+	-s NO_FILESYSTEM=1 \
+
+
+
+
 DECODE_BC = ffmpeg_prod_demux.bc
 DECODE_FUNCTIONS ="['_init_muxer', '_get_next_frame', '_set_frame', '_close_muxer']"
 DECODE_FILES = ./C/avio_read.c
