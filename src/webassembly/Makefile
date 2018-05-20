@@ -37,7 +37,7 @@ ENCODE_COMMON_JS = \
 	-s MODULARIZE=1 \
 	-s EXPORT_NAME="'WasmEncoderJS'" \
 	-s NO_FILESYSTEM=1 \
-
+	-s ALLOW_MEMORY_GROWTH=1 \
 
 
 
@@ -63,4 +63,4 @@ demux.js:
 	emcc $(INCLUDES) $(DECODE_FILES) $(DECODE_COMMON) $(DECODE_BC) $(ENCODE_DEPS) 
 
 encode.js:
-	emcc -I./build/em/include $(ENCODE_FILES) $(ENCODE_COMMON) $(ENCODE_BC) $(ENCODE_DEPS) 
+	emcc -I./build/em/include $(ENCODE_FILES) $(ENCODE_COMMON_JS) $(ENCODE_BC) $(ENCODE_DEPS) 
