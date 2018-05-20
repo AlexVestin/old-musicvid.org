@@ -18,12 +18,12 @@ ENCODE_COMMON = \
 	--llvm-lto 1 \
 	-Oz --memory-init-file 0 \
 	--closure 1 \
-	-o  ../../public/WasmEncoder.js\
+	-o  ../../public/WasmEncoder1.js\
 	-s WASM=1 \
-	-s ALLOW_MEMORY_GROWTH=1 \
+	-s TOTAL_MEMORY=1073741824 \
 	-s EXPORTED_FUNCTIONS=$(ENCODE_FUNCTIONS) \
 	-s MODULARIZE=1 \
-	-s EXPORT_NAME="'WasmEncoder'" \
+	-s EXPORT_NAME="'WasmEncoder1'" \
 	-s NO_FILESYSTEM=1 \
 	-s DISABLE_EXCEPTION_CATCHING=1 \
 
@@ -32,13 +32,11 @@ ENCODE_COMMON_JS = \
 	-O3 --memory-init-file 0 \
 	--closure 1 \
 	-o  ../../public/WasmEncoderJS.js\
-	-s TOTAL_MEMORY=67108864 \
+	-s TOTAL_MEMORY=1073741824 \
 	-s EXPORTED_FUNCTIONS=$(ENCODE_FUNCTIONS) \
 	-s MODULARIZE=1 \
 	-s EXPORT_NAME="'WasmEncoderJS'" \
 	-s NO_FILESYSTEM=1 \
-	-s ALLOW_MEMORY_GROWTH=1 \
-
 
 
 DECODE_BC = ffmpeg_prod_demux.bc
@@ -46,10 +44,10 @@ DECODE_FUNCTIONS ="['_init_muxer', '_get_next_frame', '_set_frame', '_close_muxe
 DECODE_FILES = ./C/avio_read.c
 
 DECODE_COMMON = \
-	-O2 --memory-init-file 0 \
+	-O3 --memory-init-file 0 \
 	-o  ../../public/Demux2.js\
 	-s WASM=1 \
-	-s ALLOW_MEMORY_GROWTH=1 \
+	-s TOTAL_MEMORY=1073741824 \
 	-s EXPORTED_FUNCTIONS=$(DECODE_FUNCTIONS) \
 	-s MODULARIZE=1 \
 	-s EXPORT_NAME="'Demuxer'" \
@@ -63,4 +61,4 @@ demux.js:
 	emcc $(INCLUDES) $(DECODE_FILES) $(DECODE_COMMON) $(DECODE_BC) $(ENCODE_DEPS) 
 
 encode.js:
-	emcc -I./build/em/include $(ENCODE_FILES) $(ENCODE_COMMON_JS) $(ENCODE_BC) $(ENCODE_DEPS) 
+	emcc -I./build/em/include $(ENCODE_FILES) $(ENCODE_COMMON) $(ENCODE_BC) $(ENCODE_DEPS) 
