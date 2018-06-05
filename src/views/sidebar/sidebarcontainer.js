@@ -41,9 +41,10 @@ TabContainer.propTypes = {
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     height: "100%",
+    minWidth: "100%",
+    overflow: "hidden"
   },
 });
 
@@ -87,20 +88,12 @@ class SidebarContainer extends React.Component {
         return (
             <div className={classes.root}>
                 <AppBar position="static" >
-                    <Tabs value={this.tabValue} onChange={this.handleChange} fullWidth>
+                    <Tabs value={this.tabValue} onChange={this.handleChange} fullWidth >
                         <Tab label="Layers" style={tabStyle} href="#basic-tabs" />
                         <Tab label="Audio" style={tabStyle}/>
                         <Tab label="Project" style={tabStyle}/>
                     </Tabs>
                 </AppBar>
-
-                {value > 2 && 
-                <AppBar position="static" color="default" style={{height: 30, minHeight: 30, textAlign: "center"}}>
-                        <Typography variant="title" color="inherit">
-                            {this.props.selectedLayer &&  this.props.selectedLayer.name }
-                        </Typography>
-                </AppBar>
-            }
 
                 {value === INDEXES.CONTROLS && <Controls idxs={INDEXES}></Controls>}
                 {value === INDEXES.PROJECTSETTINGS && <ProjectSettings idxs={INDEXES}></ProjectSettings>}

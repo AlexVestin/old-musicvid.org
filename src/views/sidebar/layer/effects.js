@@ -17,8 +17,7 @@ const styles = theme => ({
     width: '100%',
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    backgroundColor: theme.palette.background.paper,
+    overflowY: "scroll"
   },
   textField: {
     marginLeft: theme.spacing.unit * 3,
@@ -43,42 +42,32 @@ class EffectList extends React.Component {
 
     render() {
         const { classes, passes } = this.props;
-        const idxs = this.props.idxs
+
         return (
             <div className={classes.root}>
-                <div>
-                  
-                    <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
-                        {passes.map( (pass, i) => {
-                            return( 
-                                <div key={pass.id} style={{width: "100%", display: "flex", flexDirection: "row", textAlign: "right", overflow: "hidden",}}>
-                                    <Button variant="raised" fullWidth onClick={() => selectEffect(pass.id)}> {pass.name} </Button>
-                                        <div style={{display: "flex", flexDirection: "row"}}>
+                <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
+                    {passes.map( (pass, i) => {
+                        return( 
+                            <div key={pass.id} style={{width: "100%", display: "flex", flexDirection: "row", textAlign: "right", overflow: "hidden",}}>
+                                <Button variant="raised" fullWidth onClick={() => selectEffect(pass.id)}> {pass.name} </Button>
+                                <div style={{display: "flex", flexDirection: "row"}}>
 
-                                            <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || passes[i-1].renderPass}>
-                                                <KeyboardArrowUp></KeyboardArrowUp>
-                                            </Button>
-                                            <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || i === passes.length - 1} >
-                                                <KeyboardArrowDown ></KeyboardArrowDown>
-                                            </Button>
+                                    <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || passes[i-1].renderPass} disableRipple>
+                                        <KeyboardArrowUp ></KeyboardArrowUp>
+                                    </Button>
+                                    <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || i === passes.length - 1} disableRipple>
+                                        <KeyboardArrowDown ></KeyboardArrowDown>
+                                    </Button>
 
-                                            <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} >
-                                                <Delete onClick={() => this.removeItem(pass)}></Delete>
-                                            </Button>
-                                        </div>
-    
+                                    <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} >
+                                        <Delete onClick={() => this.removeItem(pass)}></Delete>
+                                    </Button>
                                 </div>
-                            )
-                        } 
-                        )}
-                    </div>
+                            </div>
+                        )
+                    } 
+                    )}
                 </div>
-                    <div> 
-                        <Button onClick={() => setSidebarWindowIndex(idxs.NEWEFFECT)} fullWidth color="primary" variant="raised"> Add new effect</Button>
-                        <Button variant="raised" fullWidth onClick={this.back}>
-                            Back
-                        </Button>
-                    </div>
             </div>
         );
     }

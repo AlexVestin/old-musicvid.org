@@ -1,5 +1,5 @@
-const controlTypes = ["OrbitControl"]
-const controlsGroup = {
+const controlTypes = ["OrbitControl", "TrackballControl"]
+const orbitGroup = {
     title: "Controls",
     items: {
         enabled: {value: false, type: "Boolean"},
@@ -14,11 +14,28 @@ const controlsGroup = {
     }
 }
 
+const trackballGroup = {
+    title: "Controls",
+    items: {
+        enabled: {value: false, type: "Boolean"},
+        type: {value: 0, type: "List", options: controlTypes},
+        rotateSpeed: {value: 1.0, type: "Number"},
+        zoomSpeed: {value: 1.2, type: "Number"},
+        panSpeed: {value: 0.8, type: "Number"},
+        noZoom:  {value: false, type: "Boolean"},
+        noPan: {value: false, type: "Boolean"},
+        staticMoving: {value: true, type: "Boolean"},
+        dynamicDampingFactor: {value: 0.3, type: "Number"}
+    }
+}
+
+
+
 export default {
-    config: {
+    orbitConfig: {
         enabled: false,
         type: "OrbitControl",
-        defaultConfig: [controlsGroup],
+        defaultConfig: [orbitGroup],
         panningMode: 1,
         minDistance:  40.0,
         maxDistance: 300.0,
@@ -26,6 +43,19 @@ export default {
         targetY: 10, 
         targetZ: 0, 
         maxPolarAngle: Math.PI * 0.495,
+    },
+
+    trackballConfig: {
+        enabled: true,
+        type: "TrackballControl",
+        defaultConfig: [trackballGroup],
+        rotateSpeed: 1.0,
+        zoomSpeed: 1.2,
+        panSpeed: 0.8,
+        noZoom: false,
+        noPan: false,
+        staticMoving: true,
+        dynamicDampingFactor: 0.3
     }
 }
 

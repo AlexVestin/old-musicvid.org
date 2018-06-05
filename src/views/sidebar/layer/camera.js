@@ -21,25 +21,18 @@ class Camera extends React.PureComponent {
     }
 
     render() {
-        const item = this.props.cameras[this.props.selectedLayerId]
+        const item = this.props.camera
         const defaultConfig = item.defaultConfig;
 
         return (
-            <ConfigList 
-                handleChange={this.handleChange} 
-                defaultConfig={defaultConfig} 
-                item={item} 
-                addAutomation={this.addAutomation}
-                onBack={this.back}>
-            </ConfigList>
+            <React.Fragment></React.Fragment>
         );
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        selectedLayerId: state.items.selectedLayerId,
-        cameras: state.items.cameras
+        camera: state.items.cameras[state.items.selectedLayerId]
     }
 }
 

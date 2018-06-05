@@ -47,6 +47,14 @@ export function editControls(item) {
     );
 }
 
+export function replaceControls(item) {
+    store.dispatch({
+        type: "REPLACE_CONTROLS",
+        payload: item
+        } 
+    );
+}
+
 export function replaceCamera(item) {
     store.dispatch({
         type: "REPLACE_CAMERA",
@@ -128,6 +136,14 @@ export function removeSound(item){
 export function editEffect(item) {
     store.dispatch({
         type: "EDIT_EFFECT",
+        payload: item
+        } 
+    );  
+} 
+
+export function editFog(item) {
+    store.dispatch({
+        type: "EDIT_FOG",
         payload: item
         } 
     );  

@@ -149,13 +149,51 @@ export default class Clip extends PureComponent {
             width: resizeWidth,
             height: height
         }
+
+
+        
+        const HEADER_SIZE = 12
+        //const startIndex = Math.floor(((l / (zoomWidth * unitSize)) * item.sampleRate) / item.precision)
+        //const totalLength = (item.maxDuration * zoomWidth * unitSize) + this.state.resizeRightDx - this.state.resizeLeftDx
+        //const newpoints = item.points.slice(startIndex, item.points.length -1)
+      
+        /*
+          let stringPoints = ""
+        item.points.forEach((e, i) => stringPoints += String(e[0])  +"," + String(e[1]) + " ")
+
+        const BUCKET_WIDTH = 1
+        const nrPoints = 100
+           
+        let count = 0
+
+         {item.points.map((bucket, i) => {
+                        const bucketSVGHeight = bucket * height;
+                        return(
+                            <div
+                                key={i}
+                                style={{
+                                    position: "absolute",
+                                    zIndex: 10,
+                                    marginTop: HEADER_SIZE / 2,
+                                    left: (i / item.points.length) * w,
+                                    top: ~~(height - bucketSVGHeight) / 2.0,
+                                    height: ~~bucketSVGHeight,
+                                    width: BUCKET_WIDTH,
+                                    backgroundColor: "white",
+                                }}
+                                /> 
+                            ) 
+                        }
+                    )}
+        */
+
+     
         return (
             <div 
                 onClick={this.onClick}
                 style={{position:"relative", display: "flex", flexDirection: "row", zIndex: 2}} 
                 onMouseDown={this.onMouseDown}
             >
-
                 <div 
                     style={{
                         position: "absolute",
@@ -172,13 +210,13 @@ export default class Clip extends PureComponent {
                         borderWidth: 1,
                         borderColor: '#555555',
                     }}>
-                    
+    
                     <div 
                         style={{
                             width: "100%",
                             position: "relative",
                             backgroundColor: "rgba(2,2,2,0.6)",
-                            fontSize: 12, 
+                            fontSize: HEADER_SIZE, 
                             fontFamily: "'Lucida Console', Monaco, monospace", 
                             color:"white", 
                             pointerEvents: "none", 

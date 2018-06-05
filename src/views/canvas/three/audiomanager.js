@@ -20,7 +20,6 @@ export default class AudioManager {
         this.fftSize = 2048
         this.lastBins = []
         this.lastFFTIdx  = 0;
-
         this.time = 0
 
         this.metronome = new Worker("audioworker.js")
@@ -35,6 +34,7 @@ export default class AudioManager {
         this.Module["onRuntimeInitialized"] = () => { 
             this.onModuleLoaded()
         };
+        
         //this.fftTransformer = new FFTTransformer(this.fftSize, 32)
     }
 
@@ -151,7 +151,7 @@ export default class AudioManager {
         if(this.sampleBuffer.length >= this.fftSize) {
             let windowSize = this.fftSize;
 
-            const idx = Math.floor((time - this.time + (this.sampleWindowSize * (this.buffers.length - 1)))* this.sampleRate)
+            const idx = Math.floor((time - this.time + (this.sampleWindowSize * this.buffers.length))* this.sampleRate)
             const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
 
             this.sampleBuffer = this.sampleBuffer.slice(idx - this.lastFFTIdx)
@@ -192,11 +192,6 @@ export default class AudioManager {
         this.time = time
         this.sounds.forEach(e => e.setTime(time, this.sampleWindowSize))
         this.buffers = []
-
-
-        this.sampleBuffer = new Float32Array()
-        this.sliceIndex = 0
-        this.lastFFTIdx = 0
     }
 
     play = (time, playing) => {

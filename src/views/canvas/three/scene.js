@@ -11,12 +11,11 @@ import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
 import RenderTarget from './postprocessing/rendertarget';
-import { addLayer, replaceCamera } from '../../../redux/actions/items'
+import { addLayer, replaceCamera, replaceControls } from '../../../redux/actions/items'
 import cameraConfigs from './cameras/camera'
 import controlConfigs from './controls/config'
-
-
 import Particles from './items/particles';
+import TrackballControls from './controls/trackball';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -30,7 +29,25 @@ export default class SceneContainer {
         this.toRender = []
         this.rendering = []
 
-        this.cameraConfig = cameraConfigs.orthoConfig
+        this.cameraConfig   = cameraConfigs.orthoConfig
+        this.controlConfig  = controlConfigs.orbitConfig
+        this.fogConfig      = {
+            near: 500, 
+            far: 2000, 
+            color: "0xcce0ff", 
+            enabled: false,
+            defaultConfig: [{
+                title: "Fog", 
+                items: {
+                    enabled:    { value: false, type: "Boolean" },
+                    near:       { value: 500, type: "Number"},
+                    far:        { value: 2000, type: "Number"},
+                    color:      { value: "333333", type: "String"}
+                }
+            }] 
+        }
+
+        this.scene.fog = new THREE.Fog(0xfffff, 1, 1000)
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
@@ -39,29 +56,60 @@ export default class SceneContainer {
             height,
             passes: [],
             camera: this.cameraConfig,
-            controls: controlConfigs.config
+            controls: this.controlConfig,
+            fog: this.fogConfig
         }
 
-        const sceneConfig = {
+        this.sceneConfig = {
             scene: this.scene,
             camera: this.camera,
             renderer
         }
         
         addLayer(this.config)
-        this.renderTarget = new RenderTarget(name, width, height, sceneConfig)
+
+        this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
         this.texture = this.renderTarget.buffer.texture
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
-        this.quad.frustumCulled = false; // Avoid getting clipped 
+        this.quad.frustumCulled = false; 
+    }
+
+    editFog = (key, value) => {
+        this.scene.fog[key] = value
     }
 
     editControls = (key, value) => {
-        console.log(key, value)
+        if(key === "type") {
+            this.controls.dispose()
+            if(value === "TrackballControl") {
+                this.controls = new TrackballControls(this.camera, this.sceneConfig.renderer.domElement)
+                this.controlConfig = controlConfigs.trackballConfig
+                
+            }else if(value === "OrbitControl") {
+                this.controls = new OrbitControls(this.camera, this.sceneConfig.renderer.domElement)
+               
+                this.camera.lookAt(this.controls.target);
+                this.controlConfig = controlConfigs.orbitConfig
+            }else {
+                alert("faulty control type name provided")
+            }
+
+            replaceControls(this.controlConfig)
+            return
+        }
+
         switch(key) {
             case "maxDistance":
             case "minDistance":
             case "maxPolarAngle":
             case "enabled":
+            case "panSpeed":
+            case "noZoom":
+            case "noPan":
+            case "rotateSpeed":
+            case "zoomSpeed":
+            case "staticMoving":
+            case "dynamicDampingFactor":
                 this.controls[key] = value
                 break;
             case "targetX":
@@ -72,6 +120,8 @@ export default class SceneContainer {
                 break;
             default:   
         }
+
+
         this.controls.update()
     }
 
@@ -84,8 +134,8 @@ export default class SceneContainer {
                 this.camera = new THREE.OrthographicCamera()
             }else if (value === "PerspectiveCamera") {
                 this.cameraConfig = cameraConfigs.perspectiveConfig
-                this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000)
-                this.camera.position.set(30,30,200)
+                this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000)
+                this.camera.position.set(30, 30, 200)
             }else {
                 alert("--------ERROR COULD NOT FIND CAMERA PROVIDED ----------")
                 return
@@ -95,12 +145,22 @@ export default class SceneContainer {
         }
 
         if(this.cameraConfig.type === "PerspectiveCamera") {
-            if(key === "x" || key  === "y" || key === "z") {
+            switch(key) {
+                case "x":
+                case "y":
+                case "z":
                 this.camera.position[key] = value; 
-                //this.controls.update()
+                break;
+                case "fov":
+                case "aspect":
+                case "near":
+                case "far":
+                this.camera[key] = value;
+                this.camera.updateProjectionMatrix();
+                break;
+                default:
+
             }
-
-
         }   
     }
     
@@ -198,8 +258,8 @@ export default class SceneContainer {
         const { width, height } = this.config
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000)
         this.camera.position.set(30,30,200)
-        replaceCamera({...this.cameraConfig, x: 30, y: 30, z: 200, type: "PerspectiveCamera", aspect: width / height, near: 1, far: 20000})
-        
+        this.cameraConfig = cameraConfigs.perspectiveConfig
+        replaceCamera(this.cameraConfig)
         this.renderTarget.setCamera(this.camera)
     }
 
@@ -220,7 +280,7 @@ export default class SceneContainer {
         const { camera, renderer } = this
         let controls = new OrbitControls(camera, renderer.domElement);
         controls.maxPolarAngle = Math.PI * 0.495;
-        controls.target.set(0, 10, 0);
+        controls.target.set(0, 0, 0);
         controls.panningMode = 1;
         controls.minDistance = 40.0;
         controls.maxDistance = 300.0;
@@ -241,7 +301,7 @@ export default class SceneContainer {
         this.rendering = this.rendering.filter(e => e.config.id !== item.config.id)
         item.mesh.visible = false
         const { start, duration } = item.config
-        if(time - start > 0 && time - start < duration ) {
+        if(time - start >= 0 && time - start < duration ) {
             this.rendering.push(item)
             item.mesh.visible = true
         }else if (start > time) {
@@ -296,6 +356,7 @@ export default class SceneContainer {
         this.addOrRemove(this.toRender, this.rendering, this.scene, time)
         this.rendering.forEach(e =>  e.animate(time, frequencyBins))
         this.freqNr = frequencyBins[1]
+        if(this.controls)this.controls.update()
     }
 
     render = (renderer, time, postProcessingEnabled) => {

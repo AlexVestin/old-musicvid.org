@@ -37,7 +37,7 @@ export default class DragControls extends THREE.EventDispatcher {
         }
 
         function deactivate() {
-
+            
             _domElement.removeEventListener( 'mousemove', onDocumentMouseMove, false );
             _domElement.removeEventListener( 'mousedown', onDocumentMouseDown, false );
             _domElement.removeEventListener( 'mouseup', onDocumentMouseCancel, false );

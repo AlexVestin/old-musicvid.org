@@ -9,12 +9,11 @@ import {connect} from 'react-redux'
 
 const styles = theme => ({
   root: {
-    height: "calc(100% - 78px)", // height of the header/appbar
+    height: "calc(100% - 48px)", // height of the header/appbar
     width: '100%',
     display: "flex", 
     flexDirection: "column",
     justifyContent: "space-between",
-    width: '100%',
     backgroundColor: theme.palette.background.paper,
   },
 });

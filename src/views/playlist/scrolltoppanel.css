@@ -1,12 +1,10 @@
 .group1 .button {
-    width: 15px;
-    height: 15px;
     background-color: #646464;
+    max-width: 15px;
+    max-height: 15px;
 }
 
 .group1 .button:hover {
-    width: 15px;
-    height: 15px;
     color: white;
 }
 

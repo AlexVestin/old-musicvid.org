@@ -9,6 +9,7 @@ export default function itemsReducer(state = {
     automations: {},
     cameras: {},
     controls: {},
+    fog: {},
     audioInfo: null,
     sideBarWindowIndex: 0,
     selectedItemId: 0,
@@ -23,8 +24,11 @@ export default function itemsReducer(state = {
     
     }, action){
 
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog
         switch(action.type){  
+            case "EDIT_FOG": 
+                fog =  update(state.fog, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
+                return { ...state, fog }
             case "SET_POST_PROCESSING_ENABLED":
                 return {...state, postProcessingEnabled: action.payload}
             case "EDIT_CAMERA": 
@@ -32,6 +36,9 @@ export default function itemsReducer(state = {
                 return {...state, cameras}
             case "EDIT_CONTROLS": 
                 controls =  update(state.controls, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
+                return {...state, controls}
+            case "REPLACE_CONTROLS":
+                controls = update(state.controls, {[state.selectedLayerId]: { $set: action.payload }})
                 return {...state, controls}
             case "REPLACE_CAMERA":
                 cameras =  update(state.cameras, {[state.selectedLayerId]: { $set: action.payload }})
@@ -84,14 +91,19 @@ export default function itemsReducer(state = {
                 audioItems  = update(state.audioItems, {$push: [{...action.payload, index: state.itemIdx}]})
                 return {...state, audioInfo: action.payload, audioItems, itemIdx: state.itemIdx + 1}
             case "ADD_LAYER":
-                id      = action.payload.id
-                items   = update(state.items,  {[id]: {$set: {} }})
-                passes  = update(state.passes, {[id]: {$set: [] }})
-                layers  = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: [], camera: action.payload.camera.id, controls: action.payload.controls.id }}})
-                cameras = update(state.cameras, {[id]: {$set: action.payload.camera }})
-                controls = update(state.controls, {[id]: {$set: action.payload.controls }})
+                id          = action.payload.id
+                items       = update(state.items,  {[id]: {$set: {} }})
+                passes      = update(state.passes, {[id]: {$set: [] }})
                 
-                return {...state, items, layers, passes, cameras, controls, selectedLayerId: id}
+                layers      = update(state.layers,  {[id]: 
+                                {$set: {...action.payload,  
+                                    items: [], passes: [], camera: action.payload.camera.id, 
+                                    controls: action.payload.controls.id, fog: action.payload.fog.id }}})
+
+                cameras     = update(state.cameras, {[id]: {$set: action.payload.camera }} )
+                controls    = update(state.controls, {[id]: {$set: action.payload.controls }} )
+                fog         = update(state.fog,  {[id]: {$set: action.payload.fog }} )
+                return {...state, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
             case "SELECT_LAYER":
                 return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":

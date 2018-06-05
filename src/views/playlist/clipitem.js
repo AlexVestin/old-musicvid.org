@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp'
 import Add from '@material-ui/icons/Add'
+import IconButton from 'material-ui/IconButton'
 
 import classes from './clipinfobar.css'
 import Clip from './clip'
@@ -75,15 +76,23 @@ class ClipItem extends PureComponent {
                             <div style={{marginLeft: 3, position: "absolute"}}>{i + 1}</div>
                             
                             <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 14, display: "flex", flexDirection: "row", height: pHeight}}>
-                                {!this.state.expanded && <KeyboardArrowDown onClick={() => this.setState({expanded: true})} style={{marginTop: -5}}/>}
-                                {this.state.expanded && <KeyboardArrowUp onClick={() => this.setState({expanded: false})} style={{marginTop: -5}}/>}
+                                {!this.state.expanded &&  
+                                <IconButton iconStyle={{width: 15, height: 15}} style={{width: 15, height: 15, color: "white"}} disableRipple>
+                                    <KeyboardArrowDown  onClick={() => this.setState({expanded: true})} style={{marginTop: -5}}> </KeyboardArrowDown>
+                                </IconButton>
+                                }
+                                {this.state.expanded && 
+                                <IconButton iconStyle={{width: 15, height: 15}} style={{width: 15, height: 15,  color: "white"}} disableRipple>
+                                    <KeyboardArrowUp  onClick={() => this.setState({expanded: false})} style={{marginTop: -5}} ></KeyboardArrowUp>        
+                                </IconButton>
+                                }
                                 <div style={{userSelect: "none"}}>{str}</div>
                             </div>
 
                              {this.state.expanded && 
 
                             <React.Fragment>
-                                {automations.map((e, i) => (
+                                {automations && automations.map((e, i) => (
                                     <div 
                                         key={e.name}
                                         style={{
@@ -133,6 +142,8 @@ class ClipItem extends PureComponent {
                             item={item}
                             itemRightOffset={itemRightOffset}
                             unitSize={unitSize}
+                            viewport={viewport}
+                            maxNrUnits={maxNrUnits}
                             >
                         </Clip>
                         {this.state.expanded && 

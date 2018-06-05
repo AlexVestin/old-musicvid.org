@@ -8,10 +8,6 @@ class Item extends React.PureComponent {
         setSidebarWindowIndex(this.props.idxs.ITEMS)
     }
 
-    handleChange = change => {
-        editItem(change)
-    }
-
     removeItem = () => {
         removeItem({id: this.props.selectedItem.id, type: this.props.selectedItem.type})
     }
@@ -27,14 +23,16 @@ class Item extends React.PureComponent {
         const item = this.props.selectedItem
         const defaultConfig = item.defaultConfig;
         return (
-            <ConfigList 
-                handleChange={this.handleChange} 
-                defaultConfig={defaultConfig} 
-                item={item} 
-                onDelete={this.removeItem} 
-                addAutomation={this.addAutomation}
-                onBack={this.back}>
-            </ConfigList>
+            <div>
+                
+                <ConfigList 
+                    edit={editItem} 
+                    defaultConfig={defaultConfig} 
+                    item={item} 
+                    onDelete={this.removeItem} 
+                    addAutomation={this.addAutomation}>
+                </ConfigList>
+            </div>
         );
     }
 }

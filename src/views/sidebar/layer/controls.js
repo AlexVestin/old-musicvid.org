@@ -25,13 +25,7 @@ class Controls extends React.PureComponent {
         const defaultConfig = item.defaultConfig;
 
         return (
-            <ConfigList 
-                handleChange={this.handleChange} 
-                defaultConfig={defaultConfig} 
-                item={item} 
-                addAutomation={this.addAutomation}
-                onBack={this.back}>
-            </ConfigList>
+            <React.Fragment></React.Fragment>
         );
     }
 }

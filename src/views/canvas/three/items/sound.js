@@ -42,9 +42,8 @@ export default class Sound extends BaseItem {
 
     }
 
-    setTime = (time, sampleWindowSize) => {
+    setTime = (time) => {
         this.offset = Math.floor( (time - this.config.start + this.config.offsetLeft) * this.sampleRate)
-        this.windowSize = sampleWindowSize
     }
 
     getAudioFrame = (time, first = false, sampleWindowSize) => {
@@ -56,7 +55,6 @@ export default class Sound extends BaseItem {
         }
 
         const length = Math.floor(this.windowSize * this.sampleRate)
-        console.log(this.offset )
         if(this.offset >=  this.config.offsetLeft * this.sampleRate && this.offset < (this.config.duration + this.config.offsetLeft) * this.sampleRate) {
             const buffer = {}
             buffer.left =  this.left.subarray(this.offset, this.offset + length)
@@ -88,6 +86,8 @@ export default class Sound extends BaseItem {
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
+
+                    that.config.points = that.generateSvgWaveform(that.left)
                 
                     addSound(that.config)
                     setDisabled(false)
@@ -108,6 +108,25 @@ export default class Sound extends BaseItem {
         }else {
             reader.readAsArrayBuffer(file)
         }
-        
+    }
+
+    generateSvgWaveform = ( decodedAudioData ) => {
+        const NUMBER_OF_BUCKETS = Math.floor(this.duration * 3); // number of "bars" the waveform should have
+        let bucketDataSize = Math.floor(decodedAudioData.length / NUMBER_OF_BUCKETS,);
+        let buckets = [];
+        for (var i = 0; i < NUMBER_OF_BUCKETS; i++) {
+            let startingPoint = i * bucketDataSize;
+            let endingPoint = i * bucketDataSize + bucketDataSize;
+            let max = 0;
+            for (var j = startingPoint; j < endingPoint; j++) {
+                if (decodedAudioData[j] > max) {
+                    max = decodedAudioData[j];
+                }
+            }
+            let size = Math.abs(max);
+            buckets.push(size / 2);
+        }
+
+        return buckets
     }
 }

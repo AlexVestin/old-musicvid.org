@@ -54,9 +54,13 @@ class ThreeCanvas extends Component {
 
     setupScene = () =>  {
         const background = new SceneContainer("background", this.width, this.height, this.renderer)
+        background.setControls()
+        background.controls.enabled = false
+        
         const graphics   = new SceneContainer("graphics", this.width, this.height, this.renderer)
         graphics.setCamera()
         graphics.setControls()
+        graphics.controls.enabled = false
 
         this.mainCamera = new OrthographicCamera(-1,1,1,-1,0,100);
         this.mainScene = new Scene();
@@ -136,6 +140,9 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
 
         switch(type) {
+            case "EDIT_FOG":
+                scene.editFog(payload.key, payload.value)
+                break;
             case "EDIT_CONTROLS": 
                 scene.editControls(payload.key, payload.value)
                 break;

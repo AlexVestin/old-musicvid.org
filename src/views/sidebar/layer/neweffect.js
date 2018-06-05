@@ -8,11 +8,8 @@ import { setSidebarWindowIndex, createEffect } from '../../../redux/actions/item
 
 const styles = theme => ({
   root: {
-    height: "calc(100% - 78px)", // height of the header/appbar
+    height: "calc(100% - 48px)", // height of the header/appbar
     width: '100%',
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
     backgroundColor: theme.palette.background.paper,
   },
 });
@@ -40,10 +37,6 @@ class NewEffect extends React.Component {
                     </ListItem>
                 ))} 
             </List>
-
-            <Button variant="raised" fullWidth onClick={this.back}>
-                Back
-            </Button>
       </div>
     );
   }

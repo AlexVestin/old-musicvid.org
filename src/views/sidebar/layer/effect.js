@@ -9,10 +9,6 @@ class Effect extends React.PureComponent {
         setSidebarWindowIndex(this.props.idxs.EFFECTS)
     }
 
-    handleChange =  change => {
-        editEffect(change)
-    }
-
     removeItem = () => {
         removeEffect(this.props.selectedLayer.selectedEffect)
     }
@@ -27,6 +23,7 @@ class Effect extends React.PureComponent {
                 handleChange={this.handleChange} 
                 defaultConfig={defaultConfig} 
                 item={item} 
+                edit={editEffect}
                 onDelete={this.removeItem} 
                 onBack={this.back}>
             </ConfigList>

@@ -29,7 +29,7 @@ class ProjectSettings extends PureComponent {
         return(
             <div style={{ width: "100%", height: "100%" , margin: 10, fontSize: 14}}>
                 Configurarion
-                <Input onChange={(e) => setFps(e.target.value)}  value={fps} type="number" label="FPS"></Input>
+                <Input disabled onChange={(e) => setFps(e.target.value)}  value={fps} type="number" label="FPS"></Input>
                 <Input onChange={(e) => setClipDuration(e.target.value)} value={clipDuration} type="number" label="CLIP DURATION"></Input>
                 <div style={listItemStyle}>
                         <div style={{marginTop: 8}}> ENABLE POSTPROCESSING </div>
@@ -48,7 +48,7 @@ class Input extends PureComponent {
         return(
             <div style={listItemStyle}>
                 <div style={{fontSize: 14, marginTop: 8}}>{label}</div>
-                <div><input value={value} onChange={onChange} style={{height: 18, width: 40}} type={type}></input></div>
+                <div><input disabled={this.props.disabled} value={value} onChange={onChange} style={{height: 18, width: 40}} type={type}></input></div>
             </div>
         )
     }

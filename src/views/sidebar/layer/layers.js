@@ -10,9 +10,8 @@ import Button from 'material-ui/Button'
 
 const styles = theme => ({
   root: {
-    height: "calc(100% - 78px)", // height of the header/appbar
+    height: "calc(100% - 48px)", // height of the header/appbar
     width: '100%',
-    backgroundColor: theme.palette.background.paper,
   },
 });
 
@@ -33,8 +32,11 @@ class LayerList  extends React.Component {
             <ListItem key={layers[key].name} dense button className={classes.listItem} onClick={() => this.onClick(layers[key])}>
               <ListItemText primary={layers[key].name} />
             </ListItem>
+            
           ))}
+        <ListItem>TTEST</ListItem>
         </List>
+        
         <Button disabled variant="raised" fullWidth onClick={this.setWindow} color="secondary">
             Add New Layer
         </Button>
