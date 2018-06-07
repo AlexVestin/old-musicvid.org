@@ -1,0 +1,43 @@
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    top: 0;
+    margin: 0;
+    height: 5vh;
+    min-height: 5vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.user_group {
+    display: flex;
+}
+
+
+.logo {
+   height: 100%;
+   width: 100%; 
+   color: #f67600;
+   text-align: center;
+}
+
+.header .logo h1  {
+    font-family: "proxima-nova", sans-serif;
+    font-weight: 700;
+    height: 100%;
+    letter-spacing: -2px;
+    margin: 0;
+    margin-top: 5px;
+    margin-left: 25px;
+    
+}
+.link {
+    border:none;
+    outline:none;
+    text-decoration:none;
+    color:inherit;
+    -webkit-tap-highlight-color: white;
+}
+

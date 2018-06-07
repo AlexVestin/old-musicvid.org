@@ -8,6 +8,14 @@ export function incrementTime(item){
     );  
 }
 
+export function setAudioBufferSize(item){
+    store.dispatch({
+        type: "SET_AUDIO_BUFFER_SIZE",
+        payload: item
+        } 
+    );  
+}
+
 export function setTime(item){
     store.dispatch({
         type: "SET_TIME",

@@ -1,0 +1,32 @@
+.content_wrapper {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f1f1f1;
+    min-height: 0;
+  }
+  
+.content_footer {
+    align-self: flex-end;
+    background-color: teal;
+    height: 22%;
+    width: 100%; 
+    margin-bottom: 0px;
+  }
+  
+.wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.canvas {
+    display: table;
+    margin: 0 auto;
+    text-align: center;
+}
+  
+  

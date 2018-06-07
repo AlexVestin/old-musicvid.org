@@ -1,5 +1,5 @@
 
-import SidebarContainer from '../../views/sidebar/sidebarcontainer'
+import SidebarContainer from '@/views/editor/sidebar/sidebarcontainer'
 import update from 'immutability-helper'
 
 export default function itemsReducer(state = {
@@ -21,6 +21,7 @@ export default function itemsReducer(state = {
     audioItemView: 0,
     effectId: 0,
     postProcessingEnabled: false,
+    initialized: false,
     
     }, action){
 

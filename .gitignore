@@ -8,7 +8,7 @@ node_modules/
 src/webassembly/C/a.out
 src/webassembly/C/assets/
 src/assets/
-
+vendor/
 src/webassembly/build/em/lib/
 src/webassembly/build/em/include/
 src/webassembly/build/em/share/

@@ -30,36 +30,13 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-.sidepanel {
-  width: 4px;
-  height: 100%;
-  background-color: #121212;
-}
-
-.middlewrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-}
-
-.header {
-  position: relative;
-  top: 0;
-  margin: 0;
-  height: 4vh;
-  min-height: 4vh;
-  width: 100%;
-  overflow: hidden;
-  background-color: #888888;
-}
 
 .footer {
   position: absolute;
   bottom: 0;
-  min-height: 12px;
+  min-height: 8px;
   width: 100%;
-  height: 12px;
+  height: 8px;
   z-index: 100;
   background-color: #121212;
 }
@@ -73,32 +50,3 @@ input[type=number]::-webkit-outer-spin-button {
   flex-direction: column; 
 }
 
-.canvas {
-  display: table;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.wrapper .content_wrapper {
-  position: relative;
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  align-items: center;
-  background-color: #f1f1f1;
-  min-height: 0;
-}
-
-.wrapper .content_wrapper .content_header {
-  background-color: teal;
-  height: 2%;
-  width: 100%; 
-}
-
-.wrapper .content_wrapper .content_footer {
-  align-self: flex-end;
-  background-color: teal;
-  height: 22%;
-  width: 100%; 
-  margin-bottom: 0px;
-}

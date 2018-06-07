@@ -6,10 +6,13 @@ export default function playbackReducer(state = {
     frameId: 0,
     disabled: false,
     encoding: false,
-    fftSettings: {}
+    fftSettings: {},
+    audioBufferSize: 0.1,
 
     }, action){
         switch(action.type){
+            case "SET_AUDIO_BUFFER_SIZE":
+                return {...state, audioBufferSize: action.payload}
             case "EDIT_FFT": 
                 return {...state, fftSettings: {...state.fftSettings, [action.payload.key] : action.payload.value}}
             case "ADD_FFT_SETTINGS":
