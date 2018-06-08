@@ -1,0 +1,43 @@
+
+
+import React, { PureComponent} from 'react'
+import {connect} from 'react-redux'
+
+
+import Effect from './effect'
+import NewEffect from './neweffect'
+import AddResourceOptions from '../item/newitem'
+import Layer from './layer'
+import Item from '../item/item'
+import AudioReactiveTypeList from '../item/audioreactivetypes'
+
+class LayerContainer extends PureComponent {
+    render() { 
+        const  { index, idxs, selectedItemId, items, layer } = this.props
+        let itemName = ""
+        if(index === idxs.ITEM)
+            itemName = items[selectedItemId].name
+
+        return (
+            <div>
+                {index === idxs.LAYER && <Layer layerName={layer.name} idxs={idxs} idx={idxs.LAYER} backIdx={idxs.LAYERS}></Layer>}
+                {index === idxs.NEWEFFECT && <NewEffect layerName={layer.name} idxs={idxs} idx={idxs.NEWFFECT}></NewEffect>}
+                {index === idxs.EFFECT && <Effect layerName={layer.name} idxs={idxs} idx={idxs.EFFECT}></Effect>}
+                {index === idxs.ADDRESOURCEOPTIONS && <AddResourceOptions idx={idxs.ADDRESOURCEOPTIONS} layerName={layer.name} idxs={idxs}></AddResourceOptions>}
+                {index === idxs.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idx={idxs.AUDIOREACTIVETYPELIST} layerName={layer.name} backIdx={idxs.LAYER} idxs={idxs}></AudioReactiveTypeList>}
+                {index === idxs.ITEM && <Item itemName={itemName} layerName={layer.name} idxs={idxs} backIdx={idxs.LAYER} idx={idxs.ITEM}></Item>}
+            </div>
+        )
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        index: state.items.sideBarWindowIndex,
+        items: state.items.items[state.items.selectedLayerId],
+        layer: state.items.layers[state.items.selectedLayerId],
+        selectedItemId: state.items.selectedItemId
+    }
+}
+
+export default connect(mapStateToProps)(LayerContainer)

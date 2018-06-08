@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import ThreeWater from "./waterclass"
 import BaseItem from './item';
 
-export default class Water extends BaseItem{
+export default class NorthernLights extends BaseItem{
     constructor(config) {
         super(config)
         this.light = config.sceneConfig.light

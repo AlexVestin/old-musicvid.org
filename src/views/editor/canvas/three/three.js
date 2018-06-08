@@ -44,18 +44,8 @@ class ThreeCanvas extends Component {
         this.audioManager = new AudioManager()
     }
 
-    incrementTime = () => {
-
-    }
-
-    decrementFrame = () => {
-
-    }
-
     setupScene = () =>  {
         const background = new SceneContainer("background", this.width, this.height, this.renderer)
-        background.setControls()
-        background.controls.enabled = false
         
         const graphics   = new SceneContainer("graphics", this.width, this.height, this.renderer)
         graphics.setCamera()
@@ -69,7 +59,6 @@ class ThreeCanvas extends Component {
         background.quad.position.z = -1
         this.mainScene.add(graphics.quad)               
         
-        this.mainScene.add(background.quad, graphics.quad);
         this.scenes = [background, graphics]
 
         setSidebarWindowIndex(0);

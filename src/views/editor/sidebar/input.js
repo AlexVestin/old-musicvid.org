@@ -1,14 +1,13 @@
 
 import React, {PureComponent} from 'react'
 
-import { withStyles } from 'material-ui/styles';
-import PropTypes from 'prop-types'
-
 import BrightnessAuto from '@material-ui/icons/BrightnessAuto'
 import Help from '@material-ui/icons/Help'
 
 import GroupContainer from './groupcontainer'
 import Tooltip from 'material-ui/Tooltip';
+
+import classes from "./input.css"
 
 const inputStyles = {
     Number: {marginRight: 10, width: 40, minWidth: 40, marginLeft: 5},
@@ -18,11 +17,6 @@ const inputStyles = {
     List : {marginRight: 10}
 }
 
-const styles = theme => ({
-    root: {
-      width: '100%'
-    }
-});
 
 
 class ConfigList extends PureComponent {
@@ -33,7 +27,6 @@ class ConfigList extends PureComponent {
     }
 
     render(){
-        const { classes } = this.props;
         const defaultConfig = this.props.defaultConfig
         const item = this.props.item
 
@@ -164,10 +157,6 @@ class LabeledFieldWrapper extends PureComponent {
     }
 }
 
-ConfigList.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-  
 
-export default withStyles(styles)(ConfigList)
+export default ConfigList
 

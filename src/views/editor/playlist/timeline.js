@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-
 import { setTime } from '@redux/actions/globals'
 
+import classes from './timeline.css'
 const style = {
     backgroundColor: "#222222",
     minHeight: "20px",
@@ -64,7 +64,7 @@ class Timeline extends PureComponent {
         }
 
         return(
-            <div style={style} onWheel={this.props.onWheel} onClick={this.onClick}>
+            <div style={style} onWheel={this.props.onWheel} onClick={this.onClick} className={classes.txt}>
                 <svg height="20" width="100%" style={{position:"absolute", zIndex: 1000, pointerEvents: "none"}}>
                     <polygon points={`${l},10 ${m},18 ${r},10`} style={{fill: "white", stroke: "gray", strokeWidth:1 }}/>
                 </svg>

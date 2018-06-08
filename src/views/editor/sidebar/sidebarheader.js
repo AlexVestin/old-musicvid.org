@@ -1,15 +1,19 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import {setSidebarWindowIndex} from '@redux/actions/items'
 import { connect } from 'react-redux'
 import classes from './sidebarheader.css'
 import Button from 'material-ui/Button'
 
- class SidebarHeader extends PureComponent {
+ class SidebarHeader extends Component {
     
     handleChange = (event, value) => {
         
         setSidebarWindowIndex(value)
     };
+
+    shouldComponentUpdate(props) {
+        return props.idx <= 2
+    }
 
     render() {
         const idx = this.props.idx

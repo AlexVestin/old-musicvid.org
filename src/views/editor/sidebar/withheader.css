@@ -1,4 +1,9 @@
-.container {
+
+
+.icon {
+    cursor: pointer;
+}
+.txt {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -7,3 +12,9 @@
     user-select: none;
 }
 
+.txt:hover {
+    text-decoration: underline;
+    cursor: pointer;
+
+    
+}

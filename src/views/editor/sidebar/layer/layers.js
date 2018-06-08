@@ -1,19 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux'
 
 import {selectLayer} from '@redux/actions/items'
-import { withStyles } from 'material-ui/styles';
+import withHeader from '../withheader'
+
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button'
 
-const styles = theme => ({
-  root: {
-    height: "100%", // height of the header/appbar
-    width: '100%',
-  },
-});
+
 
 class LayerList  extends React.Component {
 
@@ -22,17 +17,21 @@ class LayerList  extends React.Component {
   }
 
   render() {
-    const { classes, layers } = this.props;
+    const { layers } = this.props;
+
+    const root = {
+      height: "100%", 
+      width: '100%',
+      overflowY: "scroll"
+    }
 
     return (
-      <div className={classes.root}>
-      
+      <div className={root}>
         <List>
           {Object.keys(layers).map(key => (
-            <ListItem key={layers[key].name} dense button className={classes.listItem} onClick={() => this.onClick(layers[key])}>
+            <ListItem key={layers[key].name} dense button onClick={() => this.onClick(layers[key])}>
               <ListItemText primary={layers[key].name} />
             </ListItem>
-            
           ))}
         </List>
         
@@ -44,14 +43,9 @@ class LayerList  extends React.Component {
   }
 }
 
-LayerList.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
 const mapStateToProps = state => {
   return {
     layers: state.items.layers
   }
 }
-
-export default connect(mapStateToProps)(withStyles(styles)(LayerList))
+export default connect(mapStateToProps)(withHeader(LayerList))

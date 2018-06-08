@@ -3,9 +3,7 @@ import ConfigList from '../input'
 import { connect } from 'react-redux'
 import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '@redux/actions/items'
 
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import AppBar from 'material-ui/AppBar'
-
+import withHeader from '../withheader'
 class Item extends React.PureComponent {
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYER)
@@ -27,13 +25,8 @@ class Item extends React.PureComponent {
         const defaultConfig = item.defaultConfig;
 
         return (
-            <div>
-                 <AppBar position="static" style={{display: "flex" , flexDirection: "row", backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0, textAlign: "center"}}>
-                    <div style={{minWidth: 20, minHeight: 20, marginTop: 3}}>
-                        <KeyboardArrowLeft onClick={this.back} ></KeyboardArrowLeft>
-                    </div>
-                    <div style={{marginTop: 3, height: 12}}>{this.props.layer.name + " - " + item.name} </div>
-                </AppBar>
+            <div style={{overflowY: "scroll", height: "100%"}}>
+
 
                 <ConfigList 
                     edit={editItem} 
@@ -55,4 +48,4 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-export default connect(mapStateToProps)(Item)
+export default connect(mapStateToProps)(withHeader(Item))

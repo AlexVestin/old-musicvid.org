@@ -15,11 +15,7 @@ class Header extends PureComponent {
                     <div className={classes.logo}>
                         <h1>musicvid.org</h1>
                     </div>
-                    <Button  style={{marginLeft: 50}} disableRipple> <Link className={classes.link} to="/"> Editor </Link></Button>
-                    <Button  disableRipple> <Link className={classes.link} to="/landing"> Landing </Link> </Button>
-
-                    <Button  disableRipple> <Link className={classes.link} to="/showcase"> Showcase </Link> </Button>
-                    <Button  disableRipple> <Link className={classes.link} to="/daily"> info </Link> </Button>
+                    
             
                 </div>
                 <div className={classes.user_group}>
@@ -31,5 +27,13 @@ class Header extends PureComponent {
         )
     }
 }
+
+/*
+<Button  style={{marginLeft: 50}} disableRipple> <Link className={classes.link} to="/"> Editor </Link></Button>
+                    <Button  disableRipple> <Link className={classes.link} to="/landing"> Landing </Link> </Button>
+
+                    <Button  disableRipple> <Link className={classes.link} to="/showcase"> Showcase </Link> </Button>
+                    <Button  disableRipple> <Link className={classes.link} to="/daily"> info </Link> </Button>
+            */
 
 export default Header;

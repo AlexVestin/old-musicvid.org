@@ -9,17 +9,21 @@ export default class Pass {
 
         this.config = {}
         this.config.defaultConfig = [
-            {
-                title: "config",
-                items: {
-                    name: {value: "", type: "String", editable: true, tooltip: ""},
-                }
-            }]
+        {
+            title: "config",
+            items: {
+                name: {value: "", type: "String", editable: true, tooltip: ""},
+            }
+        }]
         
         this.config.strength = 0
         this.config.name = name
         this.config.id = Math.floor(Math.random() * 10000000)
         this.addEffect = addEffect
+    }
+
+    update = (key, value) =>  {
+        this.config[key] = value
     }
  
     setSize(width, height) { }

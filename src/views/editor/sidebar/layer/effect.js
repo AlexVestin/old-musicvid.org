@@ -16,8 +16,9 @@ class Effect extends React.PureComponent {
     render() {
         const {  passes, effectId } = this.props
 
-        const item = passes.find(e => e.id == effectId)
+        const item = passes.find(e => e.id === effectId)
         const defaultConfig = item.defaultConfig;
+        
         return (
             <ConfigList 
                 handleChange={this.handleChange} 

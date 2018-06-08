@@ -58,7 +58,7 @@ export default class BaseItem {
 
         this._updateConfig(c)
     } 
-
+    
     getConfig = (config) => {
         config.forEach(group => {
             Object.keys(group.items).map((key, index) => {
@@ -115,10 +115,10 @@ export default class BaseItem {
     }
 
     //TODO remove // find better use
+    _updateConfig = (config) => { this.config = config }
     stop = () => {}
     play = () => {}
     _animate = () => {}
-    _updateConfig = () => {}
     
 } 
 
@@ -308,7 +308,7 @@ export class AudioreactiveItem extends MeshItem {
 
         var newValues = [];
         for (var i = 0; i < length; i++) {
-            var value = 0;
+            let value = 0;
             if (i == 0) {
                 value = values[i];
             } else if (i == length - 1) {

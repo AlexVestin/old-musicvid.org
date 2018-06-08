@@ -11,6 +11,7 @@ import ShaderPass from './passes/shaderpass';
 import FXAAShader from './shaders/fxaa'
 
 import GlitchPass from './passes/glitchpass'
+import HalftonePass from './passes/halftonepass';
 
 export default class RenderTarget {
     constructor(name, width, height, sceneConfig, isMain = false) {
@@ -55,6 +56,8 @@ export default class RenderTarget {
 
         this.nShaderPasses = 0
         this.passes = [ this.renderPass ]
+        this.width = width
+        this.height = height
     }
 
     setCamera = (camera) => {
@@ -83,9 +86,16 @@ export default class RenderTarget {
                 break;
             case "ANTI ALIAS":
                 fx = new ShaderPass(FXAAShader, undefined, "anti alias")
+                fx.uniforms.resolution.value.x = 1 / this.width
+                fx.uniforms.resolution.value.y = 1 / this.height
+                fx.uniforms.tDiffuse.value = this.buffer.texture 
                 break;
             case "BLOOM":
                 fx = new BloomPass(0.5)
+                break;
+            case "RGB HALFTONE":
+                console.log("add nerw shader")
+                fx = new HalftonePass(this.width, this.height, "halftone")
                 break;
             default:
                 console.log("unknown EFFECTS type", type)
@@ -110,9 +120,9 @@ export default class RenderTarget {
         
         const pass = this.passes.find(e => e.config.id === id)
         if(!pass)
-            console.log("[rendertarget.js] failed to find pass")
-        
-        pass.config = {...pass.config, [config.key]: config.value }
-        
+            alert("[rendertarget.js] failed to find pass")
+
+        console.log("??", pass)
+        pass.update(config.key, config.value)
     }
 }

@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import ClipItem from './clipitem'
 
-
-
 class ClipInfoBar extends PureComponent {
 
     render(){

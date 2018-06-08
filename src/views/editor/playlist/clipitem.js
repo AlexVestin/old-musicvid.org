@@ -73,7 +73,7 @@ class ClipItem extends PureComponent {
                 <div style={{borderBottom: "1px solid gray", width: "20%", zIndex: 3, backgroundColor: "#434343", overflow: "hidden"}} >
                     <div key={i} style={{...clipStyle, height: panelHeight}}>
                         <div style={{width: "100%"}}>
-                            <div style={{marginLeft: 3, position: "absolute"}}>{i + 1}</div>
+                            <div className={classes.txt} style={{marginLeft: 3, position: "absolute"}}>{i + 1}</div>
                             
                             <div style={{marginTop: 2, marginLeft: 15, color: "white", fontSize: 14, display: "flex", flexDirection: "row", height: pHeight}}>
                                 {!this.state.expanded &&  
@@ -86,7 +86,7 @@ class ClipItem extends PureComponent {
                                     <KeyboardArrowUp  onClick={() => this.setState({expanded: false})} style={{marginTop: -5}} ></KeyboardArrowUp>        
                                 </div>
                                 }
-                                <div style={{userSelect: "none"}}>{str}</div>
+                                <div className={classes.txt} >{str}</div>
                             </div>
 
                              {this.state.expanded && 
@@ -95,6 +95,7 @@ class ClipItem extends PureComponent {
                                 {automations && automations.map((e, i) => (
                                     <div 
                                         key={e.name}
+                                        className={classes.txt}
                                         style={{
                                             
                                             boxSizing: "border-box",

@@ -17,16 +17,6 @@ const styles = theme => ({
     display: "flex",
     flexDirection: "column",
     overflowY: "scroll"
-  },
-  textField: {
-    marginLeft: theme.spacing.unit * 3,
-    marginRight: theme.spacing.unit * 3,
-    width: 75,
-  },
-
-  listItem: {
-      height: 50,
-      minHeight: 50
   }
 });
 

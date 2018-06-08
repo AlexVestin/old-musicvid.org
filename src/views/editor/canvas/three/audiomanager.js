@@ -35,7 +35,6 @@ export default class AudioManager {
             this.onModuleLoaded()
         };
         
-        //this.fftTransformer = new FFTTransformer(this.fftSize, 32)
     }
 
     removeSound = (idx) => {

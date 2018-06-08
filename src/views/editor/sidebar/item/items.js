@@ -1,20 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 
 
 import { connect } from 'react-redux'
 import { selectItem, setSidebarWindowIndex } from '@redux/actions/items'
 
-
-const styles = theme => ({
-  root: {
-    height: "100%", // height of the header/appbar
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-  },
-});
 
 class ItemList extends React.Component {
 
@@ -31,15 +21,13 @@ class ItemList extends React.Component {
   }
 
   render() {
-    const { classes, selectedLayerId } = this.props;
+    const { selectedLayerId } = this.props;
     const items = this.props.items[selectedLayerId]
 
-    const myItems = this.props.layers[selectedLayerId].items.map(id => this.props.items[id])
     return (
-      <div className={classes.root}>
         <List>
           {items !== undefined && Object.keys(items).map(key => 
-            <ListItem key={items[key].id} dense button className={classes.listItem} onClick={() => this.selectItem(items[key])}>
+            <ListItem key={items[key].id} dense button  onClick={() => this.selectItem(items[key])}>
               <ListItemText primary={items[key].name} />
               <ListItemSecondaryAction>
                     <div >
@@ -48,14 +36,10 @@ class ItemList extends React.Component {
             </ListItem>
          )}
         </List>
-      </div>
     );
   }
 }
 
-ItemList.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = state => {
   return {
@@ -66,4 +50,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(ItemList))
+export default connect(mapStateToProps)(ItemList)

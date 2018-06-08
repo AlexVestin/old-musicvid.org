@@ -64,7 +64,6 @@ export default class EffectComposer {
         this.passes.push(pass);
         var size = this.renderer.getDrawingBufferSize();
         pass.setSize(size.width, size.height);
-
     }
 
     insertPass(pass, index) {

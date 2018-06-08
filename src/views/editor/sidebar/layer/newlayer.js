@@ -1,16 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import withHeader from '../withheader';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import Button from 'material-ui/Button'
-
-const styles = theme => ({
-  root: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-  },
-});
 
 class AddLayerOptions extends React.Component {
     back = () => {
@@ -37,7 +30,7 @@ class AddLayerOptions extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
+      <div>
         <input type="file" ref={(ref) => this.uploadSound = ref} style={{ display: 'none' }} />
         <input type="file" ref={(ref) => this.uploadImage = ref} style={{ display: 'none' }} />
         <input type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
@@ -73,9 +66,6 @@ class AddLayerOptions extends React.Component {
     );
   }
 }
+;
 
-AddLayerOptions.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(AddLayerOptions)
+export default withHeader(AddLayerOptions)

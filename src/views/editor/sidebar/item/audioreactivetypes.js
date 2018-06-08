@@ -2,18 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import List, { ListItem,  ListItemText } from 'material-ui/List';
-import Button from 'material-ui/Button'
 import { setSidebarWindowIndex, createItem } from '@redux/actions/items'
-
 import {connect} from 'react-redux'
+
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
+import AppBar from 'material-ui/AppBar'
+
+const items = [
+  "Bars", 
+  "Text3D", 
+  "Water", 
+  "Tesselated Text", 
+  "Sphere", 
+  "Random Geometry", 
+  "Particles", 
+  "Skybox", 
+  "Skybox2", 
+  "Northern Lights"
+]
 
 const styles = theme => ({
   root: {
     height: "100%", // height of the header/appbar
     width: '100%',
-    display: "flex", 
-    flexDirection: "column",
-    justifyContent: "space-between",
+    overflowY:  "scroll",
     backgroundColor: theme.palette.background.paper,
   },
 });
@@ -35,18 +47,22 @@ class AudioReactiveTypeList extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <div>
+       <AppBar position="static" style={{display: "flex" , flexDirection: "row", backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0, textAlign: "center"}}>
+            <div style={{minWidth: 20, minHeight: 20, marginTop: 3}}>
+                <KeyboardArrowLeft onClick={this.back} ></KeyboardArrowLeft>
+            </div>
+            <div style={{marginTop: 3, height: 12}}>{this.props.layer.name} </div>
+        </AppBar>
+
+
         <List>
-          {["Bars", "Text3D", "Water", "Tesselated Text", "Sphere", "Random Geometry", "Particles"].map(value => (
+          {items.map(value => (
             <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add(value)}>
               <ListItemText primary={value} />
             </ListItem>
           ))}
         </List>
-        </div>
-        <Button variant="raised" fullWidth onClick={this.back}>
-            Back
-        </Button>
+
       </div>
     );
   }
@@ -58,7 +74,7 @@ AudioReactiveTypeList.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    items: state.items.items
+    layer: state.items.layers[state.items.selectedLayerId]
   }
 }
 

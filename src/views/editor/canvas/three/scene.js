@@ -15,7 +15,11 @@ import { addLayer, replaceCamera, replaceControls } from '@redux/actions/items'
 import cameraConfigs from './cameras/camera'
 import controlConfigs from './controls/config'
 import Particles from './items/particles';
+import NorthernLights from './items/northernlights';
 import TrackballControls from './controls/trackball';
+import SkyBox from './items/skybox';
+import SkyBox2 from './items/skybox2';
+
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -72,6 +76,10 @@ export default class SceneContainer {
         this.texture = this.renderTarget.buffer.texture
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
         this.quad.frustumCulled = false; 
+
+        var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+        this.scene.add( ambientLight );
+        this.scene.fog = new THREE.FogExp2( 0xaabbbb, 0.001 );
     }
 
     editFog = (key, value) => {
@@ -188,6 +196,15 @@ export default class SceneContainer {
 
         let item;
         switch (info.type) {
+            case "NORTHERN LIGHTS":
+                item = new NorthernLights(info)
+                break;
+            case "SKYBOX2":
+                item = new SkyBox2(info)
+                break;
+            case "SKYBOX":
+                item = new SkyBox(info)
+                break;
             case "PARTICLES":
                 item = new Particles(info)
                 break;
@@ -278,14 +295,18 @@ export default class SceneContainer {
 
     setControls = (config) => {
         const { camera, renderer } = this
-        let controls = new OrbitControls(camera, renderer.domElement);
-        controls.maxPolarAngle = Math.PI * 0.495;
-        controls.target.set(0, 0, 0);
-        controls.panningMode = 1;
-        controls.minDistance = 40.0;
-        controls.maxDistance = 300.0;
-        camera.lookAt(controls.target);
+       
+            let controls = new OrbitControls(camera, renderer.domElement);
+            controls.maxPolarAngle = Math.PI * 0.495;
+            controls.target.set(0, 10, 0);
+            controls.panningMode = 1;
+            controls.minDistance = 40.0;
+            controls.maxDistance = 300.0;
+        if(this.config.name !== "background") {
+            camera.lookAt(controls.target);
+        }
         this.controls = controls
+        
     }
 
     updateItem = (config, time) => {

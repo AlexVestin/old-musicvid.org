@@ -1,24 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import  withHeader from '../withheader';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
-import Button from 'material-ui/Button'
 import { createItem, setSidebarWindowIndex } from '@redux/actions/items'
 import { connect } from 'react-redux'
-
 import Modal from '../modal'
-
-const styles = theme => ({
-  root: {
-    height: "100%", // height of the header/appbar
-    width: '100%',
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    backgroundColor: theme.palette.background.paper,
-  },
-});
 
 class AddResourceOptions extends React.Component {
 
@@ -27,7 +13,7 @@ class AddResourceOptions extends React.Component {
         this.state = {modalOpen: false}
     }
     back = () => {
-        setSidebarWindowIndex(this.props.idxs.ITEMS)
+        setSidebarWindowIndex(this.props.idxs.LAYER)
     };
 
     componentDidMount() {
@@ -81,52 +67,47 @@ class AddResourceOptions extends React.Component {
     }
 
   render() {
-    const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
+      <div >
         <input accept="audio/*" type="file" ref={(ref) => this.uploadSound = ref} style={{ display: 'none' }} />
         <input accept="image/*" type="file" ref={(ref) => this.uploadImage = ref} style={{ display: 'none' }} />
         <input accept="video/mp4,video/mkv,video/x-m4v,video/*" type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
 
-        <Modal onChoice={this.loadVideo} onCancel={() => this.setState({modalOpen: false})} open={this.state.modalOpen}></Modal>        
+        <Modal onChoice={this.loadVideo} onCancel={() => this.setState({modalOpen: false})} open={this.state.modalOpen}></Modal>   
+
         <List>
-            
-            <ListItem dense button className={classes.listItem}>
+            <ListItem dense button >
                 <ListItemText primary={`Add background image`} onClick={() => this.add(1)}/>
             </ListItem>
 
-            <ListItem dense button className={classes.listItem} onClick={() => this.add(2)}>
+            <ListItem dense button onClick={() => this.add(2)}>
                 <ListItemText primary={`Add Video`} />
             </ListItem>
             
-            <ListItem dense disabled button className={classes.listItem} onClick={() => this.add(3)}>
+            <ListItem dense disabled button onClick={() => this.add(3)}>
                 <ListItemText  primary={`Foreground text`} />
             </ListItem>
 
 
-            <ListItem dense button className={classes.listItem} onClick={() => this.add(4)}>
+            <ListItem dense button onClick={() => this.add(4)}>
                 <ListItemText primary={`3D items`} />
             </ListItem>
 
             
         </List>
-        <Button variant="raised" fullWidth onClick={this.back}>
-            Back
-        </Button>
+
       </div>
     );
   }
 }
 
-AddResourceOptions.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = state => {
     return {
-        items: state.items.items
+        items: state.items.items,
+        layer: state.items.layers[state.items.selectedLayerId]
     }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(AddResourceOptions ))
+export default connect(mapStateToProps)(withHeader(AddResourceOptions))
