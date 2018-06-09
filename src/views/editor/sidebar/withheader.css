@@ -4,6 +4,7 @@
     cursor: pointer;
 }
 .txt {
+    margin-top: 3px;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;

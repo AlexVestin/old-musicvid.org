@@ -2,8 +2,9 @@ import React from 'react';
 import ConfigList from '../input'
 import { connect } from 'react-redux'
 import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '@redux/actions/items'
-
 import withHeader from '../withheader'
+
+
 class Item extends React.PureComponent {
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYER)
@@ -25,15 +26,18 @@ class Item extends React.PureComponent {
         const defaultConfig = item.defaultConfig;
 
         return (
-            <div style={{ height: "calc(100% - 30px)" }}>
+            <div style={{ height: "calc(100% - 30px)"}}>
 
-                <ConfigList 
-                    edit={editItem} 
-                    defaultConfig={defaultConfig} 
-                    item={item} 
-                    onDelete={this.removeItem} 
-                    addAutomation={this.addAutomation}>
-                </ConfigList>
+                <div style={{flexGrow: 1, height: "100%", overflowY: "scroll"}}>
+                    <ConfigList 
+                        edit={editItem} 
+                        defaultConfig={defaultConfig} 
+                        item={item} 
+                        onDelete={this.removeItem} 
+                        addAutomation={this.addAutomation}>
+                    </ConfigList>
+                </div>
+
             </div>
         );
     }

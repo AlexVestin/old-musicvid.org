@@ -2,11 +2,6 @@
 import * as THREE from 'three'
 import BaseItem from './item';
 
-
-
-
-
-
 export default class AudioCircle extends BaseItem {
     constructor(config) {
         super(config)
@@ -26,9 +21,9 @@ export default class AudioCircle extends BaseItem {
         geometry.center()
         var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
         this.mesh = new THREE.Mesh( geometry, material );
-
-
         this.config.defaultConfig.push(group)
+
+
         this.getConfig()
         this.addItem()
     }

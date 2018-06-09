@@ -18,7 +18,7 @@ class Layer extends React.Component {
     render() {
        
         return (
-            <div >
+            <div style={{height: "100%", overflowY: "scroll"}}>
                 <GroupContainer label={"Items"} addAction={() => setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)}>
                     <ItemList idxs={this.props.idxs}></ItemList>
                 </GroupContainer>

@@ -22,6 +22,13 @@ export default class Pass {
         this.addEffect = addEffect
     }
 
+    getConfig = () => {
+        this.config.defaultConfig.forEach(group => {
+            Object.keys(group.items).map((key, index) => {
+                this.config[key] = group.items[key].value
+            })
+        })
+    }
     update = () => {}
 
     edit = (key, value) =>  {

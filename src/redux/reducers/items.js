@@ -122,7 +122,7 @@ export default function itemsReducer(state = {
                 items   = update(state.items,  {[state.selectedLayerId]: {$unset: [action.payload.id]}})  
                 layers  = update(state.layers, {[state.selectedLayerId]: {items: {$splice: [[idx, 1]]}}})
 
-                return {...state, items, layers, selectedItemId: -1, sideBarWindowIndex: SidebarContainer.INDEXES.ITEMS}
+                return {...state, items, layers, selectedItemId: -1, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
             case "UPDATE_ITEM_CONFIG":
                 const newItem = {...state.items[action.payload.sceneId][action.payload.id], ...action.payload}
                 items   = update(state.items, {[action.payload.sceneId]: {[action.payload.id]: {$set: newItem }}})

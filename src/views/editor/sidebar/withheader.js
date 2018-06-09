@@ -1,14 +1,16 @@
 import React from 'react'
 import { setSidebarWindowIndex } from '@redux/actions/items' 
 
+import IconButton from 'material-ui/IconButton'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
+import Delete from '@material-ui/icons/Delete'
+
 import AppBar from 'material-ui/AppBar'
 import classes from './withheader.css'
 
 const  root = {
     height: "100%", // height of the header/appbar
     width: '100%',
-    overflowY : "scroll"
 }
 
 
@@ -30,15 +32,24 @@ export default function withHeader(InputComponent) {
             <div style={root}>
                 <AppBar position="static" style={style}>
                     {this.props.idx >= 2 &&
-                        <div style={{display: "flex", flexDirection: "row", marginTop: 3}}>
-                            <div style={{ minWidth: 20, minHeight: 20}}>
-                                <KeyboardArrowLeft onClick={this.back} className={classes.icon} ></KeyboardArrowLeft>
+                        <div style={{display: "flex", flexDirection: "row", marginTop: 3, justifyContent: "space-between"}}>
+                            <div style={{display: "flex", flexDirection: "row"}}>
+                                <div style={{ minWidth: 20, minHeight: 20}}>
+                                    <KeyboardArrowLeft onClick={this.back} className={classes.icon} ></KeyboardArrowLeft>
+                                </div>
+                                
+                                {this.props.layerName && <div onClick={this.layerClicked} className={classes.txt}>{this.props.layerName}</div>}
+                                {this.props.itemName && <div style={{marginLeft: 10}}>{" - "}</div>}
+                                {this.props.itemName && <div style={{marginLeft: 10}} className={classes.txt}>{this.props.itemName}</div>}
+                                
                             </div>
+
+                            {this.props.itemName && 
                             
-                            {this.props.layerName && <div onClick={this.layerClicked} className={classes.txt}>{this.props.layerName}</div>}
-                            {this.props.itemName && <div style={{marginLeft: 10}} className={classes.txt}>{" - "}</div>}
-                            {this.props.itemName && <div style={{marginLeft: 10}} className={classes.txt}>{this.props.itemName}</div>}
-                            
+                                <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
+                                    <Delete onClick={this.back} className={classes.icon} ></Delete>
+                                </div>
+                            }
                         </div>
                     }
                 </AppBar>

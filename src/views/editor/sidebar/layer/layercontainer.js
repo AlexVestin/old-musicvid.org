@@ -19,10 +19,10 @@ class LayerContainer extends PureComponent {
             itemName = items[selectedItemId].name
 
         return (
-            <div style={{height: "100%"}}>
+            <div style={{height: "100%", overflow: "hidden"}}>
                 {index === idxs.LAYER && <Layer layerName={layer.name} idxs={idxs} idx={idxs.LAYER} backIdx={idxs.LAYERS}></Layer>}
-                {index === idxs.NEWEFFECT && <NewEffect layerName={layer.name} idxs={idxs} idx={idxs.NEWEFFECT}></NewEffect>}
-                {index === idxs.EFFECT && <Effect layerName={layer.name} idxs={idxs} idx={idxs.EFFECT}></Effect>}
+                {index === idxs.NEWEFFECT && <NewEffect layerName={layer.name} idxs={idxs} idx={idxs.NEWEFFECT} backIdx={idxs.LAYER}></NewEffect>}
+                {index === idxs.EFFECT && <Effect layerName={layer.name} idxs={idxs} idx={idxs.EFFECT} backIdx={idxs.LAYER}></Effect>}
                 {index === idxs.ADDRESOURCEOPTIONS && <AddResourceOptions idx={idxs.ADDRESOURCEOPTIONS} layerName={layer.name} idxs={idxs}></AddResourceOptions>}
                 {index === idxs.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idx={idxs.AUDIOREACTIVETYPELIST} layerName={layer.name} backIdx={idxs.LAYER} idxs={idxs}></AudioReactiveTypeList>}
                 {index === idxs.ITEM && <Item itemName={itemName} layerName={layer.name} idxs={idxs} backIdx={idxs.LAYER} idx={idxs.ITEM}></Item>}
