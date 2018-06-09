@@ -7,7 +7,11 @@ export default class AudioManager {
         this.buffers  = []
    
         this.audioCtx = new AudioContext()
-        this.bufferSources = [{}, {}]
+        
+        this.nrBufferSources = 2
+        this.bufferSources = []
+        
+        
         this.sounds = []
         this.frameIdx = 0
         this.channels = 2
@@ -18,14 +22,13 @@ export default class AudioManager {
         this.sampleBuffer = new Float32Array() 
         this.sliceIndex = 0
         this.fftSize = 2048
-        this.lastBins = []
         this.lastFFTIdx  = 0;
         this.time = 0
 
         this.metronome = new Worker("audioworker.js")
         this.metronome.onmessage = (e) => {
             if(e.data === "tick")
-                this.schedule(this.frameIdx % 2)
+                this.schedule(this.frameIdx % this.nrBufferSources)
         }
         this.metronome.postMessage({interval: this.sampleWindowSize * 1000})
         
@@ -74,7 +77,6 @@ export default class AudioManager {
                 buffersToSchedule.forEach(buffer => buffer.start()) 
                 that.offlineCtx.startRendering().then((renderedBuffer => {
                     that.buffers.push(renderedBuffer)
-                   
                     that.sampleBuffer = that.float32Concat(that.sampleBuffer, renderedBuffer.getChannelData(0))
                     resolve()
                     return
@@ -98,12 +100,10 @@ export default class AudioManager {
                 this.bufferSources[index].buffer = buffer
                 this.bufferSources[index].connect(this.audioCtx.destination)
                 //this.bufferSources[index].onended = () => this.schedule(index)
-                this.bufferSources[index].start(this.startTime + this.sampleWindowSize * this.frameIdx++)
-            }else {
-                //setTimeout(() => this.schedule(index), this.sampleWindowSize * 2000)
-                this.frameIdx++
+                this.bufferSources[index].start(this.startTime + this.sampleWindowSize * this.frameIdx)
             }
-
+            
+            this.frameIdx++
             this.addAudioFrame(this.time)
         }
     }
@@ -138,6 +138,7 @@ export default class AudioManager {
     add = (sound) => {
         sound.windowSize = this.sampleWindowSize
         this.sounds.push(sound)
+        sound.setTime(this.time + this.sampleWindowSize * this.frameIdx )
     }
 
     onModuleLoaded = () => {
@@ -145,12 +146,15 @@ export default class AudioManager {
         this.Module._init_r(this.fftSize)
     }
 
-    getBins = (time, stepping) => {
+    getBins = (times, stepping) => {
         let bins = []
+        let time = times + (3 * this.sampleWindowSize)
+        const idx = Math.floor((time - this.time) * this.sampleRate)
+        if(!this.sampleBuffer.length>= this.fftSize)console.log(this.sampleBuffer.length, this.fftSize, time)
         if(this.sampleBuffer.length >= this.fftSize) {
             let windowSize = this.fftSize;
 
-            const idx = Math.floor((time - this.time + (this.sampleWindowSize * this.buffers.length))* this.sampleRate)
+            
             const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
 
             this.sampleBuffer = this.sampleBuffer.slice(idx - this.lastFFTIdx)
@@ -174,6 +178,7 @@ export default class AudioManager {
             this.addAudioFrame()
             this.buffers.pop()
         }
+       
         return bins
     }
 
@@ -198,16 +203,14 @@ export default class AudioManager {
         if(this.playing){
             this.stop()
         }else {
-            this.playing = true 
-            this.tmpTime = 0
-            
+            this.playing = true             
             this.addAudioFrame(time, true, this.sampleWindowSize).then( () => {
                 this.startTime  =  this.audioCtx.currentTime
                 this.schedule(0)
             })
-            this.addAudioFrame().then(() => {
-                this.schedule(1)
-            })
+            
+            this.addAudioFrame().then(() => {this.schedule(1)})
+            this.addAudioFrame().then(() => {this.schedule(2)})
 
             this.metronome.postMessage("start")
         }

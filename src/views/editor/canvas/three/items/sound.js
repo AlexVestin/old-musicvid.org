@@ -31,7 +31,7 @@ export default class Sound extends BaseItem {
         this.fftSize = 4096
 
         this.loadSound(config.file, (data) => this.fftData = data)
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
 
         this.ac = new AudioContext()
         this.lastIdx = -1

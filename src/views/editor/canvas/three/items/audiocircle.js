@@ -1,8 +1,13 @@
 
 import * as THREE from 'three'
-import { AudioreactiveItem } from './item';
+import BaseItem from './item';
 
-export default class Bars extends AudioreactiveItem {
+
+
+
+
+
+export default class AudioCircle extends BaseItem {
     constructor(config) {
         super(config)
         this.mesh = new THREE.Group()
@@ -16,21 +21,15 @@ export default class Bars extends AudioreactiveItem {
                 scale : {value: 0.5, type: "Number", tooltip: "", editable: true}
             }
         }
-        
-        for(var i = 0; i < 32; i++) {
-            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshBasicMaterial( {color: "0xFFFFFF"} );
-            var cube = new THREE.Mesh( geometry, material );
 
-            cube.position.x = i+(i*0.5) - 24;
-            this.mesh.add(cube)
-        }
+        var geometry = new THREE.CircleGeometry( 32, 32 );
+        geometry.center()
+        var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+        this.mesh = new THREE.Mesh( geometry, material );
 
 
         this.config.defaultConfig.push(group)
         this.getConfig()
-
-        this.strength = 1
         this.addItem()
     }
 
@@ -57,18 +56,8 @@ export default class Bars extends AudioreactiveItem {
     }
 
     _animate = (time, frequencyBins) => {
-        const { deltaRequired, decreaseSpeed, scale, Y } = this.config
-        const bins = this.getTransformedSpectrum(frequencyBins)
-
-        this.mesh.children.forEach( (e,i) => {
-            var newScale = bins[i] > 1 ? bins[i] : 1 
-            if(newScale < e.scale.y || Math.abs(newScale - e.scale.y) < deltaRequired) {
-                newScale = e.scale.y - decreaseSpeed * (time - this._lastTime)  > 1 ? e.scale.y - decreaseSpeed * (time - this._lastTime) : 1
-                newScale = time - this._lastTime < 0 ? 1 : newScale
-            }
-
-            e.scale.set(scale , newScale, scale); 
-            e.position.y = Y + newScale/2 
-        })
+        const scale = ( frequencyBins[5] / 1048 ) + 1 || 1
+        
+        this.mesh.scale.set(scale, scale, scale)
     }
 }

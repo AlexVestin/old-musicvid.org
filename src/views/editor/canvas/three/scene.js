@@ -19,6 +19,7 @@ import NorthernLights from './items/northernlights';
 import TrackballControls from './controls/trackball';
 import SkyBox from './items/skybox';
 import SkyBox2 from './items/skybox2';
+import AudioCircle from './items/audiocircle';
 
 
 export default class SceneContainer {
@@ -196,6 +197,9 @@ export default class SceneContainer {
 
         let item;
         switch (info.type) {
+            case "AUDIO CIRCLE":
+                item = new AudioCircle(info)
+                break;
             case "NORTHERN LIGHTS":
                 item = new NorthernLights(info)
                 break;
@@ -376,14 +380,14 @@ export default class SceneContainer {
     animate = (time, frequencyBins) => {
         this.addOrRemove(this.toRender, this.rendering, this.scene, time)
         this.rendering.forEach(e =>  e.animate(time, frequencyBins))
-        this.freqNr = frequencyBins[1]
+        this.renderTarget.update(time, frequencyBins)
         if(this.controls)this.controls.update()
     }
 
     render = (renderer, time, postProcessingEnabled) => {
         //if(this.config.name === "graphics")console.log(this.config.postProcessingEnabled)
         if(postProcessingEnabled) {
-            this.renderTarget.render( renderer, time, this.freqNr)
+            this.renderTarget.render( renderer, time)
         }else {
             renderer.render(this.scene, this.camera)
         }

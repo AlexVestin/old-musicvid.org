@@ -8,6 +8,8 @@ import RenderPass from './passes/renderpass'
 import BloomPass from './passes/bloompass'
 import SepiaShader from './shaders/sepiashader'
 import ShaderPass from './passes/shaderpass';
+import ColorShader from './shaders/colorshader'
+import ColorPass from './passes/colorpass'
 import FXAAShader from './shaders/fxaa'
 
 import GlitchPass from './passes/glitchpass'
@@ -30,26 +32,7 @@ export default class RenderTarget {
         const { scene, camera, renderer } = sceneConfig
         this.buffer = new WebGLRenderTarget( width, height, rtParameters )
         this.effectComposer = new EffectComposer(renderer, this.buffer)
-        /*
-        this.clearMask = new ClearMaskPass();
-        this.renderMask = new MaskPass( scene, camera );
-        var renderMaskInverse = new MaskPass( scene, camera );
-        renderMaskInverse.inverse = true;
-        
-        const SSAPass = new SSAARenderPass(scene, camera)
-        
-       
-        this.sepiaPass = new ShaderPass("sepia", SepiaShader)
-        
-        this.glitchPass = new GlitchPass(0.4)
-        
-        this.antiAliasPass = new ShaderPass("anti alias", FXAAShader)
-        this.antiAliasPass.uniforms[ 'resolution' ].value.set(1/width, 1 / height);
-        this.effectComposer.addPass(this.renderPass)
-        this.effectComposer.addPass(this.antiAliasPass)
-        this.effectComposer.addPass(this.glitchPass)
-        
-        */
+
         this.renderPass = new RenderPass(scene, camera, null, 0xFFFFFF, 0)
         this.effectComposer.addPass(this.renderPass)
         this.effectComposer.swapBuffers()
@@ -64,8 +47,11 @@ export default class RenderTarget {
         this.renderPass.camera = camera
     }
 
-    render = (renderer, time, amp) => {
-        this.passes.forEach(e => e.amp = amp)
+    update = (time, frequencyBins) => {
+        this.passes.forEach( e => e.update(time, frequencyBins) )
+    }
+
+    render = (renderer, time) => {
         
         this.effectComposer.render(time)
         if(this.nShaderPasses % 2 === 1)this.effectComposer.swapBuffers()
@@ -78,6 +64,10 @@ export default class RenderTarget {
     createEffect = (type) =>  {
         var fx;
         switch(type) {
+            case "COLOR SHADER":
+                fx = new ColorPass(ColorShader, undefined, "color")
+                console.log("??")
+                break;
             case "SEPIA":
                 fx = new ShaderPass(SepiaShader, undefined, "sepia")
                 break;
@@ -122,7 +112,6 @@ export default class RenderTarget {
         if(!pass)
             alert("[rendertarget.js] failed to find pass")
 
-        console.log("??", pass)
-        pass.update(config.key, config.value)
+        pass.edit(config.key, config.value)
     }
 }

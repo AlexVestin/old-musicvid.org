@@ -8,7 +8,6 @@ import { connect } from 'react-redux'
 import Audio from './audio'
 import LayerList from './layer/layers'
 import ProjectSettings from './project'
-
 import LayerContainer from './layer/layercontainer'
 
 function TabContainer(props) {
@@ -52,10 +51,8 @@ class SidebarContainer extends React.Component {
         contentValue: 0,
     };
 
-    
-
     render() {
-        const { classes, item, layer } = this.props;
+        const { classes } = this.props;
         const value = this.props.sideBarWindowIndex
         
         if(value <= 2)

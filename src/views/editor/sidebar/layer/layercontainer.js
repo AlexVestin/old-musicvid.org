@@ -19,9 +19,9 @@ class LayerContainer extends PureComponent {
             itemName = items[selectedItemId].name
 
         return (
-            <div>
+            <div style={{height: "100%"}}>
                 {index === idxs.LAYER && <Layer layerName={layer.name} idxs={idxs} idx={idxs.LAYER} backIdx={idxs.LAYERS}></Layer>}
-                {index === idxs.NEWEFFECT && <NewEffect layerName={layer.name} idxs={idxs} idx={idxs.NEWFFECT}></NewEffect>}
+                {index === idxs.NEWEFFECT && <NewEffect layerName={layer.name} idxs={idxs} idx={idxs.NEWEFFECT}></NewEffect>}
                 {index === idxs.EFFECT && <Effect layerName={layer.name} idxs={idxs} idx={idxs.EFFECT}></Effect>}
                 {index === idxs.ADDRESOURCEOPTIONS && <AddResourceOptions idx={idxs.ADDRESOURCEOPTIONS} layerName={layer.name} idxs={idxs}></AddResourceOptions>}
                 {index === idxs.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idx={idxs.AUDIOREACTIVETYPELIST} layerName={layer.name} backIdx={idxs.LAYER} idxs={idxs}></AudioReactiveTypeList>}

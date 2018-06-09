@@ -149,7 +149,7 @@ class ClipItem extends PureComponent {
                         </Clip>
                         {this.state.expanded && 
                             <React.Fragment>
-                            {automations.map( (automation, i) => 
+                            {automations && automations.map( (automation, i) => 
                                 automation.points.map(point => 
                                 <KeyFrame
                                     time={this.props.time}

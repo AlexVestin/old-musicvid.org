@@ -18,7 +18,7 @@ class Layer extends React.Component {
     render() {
        
         return (
-            <div>
+            <div >
                 <GroupContainer label={"Items"} addAction={() => setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)}>
                     <ItemList idxs={this.props.idxs}></ItemList>
                 </GroupContainer>
@@ -44,7 +44,6 @@ class Layer extends React.Component {
                     addAutomation={this.addAutomation}>
                 </ConfigList>
 
-        
                 <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                     <EffectList idxs={this.props.idxs}></EffectList>
                 </GroupContainer> 

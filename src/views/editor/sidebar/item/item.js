@@ -25,8 +25,7 @@ class Item extends React.PureComponent {
         const defaultConfig = item.defaultConfig;
 
         return (
-            <div style={{overflowY: "scroll", height: "100%"}}>
-
+            <div style={{ height: "calc(100% - 30px)" }}>
 
                 <ConfigList 
                     edit={editItem} 

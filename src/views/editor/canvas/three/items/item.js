@@ -36,7 +36,7 @@ export default class BaseItem {
         
         this.mesh = {}
         this.automations = []
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
         this._lastTime = -1
     }
 
@@ -59,8 +59,8 @@ export default class BaseItem {
         this._updateConfig(c)
     } 
     
-    getConfig = (config) => {
-        config.forEach(group => {
+    getConfig = () => {
+        this.config.defaultConfig.forEach(group => {
             Object.keys(group.items).map((key, index) => {
                 this.config[key] = group.items[key].value
             })
@@ -135,7 +135,7 @@ export class MeshItem extends BaseItem {
         }
         
         this.config.defaultConfig.push(positionGroup)
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
     }
 }
 
@@ -196,7 +196,7 @@ export class AudioreactiveItem extends MeshItem {
         }
     
         this.config.defaultConfig = [audioReactiveGroup, group1, group2, group3]
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
     }
 
 

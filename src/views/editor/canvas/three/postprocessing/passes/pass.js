@@ -22,7 +22,9 @@ export default class Pass {
         this.addEffect = addEffect
     }
 
-    update = (key, value) =>  {
+    update = () => {}
+
+    edit = (key, value) =>  {
         this.config[key] = value
     }
  

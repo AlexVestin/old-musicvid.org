@@ -3,8 +3,6 @@ import classes from  './main.css'
 import { Route, Switch } from 'react-router-dom'
 
 import Header from './views/header/header'
-
-
 import Landing from './views/landing/Landing'
 import Editor from './views/editor/Editor'
 

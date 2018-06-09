@@ -227,8 +227,10 @@ class ScrollArea2 extends PureComponent {
                         ref={ref => this.scrollTopPanelRef = ref}
                         onWheel={this.onWheel}
                 ></ScrollTopPanel>
+                
                 <div className={classes.scrollArea} ref={ref => this.scrollAreaRef = ref }  onWheel={this.gridScrolled} >
                     <ClipInfoBar info={info} selectedLayerId={this.props.selectedLayerId} ></ClipInfoBar>
+                    
                     <svg style={{position: "absolute", left: 0, zIndex: 1}} width={width*2} height={height + 1000} xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <pattern id="grid" width={itemRightOffset} height={35 * this.state.zoomHeight} patternUnits="userSpaceOnUse">

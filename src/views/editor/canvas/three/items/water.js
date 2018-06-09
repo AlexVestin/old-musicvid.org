@@ -9,7 +9,7 @@ export default class Water extends BaseItem{
     constructor(config) {
         super(config)
         this.light = config.sceneConfig.light
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
         const parameters = {
             oceanSide: 2000,
             size: 1.0,

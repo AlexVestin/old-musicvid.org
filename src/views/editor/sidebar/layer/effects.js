@@ -1,24 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 
 import Button from 'material-ui/Button'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
+import Delete from '@material-ui/icons/Delete';
+
 
 
 import { connect } from 'react-redux'
 import {  setSidebarWindowIndex, selectEffect, removeEffect } from '@redux/actions/items'
 
-const styles = theme => ({
-  root: {
-    height: "calc(100% - 78px)", // height of the header/appbar
-    width: '100%',
-    display: "flex",
-    flexDirection: "column",
-    overflowY: "scroll"
-  }
-});
 
 class EffectList extends React.Component {
     back = () => {
@@ -30,10 +21,10 @@ class EffectList extends React.Component {
     }
 
     render() {
-        const { classes, passes } = this.props;
+        const {  passes } = this.props;
 
         return (
-            <div className={classes.root}>
+            <div>
                 <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
                     {passes.map( (pass, i) => {
                         return( 
@@ -48,7 +39,8 @@ class EffectList extends React.Component {
                                         <KeyboardArrowDown ></KeyboardArrowDown>
                                     </Button>
 
-                                    <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} >
+                                    <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} onClick={this.removeItem}>
+                                        <Delete></Delete>
                                     </Button>
                                 </div>
                             </div>
@@ -61,9 +53,6 @@ class EffectList extends React.Component {
     }
 }
 
-EffectList.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = state => {
     return {
@@ -72,4 +61,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(EffectList)) 
+export default connect(mapStateToProps)(EffectList) 

@@ -6,6 +6,15 @@ import { setSidebarWindowIndex, createEffect } from '@redux/actions/items'
 import withHeader from '../withheader'
 
 
+const effects = [
+    "Sepia", 
+    "Glitch", 
+    "Anti Alias",
+    "Bloom", 
+    "RGB Halftone",
+    "Color Shader"
+]
+
 class NewEffect extends React.Component {
 
     back = () => {
@@ -18,12 +27,11 @@ class NewEffect extends React.Component {
 
 
   render() {
-    const { classes } = this.props;
-
+    console.log(this.props)
     return (
         <List>  
-            {["Sepia", "Glitch", "Anti Alias", "Bloom", "RGB Halftone"].map(e => (
-                <ListItem key={e} dense button className={classes.listItem}>
+            {effects.map(e => (
+                <ListItem key={e} dense button >
                     <ListItemText primary={e} onClick={() => this.createEffect(e.toUpperCase())}/>
                 </ListItem>
             ))} 
@@ -31,10 +39,6 @@ class NewEffect extends React.Component {
     );
   }
 }
-
-NewEffect.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 
 

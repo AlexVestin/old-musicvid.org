@@ -15,7 +15,7 @@ export default class Text3D extends MeshItem {
             }
         }
         this.config.defaultConfig.push(group)
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
 
 
         var loader = new THREE.FontLoader();

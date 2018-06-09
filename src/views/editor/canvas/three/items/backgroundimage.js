@@ -5,11 +5,29 @@ export default class BackgroundImage extends BaseItem {
     constructor(config) {
         super(config) 
 
+
+        const group = {
+            title: "Config",
+            items: {
+                scale: {value: 1, type: "Number"},
+                x: {value: 0, type: "Number"},
+                y: {value: 0, type: "Number"},
+                z: {value: 0, type: "Number"},
+                wrapS: {}
+            }
+        }
+
+        this.config.defaultConfig.push(group)
+        this.getConfig()
+
         var fr = new FileReader()
         fr.onload = () => {
             var image = fr.result
             var texture = new THREE.TextureLoader().load(image)
-
+            console.log(texture)
+            texture.wrapS = THREE.RepeatWrapping
+            texture.minFilter = THREE.NearestFilter
+            console.log(texture)
             this.mesh.material.map = texture
             this.mesh.material.needsUpdate = true
             this.config.name = config.name

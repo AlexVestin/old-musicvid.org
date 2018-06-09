@@ -231,7 +231,7 @@ export default  class Particles extends AudioreactiveItem {
 
 
        this.config.defaultConfig.push({title:  "TODO", items: {thing: {value: 0, type: "Number" }} })
-       this.getConfig(this.config.defaultConfig)
+       this.getConfig()
        this.addItem()
     }
 

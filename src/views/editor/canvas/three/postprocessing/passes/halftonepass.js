@@ -69,7 +69,7 @@ export default class HalftonePass extends Pass {
 
     };
 
-    update = (key, value) => {
+    edit = (key, value) => {
         this.config[key] = value;
         this.uniforms[key].value = value
     }

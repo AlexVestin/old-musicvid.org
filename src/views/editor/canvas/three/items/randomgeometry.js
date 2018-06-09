@@ -16,7 +16,7 @@ export default class RandomGeometry extends AudioreactiveItem {
         }
 
         this.config.defaultConfig.push(rotationGroup)
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
         this.config.strength = 1
 
         this.mesh = new THREE.Mesh()

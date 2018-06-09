@@ -18,7 +18,8 @@ const items = [
   "Particles", 
   "Skybox", 
   "Skybox2", 
-  "Northern Lights"
+  "Northern Lights",
+  "Audio Circle"
 ]
 
 const styles = theme => ({

@@ -52,7 +52,7 @@ export default class TessellatedText extends AudioreactiveItem {
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
 
-        this.getConfig(this.config.defaultConfig)
+        this.getConfig()
         this.mesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 

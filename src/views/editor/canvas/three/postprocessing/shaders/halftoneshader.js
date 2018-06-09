@@ -298,8 +298,8 @@ export default {
 				"if ( greyscale ) {",
 					"r = g = b = (r + b + g) / 3.0;",
 				"}",
-
-				"gl_FragColor = vec4( r, g, b, 1.0 );",
+				"float alpha = (r == 0.0 && g == 0.0 && b == 0.0) ? 0.0 : 1.0;",
+				"gl_FragColor = vec4( r, g, b, alpha);",
 
 			"} else {",
 

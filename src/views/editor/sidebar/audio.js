@@ -14,6 +14,7 @@ const styles = theme => ({})
 class Audio extends React.Component {
 
     componentDidMount() {
+        setAudioItemView(0)
         this.fileInputRef.onchange = () => {
             let file = this.fileInputRef.files[0]
             if(file) {
