@@ -32,4 +32,6 @@ However it will be moved to a seperate when the editor/encoder are readyn for us
 
 ### Build
 Makefile & patches from ffmpeg.js / videoencoder.js
-~~
+
+# musicvid.org
+An audio visualizing video editor in the browser
