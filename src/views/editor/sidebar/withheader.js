@@ -1,9 +1,6 @@
 import React from 'react'
 import { setSidebarWindowIndex } from '@redux/actions/items' 
-
-import IconButton from 'material-ui/IconButton'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import Delete from '@material-ui/icons/Delete'
 
 import AppBar from 'material-ui/AppBar'
 import classes from './withheader.css'
@@ -25,6 +22,10 @@ export default function withHeader(InputComponent) {
                 setSidebarWindowIndex(this.props.idxs.LAYER)
         } 
 
+        onDelete = () => {
+            console.log("delete", this.props)
+        }
+
         render() { 
 
             const style = { backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0}
@@ -44,12 +45,6 @@ export default function withHeader(InputComponent) {
                                 
                             </div>
 
-                            {this.props.itemName && 
-                            
-                                <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
-                                    <Delete onClick={this.back} className={classes.icon} ></Delete>
-                                </div>
-                            }
                         </div>
                     }
                 </AppBar>

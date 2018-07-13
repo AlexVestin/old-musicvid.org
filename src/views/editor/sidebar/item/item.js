@@ -3,6 +3,7 @@ import ConfigList from '../input'
 import { connect } from 'react-redux'
 import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '@redux/actions/items'
 import withHeader from '../withheader'
+import Delete from '@material-ui/icons/Delete'
 
 
 class Item extends React.PureComponent {
@@ -21,14 +22,24 @@ class Item extends React.PureComponent {
         addAutomation({key, automation})
     }
 
+    onDelete = () => {
+        removeItem(this.props.selectedItem)
+    }
+
     render() {
         const item = this.props.selectedItem
         const defaultConfig = item.defaultConfig;
 
         return (
             <div style={{ height: "calc(100% - 30px)"}}>
-
                 <div style={{flexGrow: 1, height: "100%", overflowY: "scroll"}}>
+                    <div style={{height: 28, width: "100%", display:"flex", flexDirection: "row", justifyContent: "space-between", backgroundColor: "#AAA"}}> 
+                        {item.name} 
+                                                    
+                        <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
+                            <Delete onClick={this.onDelete}  style={{cursor: "pointer"}}></Delete>
+                        </div>
+                    </div>
                     <ConfigList 
                         edit={editItem} 
                         defaultConfig={defaultConfig} 

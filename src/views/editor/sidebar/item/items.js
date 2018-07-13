@@ -1,7 +1,6 @@
 import React from 'react';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 
-
 import { connect } from 'react-redux'
 import { selectItem, setSidebarWindowIndex } from '@redux/actions/items'
 

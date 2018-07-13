@@ -32,6 +32,7 @@ class ConfigList extends PureComponent {
 
         return(
             <div className={classes.root}>
+                
                 {defaultConfig.map(group =>     
                     <GroupContainer label={group.title} key={group.title}>
                             <InputContent item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></InputContent>

@@ -3,6 +3,7 @@
 import React, { PureComponent} from 'react'
 import {connect} from 'react-redux'
 
+import { removeItem } from "@redux/actions/items"
 
 import Effect from './effect'
 import NewEffect from './neweffect'
@@ -25,7 +26,7 @@ class LayerContainer extends PureComponent {
                 {index === idxs.EFFECT && <Effect layerName={layer.name} idxs={idxs} idx={idxs.EFFECT} backIdx={idxs.LAYER}></Effect>}
                 {index === idxs.ADDRESOURCEOPTIONS && <AddResourceOptions idx={idxs.ADDRESOURCEOPTIONS} layerName={layer.name} idxs={idxs}></AddResourceOptions>}
                 {index === idxs.AUDIOREACTIVETYPELIST && <AudioReactiveTypeList idx={idxs.AUDIOREACTIVETYPELIST} layerName={layer.name} backIdx={idxs.LAYER} idxs={idxs}></AudioReactiveTypeList>}
-                {index === idxs.ITEM && <Item itemName={itemName} layerName={layer.name} idxs={idxs} backIdx={idxs.LAYER} idx={idxs.ITEM}></Item>}
+                {index === idxs.ITEM && <Item onDelete={removeItem} itemName={itemName} layerName={layer.name} idxs={idxs} backIdx={idxs.LAYER} idx={idxs.ITEM}></Item>}
             </div>
         )
     }

@@ -16,7 +16,7 @@ class ClipInfoBar extends PureComponent {
         })
 
         allItems = [...allItems, ...this.props.audioItems].sort((a, b) => a.index - b.index )
-
+        console.log(allItems)
         return (
             <div style={{width: "100%"}} >
                 <div style={{position: "absolute", width: "20%", height: "100%", backgroundColor: "#434343"}}></div>

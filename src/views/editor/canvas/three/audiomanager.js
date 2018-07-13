@@ -150,7 +150,8 @@ export default class AudioManager {
         let bins = []
         let time = times + (3 * this.sampleWindowSize)
         const idx = Math.floor((time - this.time) * this.sampleRate)
-        if(!this.sampleBuffer.length>= this.fftSize)console.log(this.sampleBuffer.length, this.fftSize, time)
+        if(!this.sampleBuffer.length>= this.fftSize)console.log("NOT CACUGHT UP, AUDIOMANAGER", this.sampleBuffer.length, this.fftSize, time)
+        
         if(this.sampleBuffer.length >= this.fftSize) {
             let windowSize = this.fftSize;
 
