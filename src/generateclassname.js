@@ -53,13 +53,11 @@ export function createGenerateClassName() {
         }
       }
 
-      /*
+      
       if (process.env.NODE_ENV === 'production') {
         return "".concat(productionPrefix).concat(ruleCounter);
       }
-      */
-
-      console.log("???")
+      
 
       return "".concat(rule.key, "-").concat(ruleCounter);
     }

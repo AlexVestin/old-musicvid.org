@@ -157,7 +157,7 @@ export class AudioreactiveItem extends MeshItem {
         const group1 = {
             title: "General fft settings",
             items: {
-                amplitude: { value: 22, type: "Number", tooltip: "Amplitude of the spectrum values" },
+                amplitude: { value: 12, type: "Number", tooltip: "Amplitude of the spectrum values" },
                 enableTransformToVisualBins:{value: false, type: "Boolean", tooltip: "Transforms the frequency data to visual bins"},
                 enableNormalizeAmplitude:   {value: true,  type: "Boolean", tooltip: "Normalizes the spectrumdata using the amplitude value"},
                 enableAverageTransform:     {value: true,  type: "Boolean", tooltip: "Averages data using neighbours"},

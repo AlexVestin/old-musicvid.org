@@ -26,7 +26,7 @@ export default class SceneContainer {
     constructor(name, width, height, renderer) {
 
         this.scene = new THREE.Scene()
-        this.camera = new THREE.OrthographicCamera(-1,1,1,-1,0, 1)
+        this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
         this.renderer = renderer
         this.setLight(this.scene)
 
@@ -77,10 +77,6 @@ export default class SceneContainer {
         this.texture = this.renderTarget.buffer.texture
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
         this.quad.frustumCulled = false; 
-
-        var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
-        this.scene.add( ambientLight );
-        this.scene.fog = new THREE.FogExp2( 0xaabbbb, 0.001 );
     }
 
     editFog = (key, value) => {
@@ -265,7 +261,6 @@ export default class SceneContainer {
         } else {
             console.log("unable to remove item")
         }
-
     }
 
     setSize = (width, height) => {
@@ -399,7 +394,7 @@ export default class SceneContainer {
         this.play(time)
     }
 
-    play = (time, fps) => {
+    play = (time) => {
         this.items.forEach(e => {
             const { start, duration } = e.config
             if(time - start >= 0 && time - start < duration ) {

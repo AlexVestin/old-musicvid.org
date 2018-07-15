@@ -10,13 +10,14 @@ class ClipInfoBar extends PureComponent {
 
         Object.keys(layers).forEach(layerId =>  {
             const layer = layers[layerId]
+            
             layer.items.forEach(itemId => {
                 allItems = [...allItems, items[layerId][itemId]] 
             })
         })
 
         allItems = [...allItems, ...this.props.audioItems].sort((a, b) => a.index - b.index )
-        console.log(allItems)
+
         return (
             <div style={{width: "100%"}} >
                 <div style={{position: "absolute", width: "20%", height: "100%", backgroundColor: "#434343"}}></div>

@@ -1,19 +1,18 @@
 import React from 'react';
-
 import { connect } from 'react-redux'
-
-import {selectLayer} from '@redux/actions/items'
+import { selectLayer, dispatchAction } from '@redux/actions/items'
 import withHeader from '../withheader'
-
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Button from 'material-ui/Button'
-
-
 
 class LayerList  extends React.Component {
 
   onClick = (layer) => {
     selectLayer(layer.id)
+  }
+
+  createLayer = () =>  {
+    dispatchAction( { type: "CREATE_LAYER" })
   }
 
   render() {
@@ -35,7 +34,7 @@ class LayerList  extends React.Component {
           ))}
         </List>
         
-        <Button disabled variant="raised" fullWidth onClick={this.setWindow} color="secondary">
+        <Button variant="raised" fullWidth onClick={this.createLayer} color="secondary">
             Add New Layer
         </Button>
       </div>

@@ -22,7 +22,6 @@ export default function itemsReducer(state = {
     effectId: 0,
     postProcessingEnabled: false,
     initialized: false,
-    
     }, action){
 
         var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog
@@ -118,13 +117,9 @@ export default function itemsReducer(state = {
                 automations = update(state.automations, {[id]: {$set: [] }}) 
                 return {...state, items, layers, automations, selectedItemId: id, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM, itemIdx: state.itemIdx + 1}
             case "REMOVE_ITEM":
-                console.log(action.payload)
-                console.log("????", state.items)
-                idx     = state.layers[state.selectedLayerId].items.findIndex(e => e.id === action.payload.id)
+                idx     = state.layers[state.selectedLayerId].items.findIndex(e => e === action.payload.id)
                 items   = update(state.items,  {[state.selectedLayerId]: {$unset: [action.payload.id]}})  
                 layers  = update(state.layers, {[state.selectedLayerId]: {items: {$splice: [[idx, 1]]}}})
-
-                console.log(".....", items)
                 return {...state, items, layers, selectedItemId: -1, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
             case "UPDATE_ITEM_CONFIG":
                 const newItem = {...state.items[action.payload.sceneId][action.payload.id], ...action.payload}

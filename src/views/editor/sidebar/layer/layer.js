@@ -37,13 +37,6 @@ class Layer extends React.Component {
                     addAutomation={this.addAutomation}>
                 </ConfigList>
 
-                <ConfigList 
-                    edit={editFog} 
-                    defaultConfig={this.props.fog.defaultConfig} 
-                    item={this.props.fog} 
-                    addAutomation={this.addAutomation}>
-                </ConfigList>
-
                 <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                     <EffectList idxs={this.props.idxs}></EffectList>
                 </GroupContainer> 
@@ -68,3 +61,12 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(withHeader(Layer)) 
+
+/*
+<ConfigList 
+    edit={editFog} 
+    defaultConfig={this.props.fog.defaultConfig} 
+    item={this.props.fog} 
+    addAutomation={this.addAutomation}>
+</ConfigList>
+*/

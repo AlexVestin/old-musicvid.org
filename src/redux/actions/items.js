@@ -82,13 +82,11 @@ export function addAutomation(item){
 
 export function addLayer(item){
     const id = Math.floor(Math.random() * 100000000)
-
     store.dispatch({
         type: "ADD_LAYER",
         payload: item,
         id    
-    } 
-    );  
+    });
 }
 
 export function addSound(item){
@@ -107,6 +105,13 @@ export function createSound(item){
     ); 
 }
 
+
+export function dispatchAction(args) {
+    store.dispatch({
+        type: args.type,
+        payload: args.payload
+    })
+}
 
 
 export function selectLayer(index){
@@ -217,6 +222,8 @@ export function createItem(item, itemType){
         } 
     );  
 }
+
+
 
 export function removeItem(item){
     store.dispatch({

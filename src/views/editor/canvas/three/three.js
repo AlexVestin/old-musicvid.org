@@ -2,16 +2,16 @@ import SceneContainer from './scene'
 import React, { Component } from 'react';
 import Sound from "./items/sound"
 import store from '@redux/store'
-import {OrthographicCamera, Scene, WebGLRenderer } from 'three' 
+import { OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
-import {  setSidebarWindowIndex } from '@redux/actions/items'
-import AudioManager from './audiomanager'
+import { setSidebarWindowIndex } from '@redux/actions/items'
+
+import AudioManager from '../audiomanager'
 
 
 class ThreeCanvas extends Component {
-
     constructor(props) {
         super(props)
         this.state = {
@@ -22,22 +22,19 @@ class ThreeCanvas extends Component {
     }
 
     componentDidMount() {    
-        const mount = this.mountRef
-        this.width = mount.clientWidth
-        this.height = mount.clientHeight
-        const renderer = new WebGLRenderer({antialias: true, alpha: true})
-        renderer.setClearColor('#000000')
-        renderer.setSize(this.width, this.height)
-        renderer.autoClear = false;
-        this.renderer = renderer
+        this.mount = this.mountRef
+        this.width = this.mount.clientWidth
+        this.height = this.mount.clientHeight
+        
+        this.renderer = new WebGLRenderer({antialias: true, alpha: true})
+        this.renderer.setClearColor('#000000')
+        this.renderer.setSize(this.width, this.height)
+        this.renderer.autoClear = false;
         
         this.unsubscribe = store.subscribe(this.handleChange)
         
-        mount.appendChild(this.renderer.domElement)
+        this.mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
-
-        this.audioLoaded = false
-        this.mount = mount 
 
         this.encodedFrames = 0
         this.setupScene()
@@ -56,9 +53,8 @@ class ThreeCanvas extends Component {
         this.mainScene = new Scene();
 
         this.mainScene.add(background.quad) 
-        background.quad.position.z = -1
+        //background.quad.position.z = -1
         this.mainScene.add(graphics.quad)               
-        
         this.scenes = [background, graphics]
 
         setSidebarWindowIndex(0);
@@ -90,15 +86,12 @@ class ThreeCanvas extends Component {
         this.encodedFrames = 0
         this.play(0)
 
-        const { width, height } = this.config
-        this.setSize(width, height, true)
+        this.setSize(this.config.width, this.config.height, true)
 
         this.startTime = performance.now()
-        this.audioTimeSum = 0;
-        this.audioFramesEncoded = 0
         this.encodeVideoFrame(this.time)
         this.videoEncoder.sendFrame()
-        this.audioManager.encodingStarted(1 / this.config.fps)
+        this.audioManager.encodingStarted()
     }
 
 
@@ -107,6 +100,7 @@ class ThreeCanvas extends Component {
         const channels = this.audioManager.channles
         const audioConfig = {  channels, samplerate, bitrate: 320000 }
         let videoConfig = { w: this.config.width, h:this.config.height, fps: this.config.fps, bitrate: this.config.bitrate, presetIdx: this.config.presetIdx }
+        
         this.videoEncoder.init(videoConfig, audioConfig, this.encoderInitialized, this.encode)
     }
 
@@ -129,6 +123,15 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
 
         switch(type) {
+            case "CREATE_LAYER":
+                const newLayer   = new SceneContainer("new graphics", this.width, this.height, this.renderer)
+                newLayer.setCamera()
+                newLayer.setControls()
+                newLayer.controls.enabled = false
+                this.mainScene.add(newLayer.quad)               
+                this.scenes.push(newLayer)
+                setSidebarWindowIndex(0);
+                break;
             case "EDIT_FOG":
                 scene.editFog(payload.key, payload.value)
                 break;
@@ -192,32 +195,31 @@ class ThreeCanvas extends Component {
         this.audioManager.stop()
     }
 
-    play = (time, play) => {
+    play = (time) => {
         this.scenes.forEach(e => e.play(time))
         this.audioManager.play(time, this.state.encoding)
     }
 
     saveBlob = (vid) => {
-        const blob = new Blob([vid], { type: 'video/mp4' });
-        FileSaver.saveAs(blob, "vid.mp4")
+        FileSaver.saveAs(new Blob([vid], { type: 'video/mp4' }), "vid.mp4")
     }
 
-
-    encode = (time) => {
-        this.renderScene(this.time)
-        if(this.encoding && this.encodedFrames <  this.duration*this.config.fps  && this.encodedFrames !== -1) { 
-            const videoTs = (this.encodedFrames / this.config.fps )+ 0.1 
+    encode = () => {
+        if(this.encoding && this.encodedFrames <  this.duration * this.config.fps  && this.encodedFrames !== -1) { 
+            const videoTs = (this.encodedFrames / this.config.fps ) 
             const audioTs = (this.audioManager.frameIdx * this.audioManager.sampleWindowSize) 
-            if( videoTs > audioTs ) {
-                this.encodeAudioFrame(time)
+            if( videoTs >= audioTs ) {
+                this.encodeAudioFrame()
             }else{
-                this.encodeVideoFrame(time)
+                this.renderScene()
+                this.encodeVideoFrame()
             }
+
         }else if(this.encoding && this.encodedFrames >= this.duration * this.config.fps) {
             this.encoding = false
             setEncoding(false)
             const t =  (performance.now() - this.startTime) / 1000
-            console.log("ENCODING FINISHED ----- ",t, " seconds and ",  this.encodedFrames / t , " fps" )
+            console.log("ENCODING FINISHED ----- ", t, " seconds and ",  this.encodedFrames / t , " fps" )
             this.setSize(this.props.width, this.props.height, false)
             this.videoEncoder.close(this.saveBlob)
             this.audioManager.encodingFinished()
@@ -227,37 +229,28 @@ class ThreeCanvas extends Component {
     }
 
 
-    encodeAudioFrame = (time) => {
-        const t = performance.now()
+    encodeAudioFrame = () => {
         const frame = this.audioManager.getEncodingFrame()
         this.videoEncoder.queueFrame( frame )
-        
-        const delta = performance.now() - t
-        this.audioTimeSum += delta
-        if((this.audioFramesEncoded++ % 50) === 0 && false) {
-            console.log("audio loaded, last: ", delta, " average: ", this.audioTimeSum / this.audioFramesEncoded) 
-            console.log(this.audioManager.buffers.length, this.audioManager.sampleBuffer.length)
-        }
     }
 
-    encodeVideoFrame = (time) => {
+    encodeVideoFrame = () => {
         const { width, height} = this.state
         const gl = this.renderer.getContext();
-        this.pixels = new Uint8Array(width*height*4)
+        this.pixels = new Uint8Array(width * height * 4)
         gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
         this.videoEncoder.queueFrame( {type: "video", pixels: this.pixels} )
 
         //incrementTime(this.time + (1 / this.config.fps))
-        this.time += (1/this.config.fps)
+        this.time += (1 / this.config.fps)
         this.pixels = null
-        if(this.encodedFrames++ % 99 === 0) console.log(this.encodedFrames, this.time, this.encodedFrames / ((performance.now() - this.startTime) / 1000) ) 
+        this.encodedFrames++
     }
     
 
     renderScene = (time, stepping) => { 
-        var frequencyBins = this.audioManager.getBins(time, stepping)
+        const frequencyBins = this.audioManager.getBins(this.time, stepping)
         this.renderer.clear()
-        
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
             scene.render(this.renderer, time, this.postProcessingEnabled)
@@ -267,9 +260,6 @@ class ThreeCanvas extends Component {
         if(this.postProcessingEnabled) {
             this.renderer.render(this.mainScene, this.mainCamera)
         }
-        
-       
-        
     }
 
     setTime = (time, playing) => {
