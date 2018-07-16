@@ -90,7 +90,7 @@ export default function itemsReducer(state = {
             case "ADD_SOUND": 
                 audioItems  = update(state.audioItems, {$push: [{...action.payload, index: state.itemIdx}]})
                 return {...state, audioInfo: action.payload, audioItems, itemIdx: state.itemIdx + 1}
-            case "ADD_LAYER":
+            case "ADD_3D_LAYER":
                 id          = action.payload.id
                 items       = update(state.items,  {[id]: {$set: {} }})
                 passes      = update(state.passes, {[id]: {$set: [] }})
@@ -104,6 +104,12 @@ export default function itemsReducer(state = {
                 controls    = update(state.controls, {[id]: {$set: action.payload.controls }} )
                 fog         = update(state.fog,  {[id]: {$set: action.payload.fog }} )
                 return {...state, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
+            case "ADD_2D_LAYER":
+                id          = action.payload.id
+                items       = update(state.items,  {[id]: {$set: {} }})
+                passes      = update(state.passes, {[id]: {$set: [] }})
+                layers      = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: []}}})
+                return {...state, items, layers, passes, selectedLayerId: id }
             case "SELECT_LAYER":
                 return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":

@@ -1,8 +1,9 @@
 import * as THREE from 'three'
-import { addLayer } from '@redux/actions/items'
-import cameraConfigs from './cameras/camera'
-import controlConfigs from './controls/config'
+import { add2DLayer } from '@redux/actions/items'
 
+import Nebula from './items/nebula'
+import InceptionCity from './items/inceptioncity'
+import CircleRings from './items/circlerings';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -13,9 +14,6 @@ export default class SceneContainer {
         this.toRender   = []
         this.rendering  = []
 
-        this.cameraConfig   = cameraConfigs.orthoConfig
-        this.controlConfig  = controlConfigs.orbitConfig
-
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
@@ -23,26 +21,36 @@ export default class SceneContainer {
             width,
             height,
             passes: [],
+            isThreeLayer: false
         }
 
-        this.scene = new THREE.Scene()
-        this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
-        this.sceneConfig = {
-            scene: this.scene,
-            camera: this.camera,
-            renderer
-        }
-        
-        addLayer(this.config)
+        add2DLayer(this.config)
 
         this.canvas = document.createElement('canvas');
-        this.canvas.width = width;
-        this.canvas.height = height;
+        this.canvas.width = 512;
+        this.canvas.height = 512;
         this.ctx = this.canvas.getContext("2d");
 
-        this.texture =  new THREE.Texture(this.canvas)
-        this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } ));
-        this.quad.frustumCulled = false; 
+        this.ctx.fillStyle = '#00FF00';
+        this.ctx.fillRect(0, 0, 200, 200);
+        this.texture =  new THREE.CanvasTexture(this.canvas)
+        this.test = 0
+
+
+        this.quad = new THREE.Mesh( 
+            new THREE.PlaneBufferGeometry( 2, 2 ), 
+            new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
+        );
+
+        this.internalQuad = new THREE.Mesh( 
+            new THREE.PlaneBufferGeometry( 2, 2 ), 
+            new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
+        );
+
+        this.mainCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        this.mainScene = new THREE.Scene();
+        this.mainScene.add(this.internalQuad)   
+
     }
 
     removeEffect = (config) => {
@@ -58,18 +66,24 @@ export default class SceneContainer {
     }
 
     addItem = (name, info, time) => {
-        info.name = name
-        info.sceneId = this.config.id
-        info.time = time
-        
+        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id}
+        console.log(info)
         let item; 
         switch (info.type) {
+            case "NEBULOSA":
+                item = new Nebula(info)
+                break;
+            case "INCEPTION CITY":
+                item = new InceptionCity(info)
+                break;
+            case "CIRCLE RINGS":
+                item = new CircleRings(info)
+                break;
             default:
                 console.log("unkown config type while adding object")
         }
 
         this.items.push(item)
-        this.scene.add(item.mesh)
         
         const { start, duration } = item.config
         item.mesh.visible = false
@@ -85,7 +99,7 @@ export default class SceneContainer {
         let idx = this.items.findIndex((e) => e.config.id === id)
 
         if (idx !== -1) {
-            this.scene.remove(this.items[idx].mesh)
+            //this.scene.remove(this.items[idx].mesh)
             this.items = this.items.filter((_, i) => i !== idx)
             this.toRender = this.toRender.filter(e => e.config.id !== id)
             this.rendering = this.rendering.filter(e => e.config.id !== id)
@@ -96,13 +110,11 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
-        this.camera.aspect = width / height;
-        this.renderTarget.setSize(width, height)
-        if (this.camera.isPerspectiveCamera)
-            this.camera.updateProjectionMatrix();
+        this.mainCamera.aspect = width / height;
+        //this.renderTarget.setSize(width, height)
+        if (this.mainCamera.isPerspectiveCamera)
+            this.mainCamera.updateProjectionMatrix();
     }
-
-
 
 
     updateItem = (config, time) => {
@@ -110,7 +122,7 @@ export default class SceneContainer {
         if (item) {
             item.updateConfig(config)
         } else {
-            console.log("[scene.js] can't find id", config, this.items)
+            console.log("[scene.js] can't find id in: ", this.config.name, config, this.items)
             return
         }
 
@@ -171,16 +183,21 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
-
+        this.addOrRemove(this.toRender, this.rendering, this.mainScene, time)
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.rendering.forEach(item => item.animate(frequencyBins, time))
+        this.texture.needsUpdate = true
     }
 
     render = (renderer, time, postProcessingEnabled) => {
         //if(this.config.name === "graphics")console.log(this.config.postProcessingEnabled)
-        if(postProcessingEnabled) {
+        if( postProcessingEnabled ) {
             this.renderTarget.render( renderer, time)
         }else {
-            renderer.render(this.scene, this.camera)
+            renderer.render(this.mainScene, this.mainCamera)
         }
+
+
     }
 
     setTime = (time, playing, sItemId) => {
@@ -202,11 +219,10 @@ export default class SceneContainer {
     }
 
     stop = () => {
-        this.scene.children.forEach(e => e.visible = false)
+        //this.scene.children.forEach(e => e.visible = false)
         this.items.forEach(e => { e.stop() })
         this.rendering = []
         this.toRender = []
-        this.play(0)
     }
 
 

@@ -24,7 +24,6 @@ export default class EffectComposer {
             var size = renderer.getDrawingBufferSize();
             renderTarget = new WebGLRenderTarget(size.width, size.height, parameters);
             renderTarget.texture.name = 'EffectComposer.rt1';
-
         }
 
         this.renderTarget1 = renderTarget;

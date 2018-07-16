@@ -47,8 +47,8 @@ const GroupHeader = (props) => {
         <div style={{display: "flex", flexDirection: "row"}}>
             { props.addAction && 
                 <div style={{minWidth: iconSize, minHeight: iconSize, marginTop: 3}}>
-                 <AddBox onClick={props.addAction} style={{marginTop: 3, width: iconSize, height: iconSize}}></AddBox>
-                 </div>
+                    <AddBox onClick={props.addAction} style={{marginTop: 3, width: iconSize, height: iconSize}}></AddBox>
+                </div>
             }
             { props.expanded && 
             <div style={{minWidth: iconSize, minHeight: iconSize, marginTop: 3}}>

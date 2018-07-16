@@ -8,7 +8,7 @@ import {connect} from 'react-redux'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
 import AppBar from 'material-ui/AppBar'
 
-const items = [
+const items3D = [
   "Bars", 
   "Text3D", 
   "Water", 
@@ -20,6 +20,12 @@ const items = [
   "Skybox2", 
   "Northern Lights",
   "Audio Circle"
+]
+
+const items2D = [
+  "Inception City",
+  "Nebulosa",
+  "Circle Rings"
 ]
 
 const styles = theme => ({
@@ -46,7 +52,9 @@ class AudioReactiveTypeList extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const items = this.props.layer.isThreeLayer ? items3D : items2D
     return (
+
       <div className={classes.root}>
        <AppBar position="static" style={{display: "flex" , flexDirection: "row", backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0, textAlign: "center"}}>
             <div style={{minWidth: 20, minHeight: 20, marginTop: 3}}>

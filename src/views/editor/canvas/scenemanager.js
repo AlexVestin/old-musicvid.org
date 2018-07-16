@@ -1,6 +1,8 @@
-import SceneContainer from './scene'
+import SceneContainer3D from './three/scene'
+import SceneContainer2D from './canvas2d/scene'
+
 import React, { Component } from 'react';
-import Sound from "./items/sound"
+import Sound from "./three/items/sound"
 import store from '@redux/store'
 import { OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
@@ -8,7 +10,7 @@ import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
 import { setSidebarWindowIndex } from '@redux/actions/items'
 
-import AudioManager from '../audiomanager'
+import AudioManager from './audiomanager'
 
 
 class ThreeCanvas extends Component {
@@ -42,21 +44,21 @@ class ThreeCanvas extends Component {
     }
 
     setupScene = () =>  {
-        const background = new SceneContainer("background", this.width, this.height, this.renderer)
-        
-        const graphics   = new SceneContainer("graphics", this.width, this.height, this.renderer)
+        const background = new SceneContainer3D("background", this.width, this.height, this.renderer)
+        const graphics   = new SceneContainer3D("graphics", this.width, this.height, this.renderer)
+        const c2d = new SceneContainer2D("canvas2d", this.width, this.height, this.renderer)
+
         graphics.setCamera()
         graphics.setControls()
         graphics.controls.enabled = false
 
-        this.mainCamera = new OrthographicCamera(-1,1,1,-1,0,100);
+        this.mainCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 100);
         this.mainScene = new Scene();
 
-        this.mainScene.add(background.quad) 
-        //background.quad.position.z = -1
-        this.mainScene.add(graphics.quad)               
-        this.scenes = [background, graphics]
-
+        this.mainScene.add(c2d.quad)   
+        this.mainScene.add(graphics.quad)   
+        this.mainScene.add(background.quad)   
+        this.scenes = [background, c2d, graphics]
         setSidebarWindowIndex(0);
     }
 
@@ -121,13 +123,20 @@ class ThreeCanvas extends Component {
 
         const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null
         this.selectedItemId = state.items.selectedItemId
-
+        var newLayer
         switch(type) {
-            case "CREATE_LAYER":
-                const newLayer   = new SceneContainer("new graphics", this.width, this.height, this.renderer)
+            
+            case "CREATE_3D_LAYER":
+                newLayer   = new SceneContainer3D("new 3d graphics", this.width, this.height, this.renderer)
                 newLayer.setCamera()
                 newLayer.setControls()
                 newLayer.controls.enabled = false
+                this.mainScene.add(newLayer.quad)               
+                this.scenes.push(newLayer)
+                setSidebarWindowIndex(0);
+                break;
+            case "CREATE_2D_LAYER":
+                newLayer   = new SceneContainer2D("new 2d graphics", this.width, this.height, this.renderer)
                 this.mainScene.add(newLayer.quad)               
                 this.scenes.push(newLayer)
                 setSidebarWindowIndex(0);

@@ -11,8 +11,12 @@ class LayerList  extends React.Component {
     selectLayer(layer.id)
   }
 
-  createLayer = () =>  {
-    dispatchAction( { type: "CREATE_LAYER" })
+  create2DLayer = () =>  {
+    dispatchAction( { type: "CREATE_2D_LAYER" })
+  }
+
+  create3DLayer = () =>  {
+    dispatchAction( { type: "CREATE_3D_LAYER" })
   }
 
   render() {
@@ -34,9 +38,10 @@ class LayerList  extends React.Component {
           ))}
         </List>
         
-        <Button variant="raised" fullWidth onClick={this.createLayer} color="secondary">
-            Add New Layer
-        </Button>
+        <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+          <Button disableRipple style={{  borderTop: "1px solid gray", borderBottom: "1px solid gray"}}  fullWidth onClick={this.create3DLayer} > Add 3d Layer</Button>
+          <Button disableRipple style={{ borderTop: "1px solid gray", borderBottom: "1px solid gray"}}  fullWidth onClick={this.create2DLayer} > Add 2d Layer</Button>
+        </div>
       </div>
     );
   }

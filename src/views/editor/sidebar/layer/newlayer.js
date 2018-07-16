@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import withHeader from '../withheader';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
@@ -36,19 +35,19 @@ class AddLayerOptions extends React.Component {
         <input type="file" ref={(ref) => this.uploadVideo = ref} style={{ display: 'none' }} />
                         
         <List>
-            <ListItem dense button className={classes.listItem}>
+            <ListItem disableRipple  dense button className={classes.listItem}>
                 <ListItemText primary={`Add sound`} onClick={() => this.upload(0)}/>
             </ListItem>
 
-            <ListItem dense button className={classes.listItem}>
+            <ListItem disableRipple  dense button className={classes.listItem}>
                 <ListItemText primary={`Add background image`} onClick={() => this.upload(1)}/>
             </ListItem>
 
-            <ListItem dense button className={classes.listItem} onClick={() => this.upload(2)}>
+            <ListItem disableRipple  dense button className={classes.listItem} onClick={() => this.upload(2)}>
                 <ListItemText primary={`Add Video`} />
             </ListItem>
 
-            <ListItem dense button className={classes.listItem}>
+            <ListItem  disableRipple dense button className={classes.listItem}>
                 <ListItemText primary={`Add Audio Reactive Item`} />
             </ListItem>
 
@@ -56,7 +55,7 @@ class AddLayerOptions extends React.Component {
                 <ListItemText primary={`Add Text`} />
             </ListItem>
 
-          <ListItem dense button className={classes.listItem}>
+          <ListItem disableRipple  dense button className={classes.listItem}>
             <Button variant="raised" fullWidth onClick={this.back}>
                 Back
             </Button>

@@ -80,10 +80,19 @@ export function addAutomation(item){
     );  
 }
 
-export function addLayer(item){
+export function add3DLayer(item){
     const id = Math.floor(Math.random() * 100000000)
     store.dispatch({
-        type: "ADD_LAYER",
+        type: "ADD_3D_LAYER",
+        payload: item,
+        id    
+    });
+}
+
+export function add2DLayer(item){
+    const id = Math.floor(Math.random() * 100000000)
+    store.dispatch({
+        type: "ADD_2D_LAYER",
         payload: item,
         id    
     });

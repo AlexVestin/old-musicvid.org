@@ -11,7 +11,7 @@ import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
 import RenderTarget from './postprocessing/rendertarget';
-import { addLayer, replaceCamera, replaceControls } from '@redux/actions/items'
+import { add3DLayer, replaceCamera, replaceControls } from '@redux/actions/items'
 import cameraConfigs from './cameras/camera'
 import controlConfigs from './controls/config'
 import Particles from './items/particles';
@@ -62,7 +62,8 @@ export default class SceneContainer {
             passes: [],
             camera: this.cameraConfig,
             controls: this.controlConfig,
-            fog: this.fogConfig
+            fog: this.fogConfig,
+            isThreeLayer: true
         }
 
         this.sceneConfig = {
@@ -71,7 +72,7 @@ export default class SceneContainer {
             renderer
         }
         
-        addLayer(this.config)
+        add3DLayer(this.config)
 
         this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
         this.texture = this.renderTarget.buffer.texture

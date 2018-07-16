@@ -44,6 +44,7 @@ class SidebarContainer extends React.Component {
         ITEMS: 8,
         EFFECT: 9,
         NEWEFFECT: 10,
+        ADDRESOURCEOPTIONS2D: 11,
     }
     
     state = {
@@ -66,7 +67,6 @@ class SidebarContainer extends React.Component {
                 {value === INDEXES.LAYERS && <LayerList idx={0} ></LayerList>}
                 {value === INDEXES.AUDIO && <Audio idxs={INDEXES} idx={INDEXES.AUDIO}></Audio>}
                 {value >= 2 && <LayerContainer idxs={INDEXES} ></LayerContainer>}
-                
             </div>
         );
     }

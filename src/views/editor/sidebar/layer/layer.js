@@ -2,7 +2,7 @@ import React from 'react';
 import withHeader from '../withheader'
 
 import { connect } from 'react-redux'
-import { setSidebarWindowIndex,  editCamera, editFog, editControls } from '@redux/actions/items'
+import { setSidebarWindowIndex,  editCamera, editControls } from '@redux/actions/items'
 
 import GroupContainer from '../groupcontainer'
 import ConfigList from '../input'
@@ -15,32 +15,42 @@ class Layer extends React.Component {
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYERS)
     };
+
+    addAction = () => {
+        if(this.props.layer.isThreeLayer){
+            setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)
+        } else {
+            setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS2D)
+        }
+    }
+    
     render() {
-       
         return (
             <div style={{height: "100%", overflowY: "scroll"}}>
-                <GroupContainer label={"Items"} addAction={() => setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)}>
+                <GroupContainer label={"Items"} addAction={this.addAction}>
                     <ItemList idxs={this.props.idxs}></ItemList>
                 </GroupContainer>
 
-                <ConfigList 
-                    edit={editCamera} 
-                    defaultConfig={this.props.camera.defaultConfig} 
-                    item={this.props.camera} 
-                    addAutomation={this.addAutomation}>
-                </ConfigList>
-             
-                <ConfigList 
-                    edit={editControls} 
-                    defaultConfig={this.props.controls.defaultConfig} 
-                    item={this.props.controls} 
-                    addAutomation={this.addAutomation}>
-                </ConfigList>
-
+                {this.props.layer.isThreeLayer &&
+                    <React.Fragment>
+                        <ConfigList 
+                            edit={editCamera} 
+                            defaultConfig={this.props.camera.defaultConfig} 
+                            item={this.props.camera} 
+                            addAutomation={this.addAutomation}>
+                        </ConfigList>
+                    
+                        <ConfigList 
+                            edit={editControls} 
+                            defaultConfig={this.props.controls.defaultConfig} 
+                            item={this.props.controls} 
+                            addAutomation={this.addAutomation}>
+                        </ConfigList>
+                    </React.Fragment>
+                }
                 <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                     <EffectList idxs={this.props.idxs}></EffectList>
                 </GroupContainer> 
-
             </div>
         );
     }
@@ -52,7 +62,6 @@ const mapStateToProps = state => {
         items: state.items.items,
         sideBarWindowIndex: state.items.sideBarWindowIndex,
         postProcessingEnabled: state.items.postProcessingEnabled,
-        
         layer: state.items.layers[state.items.selectedLayerId],
         camera: state.items.cameras[state.items.selectedLayerId],
         controls: state.items.controls[state.items.selectedLayerId],

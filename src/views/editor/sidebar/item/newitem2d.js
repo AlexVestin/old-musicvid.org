@@ -6,13 +6,13 @@ import { createItem, setSidebarWindowIndex } from '@redux/actions/items'
 import { connect } from 'react-redux'
 import Modal from '../modal'
 
-class AddResourceOptions extends React.Component {
+class AddResourceOptions2D extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {modalOpen: false}
     }
-
+    
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYER)
     };
@@ -28,10 +28,6 @@ class AddResourceOptions extends React.Component {
 
         this.uploadImage.onchange = () => {
             add("IMAGE", this.uploadImage)
-        }
-
-        this.uploadVideo.onchange = () => {
-            add("VIDEO", this.uploadVideo)
         }
     }
 
@@ -71,20 +67,14 @@ class AddResourceOptions extends React.Component {
                 <ListItemText primary={`Add image`} onClick={() => this.add(1)}/>
             </ListItem>
 
-            <ListItem disableRipple dense button onClick={() => this.add(2)}>
-                <ListItemText primary={`Add Video`} />
-            </ListItem>
-
             <ListItem disableRipple dense button onClick={() => this.add(4)}>
-                <ListItemText primary={`3D items`} />
+                <ListItemText primary={`Items`} />
             </ListItem>            
         </List>
       </div>
     );
   }
 }
-
-
 const mapStateToProps = state => {
     return {
         items: state.items.items,
@@ -92,4 +82,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(withHeader(AddResourceOptions))
+export default connect(mapStateToProps)(withHeader(AddResourceOptions2D))

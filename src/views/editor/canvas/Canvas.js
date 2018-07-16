@@ -1,6 +1,6 @@
 
-import React, {Component} from 'react'
-import ThreeCanvas from './three/three';
+import React, { Component } from 'react'
+import ThreeCanvas from './scenemanager';
 
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
