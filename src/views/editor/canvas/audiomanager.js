@@ -1,3 +1,5 @@
+import AvForward10 from "material-ui/SvgIcon";
+
 const EMPTY_BUFFER = -1
 
 export default class AudioManager {
@@ -10,8 +12,7 @@ export default class AudioManager {
         
         this.nrBufferSources = 3
         this.bufferSources = []
-        
-        
+    
         this.sounds = []
         this.frameIdx = 0
         this.channels = 2
@@ -32,7 +33,7 @@ export default class AudioManager {
             if(e.data === "tick")
                 this.schedule(this.frameIdx % (this.nrBufferSources - 1))
         }
-        this.metronome.postMessage({interval: this.sampleWindowSize * 1000})
+        this.metronome.postMessage( { interval: this.sampleWindowSize * 1000 } )
         
         this.Module  = {};
         window.KissFFT(this.Module)
@@ -41,6 +42,8 @@ export default class AudioManager {
         };
         
     }
+
+    merge = (arr1, arr2) => arr1.map((e,i) => e + arr2[i])
 
     removeSound = (idx) => {
         this.sounds.splice(idx, 1)
@@ -79,7 +82,9 @@ export default class AudioManager {
                 buffersToSchedule.forEach(buffer => buffer.start()) 
                 that.offlineCtx.startRendering().then((renderedBuffer => {
                     that.buffers.push(renderedBuffer)
-                    that.sampleBuffer = that.float32Concat(that.sampleBuffer, renderedBuffer.getChannelData(0))
+
+                    const merged = that.merge(renderedBuffer.getChannelData(0), renderedBuffer.getChannelData(1))
+                    that.sampleBuffer = that.float32Concat(that.sampleBuffer, merged)
                     resolve()
                     return
                 })) 
@@ -152,15 +157,15 @@ export default class AudioManager {
     }
 
     getBins = (times, stepping) => {
-        let bins = []
+        let bins = [], data = []
         
         //TODO encoding lags behind by about a second (0.9 seconds) from regular playback, bad hack using magic number to fix
         const time = this.encoding ? times + (4 * this.nrBufferSources * this.sampleWindowSize) :  times + (this.nrBufferSources * this.sampleWindowSize)
         const idx = Math.floor((time - this.time) * this.sampleRate)
-        
+
         if(this.sampleBuffer.length >= this.fftSize) {
             const windowSize = this.fftSize;
-            const data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
+            data = this.sampleBuffer.subarray(idx - this.sliceIndex, idx + windowSize - this.sliceIndex)
             this.sampleBuffer = this.sampleBuffer.slice(idx - this.lastFFTIdx)
             this.sliceIndex += idx - this.lastFFTIdx
             this.lastFFTIdx = idx
@@ -182,7 +187,7 @@ export default class AudioManager {
             this.buffers.pop()
         }
        
-        return bins
+        return { bins: bins, raw: data }
     }
 
     update = (time) => {

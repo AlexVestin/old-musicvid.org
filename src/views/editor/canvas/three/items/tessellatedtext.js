@@ -39,10 +39,10 @@ export default class TessellatedText extends AudioreactiveItem {
         const group = {
             title: "Text",
             items: {
-                text: {value: "text", type: "String", tooltip: "", editable: true},
-                fontSize: {value: 5, type: "Number", tooltip: "", editable: true},
-                threshold: {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true},
-                scale: {value: 50, type: "Number", tooltip: "", editable: true},
+                text: {value: "text", type: "String", tooltip: "", disabled: true},
+                fontSize: {value: 5, type: "Number", tooltip: "", disabled: true},
+                threshold: {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", disabled: true},
+                scale: {value: 50, type: "Number", tooltip: "", disabled: true},
             }
         }
 

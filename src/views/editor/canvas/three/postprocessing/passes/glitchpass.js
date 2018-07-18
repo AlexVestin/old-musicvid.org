@@ -12,8 +12,8 @@ export default class GlitchPass extends Pass {
 		const group = {
 			title: "audio reactive settings",
 			items: {
-				ampThreshold: {value: 20, type: "Number", tooltip: "Amount needed to trigger a glitch effect", editable: true},
-				amount: {value: 40, type: "Number", tooltip: "How strong the glitch will be", editable: true},
+				ampThreshold: {value: 20, type: "Number", tooltip: "Amount needed to trigger a glitch effect", disabled: true},
+				amount: {value: 40, type: "Number", tooltip: "How strong the glitch will be", disabled: true},
 			}
 		}
 		

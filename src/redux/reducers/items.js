@@ -73,7 +73,6 @@ export default function itemsReducer(state = {
                 passes       = update(state.passes, {[state.selectedLayerId]: {$push: [action.payload] }})
                 layers       = update(state.layers, {[state.selectedLayerId]: {passes: {$push: [action.payload.id]}}})
                 return {...state, layers, passes, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT, effectId: action.payload.id} 
-
             case "EDIT_EFFECT":
                 idx = state.passes[state.selectedLayerId].findIndex(e => e.id === state.effectId)
                 const pass = state.passes[state.selectedLayerId][idx]                
@@ -127,6 +126,16 @@ export default function itemsReducer(state = {
                 items   = update(state.items,  {[state.selectedLayerId]: {$unset: [action.payload.id]}})  
                 layers  = update(state.layers, {[state.selectedLayerId]: {items: {$splice: [[idx, 1]]}}})
                 return {...state, items, layers, selectedItemId: -1, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
+            
+            case "TOGGLE_ITEMS_ENABLED":
+                const s = {...state.items[state.selectedLayerId][state.selectedItemId], ...action.payload}
+                action.payload.items.forEach(e => {
+                    s.defaultConfig[action.payload.groupIndex].items[e].disabled = action.payload.disabled
+                })
+                
+                items   = update(state.items, {[state.selectedLayerId]: {[state.selectedItemId]: {$set: s }}})
+                return {...state, items}
+            
             case "UPDATE_ITEM_CONFIG":
                 const newItem = {...state.items[action.payload.sceneId][action.payload.id], ...action.payload}
                 items   = update(state.items, {[action.payload.sceneId]: {[action.payload.id]: {$set: newItem }}})

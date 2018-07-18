@@ -66,7 +66,7 @@ class InputContent extends PureComponent {
                                 <input 
                                     onChange={this.props.handleChange({type: config.type, key: key})} 
                                     value={item[key]} 
-                                    disabled={config.editable === false}    
+                                    disabled={config.disabled === true}   
                                     style={inputStyles[config.type]}
                                     type={config.type === "Number" ? "number" : "text"}
                             ></input>
@@ -86,7 +86,7 @@ class InputContent extends PureComponent {
                                     type="checkbox"
                                     checked={item[key]}
                                     onChange={this.props.handleChange({type: config.type, key: key, prev: item[key]})} 
-                                    disabled={config.editable === false}    
+                                    disabled={config.disabled === true}    
                                     style={inputStyles[config.type]}>
                                 </input>
                             </LabeledFieldWrapper>}
@@ -122,7 +122,7 @@ class LabeledFieldWrapper extends PureComponent {
     render() {
         let { config, item } = this.props
         const key = this.props.keyVal
-        if(config === undefined)config = {value: item[key], type: "Number", editable: false}
+        if(config === undefined)config = {value: item[key], type: "Number", disabled: false}
 
         const autoIconWidth = 18
         const iconMarginTop = 2
@@ -138,7 +138,7 @@ class LabeledFieldWrapper extends PureComponent {
                 </div>
 
                 <div style={{display: "flex", flexDirection: "row"}}>
-                    {config.type === "Number" && config.editable !== false && !config.disableAutomations &&
+                    {config.type === "Number" && config.disabled !== true && !config.disableAutomations &&
                         <Tooltip id="tooltip-top-start" title={"Add keyframe track"} placement="right-end">
                             <div style={{width: autoIconWidth, height: autoIconWidth}}>
                                 <BrightnessAuto 

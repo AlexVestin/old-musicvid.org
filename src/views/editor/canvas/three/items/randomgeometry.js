@@ -9,9 +9,9 @@ export default class RandomGeometry extends AudioreactiveItem {
         const rotationGroup = {
             title: "Rotation",
             items: {
-               rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick", editable: true},
-               rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick", editable: true},
-               rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick", editable: true},
+               rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick", disabled: true},
+               rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick", disabled: true},
+               rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick", disabled: true},
             }
         }
 

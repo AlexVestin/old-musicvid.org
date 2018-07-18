@@ -86,7 +86,7 @@ export default class Nebula extends BaseItem {
         }
     }
 
-    animate = (frequencyBins, newTime) => {
+    animate = (newTime, frequencyBins) => {
         var	sortPuff = function(p1,p2) { return p1.p - p2.p; };	        
         if(this.oldTime === 0 ) {
             this.oldTime = newTime;

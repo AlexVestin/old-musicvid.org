@@ -10,10 +10,10 @@ export default class Bars extends AudioreactiveItem {
         const group = { 
             title: "Stuff",
             items: {
-                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick", editable: true},
-                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", editable: true},    
-                color : {value: "FFFFFF", type: "String", tooltip: "", editable: true},
-                scale : {value: 0.5, type: "Number", tooltip: "", editable: true}
+                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick", disabled: true},
+                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", disabled: true},    
+                color : {value: "FFFFFF", type: "String", tooltip: "", disabled: true},
+                scale : {value: 0.5, type: "Number", tooltip: "", disabled: true}
             }
         }
         

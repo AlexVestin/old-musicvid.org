@@ -9,9 +9,9 @@ export default class Text3D extends MeshItem {
         const group = {
             title: "Text",
             items: {
-                text: {value: "text", type: "String", tooltip: "", editable: true},
-                fontSize: {value: 5, type: "Number", tooltip: "", editable: true},
-                color: {value: "FFFFFF", type: "String", tooltip: "", editable: true},
+                text: {value: "text", type: "String", tooltip: "", disabled: true},
+                fontSize: {value: 5, type: "Number", tooltip: "", disabled: true},
+                color: {value: "FFFFFF", type: "String", tooltip: "", disabled: true},
             }
         }
         this.config.defaultConfig.push(group)

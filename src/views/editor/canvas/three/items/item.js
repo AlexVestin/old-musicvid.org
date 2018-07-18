@@ -9,17 +9,17 @@ export default class BaseItem {
                 title: "Author Information", 
                 hide: true,
                 items: {
-                    author: {value: "example", type: "String", editable: false},
-                    website: {value: "http://example.org", type: "Link", editable: false},
-                    github: {value: "https://github.com/example", type: "Link", editable: false},
+                    author: {value: "example", type: "String", disabled: false},
+                    website: {value: "http://example.org", type: "Link", disabled: false},
+                    github: {value: "https://github.com/example", type: "Link", disabled: false},
             }
         }
 
         const timeGroup = {
             title: "Time configurations", 
             items: {
-                start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", editable: true, disableAutomations: true},
-                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", editable:  true, disableAutomations: true},
+                start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", disabled: true, disableAutomations: true},
+                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", disabled:  true, disableAutomations: true},
             }
         }
 
@@ -128,9 +128,9 @@ export class MeshItem extends BaseItem {
         const positionGroup = {
             title: "Positioning",
             items: {
-                X: {value: 0, type: "Number",  tooltip: "X position", editable: true},
-                Y: {value: 0, type: "Number", tooltip: "Y Position", editable: true},
-                Z: {value: 0, type: "Number",  tooltip: "Z Position", editable: true},
+                X: {value: 0, type: "Number",  tooltip: "X position", disabled: true},
+                Y: {value: 0, type: "Number", tooltip: "Y Position", disabled: true},
+                Z: {value: 0, type: "Number",  tooltip: "Z Position", disabled: true},
             }
         }
         
@@ -146,10 +146,10 @@ export class AudioreactiveItem extends MeshItem {
         const audioReactiveGroup = {
             title: "Audio Reactive Settings",
             items: {
-                threshold: {value: 15, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", editable: true},
-                deltaTime: {value: 0.01, type: "Number", tooltip: "Time cooldown before rerendering (in seconds)", editable: true},
-                barIndex:  {value: 2, type: "Number", tooltip: "Index of audio bin (0-32) that should be the input for triggering a rerender", editable: true},
-                strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", editable: true},
+                threshold: {value: 15, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", disabled: true},
+                deltaTime: {value: 0.01, type: "Number", tooltip: "Time cooldown before rerendering (in seconds)", disabled: true},
+                barIndex:  {value: 2, type: "Number", tooltip: "Index of audio bin (0-32) that should be the input for triggering a rerender", disabled: true},
+                strength: {value: 1, type: "Number", tooltip: "Exaggeration in the y axis", disabled: true},
                 
             }
         }

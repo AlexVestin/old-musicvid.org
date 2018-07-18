@@ -12,7 +12,7 @@ export default class Pass {
         {
             title: "config",
             items: {
-                name: {value: "", type: "String", editable: true, tooltip: ""},
+                name: {value: "", type: "String", disabled: true, tooltip: ""},
             }
         }]
         

@@ -25,7 +25,8 @@ const items3D = [
 const items2D = [
   "Inception City",
   "Nebulosa",
-  "Circle Rings"
+  "Circle Rings",
+  "Polartone"
 ]
 
 const styles = theme => ({

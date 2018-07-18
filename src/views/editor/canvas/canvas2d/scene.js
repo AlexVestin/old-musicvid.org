@@ -4,6 +4,7 @@ import { add2DLayer } from '@redux/actions/items'
 import Nebula from './items/nebula'
 import InceptionCity from './items/inceptioncity'
 import CircleRings from './items/circlerings';
+import WaveletCanvas from './items/waveletcanvas';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -27,16 +28,12 @@ export default class SceneContainer {
         add2DLayer(this.config)
 
         this.canvas = document.createElement('canvas');
-        this.canvas.width = 512;
-        this.canvas.height = 512;
+        this.canvas.width = 2048;
+        this.canvas.height = 2048;
         this.ctx = this.canvas.getContext("2d");
-
-        this.ctx.fillStyle = '#00FF00';
-        this.ctx.fillRect(0, 0, 200, 200);
+        
         this.texture =  new THREE.CanvasTexture(this.canvas)
         this.test = 0
-
-
         this.quad = new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 
             new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
@@ -70,6 +67,12 @@ export default class SceneContainer {
         console.log(info)
         let item; 
         switch (info.type) {
+            case "POLARTONE":
+                item = new WaveletCanvas(info)
+            break;
+            case "WAVELET CANVAS":
+                item = new WaveletCanvas(info)
+                break;
             case "NEBULOSA":
                 item = new Nebula(info)
                 break;
@@ -183,9 +186,11 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
+        this.ctx.fillStyle = "#FFFFFF"
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
         this.addOrRemove(this.toRender, this.rendering, this.mainScene, time)
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.rendering.forEach(item => item.animate(frequencyBins, time))
+        //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.rendering.forEach(item => item.animate(time, frequencyBins))
         this.texture.needsUpdate = true
     }
 
@@ -196,8 +201,6 @@ export default class SceneContainer {
         }else {
             renderer.render(this.mainScene, this.mainCamera)
         }
-
-
     }
 
     setTime = (time, playing, sItemId) => {

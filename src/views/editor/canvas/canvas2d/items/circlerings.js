@@ -73,7 +73,6 @@ export default class CircleRings extends BaseItem {
                 ringCount: {type: "Number", value: 10},
                 thickness: {type: "Number", value: 3},
                 radius: {type: "Number", value: 20},
-
             }
         })
 
@@ -88,8 +87,6 @@ export default class CircleRings extends BaseItem {
             }
         })
         
-
-
         this.W = config.canvas.width
         this.H = config.canvas.height
         this.canvas = config.canvas
@@ -141,7 +138,7 @@ export default class CircleRings extends BaseItem {
         }
     }
 
-    animate = (frequencyBins, time) => {
+    animate = (time, frequencyBins) => {
         //this.innerCircle.draw(this.ctx, true);
         let sum  = 0
         for(var i = 0; i < 5; i++) {
