@@ -47,7 +47,7 @@ export default class SceneContainer {
                     enabled:    { value: false, type: "Boolean" },
                     near:       { value: 500, type: "Number"},
                     far:        { value: 2000, type: "Number"},
-                    color:      { value: "333333", type: "String"}
+                    color:      { value: "333333", type: "String"},
                 }
             }] 
         }
@@ -57,6 +57,17 @@ export default class SceneContainer {
             id: Math.floor(Math.random() * 100000000),
             name: name,
             items: [],
+            settings: {
+                thing: 10,
+                zIndex: 1,
+                defaultConfig: [ {
+                    title: "Settings", 
+                    items: {
+                        zIndex: {type: "Number", value: 1}
+                    }
+                }]
+            },
+
             width,
             height,
             passes: [],
@@ -82,6 +93,10 @@ export default class SceneContainer {
 
     editFog = (key, value) => {
         this.scene.fog[key] = value
+    }
+
+    editSettings = (key, value) => {
+        this.config.settings[key] = value
     }
 
     editControls = (key, value) => {
@@ -182,10 +197,19 @@ export default class SceneContainer {
         this.renderTarget.createEffect(type)
     }
 
+    moveItem = (item, up) => {
+        const delta =  up ? -1 : 1
+        let i1 = this.items.find(e => e.config.id === item.id)
+        let i2 = this.items.find(e => e.config.renderIndex === i1.config.renderIndex + delta)
+        i1.config.renderIndex = i1.config.renderIndex + delta
+        i2.config.renderIndex = i2.config.renderIndex - delta
+    }
+
     addItem = (name, info, time) => {
         info.name = name
         info.sceneId = this.config.id
         info.time = time
+        info.renderIndex = this.items.length
         info.sceneConfig = {
             light: this.light,
             camera: this.camera,

@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux'
 import { selectLayer, dispatchAction } from '@redux/actions/items'
 import withHeader from '../withheader'
-import List, { ListItem, ListItemText } from 'material-ui/List';
-import Button from 'material-ui/Button'
+import Delete from '@material-ui/icons/Delete'
 
+import classes from '../item/items.css'
 class LayerList  extends React.Component {
 
   onClick = (layer) => {
@@ -19,30 +19,38 @@ class LayerList  extends React.Component {
     dispatchAction( { type: "CREATE_3D_LAYER" })
   }
 
+  removeItem = (layer) => {
+    dispatchAction({type: "REMOVE_LAYER", payload: layer})
+  }
+
   render() {
     const { layers } = this.props;
-
-    const root = {
-      height: "100%", 
-      width: '100%',
-      overflowY: "scroll"
-    }
-
+    const sortedItems = Object.keys(layers).map(key => layers[key])
     return (
-      <div className={root}>
-        <List>
-          {Object.keys(layers).map(key => (
-            <ListItem key={layers[key].name} dense button onClick={() => this.onClick(layers[key])}>
-              <ListItemText primary={layers[key].name} />
-            </ListItem>
-          ))}
-        </List>
-        
-        <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-          <Button disableRipple style={{  borderTop: "1px solid gray", borderBottom: "1px solid gray"}}  fullWidth onClick={this.create3DLayer} > Add 3d Layer</Button>
-          <Button disableRipple style={{ borderTop: "1px solid gray", borderBottom: "1px solid gray"}}  fullWidth onClick={this.create2DLayer} > Add 2d Layer</Button>
-        </div>
-      </div>
+      <div className={classes.root}>
+          <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
+            <div style={{backgroundColor: "#f1f1f1", height: 20, width: "100%", display:"flex", justifyContent: "flex-end"}}>
+                <div style={{ display:"flex", flexDirection: "row"}}>
+                  <div onClick={this.create2DLayer} className={classes.button} style={{width: 30, height:20, minWidth: 20, minHeight: 20}}>+2D</div>
+                  <div onClick={this.create3DLayer} className={classes.button} style={{width: 30, height:20, minWidth: 20, minHeight: 20, marginLeft: 5}}>+3D</div>
+                </div>
+            </div>
+          
+              {sortedItems.map((item, i) => {
+                return( 
+                    <div key={item.id} className={classes.wrapper}>
+                        <div className={classes.listitem} onClick={() => this.onClick(item)}> <div className={classes.itemName}>{item.name}</div>  </div>
+                        <div className={classes.listitemContainer}>
+                          <div className={classes.button}  onClick={() => this.removeItem(item)}>
+                              <Delete className={classes.icon}></Delete>
+                          </div>
+                        </div>
+                    </div>
+                  )
+              } 
+              )}
+          </div>
+       </div>
     );
   }
 }
@@ -53,3 +61,4 @@ const mapStateToProps = state => {
   }
 }
 export default connect(mapStateToProps)(withHeader(LayerList))
+

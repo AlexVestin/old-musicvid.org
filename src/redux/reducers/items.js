@@ -10,6 +10,7 @@ export default function itemsReducer(state = {
     cameras: {},
     controls: {},
     fog: {},
+    settings: {},
     audioInfo: null,
     sideBarWindowIndex: 0,
     selectedItemId: 0,
@@ -24,11 +25,14 @@ export default function itemsReducer(state = {
     initialized: false,
     }, action){
 
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem
         switch(action.type){  
             case "EDIT_FOG": 
                 fog =  update(state.fog, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return { ...state, fog }
+            case "EDIT_SETTINGS": 
+                settings =  update(state.settings, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
+                return { ...state, settings }
             case "SET_POST_PROCESSING_ENABLED":
                 return {...state, postProcessingEnabled: action.payload}
             case "EDIT_CAMERA": 
@@ -102,25 +106,35 @@ export default function itemsReducer(state = {
                 cameras     = update(state.cameras, {[id]: {$set: action.payload.camera }} )
                 controls    = update(state.controls, {[id]: {$set: action.payload.controls }} )
                 fog         = update(state.fog,  {[id]: {$set: action.payload.fog }} )
-                return {...state, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
+                settings    = update(state.settings,  {[id]: {$set: action.payload.settings }} )
+                return {...state, settings, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
             case "ADD_2D_LAYER":
                 id          = action.payload.id
                 items       = update(state.items,  {[id]: {$set: {} }})
                 passes      = update(state.passes, {[id]: {$set: [] }})
                 layers      = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: []}}})
-                return {...state, items, layers, passes, selectedLayerId: id }
+                settings    = update(state.settings,  {[id]: {$set: action.payload.settings }} )
+                return {...state, items, settings, layers, passes, selectedLayerId: id }
             case "SELECT_LAYER":
                 return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":
                 return {...state, sideBarWindowIndex: action.payload }
             case "SELECT_ITEM":
                 return {...state, selectedItemId: action.payload.itemId, selectedLayerId: action.payload.layerId, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM }
+
             case "ADD_ITEM":
                 id          = action.payload.id
+                
                 items       = update(state.items,  {[state.selectedLayerId]: {[id]: {$set: {...action.payload, index: state.itemIdx}}}})
                 layers      = update(state.layers, {[state.selectedLayerId]: {items: {$push: [id]}}})
                 automations = update(state.automations, {[id]: {$set: [] }}) 
-                return {...state, items, layers, automations, selectedItemId: id, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM, itemIdx: state.itemIdx + 1}
+
+                return {...state, items, layers, automations, selectedItemId: id, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM }
+            case "REMOVE_LAYER":
+                id = action.payload.id
+                layers  = update(state.layers, {$unset: [id] })
+                return {...state, layers, sideBarWindowIndex: SidebarContainer.INDEXES.LAYERS }
+           
             case "REMOVE_ITEM":
                 idx     = state.layers[state.selectedLayerId].items.findIndex(e => e === action.payload.id)
                 items   = update(state.items,  {[state.selectedLayerId]: {$unset: [action.payload.id]}})  
@@ -137,7 +151,7 @@ export default function itemsReducer(state = {
                 return {...state, items}
             
             case "UPDATE_ITEM_CONFIG":
-                const newItem = {...state.items[action.payload.sceneId][action.payload.id], ...action.payload}
+                newItem = {...state.items[action.payload.sceneId][action.payload.id], ...action.payload}
                 items   = update(state.items, {[action.payload.sceneId]: {[action.payload.id]: {$set: newItem }}})
                 return {...state, items}
             case "SET_AUDIO_WINDOW":

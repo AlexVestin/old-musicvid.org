@@ -125,7 +125,12 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
         var newLayer
         switch(type) {
-            
+            case "REMOVE_LAYER":
+                this.scenes = this.scenes.filter(e => e.config.id !== payload.id)
+                break;
+            case "EDIT_SETTINGS":
+                scene.editSettings(payload.key, payload.value)
+                break;
             case "CREATE_3D_LAYER":
                 newLayer   = new SceneContainer3D("new 3d graphics", this.width, this.height, this.renderer)
                 newLayer.setCamera()
@@ -173,6 +178,9 @@ class ThreeCanvas extends Component {
                 break;
             case "ADD_AUTOMATION":
                 scene.addAutomation(payload.automation, this.selectedItemId)
+                break;
+            case "MOVE_ITEM":
+                scene.moveItem(payload.item, payload.up)
                 break;
             case "EDIT_SELECTED_ITEM":
                 scene.updateItem(state.items.items[this.selectedLayerId][this.selectedItemId], this.time);
@@ -260,6 +268,8 @@ class ThreeCanvas extends Component {
     renderScene = (time, stepping) => { 
         const frequencyBins = this.audioManager.getBins(this.time, stepping)
         this.renderer.clear()
+
+        this.scenes = this.scenes.sort((a,b) => a.config.settings.zIndex - b.config.settings.zIndex)
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
             scene.render(this.renderer, time, this.postProcessingEnabled)

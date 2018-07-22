@@ -26,7 +26,8 @@ const items2D = [
   "Inception City",
   "Nebulosa",
   "Circle Rings",
-  "Polartone"
+  "Polartone",
+  "Square"
 ]
 
 const styles = theme => ({

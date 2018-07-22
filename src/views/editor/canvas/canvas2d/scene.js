@@ -5,6 +5,7 @@ import Nebula from './items/nebula'
 import InceptionCity from './items/inceptioncity'
 import CircleRings from './items/circlerings';
 import WaveletCanvas from './items/waveletcanvas';
+import Square from './items/square';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -18,6 +19,21 @@ export default class SceneContainer {
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
+            settings: {
+                clearColor: "000000",
+                clearAlpha: 1,
+                shouldClear: true,
+                zIndex: 1,
+                defaultConfig: [ {
+                    title: "Clear color", 
+                    items: {
+                        clearColor: {type: "String", value: "000000"},
+                        clearAlpha: {type: "Number", value: 1},
+                        shouldClear: {type: "Boolean", value: true},
+                        zIndex: {type: "Number", value: 1}
+                    }
+                }]
+            },
             items: [],
             width,
             height,
@@ -31,7 +47,7 @@ export default class SceneContainer {
         this.canvas.width = 2048;
         this.canvas.height = 2048;
         this.ctx = this.canvas.getContext("2d");
-        
+
         this.texture =  new THREE.CanvasTexture(this.canvas)
         this.test = 0
         this.quad = new THREE.Mesh( 
@@ -62,11 +78,25 @@ export default class SceneContainer {
         this.renderTarget.createEffect(type)
     }
 
+    editSettings = (key, value) => {
+        this.config.settings[key] = value
+    }
+
+    moveItem = (item, up) => {
+        const delta =  up ? -1 : 1
+        let i1 = this.items.find(e => e.config.id === item.id)
+        let i2 = this.items.find(e => e.config.renderIndex === i1.config.renderIndex + delta)
+        i1.config.renderIndex = i1.config.renderIndex + delta
+        i2.config.renderIndex = i2.config.renderIndex - delta
+    }
+
     addItem = (name, info, time) => {
-        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id}
-        console.log(info)
+        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length}
         let item; 
         switch (info.type) {
+            case "SQUARE":
+                item = new Square(info)
+            break;
             case "POLARTONE":
                 item = new WaveletCanvas(info)
             break;
@@ -186,12 +216,23 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
-        this.ctx.fillStyle = "#FFFFFF"
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+        if(this.config.settings.shouldClear) {
+            this.ctx.fillStyle = "#" + this.config.settings.clearColor
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+        
+        //this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height)
+        this.ctx.save()
+        this.ctx.scale(1, 720/480)        
+        this.ctx.translate( 0, -(this.canvas.height / (720/480)) / 4)
+        
         this.addOrRemove(this.toRender, this.rendering, this.mainScene, time)
         //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.rendering = this.rendering.sort((a, b) => a.config.renderIndex - b.config.renderIndex)
         this.rendering.forEach(item => item.animate(time, frequencyBins))
         this.texture.needsUpdate = true
+        this.ctx.restore()
     }
 
     render = (renderer, time, postProcessingEnabled) => {

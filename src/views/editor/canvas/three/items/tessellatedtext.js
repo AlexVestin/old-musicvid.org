@@ -39,10 +39,10 @@ export default class TessellatedText extends AudioreactiveItem {
         const group = {
             title: "Text",
             items: {
-                text: {value: "text", type: "String", tooltip: "", disabled: true},
-                fontSize: {value: 5, type: "Number", tooltip: "", disabled: true},
-                threshold: {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender", disabled: true},
-                scale: {value: 50, type: "Number", tooltip: "", disabled: true},
+                text: {value: "text", type: "String", tooltip: ""},
+                fontSize: {value: 5, type: "Number", tooltip: ""},
+                threshold: {value: 0.3, type: "Number", tooltip: "Delta amplitude needed to trigger a rerender"},
+                scale: {value: 50, type: "Number", tooltip: ""},
             }
         }
 
@@ -155,8 +155,8 @@ export default class TessellatedText extends AudioreactiveItem {
     }
 
     animate = (time, frequencyBins) => {
-        if(frequencyBins[this.config.barIndex]) {
-            this.uniforms.amplitude.value = Math.random() * frequencyBins[this.config.barIndex] / this.config.scale
+        if(frequencyBins.bins[this.config.barIndex]) {
+            this.uniforms.amplitude.value = Math.random() * frequencyBins.bins[this.config.barIndex] / this.config.scale
         }
     }
 }

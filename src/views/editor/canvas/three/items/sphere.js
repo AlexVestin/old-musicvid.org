@@ -143,9 +143,9 @@ export default class Sphere extends AudioreactiveItem {
         sphere.rotation.y = 0.02 * t;
         sphere.rotation.z = 0.02 * t;
 
-        const newDiff = (frequencyBins[barIndex] / strength) - this.lastDiff
+        const newDiff = (frequencyBins.bins[barIndex] / strength) - this.lastDiff
         if(Math.abs(newDiff) > threshold && newDiff > 0 ) {
-            let diff = frequencyBins[barIndex]
+            let diff = frequencyBins.bins[barIndex]
             if(strength !== 0)
                 diff /= strength
 

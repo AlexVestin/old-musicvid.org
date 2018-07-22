@@ -2,7 +2,6 @@
 import BaseItem from '../../three/items/item'
 import createCamera from 'perspective-camera'
 import lerp from 'lerp'
-
 import { dispatchAction } from '@redux/actions/items'
 
 export default class WaveletCanvas extends BaseItem {
@@ -15,7 +14,7 @@ export default class WaveletCanvas extends BaseItem {
 
         this.internalCanvas = document.createElement("canvas")
 
-        this.internalCanvas.width = 2048
+        this.internalCanvas.width = 2048 
         this.internalCanvas.height = 2048
         this.internalCtx = this.internalCanvas.getContext("2d")
 
@@ -38,7 +37,7 @@ export default class WaveletCanvas extends BaseItem {
                 distance: {type: "Number", value: 0.25},
                 extent: {type: "Number", value: 3},
                 x: {type: "Number", value: 0},
-                y: {type: "Number", value: 3.5},
+                y: {type: "Number", value: 4},
                 z: {type: "Number", value: 0},
                 scale: {type: "Number", value: 1}
             }
@@ -48,7 +47,7 @@ export default class WaveletCanvas extends BaseItem {
             title: "Colors",
             items: {
                 shiftingColors: {type: "Boolean", value: true},
-                shiftSpeed: {type: "Number", value: 0.2},
+                shiftSpeed: {type: "Number", value: 0.1},
                 shiftingDarkness: {type:"Number", value: 30, tooltip: "Upper bound for shifting color values"},
                 red: {type: "Number", value: 225, disabled: true},
                 blue: {type: "Number", value: 225, disabled: true},
@@ -76,7 +75,6 @@ export default class WaveletCanvas extends BaseItem {
         this.dpr = window.devicePixelRatio
         this.getConfig()
         this.addItem()
-
 
         this.startRed = (Math.random() * 255) >> 0
         this.startGreen = (Math.random() * 255) >> 0
@@ -118,10 +116,10 @@ export default class WaveletCanvas extends BaseItem {
         let  audioData, amp
         if(this.config.useFFTBins) {
             audioData = data.bins
-            amp = 1
+            amp = 0.05
         }else {
             audioData = data.raw
-            amp = 5
+            amp = 4
         }
     
         this.time = dt

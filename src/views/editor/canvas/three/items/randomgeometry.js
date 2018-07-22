@@ -9,9 +9,9 @@ export default class RandomGeometry extends AudioreactiveItem {
         const rotationGroup = {
             title: "Rotation",
             items: {
-               rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick", disabled: true},
-               rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick", disabled: true},
-               rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick", disabled: true},
+               rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick"},
+               rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick"},
+               rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick"},
             }
         }
 
@@ -65,7 +65,7 @@ export default class RandomGeometry extends AudioreactiveItem {
     _animate = (time, frequencyBins) => {
         const { barIndex, threshold, deltaTime, strength } = this.config
 
-        if(frequencyBins[0] && frequencyBins[barIndex] * strength > threshold && this.lastTime + deltaTime <= time) {
+        if(frequencyBins.bins[0] && frequencyBins.bins[barIndex] * strength > threshold && this.lastTime + deltaTime <= time) {
             let c = this.bufferGeometries[Math.floor(Math.random() * this.bufferGeometries.length)]
             var geometry = new c( 50, Math.random() * 64, Math.random() * 32 );
             var material = new THREE.MeshBasicMaterial( { wireframe: true, color: this.getRandomColor() } );

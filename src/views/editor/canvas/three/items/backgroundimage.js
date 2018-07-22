@@ -24,10 +24,8 @@ export default class BackgroundImage extends BaseItem {
         fr.onload = () => {
             var image = fr.result
             var texture = new THREE.TextureLoader().load(image)
-            console.log(texture)
             texture.wrapS = THREE.RepeatWrapping
             texture.minFilter = THREE.NearestFilter
-            console.log(texture)
             this.mesh.material.map = texture
             this.mesh.material.needsUpdate = true
             this.config.name = config.name

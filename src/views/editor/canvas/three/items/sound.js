@@ -11,15 +11,15 @@ export default class Sound extends BaseItem {
         const audioGroup = {
             title: "Audio Info",
             items: {
-                sampleRate: {value: 0, type: "Number", tooltip: "", disabled: false},
-                channels: {value: 0, type: "Number",  tooltip: "", disabled: false},
+                sampleRate: {value: 0, type: "Number", tooltip: "", disabled: true},
+                channels: {value: 0, type: "Number",  tooltip: "", disabled: true},
             }
         }
         
         // don't allow editing, TODO fix audio editing
         //this.config.defaultConfig[0].items.name.disabled = false
-        this.config.defaultConfig[1].items.start.disabled = false
-        this.config.defaultConfig[1].items.duration.disabled = false
+        this.config.defaultConfig[1].items.start.disabled = true
+        this.config.defaultConfig[1].items.duration.disabled = true
         
         this.config.defaultConfig.push(audioGroup)
 

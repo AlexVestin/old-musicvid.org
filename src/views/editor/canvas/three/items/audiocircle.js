@@ -10,10 +10,10 @@ export default class AudioCircle extends BaseItem {
         const group = { 
             title: "Stuff",
             items: {
-                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick", disabled: true},
-                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", disabled: true},    
-                color : {value: "FFFFFF", type: "String", tooltip: "", disabled: true},
-                scale : {value: 0.5, type: "Number", tooltip: "", disabled: true}
+                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick"},
+                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)"},    
+                color : {value: "FFFFFF", type: "String", tooltip: ""},
+                scale : {value: 0.5, type: "Number", tooltip: ""}
             }
         }
 
@@ -51,7 +51,7 @@ export default class AudioCircle extends BaseItem {
     }
 
     _animate = (time, frequencyBins) => {
-        const scale = ( frequencyBins[5] / 1048 ) + 1 || 1
+        const scale = ( frequencyBins.bins[5] / 1048 ) + 1 || 1
         
         this.mesh.scale.set(scale, scale, scale)
     }

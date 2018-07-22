@@ -2,7 +2,7 @@ import React from 'react';
 import withHeader from '../withheader'
 
 import { connect } from 'react-redux'
-import { setSidebarWindowIndex,  editCamera, editControls } from '@redux/actions/items'
+import { setSidebarWindowIndex,  editCamera, editControls, editSettings } from '@redux/actions/items'
 
 import GroupContainer from '../groupcontainer'
 import ConfigList from '../input'
@@ -16,6 +16,10 @@ class Layer extends React.Component {
         setSidebarWindowIndex(this.props.idxs.LAYERS)
     };
 
+    editName = (value) => {
+        editSettings({key: "name", value: value})
+    }
+
     addAction = () => {
         if(this.props.layer.isThreeLayer){
             setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)
@@ -27,6 +31,11 @@ class Layer extends React.Component {
     render() {
         return (
             <div style={{height: "100%", overflowY: "scroll"}}>
+                
+                <div style= {{display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
+                    <div>{"Name:"}</div>
+                    <input style={{height: 20, padding:0, margin: 0}} onChange={this.editName} value={this.props.layer.name} type="text"></input>
+                </div>
                 <GroupContainer label={"Items"} addAction={this.addAction}>
                     <ItemList idxs={this.props.idxs}></ItemList>
                 </GroupContainer>
@@ -48,6 +57,15 @@ class Layer extends React.Component {
                         </ConfigList>
                     </React.Fragment>
                 }
+
+                <ConfigList 
+                    edit={editSettings} 
+                    defaultConfig={this.props.settings.defaultConfig} 
+                    item={this.props.settings} 
+                    addAutomation={this.addAutomation}>
+                </ConfigList>
+
+
                 <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                     <EffectList idxs={this.props.idxs}></EffectList>
                 </GroupContainer> 
@@ -65,7 +83,7 @@ const mapStateToProps = state => {
         layer: state.items.layers[state.items.selectedLayerId],
         camera: state.items.cameras[state.items.selectedLayerId],
         controls: state.items.controls[state.items.selectedLayerId],
-        fog: state.items.fog[state.items.selectedLayerId]
+        settings: state.items.settings[state.items.selectedLayerId]
     }
 }
 

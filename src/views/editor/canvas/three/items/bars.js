@@ -10,10 +10,10 @@ export default class Bars extends AudioreactiveItem {
         const group = { 
             title: "Stuff",
             items: {
-                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick", disabled: true},
-                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)", disabled: true},    
-                color : {value: "FFFFFF", type: "String", tooltip: "", disabled: true},
-                scale : {value: 0.5, type: "Number", tooltip: "", disabled: true}
+                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick"},
+                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)"},    
+                color : {value: "FFFFFF", type: "String", tooltip: ""},
+                scale : {value: 0.5, type: "Number", tooltip: ""}
             }
         }
         
@@ -58,7 +58,7 @@ export default class Bars extends AudioreactiveItem {
 
     _animate = (time, frequencyBins) => {
         const { deltaRequired, decreaseSpeed, scale, Y } = this.config
-        const bins = this.getTransformedSpectrum(frequencyBins)
+        const bins = this.getTransformedSpectrum(frequencyBins.bins)
 
         this.mesh.children.forEach( (e,i) => {
             var newScale = bins[i] > 1 ? bins[i] : 1 

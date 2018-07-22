@@ -1,51 +1,57 @@
 import React from 'react';
-import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 
+import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux'
-import { selectItem, setSidebarWindowIndex } from '@redux/actions/items'
+import { selectItem, removeItem, dispatchAction } from '@redux/actions/items'
 
+import classes from './items.css'
 
 class ItemList extends React.Component {
 
-  setWindow = () => {
-    setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)
-  };
 
   selectItem = (obj) => {
     selectItem({itemId: obj.id, layerId: obj.sceneId})
   }
 
-  back = () => {
-    setSidebarWindowIndex(this.props.idxs.LAYER)
+  removeItem = (item) => {
+    removeItem(item)
   }
 
-  render() {
-    const { selectedLayerId } = this.props;
-    const items = this.props.items[selectedLayerId]
+  moveItem = (item, up) => {
+    dispatchAction({type: "MOVE_ITEM", payload: { item, up }})
+  }
 
-    return (
-        <List>
-          {items !== undefined && Object.keys(items).map(key => 
-            <ListItem key={items[key].id} dense button  onClick={() => this.selectItem(items[key])}>
-              <ListItemText primary={items[key].name} />
-              <ListItemSecondaryAction>
-                    <div >
-                    </div>
-              </ListItemSecondaryAction>
-            </ListItem>
-         )}
-        </List>
-    );
+
+  render() {
+      const {  layerItems, items } = this.props;
+      const sortedItems = layerItems.map(key => items[key])
+
+      return (
+          <div>
+              <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
+                  {sortedItems.map((item, i) => {
+                    return( 
+                        <div key={item.id} className={classes.wrapper}>
+                            <div className={classes.listitem} onClick={() => this.selectItem(item)}> <div className={classes.itemName}>{item.name}</div>  </div>
+                            <div className={classes.listitemContainer}>
+                              <div className={classes.button}  onClick={this.removeItem}>
+                                  <Delete className={classes.icon}></Delete>
+                              </div>
+                            </div>
+                        </div>
+                      )
+                  } 
+                  )}
+              </div>
+          </div>
+      );
   }
 }
 
-
 const mapStateToProps = state => {
   return {
-    items: state.items.items,
-    selectedLayerId: state.items.selectedLayerId,
-    layers: state.items.layers
-
+    layerItems: state.items.layers[state.items.selectedLayerId].items,
+    items: state.items.items[state.items.selectedLayerId]
   }
 }
 

@@ -382,7 +382,7 @@ export default  class Particles extends AudioreactiveItem {
     }
 
     _animate = (time, frequencyBins) => {
-        const bins = this.getTransformedSpectrum(frequencyBins)
+        const bins = this.getTransformedSpectrum(frequencyBins.bins)
         this.update(bins)
         this.updateParticles()
 

@@ -18,8 +18,9 @@ export default class BaseItem {
         const timeGroup = {
             title: "Time configurations", 
             items: {
-                start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", disabled: true, disableAutomations: true},
-                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", disabled:  true, disableAutomations: true},
+                start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", disableAutomations: true},
+                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", disableAutomations: true},
+                zIndex: {value: config.renderIndex, type: "Number", tooltip: "Index of turn in renderloop",  disableAutomations: true}
             }
         }
 

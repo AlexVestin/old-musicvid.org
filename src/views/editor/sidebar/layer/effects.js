@@ -5,10 +5,8 @@ import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import Delete from '@material-ui/icons/Delete';
 
-
-
 import { connect } from 'react-redux'
-import {  setSidebarWindowIndex, selectEffect, removeEffect } from '@redux/actions/items'
+import { setSidebarWindowIndex, selectEffect, removeEffect } from '@redux/actions/items'
 
 
 class EffectList extends React.Component {
@@ -29,7 +27,7 @@ class EffectList extends React.Component {
                     {passes.map( (pass, i) => {
                         return( 
                             <div key={pass.id} style={{width: "100%", display: "flex", flexDirection: "row", textAlign: "right", overflow: "hidden",}}>
-                                <Button variant="raised" fullWidth onClick={() => selectEffect(pass.id)}> {pass.name} </Button>
+                                <Button disableRipple variant="raised" fullWidth onClick={() => selectEffect(pass.id)}> {pass.name} </Button>
                                 <div style={{display: "flex", flexDirection: "row"}}>
 
                                     <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || passes[i-1].renderPass} disableRipple>
