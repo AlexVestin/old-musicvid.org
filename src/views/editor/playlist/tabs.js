@@ -22,7 +22,6 @@ class SimpleTabs extends React.PureComponent {
     
     render() {
         const value = this.props.sideBarWindowIndex
-        const tabStyle = { minWidth: "30px", maxWidth: "100px", minHeight: "30px", height: "20px", maxHeight: "20px" }
 
         if(value <= 2)
             this.tabValue = value

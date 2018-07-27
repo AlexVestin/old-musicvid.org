@@ -26,7 +26,7 @@ const styles = theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     height: "100%",
-    minWidth: "100%",
+    width: "100%",
     overflow: "hidden"
   },
 });

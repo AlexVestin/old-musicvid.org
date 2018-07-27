@@ -8,6 +8,7 @@ import WaveletCanvas from './items/waveletcanvas';
 import Square from './items/square';
 import JSNation from './items/jsnation';
 import RenderTarget from '../three/postprocessing/rendertarget';
+import SimpleText from './items/text'
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -25,9 +26,13 @@ export default class SceneContainer {
             clearAlpha: 1,
             shouldClear: true,
             zIndex: 1,
+            heightResolution: 1024,
+            widthResolution: 1024,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
+                    heightResolution: {type: "Number", value: 1024, tooltip: "Must be a power of two" },
+                    widthResolution: {type: "Number", value: 1024, tooltip: "Must be a power of two" },
                     clearColor: {type: "String", value: "000000"},
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
@@ -42,11 +47,13 @@ export default class SceneContainer {
             isThreeLayer: false
         }
 
-        add2DLayer(this.config)
+        this.width = width
+        this.height = height
 
+        add2DLayer(this.config)
         this.canvas = document.createElement('canvas');
-        this.canvas.width = 2048;
-        this.canvas.height = 2048;
+        this.canvas.width = 1024;
+        this.canvas.height = 1024;
         this.ctx = this.canvas.getContext("2d");
 
         this.texture =  new THREE.CanvasTexture(this.canvas)
@@ -89,6 +96,8 @@ export default class SceneContainer {
     editSettings = (key, value) => {
         this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
+        if(key === "widthResolution") this.canvas.width = value    
+        if(key === "heightResolution") this.canvas.height = value    
     }
 
     moveItem = (item, up) => {
@@ -100,9 +109,13 @@ export default class SceneContainer {
     }
 
     addItem = (name, info, time) => {
-        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length}
+        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
         let item; 
+
         switch (info.type) {
+            case "TEXT":
+                item = new SimpleText(info)
+            break;
             case "JSNATION":
                 item = new JSNation(info)
             break;

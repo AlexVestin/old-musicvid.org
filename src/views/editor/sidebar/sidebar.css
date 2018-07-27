@@ -1,5 +1,8 @@
 .wrapper {
     width: 25%;
+    position: relative;
+    display: flex;
+    flex-direction: row; 
     min-width: 300px;
     height: 100%;
 }

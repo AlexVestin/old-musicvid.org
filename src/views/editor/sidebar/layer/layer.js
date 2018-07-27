@@ -33,7 +33,7 @@ class Layer extends React.Component {
         return (
             <div style={{height: "100%", overflowY: "scroll"}}>
                 
-                <div style= {{margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
+                <div style= {{margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24, overflow: "hidden"}}>
                     <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
                     <input style={{height: 18, padding:0, marginTop: 1, marginRight: 10}} onChange={this.editName} value={this.props.layer.name} type="text"></input>
                 </div>

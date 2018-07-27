@@ -14,6 +14,7 @@ class AddResourceOptions extends React.Component {
     }
 
     back = () => {
+        console.log("BACK???")
         setSidebarWindowIndex(this.props.idxs.LAYER)
     };
 

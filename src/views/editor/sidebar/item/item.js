@@ -36,8 +36,8 @@ class Item extends React.PureComponent {
 
         return (
             <div style={{ height: "calc(100% - 30px)", overflowX: "hidden"}}>
-                <div style={{flexGrow: 1, height: "100%", overflowY: "scroll",overflowX: "hidden"}}>
-                    <div style= {{overflowX: "hidden", margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
+                <div style={{flexGrow: 1, height: "100%", overflowY: "scroll", overflowX: "hidden"}}>
+                    <div style= {{overflow: "hidden", margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
                         <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
                     
                         <div style={{display: "flex", flexDirection: "row"}}>

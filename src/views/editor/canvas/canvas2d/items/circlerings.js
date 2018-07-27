@@ -1,4 +1,4 @@
-import BaseItem from '../../three/items/item'
+import AudioImpactItem from '../../three/items/audioimpactitem'
 // CREDIT: http://cssdeck.com/labs/zeaklousedit
 
 class SpaceShip {
@@ -62,7 +62,7 @@ var Circle = function(W, H) {
     };
 };
 
-export default class CircleRings extends BaseItem {
+export default class CircleRings extends AudioImpactItem {
     constructor(config) {
         super(config)
 
@@ -140,11 +140,9 @@ export default class CircleRings extends BaseItem {
 
     animate = (time, frequencyBins) => {
         //this.innerCircle.draw(this.ctx, true);
-        let sum  = 0
-        for(var i = 0; i < 5; i++) {
-            sum += frequencyBins[i]
-        }
-        sum = isNaN(sum) ? 0 : (sum / 30) >> 0
+        
+        let sum  = this.getImpactAmplitude(frequencyBins.bins)
+        console.log(sum)
         this.ships.forEach(ship => ship.draw(this.ctx, this.config, sum));
     }
 }

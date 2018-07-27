@@ -28,7 +28,8 @@ const items2D = [
   "Circle Rings",
   "Polartone",
   "Square",
-  "jsnation"
+  "jsnation",
+  "Text"
 ]
 
 const styles = theme => ({

@@ -24,7 +24,7 @@ class PlaybackPanel extends PureComponent {
                 </svg>
 
                 <div style={{display: "flex", flexDirection: "row"}}>
-                    <div style={{position: "absolute", margin: 8}}>
+                    <div style={{position: "absolute", margin: 8, userSelect: "none"}}>
                         {this.convertTime(this.props.time).substring(0, 8)}
                     </div>
                     <div style={{marginLeft: 85}}>
