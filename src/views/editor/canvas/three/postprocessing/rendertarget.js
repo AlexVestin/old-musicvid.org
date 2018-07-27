@@ -1,19 +1,21 @@
 
 
-import * as THREE from 'three'
-import { WebGLRenderTarget } from 'three'
+import { WebGLRenderTarget, LinearFilter, RGBAFormat, Vector3 } from 'three'
 
 import EffectComposer from './effectcomposer'
-import RenderPass from './passes/renderpass'
 import BloomPass from './passes/bloompass'
 import SepiaShader from './shaders/sepiashader'
 import ShaderPass from './passes/shaderpass';
 import ColorShader from './shaders/colorshader'
 import ColorPass from './passes/colorpass'
-import FXAAShader from './shaders/fxaa'
+import CopyShader from './shaders/copyshader'
+import SSAAPass from './passes/ssaapass'
 
 import GlitchPass from './passes/glitchpass'
 import HalftonePass from './passes/halftonepass';
+
+import TestShader from './shaders/testshader'
+import { timingSafeEqual } from 'crypto';
 
 export default class RenderTarget {
     constructor(name, width, height, sceneConfig, isMain = false) {
@@ -22,25 +24,50 @@ export default class RenderTarget {
         this.config.name = name
         this.config.isMain = isMain
 
+        this.width = width
+        this.height = height
+        
         var rtParameters = {
-            minFilter: THREE.LinearFilter,
-            magFilter: THREE.LinearFilter,
-            format: THREE.RGBAFormat,
+            minFilter: LinearFilter,
+            magFilter: LinearFilter,
+            format: RGBAFormat,
             stencilBuffer: true,
         };
-
+       
         const { scene, camera, renderer } = sceneConfig
         this.buffer = new WebGLRenderTarget( width, height, rtParameters )
         this.effectComposer = new EffectComposer(renderer, this.buffer)
+        
+        this.renderPass = new SSAAPass( {name: "SSAA", scene, camera} );
+        const copyPass = new ShaderPass( CopyShader, undefined, "COPY" );
+        //const fx =  new GlitchPass(64, undefined, "sepia")
+        
+        const test1 = new ShaderPass(TestShader, undefined, "test1")
+        test1.material.uniforms.targetColor.value = new Vector3(0.3, 0.3, 0.7)
+        /*
+        const test2 = new ShaderPass(TestShader, undefined, "test1")
+        test2.material.uniforms.targetColor.value = new Vector3(0.3, 0, 0)
 
-        this.renderPass = new RenderPass(scene, camera, null, 0xFFFFFF, 0)
-        this.effectComposer.addPass(this.renderPass)
-        this.effectComposer.swapBuffers()
+        const test3 = new ShaderPass(TestShader, undefined, "test1")
+        test3.material.uniforms.targetColor.value = new Vector3(0., 0.9, 0)
 
-        this.nShaderPasses = 0
-        this.passes = [ this.renderPass ]
-        this.width = width
-        this.height = height
+        const test4 = new ShaderPass(TestShader, undefined, "test1")
+        test4.material.uniforms.targetColor.value = new Vector3(0.3, 0.2, 1)
+        */
+        
+        this.renderPass.unbiased = false;
+        this.effectComposer.addPass( this.renderPass )
+        this.effectComposer.addPass( copyPass );
+
+        this.effectComposer.addPass(test1)
+        //this.effectComposer.addPass(test2)
+        //this.effectComposer.addPass(test3)
+        //this.effectComposer.addPass(test4)
+
+        //this.effectComposer.swapBuffers()
+
+        
+        this.passes = [ this.renderPass, copyPass ]
     }
 
     setCamera = (camera) => {
@@ -52,9 +79,7 @@ export default class RenderTarget {
     }
 
     render = (renderer, time) => {
-        
         this.effectComposer.render(time)
-        if(this.nShaderPasses % 2 === 1)this.effectComposer.swapBuffers()
     }
 
     setSize = (width, height) => {
@@ -64,46 +89,37 @@ export default class RenderTarget {
     createEffect = (type) =>  {
         var fx;
         switch(type) {
+            case "TEST SHADER":
+                fx = new ShaderPass(TestShader, undefined, "ytes")
+                const [r,g,b] = [Math.random(), Math.random(), Math.random()]
+                fx.material.uniforms.targetColor.value = new Vector3(r, g, b)
+                break;
             case "COLOR SHADER":
                 fx = new ColorPass(ColorShader, undefined, "color")
-                console.log("??")
                 break;
             case "SEPIA":
                 fx = new ShaderPass(SepiaShader, undefined, "sepia")
                 break;
             case "GLITCH":
-                fx = new GlitchPass(0.4)
-                break;
-            case "ANTI ALIAS":
-                fx = new ShaderPass(FXAAShader, undefined, "anti alias")
-                fx.uniforms.resolution.value.x = 1 / this.width
-                fx.uniforms.resolution.value.y = 1 / this.height
-                fx.uniforms.tDiffuse.value = this.buffer.texture 
+                fx = new GlitchPass(64)
                 break;
             case "BLOOM":
                 fx = new BloomPass(0.5)
                 break;
             case "RGB HALFTONE":
-                console.log("add nerw shader")
                 fx = new HalftonePass(this.width, this.height, "halftone")
                 break;
             default:
                 console.log("unknown EFFECTS type", type)
                 return
         }
-
-        this.nShaderPasses++;
-
         this.passes.push(fx)
         this.effectComposer.addPass(fx)
-        this.effectComposer.swapBuffers()
 
     }
 
     removeEffect = (config) =>  {
         this.effectComposer.removePass(config)
-        this.nShaderPasses--
-        this.effectComposer.swapBuffers()
     }
 
     editEffect = (config, id) => {

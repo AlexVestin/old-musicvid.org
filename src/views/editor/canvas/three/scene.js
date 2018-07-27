@@ -22,6 +22,10 @@ import SkyBox2 from './items/skybox2';
 import AudioCircle from './items/audiocircle';
 
 
+import FXAAShader from './postprocessing/shaders/fxaa'
+import ThreeCanvas from '../scenemanager';
+
+
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
 
@@ -57,17 +61,16 @@ export default class SceneContainer {
             id: Math.floor(Math.random() * 100000000),
             name: name,
             items: [],
-            settings: {
-                thing: 10,
-                zIndex: 1,
-                defaultConfig: [ {
-                    title: "Settings", 
-                    items: {
-                        zIndex: {type: "Number", value: 1}
-                    }
-                }]
-            },
-
+            thing: 10,
+            zIndex: 1,
+            enablePostProcessing:  true,
+            defaultConfig: [ {
+                title: "Settings", 
+                items: {
+                    zIndex: {type: "Number", value: 1},
+                    enablePostProcessing: {type: "Boolean", value: true}
+                }
+            }],
             width,
             height,
             passes: [],
@@ -87,8 +90,19 @@ export default class SceneContainer {
 
         this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
         this.texture = this.renderTarget.buffer.texture
-        this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), new THREE.MeshBasicMaterial({map: this.texture, transparent: true}));
-        this.quad.frustumCulled = false; 
+
+        const mat = new THREE.MeshBasicMaterial({transparent: true, map: this.texture})
+        const fxaaMaterial = new THREE.ShaderMaterial(FXAAShader)
+        fxaaMaterial.uniforms.tDiffuse.value = this.texture;
+        fxaaMaterial.uniforms.resolution.value.x = 1 / (width * 2);
+        fxaaMaterial.uniforms.resolution.value.y = 1 / (height * 2);
+        
+        this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), mat);
+            
+        // If postprocessing
+        this.mainCamera =  new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+        this.mainScene = new THREE.Scene()
+        this.mainScene.add(this.quad)
     }
 
     editFog = (key, value) => {
@@ -97,6 +111,7 @@ export default class SceneContainer {
 
     editSettings = (key, value) => {
         this.config.settings[key] = value
+        if(key === "zIndex") this.quad.renderOrder = value
     }
 
     editControls = (key, value) => {
@@ -404,10 +419,10 @@ export default class SceneContainer {
         if(this.controls)this.controls.update()
     }
 
-    render = (renderer, time, postProcessingEnabled) => {
-        //if(this.config.name === "graphics")console.log(this.config.postProcessingEnabled)
-        if(postProcessingEnabled) {
-            this.renderTarget.render( renderer, time)
+    render = ( renderer, time, mainConfig ) => {
+        if(this.config.enablePostProcessing) {
+            this.renderTarget.render( renderer, time )
+            renderer.render(this.mainScene, this.mainCamera)
         }else {
             renderer.render(this.scene, this.camera)
         }

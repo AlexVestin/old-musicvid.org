@@ -56,19 +56,27 @@ const JitterVectors = [
 
 export default class SSAARenderPass extends Pass {
 
-    constructor( scene, camera, clearColor, clearAlpha ) {
-        super()
-        this.scene = scene;
-        this.camera = camera;
+    constructor( config  ) {
+        super(config.name)
+        this.scene = config.scene;
+        this.camera = config.camera;
 
+		const group = {
+			title: "audio reactive settings",
+			items: {
+				ampThreshold: {value: 20, type: "Number", tooltip: "Amount needed to trigger a glitch effect", disabled: true},
+				amount: {value: 40, type: "Number", tooltip: "How strong the glitch will be", disabled: true},
+			}
+		}
 
+		this.config.defaultConfig.push(group)
 
         this.sampleLevel = 4; // specified as n, where the number of samples is 2^n, so sampleLevel = 4, is 2^4 samples, 16.
         this.unbiased = true;
 
         // as we need to clear the buffer in this pass, clearColor must be set to something, defaults to black.
-        this.clearColor = ( clearColor !== undefined ) ? clearColor : 0x000000;
-        this.clearAlpha = ( clearAlpha !== undefined ) ? clearAlpha : 0;
+        this.clearColor = ( config.clearColor !== undefined ) ? config.clearColor : 0x000000;
+        this.clearAlpha = ( config.clearAlpha !== undefined ) ? config.clearAlpha : 0;
 
         if ( CopyShader === undefined ) console.error( "THREE.SSAARenderPass relies on THREE.CopyShader" );
 
@@ -90,7 +98,9 @@ export default class SSAARenderPass extends Pass {
         this.scene2	= new THREE.Scene();
         this.quad2 = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), this.copyMaterial );
         this.quad2.frustumCulled = false; // Avoid getting clipped
-        this.scene2.add( this.quad2 );
+		this.scene2.add( this.quad2 );
+	
+		this.addEffect(this.config)
     }
 
 
@@ -173,9 +183,7 @@ export default class SSAARenderPass extends Pass {
 
 		renderer.autoClear = autoClear;
 		renderer.setClearColor( oldClearColor, oldClearAlpha );
-
 	}
-
 };
 
 

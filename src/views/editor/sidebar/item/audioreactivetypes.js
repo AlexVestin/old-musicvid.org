@@ -27,7 +27,8 @@ const items2D = [
   "Nebulosa",
   "Circle Rings",
   "Polartone",
-  "Square"
+  "Square",
+  "jsnation"
 ]
 
 const styles = theme => ({

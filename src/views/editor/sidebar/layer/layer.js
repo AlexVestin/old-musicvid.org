@@ -2,7 +2,7 @@ import React from 'react';
 import withHeader from '../withheader'
 
 import { connect } from 'react-redux'
-import { setSidebarWindowIndex,  editCamera, editControls, editSettings } from '@redux/actions/items'
+import { setSidebarWindowIndex,  editCamera, editControls, editLayer } from '@redux/actions/items'
 
 import GroupContainer from '../groupcontainer'
 import ConfigList from '../input'
@@ -16,8 +16,9 @@ class Layer extends React.Component {
         setSidebarWindowIndex(this.props.idxs.LAYERS)
     };
 
-    editName = (value) => {
-        editSettings({key: "name", value: value})
+    editName = event =>  {
+        var value = event.target.value
+        editLayer({key: "name", value: value})
     }
 
     addAction = () => {
@@ -32,9 +33,9 @@ class Layer extends React.Component {
         return (
             <div style={{height: "100%", overflowY: "scroll"}}>
                 
-                <div style= {{display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
-                    <div>{"Name:"}</div>
-                    <input style={{height: 20, padding:0, margin: 0}} onChange={this.editName} value={this.props.layer.name} type="text"></input>
+                <div style= {{margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
+                    <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
+                    <input style={{height: 18, padding:0, marginTop: 1, marginRight: 10}} onChange={this.editName} value={this.props.layer.name} type="text"></input>
                 </div>
                 <GroupContainer label={"Items"} addAction={this.addAction}>
                     <ItemList idxs={this.props.idxs}></ItemList>
@@ -59,12 +60,11 @@ class Layer extends React.Component {
                 }
 
                 <ConfigList 
-                    edit={editSettings} 
-                    defaultConfig={this.props.settings.defaultConfig} 
-                    item={this.props.settings} 
+                    edit={editLayer} 
+                    defaultConfig={this.props.layer.defaultConfig} 
+                    item={this.props.layer} 
                     addAutomation={this.addAutomation}>
                 </ConfigList>
-
 
                 <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                     <EffectList idxs={this.props.idxs}></EffectList>

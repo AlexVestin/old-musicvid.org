@@ -47,7 +47,6 @@ export default class EffectComposer {
         this.copyPass = new ShaderPass(CopyShader);
     }
 
-    
 
     swapBuffers() {
         var tmp = this.readBuffer;
@@ -63,6 +62,7 @@ export default class EffectComposer {
         this.passes.push(pass);
         var size = this.renderer.getDrawingBufferSize();
         pass.setSize(size.width, size.height);
+        this.swapBuffers()
     }
 
     insertPass(pass, index) {

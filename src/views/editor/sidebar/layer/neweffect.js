@@ -12,7 +12,8 @@ const effects = [
     "Anti Alias",
     "Bloom", 
     "RGB Halftone",
-    "Color Shader"
+    "Color Shader",
+    "Test Shader"
 ]
 
 class NewEffect extends React.Component {

@@ -37,7 +37,7 @@ class EffectList extends React.Component {
                                         <KeyboardArrowDown ></KeyboardArrowDown>
                                     </Button>
 
-                                    <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} onClick={this.removeItem}>
+                                    <Button style={{minWidth: 10, width: 10}} disabled={pass.renderPass} onClick={() => this.removeItem(pass)}>
                                         <Delete></Delete>
                                     </Button>
                                 </div>

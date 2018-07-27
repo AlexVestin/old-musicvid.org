@@ -2,7 +2,7 @@
   "name": "videoeditor",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://AlexVestin.github.io/WasmVideoEncoder",
+  "homepage": "https://AlexVestin.github.io/musicvid.org",
   "dependencies": {
     "@material-ui/core": "^1.2.0",
     "@material-ui/icons": "^1.0.0-rc.0",

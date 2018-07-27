@@ -93,6 +93,11 @@ export default function itemsReducer(state = {
             case "ADD_SOUND": 
                 audioItems  = update(state.audioItems, {$push: [{...action.payload, index: state.itemIdx}]})
                 return {...state, audioInfo: action.payload, audioItems, itemIdx: state.itemIdx + 1}
+
+            case "EDIT_LAYER":
+                const newLayer = {...state.layers[state.selectedLayerId], [action.payload.key]: action.payload.value}
+                layers   = update(state.layers, {[state.selectedLayerId]: {$set: newLayer }})
+                return {...state, layers}
             case "ADD_3D_LAYER":
                 id          = action.payload.id
                 items       = update(state.items,  {[id]: {$set: {} }})
@@ -106,15 +111,13 @@ export default function itemsReducer(state = {
                 cameras     = update(state.cameras, {[id]: {$set: action.payload.camera }} )
                 controls    = update(state.controls, {[id]: {$set: action.payload.controls }} )
                 fog         = update(state.fog,  {[id]: {$set: action.payload.fog }} )
-                settings    = update(state.settings,  {[id]: {$set: action.payload.settings }} )
-                return {...state, settings, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
+                return {...state, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
             case "ADD_2D_LAYER":
                 id          = action.payload.id
                 items       = update(state.items,  {[id]: {$set: {} }})
                 passes      = update(state.passes, {[id]: {$set: [] }})
                 layers      = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: []}}})
-                settings    = update(state.settings,  {[id]: {$set: action.payload.settings }} )
-                return {...state, items, settings, layers, passes, selectedLayerId: id }
+                return {...state, items, layers, passes, selectedLayerId: id }
             case "SELECT_LAYER":
                 return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":

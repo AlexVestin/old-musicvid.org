@@ -21,6 +21,10 @@ class Item extends React.PureComponent {
         const automation = {name: key, points: [point], interpolationPoints: [], id: Math.floor(Math.random() * 1000000) }
         addAutomation({key, automation})
     }
+    editName =  event => {
+        console.log(event.target.value)
+        editItem({key: "name", value: event.target.value})
+    }
 
     onDelete = () => {
         removeItem(this.props.selectedItem)
@@ -31,24 +35,27 @@ class Item extends React.PureComponent {
         const defaultConfig = item.defaultConfig;
 
         return (
-            <div style={{ height: "calc(100% - 30px)"}}>
-                <div style={{flexGrow: 1, height: "100%", overflowY: "scroll"}}>
-                    <div style={{height: 28, width: "100%", display:"flex", flexDirection: "row", justifyContent: "space-between", backgroundColor: "#AAA"}}> 
-                        {item.name} 
-                                                    
-                        <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
-                            <Delete onClick={this.onDelete}  style={{cursor: "pointer"}}></Delete>
+            <div style={{ height: "calc(100% - 30px)", overflowX: "hidden"}}>
+                <div style={{flexGrow: 1, height: "100%", overflowY: "scroll",overflowX: "hidden"}}>
+                    <div style= {{overflowX: "hidden", margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
+                        <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
+                    
+                        <div style={{display: "flex", flexDirection: "row"}}>
+                            <input style={{height: 18, padding:0, marginTop: 1, marginRight: 20}} onChange={this.editName} value={item.name} type="text"></input>
+                            <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
+                                <Delete onClick={this.onDelete}  style={{cursor: "pointer"}}></Delete>
+                            </div>
                         </div>
                     </div>
-                    <ConfigList 
-                        edit={editItem} 
-                        defaultConfig={defaultConfig} 
-                        item={item} 
-                        onDelete={this.removeItem} 
-                        addAutomation={this.addAutomation}>
-                    </ConfigList>
+                    
+                <ConfigList 
+                    edit={editItem} 
+                    defaultConfig={defaultConfig} 
+                    item={item} 
+                    onDelete={this.removeItem} 
+                    addAutomation={this.addAutomation}>
+                </ConfigList>
                 </div>
-
             </div>
         );
     }

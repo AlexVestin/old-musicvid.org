@@ -25,7 +25,6 @@ export default class WaveletCanvas extends BaseItem {
             viewport: [0, 0, ...shape]
         })
 
-        this.duration = 180
         this.positions = []
 
         this.config.defaultConfig.push({
@@ -39,7 +38,8 @@ export default class WaveletCanvas extends BaseItem {
                 x: {type: "Number", value: 0},
                 y: {type: "Number", value: 4},
                 z: {type: "Number", value: 0},
-                scale: {type: "Number", value: 1}
+                scale: {type: "Number", value: 1},
+                songDuration: {type: "Number", value: 180}
             }
         })
 
@@ -123,7 +123,7 @@ export default class WaveletCanvas extends BaseItem {
         }
     
         this.time = dt
-        const dur = this.time / this.duration
+        const dur = this.time / this.config.songDuration
         const bufferLength = audioData.length
 
         // set up our this.camera

@@ -49,9 +49,7 @@ export default class RenderPass extends Pass {
 		renderer.render( this.scene, this.camera, this.renderToScreen ? null : readBuffer, this.clear );
 
 		if ( this.clearColor ) {
-
 			renderer.setClearColor( oldClearColor, oldClearAlpha );
-
 		}
 
 		this.scene.overrideMaterial = null;

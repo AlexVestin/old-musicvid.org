@@ -55,9 +55,10 @@ class ThreeCanvas extends Component {
         this.mainCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 100);
         this.mainScene = new Scene();
 
-        this.mainScene.add(c2d.quad)   
+        /*this.mainScene.add(c2d.quad)   
         this.mainScene.add(graphics.quad)   
         this.mainScene.add(background.quad)   
+        */
         this.scenes = [background, c2d, graphics]
         setSidebarWindowIndex(0);
     }
@@ -125,8 +126,15 @@ class ThreeCanvas extends Component {
         this.selectedItemId = state.items.selectedItemId
         var newLayer
         switch(type) {
+            case "EDIT_LAYER":
+                scene.config[payload.key] = payload.value
+                break;
             case "REMOVE_LAYER":
-                this.scenes = this.scenes.filter(e => e.config.id !== payload.id)
+                const sceneToRemove = this.scenes.find(e => e.config.id === payload.id)
+                this.scenes = this.scenes.filter(e => e.config.id !== sceneToRemove.config.id)
+                this.mainScene.remove(sceneToRemove.quad)
+
+                console.log(this.scenes, this.mainScene.children)
                 break;
             case "EDIT_SETTINGS":
                 scene.editSettings(payload.key, payload.value)
@@ -136,15 +144,11 @@ class ThreeCanvas extends Component {
                 newLayer.setCamera()
                 newLayer.setControls()
                 newLayer.controls.enabled = false
-                this.mainScene.add(newLayer.quad)               
-                this.scenes.push(newLayer)
-                setSidebarWindowIndex(0);
+                this.addLayer(newLayer)
                 break;
             case "CREATE_2D_LAYER":
                 newLayer   = new SceneContainer2D("new 2d graphics", this.width, this.height, this.renderer)
-                this.mainScene.add(newLayer.quad)               
-                this.scenes.push(newLayer)
-                setSidebarWindowIndex(0);
+                this.addLayer(newLayer)
                 break;
             case "EDIT_FOG":
                 scene.editFog(payload.key, payload.value)
@@ -207,6 +211,16 @@ class ThreeCanvas extends Component {
 
         }
     }
+
+    addLayer = (layer) =>  {
+        this.scenes.push(layer)
+        this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
+        while (this.mainScene.children.length) {
+            this.mainScene.children.remove(this.mainScene.children[0]);
+        }
+        this.scenes.forEach(e => this.mainScene.add(e.quad))
+        setSidebarWindowIndex(0);
+    }
     stop = () => {
         this.scenes.forEach(e => e.stop())
         this.audioManager.stop()
@@ -268,17 +282,22 @@ class ThreeCanvas extends Component {
     renderScene = (time, stepping) => { 
         const frequencyBins = this.audioManager.getBins(this.time, stepping)
         this.renderer.clear()
+        this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
+        
 
-        this.scenes = this.scenes.sort((a,b) => a.config.settings.zIndex - b.config.settings.zIndex)
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
-            scene.render(this.renderer, time, this.postProcessingEnabled)
+            scene.render(this.renderer, time, {mainScene: this.mainScene, mainCamera: this.mainCamera})
             this.renderer.clearDepth()
         }))
 
+        /*
         if(this.postProcessingEnabled) {
+            //console.log(this.mainScene.children
             this.renderer.render(this.mainScene, this.mainCamera)
         }
+
+        */
     }
 
     setTime = (time, playing) => {

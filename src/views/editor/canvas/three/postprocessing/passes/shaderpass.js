@@ -11,15 +11,10 @@ export default class ShaderPass extends Pass  {
         this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
 
         if ( shader instanceof THREE.ShaderMaterial ) {
-
             this.uniforms = shader.uniforms;
-
             this.material = shader;
-
         } else if ( shader ) {
-
             this.uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-
             this.material = new THREE.ShaderMaterial( {
 
                 defines: Object.assign( {}, shader.defines ),
@@ -28,7 +23,6 @@ export default class ShaderPass extends Pass  {
                 fragmentShader: shader.fragmentShader
 
             } );
-
         }
 
         this.camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );

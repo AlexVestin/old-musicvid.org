@@ -163,6 +163,14 @@ export function editEffect(item) {
     );  
 } 
 
+export function editLayer(item) {
+    store.dispatch({
+        type: "EDIT_LAYER",
+        payload: item
+        } 
+    );  
+} 
+
 export function editFog(item) {
     store.dispatch({
         type: "EDIT_FOG",

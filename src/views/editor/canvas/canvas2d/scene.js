@@ -6,6 +6,8 @@ import InceptionCity from './items/inceptioncity'
 import CircleRings from './items/circlerings';
 import WaveletCanvas from './items/waveletcanvas';
 import Square from './items/square';
+import JSNation from './items/jsnation';
+import RenderTarget from '../three/postprocessing/rendertarget';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -19,21 +21,20 @@ export default class SceneContainer {
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
-            settings: {
-                clearColor: "000000",
-                clearAlpha: 1,
-                shouldClear: true,
-                zIndex: 1,
-                defaultConfig: [ {
-                    title: "Clear color", 
-                    items: {
-                        clearColor: {type: "String", value: "000000"},
-                        clearAlpha: {type: "Number", value: 1},
-                        shouldClear: {type: "Boolean", value: true},
-                        zIndex: {type: "Number", value: 1}
-                    }
-                }]
-            },
+            clearColor: "000000",
+            clearAlpha: 1,
+            shouldClear: true,
+            zIndex: 1,
+            defaultConfig: [ {
+                title: "Settings", 
+                items: {
+                    clearColor: {type: "String", value: "000000"},
+                    clearAlpha: {type: "Number", value: 1},
+                    shouldClear: {type: "Boolean", value: true},
+                    zIndex: {type: "Number", value: 1},
+                    enablePostProcessing: {type: "Boolean", value: false}
+                }
+            }],
             items: [],
             width,
             height,
@@ -64,6 +65,13 @@ export default class SceneContainer {
         this.mainScene = new THREE.Scene();
         this.mainScene.add(this.internalQuad)   
 
+        this.sceneConfig = {
+            scene: this.mainScene,
+            camera: this.mainCamera,
+            renderer
+        }
+
+        this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
     }
 
     removeEffect = (config) => {
@@ -79,7 +87,8 @@ export default class SceneContainer {
     }
 
     editSettings = (key, value) => {
-        this.config.settings[key] = value
+        this.config[key] = value
+        if(key === "zIndex") this.quad.renderOrder = value
     }
 
     moveItem = (item, up) => {
@@ -94,6 +103,9 @@ export default class SceneContainer {
         info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length}
         let item; 
         switch (info.type) {
+            case "JSNATION":
+                item = new JSNation(info)
+            break;
             case "SQUARE":
                 item = new Square(info)
             break;
@@ -144,7 +156,7 @@ export default class SceneContainer {
 
     setSize = (width, height) => {
         this.mainCamera.aspect = width / height;
-        //this.renderTarget.setSize(width, height)
+        this.renderTarget.setSize(width, height)
         if (this.mainCamera.isPerspectiveCamera)
             this.mainCamera.updateProjectionMatrix();
     }
@@ -216,8 +228,8 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
-        if(this.config.settings.shouldClear) {
-            this.ctx.fillStyle = "#" + this.config.settings.clearColor
+        if(this.config.shouldClear) {
+            this.ctx.fillStyle = "#" + this.config.clearColor
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
         }
         
@@ -235,10 +247,9 @@ export default class SceneContainer {
         this.ctx.restore()
     }
 
-    render = (renderer, time, postProcessingEnabled) => {
-        //if(this.config.name === "graphics")console.log(this.config.postProcessingEnabled)
-        if( postProcessingEnabled ) {
-            this.renderTarget.render( renderer, time)
+    render = (renderer, time) => {
+        if( this.config.enablePostProcessing ) {
+            this.renderTarget.render( renderer, time )
         }else {
             renderer.render(this.mainScene, this.mainCamera)
         }

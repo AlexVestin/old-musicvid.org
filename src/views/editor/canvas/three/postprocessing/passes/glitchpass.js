@@ -12,13 +12,13 @@ export default class GlitchPass extends Pass {
 		const group = {
 			title: "audio reactive settings",
 			items: {
-				ampThreshold: {value: 20, type: "Number", tooltip: "Amount needed to trigger a glitch effect", disabled: true},
-				amount: {value: 40, type: "Number", tooltip: "How strong the glitch will be", disabled: true},
+				ampThreshold: {value: 2, type: "Number", tooltip: "Amount needed to trigger a glitch effect"},
+				amount: {value: 1, type: "Number", tooltip: "How strong the glitch will be"},
 			}
 		}
 		
 		this.config.defaultConfig.push(group)
-		this.config.ampThreshold = 20
+		this.config.ampThreshold = 2
 		this.config.amount = 1
 		
 
@@ -30,7 +30,7 @@ export default class GlitchPass extends Pass {
         if ( dt_size === undefined ) dt_size = 64;
 
 
-        this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );
+        this.uniforms[ "tDisp" ].value = this.generateHeightmap( 64 );
 
 
         this.material = new THREE.ShaderMaterial( {
@@ -50,7 +50,15 @@ export default class GlitchPass extends Pass {
         this.curF = 0;
 		this.generateTrigger();
 		this.addEffect(this.config)
-    }
+	}
+	
+	update = (time, audioData) => {
+		let sum = 0
+		for(var i = 0; i < 13; i++) {
+			sum += audioData.bins[i] / 13
+		}
+		this.amp = sum / 100
+	}
 
     render ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
@@ -58,14 +66,13 @@ export default class GlitchPass extends Pass {
 		this.uniforms[ 'seed' ].value = Math.random();//default seeding
 		this.uniforms[ 'byp' ].value = 0;
 		if(!this.amp)this.amp = 0
-		
 		if ( this.amp > this.config.ampThreshold ) {
 			this.uniforms[ 'amount' ].value = this.config.amount * Math.random() / 30;
 			this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
-			this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( -this.config.amount, this.config.amount );
-			this.uniforms[ 'seed_y' ].value = THREE.Math.randFloat( - this.config.amount, this.config.amount );
-			this.uniforms[ 'distortion_x' ].value = THREE.Math.randFloat( 0, this.config.amount );
-			this.uniforms[ 'distortion_y' ].value = THREE.Math.randFloat( 0, this.config.amount );
+			this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( - 1, 1 );
+			this.uniforms[ 'seed_y' ].value = THREE.Math.randFloat( - 1, 1 );
+			this.uniforms[ 'distortion_x' ].value = THREE.Math.randFloat( 0, 1 );
+			this.uniforms[ 'distortion_y' ].value = THREE.Math.randFloat( 0, 1 );
 			this.curF = 0;
 			this.generateTrigger();
 
