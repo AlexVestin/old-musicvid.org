@@ -69,7 +69,8 @@ class ThreeCanvas extends Component {
 
     setSize(width, height, hidden) {
         this.scenes.forEach(e => e.setSize(width, height))
-        this.setState({width, height, hidden})
+        //this.setState({width, height, hidden})
+        console.log(width, height)
         this.renderer.setSize( width, height );     
     }
 
@@ -309,10 +310,10 @@ class ThreeCanvas extends Component {
         const {width, height, hidden} = this.state
         const hideCanvas = this.props.encoding || hidden
         return(
-            <div style={{ minWidth: String(this.props.width) +'px',  minHeight: String(this.props.height), backgroundColor: "black"} } >
+            <div style={{  width: this.props.width, height: this.props.height, backgroundColor: "black"} } >
                 <div
                     ref={ref => this.mountRef = ref } 
-                    style={{ width: String(width) +'px',  height: String(height) +'px', display: hideCanvas ? "none" :  ""}}                
+                    style={{ width: this.props.width,  height: this.props.height, display: hideCanvas ? "none" :  ""}}                
                 />
             </div>
         )

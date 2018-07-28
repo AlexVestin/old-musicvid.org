@@ -47,6 +47,7 @@ export default class SceneContainer {
             isThreeLayer: false
         }
 
+
         this.width = width
         this.height = height
 
@@ -248,8 +249,8 @@ export default class SceneContainer {
         
         //this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height)
         this.ctx.save()
-        this.ctx.scale(1, 720/480)        
-        this.ctx.translate( 0, -(this.canvas.height / (720/480)) / 4)
+        this.ctx.scale(1, this.width/this.height)        
+        this.ctx.translate( 0, -(this.canvas.height / (this.width/this.height)) / 4)
         
         this.addOrRemove(this.toRender, this.rendering, this.mainScene, time)
         //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

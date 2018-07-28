@@ -6,9 +6,10 @@ export default class Sidebar extends PureComponent {
 
     constructor(props) {
         super(props)
-        this.state = { width: 32, dx: 0 } 
-
         this.minWidth = (300 / window.innerWidth) * 100
+        this.state = { width: 25, dx: 0 } 
+
+        
     }
 
     componentWillUnmount() {

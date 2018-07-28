@@ -14,7 +14,7 @@ class Canvas extends Component {
       super(props)
 
       this.state = {
-        width: 720,
+        width: 640,
         height: 480,
         info: "",
         modalOpen: false
@@ -24,6 +24,32 @@ class Canvas extends Component {
       this.frameId = 0
       this.lastTime = 0
       this.time = 0
+
+      
+    }
+
+    setSize = (width, aspect) => {
+      if(this.state.width === width) return
+      this.setState({width: width, height: (width * aspect) >> 0})
+      this.displayRenderer.setSize(width, (width * aspect) >> 0)
+    }
+
+    resizeCanvas = (height) => {
+      const heightInPx =  (90 - height) * window.innerHeight / 100
+
+      console.log(heightInPx)
+      if(heightInPx < 300) {
+        this.setSize(260, 3/4)
+      } else if(heightInPx < 410) {
+        this.setSize(380, 3/4)
+      }
+      else if(heightInPx < 500) {
+        this.setSize(480, 3/4)
+      }else if(heightInPx < 600) {
+        this.setSize(610, 3/4)
+      }else {
+        this.setSize(680, 3/4)
+      } 
     }
   
     componentDidMount() {
@@ -31,36 +57,40 @@ class Canvas extends Component {
       this.displayRenderer = this.ThreeRenderer
       window.requestAnimationFrame(this.renderScene)
 
-      window.onkeyup = (e) => {
-        var key = e.keyCode ? e.keyCode : e.which;
-        switch(key) {
-
-          case 83:
-            this.stop()
-            break;
-
-          //SPACE
-          case 32:
-            this.play()
-            break
-          
-            // .
-          case 190:
-            if(!this.props.playing)
-              this.incrementFrame()
-            break;
-          
-          // ,
-          case 188:
-            if(!this.props.playing)  
-              this.decrementFrame()
-            break
-
-          default:
-        }
-     }
+      window.onkeyup = this.handleKeys
+      window.addEventListener('resize', () => this.resizeCanvas(this.props.playlistHeight), false);
+      this.resizeCanvas(this.props.playlistHeight)
     }
-  
+
+    handleKeys = (e) => {
+      var key = e.keyCode ? e.keyCode : e.which;
+      switch(key) {
+
+        case 83:
+          this.stop()
+          break;
+
+        //SPACE
+        case 32:
+          this.play()
+          break
+        
+          // .
+        case 190:
+          if(!this.props.playing)
+            this.incrementFrame()
+          break;
+        
+        // ,
+        case 188:
+          if(!this.props.playing)  
+            this.decrementFrame()
+          break
+
+        default:
+      }
+   
+    }
     componentWillUnmount() {
       this.stop()
     }
@@ -123,26 +153,32 @@ class Canvas extends Component {
       this.setState({modalOpen: false})
       this.displayRenderer.initEncoder(config, useAudioDuration)
     }
+
+    componentWillReceiveProps = (props) => {
+      if(props.playlistHeight !== this.props.playlistHeight) {
+        this.resizeCanvas(props.playlistHeight)
+      }
+    }
   
     render() {
-      const {width} = this.state
+      const {width, height, modalOpen} = this.state
       const { playing, time } = this.props
 
       return (
-        <div className={classes.canvas_wrapper}>
-          {this.state.modalOpen && <ExportModal open={this.state.modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
-        	 <div className={classes.center_canvas}>
-              <b>{this.state.info}</b>
-              <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={this.state.width} height={this.state.height}></ThreeCanvas>
+        <div className={classes.canvas_wrapper} >
+          {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
+        	 <div >
+              <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={width} height={height}></ThreeCanvas>
               <PlaybackPanel 
                   encodeDisabled={this.props.audioInfo === null} 
-                  width={width} playing={playing} 
-                  time={time} play={this.play} 
+                  width={width} 
+                  playing={playing} 
+                  time={time} 
+                  play={this.play} 
                   stop={this.stop} 
                   encode={this.openEncodeModal}
               >
               </PlaybackPanel>
-              <a aria-label="download ref" ref={(linkRef) => this.linkRef = linkRef}></a>
             </div>
         </div>
       )
@@ -157,7 +193,8 @@ const mapStateToProps = state => {
     fps: state.globals.fps,
     disabled: state.globals.disabled,
     encoding: state.globals.encoding,
-    audioInfo: state.items.audioInfo
+    audioInfo: state.items.audioInfo,
+    playlistHeight: state.window.playlistHeight
   }
 }
 

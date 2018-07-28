@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
 
 import ScrollArea2 from './scrollarea2'
 
@@ -28,14 +27,7 @@ class SimpleTabs extends React.PureComponent {
 
         return (
             <div className={classes.wrapper} >
-                <div className={classes.header} style={{minHeight: 20, height: 20}}>
-                    <div className={classes.root}>
-                        <AppBar position="static" style={{display: "flex", flexDirection: "row", minHeight: 20, height: 20}} >
-                            <div style={{display: "flex", flexDirection: "row", marginLeft: "auto", marginRight: "6%"}}>    
-                            </div>
-                        </AppBar>
-                    </div>
-                </div>
+                <div className={classes.header} style={{minHeight: 12, height: 12, backgroundColor: "#434343"}}></div>
                 <div className={classes.scrollbarWrapper}>
                     <ScrollArea2 maxNrUnits={this.props.clipDuration} items={this.props.items}> </ScrollArea2>
                 </div>

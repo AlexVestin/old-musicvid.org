@@ -8,8 +8,6 @@
 }
 
 .root {
-    background-color: "white";
-    min-height: 10px;
     height: 10px;
 }
 
@@ -31,10 +29,7 @@
     flex-direction: column;
     background-color: gray;
     flex-grow: 1;
-    height: 100%;
-    margin-top:2px;
-
-    
+    height: 100%;    
 }
 
 

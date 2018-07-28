@@ -1,7 +1,5 @@
 import BaseItem from '../../three/items/item'
 
-
-
 const fontList = [
     "Andale Mono",
     "Arial Italic",
@@ -47,6 +45,7 @@ export default class SimpleText extends BaseItem {
     }
 
     animate = (time, audioData) => {
+        const ws = 
         this.ctx.font =  `${this.config.fontSize * this.widthScale}pt ${this.config.font}`
         this.ctx.fillStyle = '#' + this.config.color;
         this.ctx.textAlign = this.config.textAlign
