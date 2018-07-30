@@ -10,6 +10,12 @@ import { BrowserRouter } from 'react-router-dom'
 import { JssProvider } from 'react-jss'
 import {createGenerateClassName} from './generateclassname'
 
+
+if (process.env.NODE_ENV !== 'production') {
+    const {whyDidYouUpdate} = require('why-did-you-update');
+    whyDidYouUpdate(React);
+  }
+
 const generateClassName = createGenerateClassName()
 const app = (
     <BrowserRouter>

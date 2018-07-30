@@ -19,8 +19,11 @@ class ThreeCanvas extends Component {
         this.state = {
             width: props.width,
             height: props.height,
-            hidden: false
+            hidden: false,
+            framesEncoded: 0,
         }
+
+        this.encoding = false 
     }
 
     componentDidMount() {    
@@ -69,13 +72,12 @@ class ThreeCanvas extends Component {
 
     setSize(width, height, hidden) {
         this.scenes.forEach(e => e.setSize(width, height))
-        //this.setState({width, height, hidden})
-        console.log(width, height)
+        
         this.renderer.setSize( width, height );     
     }
 
     shouldComponentUpdate(props) {
-        return props.encoding !== this.state.hidden;
+        return this.encoding !== this.state.hidden || this.props.width !== props.width;
     }
 
     initEncoder = (config, duration) => {
@@ -91,6 +93,7 @@ class ThreeCanvas extends Component {
         this.play(0)
 
         this.setSize(this.config.width, this.config.height, true)
+        this.setState({width: this.config.width, height: this.config.height, hidden: true})
 
         this.startTime = performance.now()
         this.encodeVideoFrame(this.time)
@@ -247,12 +250,15 @@ class ThreeCanvas extends Component {
                 this.encodeVideoFrame()
             }
 
+            if(this.encodedFrames % 30 === 0) this.setState({framesEncoded: this.encodedFrames})
+
         }else if(this.encoding && this.encodedFrames >= this.duration * this.config.fps) {
             this.encoding = false
             setEncoding(false)
             const t =  (performance.now() - this.startTime) / 1000
             console.log("ENCODING FINISHED ----- ", t, " seconds and ",  this.encodedFrames / t , " fps" )
             this.setSize(this.props.width, this.props.height, false)
+            this.setState( { width: this.props.width, height: this.props.height, hidden: false})
             this.videoEncoder.close(this.saveBlob)
             this.audioManager.encodingFinished()
             this.encodedFrames = -1
@@ -291,13 +297,11 @@ class ThreeCanvas extends Component {
             scene.render(this.renderer, time, {mainScene: this.mainScene, mainCamera: this.mainCamera})
             this.renderer.clearDepth()
         }))
-
         /*
         if(this.postProcessingEnabled) {
             //console.log(this.mainScene.children
             this.renderer.render(this.mainScene, this.mainCamera)
         }
-
         */
     }
 
@@ -310,7 +314,9 @@ class ThreeCanvas extends Component {
         const {width, height, hidden} = this.state
         const hideCanvas = this.props.encoding || hidden
         return(
+
             <div style={{  width: this.props.width, height: this.props.height, backgroundColor: "black"} } >
+                {this.encoding && <div style={{color: "white"}}>Frames Encoded: {this.state.framesEncoded} / {Math.floor(this.duration * this.config.fps)}</div>}
                 <div
                     ref={ref => this.mountRef = ref } 
                     style={{ width: this.props.width,  height: this.props.height, display: hideCanvas ? "none" :  ""}}                

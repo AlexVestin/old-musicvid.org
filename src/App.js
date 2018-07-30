@@ -6,6 +6,9 @@ import Header from './views/header/header'
 import Landing from './views/landing/Landing'
 import Editor from './views/editor/Editor'
 
+
+
+
 class App extends Component {
   render() {
     return (

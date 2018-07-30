@@ -26,12 +26,10 @@ class GroupContainer extends PureComponent {
     }
 
     render() {
-        const addAction = this.props.addAction ?  this.addAction : undefined
-
         return(
             <div key={this.props.label} style={groupContainerStyle} className={classes.container}>
                 <div>
-                    <GroupHeader addAction={addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
+                    <GroupHeader addAction={this.addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
                     {this.state.expanded && this.props.children}
                  </div>
             </div>  

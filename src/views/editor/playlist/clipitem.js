@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react'
+import React, {Component} from 'react'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp'
 import Add from '@material-ui/icons/Add'
@@ -6,9 +6,9 @@ import Add from '@material-ui/icons/Add'
 
 import classes from './clipinfobar.css'
 import Clip from './clip'
-import KeyFrame from './keyframe'
-import { addAutomationPoint, editAutomationPoint, editItem, editAudio, selectItem, selectAudio } from '@redux/actions/items'
+import { editItem, editAudio, selectItem, selectAudio } from '@redux/actions/items'
 import { connect } from 'react-redux'
+import KeyframeTracks from './keyframes';
 
 const pHeight = 35
 
@@ -24,7 +24,7 @@ const clipStyle = {
 }
 
 
-class ClipItem extends PureComponent {
+class ClipItem extends Component {
     state = {expanded: false}
 
     //Expand clip view if automation is added
@@ -32,22 +32,6 @@ class ClipItem extends PureComponent {
         if(props.item.automations.length !== this.props.item.automations.length) {
             this.setState({expanded: true})
         } 
-    }
-
-    addKeyFrame = (automation) => {
-        const { item, time } = this.props
-        let id = Math.floor(Math.random() * 10000000)
-        addAutomationPoint({automationId: automation.id, key: automation.name, point: {time, value: item[automation.name], id}})
-    }
-
-    editAutomationPoint = (value, key, time, automation) => {
-        let point = automation.points.find(e => e.time === time) 
-        if(point) {
-            editItem({key, value})
-            editAutomationPoint({key, time, value, id: point.id})
-        }else {
-            this.addKeyFrame(automation)
-        }
     }
 
     render(){
@@ -145,32 +129,21 @@ class ClipItem extends PureComponent {
                             unitSize={unitSize}
                             viewport={viewport}
                             maxNrUnits={maxNrUnits}
-                            >
+                        >
                         </Clip>
                         {this.state.expanded && 
-                            <React.Fragment>
-                            {automations && automations.map( (automation, i) => 
-                                automation.points.map(point => 
-                                <KeyFrame
-                                    time={this.props.time}
-                                    key={point.time} 
-                                    keyVal={automation.name}
-                                    top={(i+1) * pHeight}
-                                    height={pHeight * zoomHeight}
-                                    left={  (point.time * itemRightOffset) - left}
-                                    zoomWidth={zoomWidth}
-                                    item={point}
-                                    itemRightOffset={itemRightOffset}
-                                    unitSize={unitSize}
-                                >
-                                </KeyFrame>
-
-                            ))}
-                            </React.Fragment>
+                            <KeyframeTracks
+                                left={left}
+                                zoomWidth={zoomWidth}
+                                zoomHeight={zoomHeight}
+                                itemRightOffset={itemRightOffset}
+                                unitSize={unitSize}
+                                pHeight={pHeight}
+                                automations={automations}
+                            ></KeyframeTracks>
                         }
                     </div>    
                 }
-
 
             </div>
         )
@@ -179,7 +152,6 @@ class ClipItem extends PureComponent {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        time: state.globals.time,
         fps: state.globals.fps,
         automations: state.items.automations,
         selectedItemId:  state.items.selectedItemId,

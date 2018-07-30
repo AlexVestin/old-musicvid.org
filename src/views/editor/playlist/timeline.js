@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
-import { connect } from 'react-redux'
 import { setTime } from '@redux/actions/globals'
+import Playline from './playline'
 
 import classes from './timeline.css'
 const style = {
@@ -48,10 +48,8 @@ class Timeline extends PureComponent {
     }
 
     render() {
-        const { maxNrUnits, zoomWidth, time, unitSize, left } = this.props
-        const l =  (time * zoomWidth * unitSize) - 6 - left - 1
-        const m = l+6; 
-        const r = m +6;
+        const { maxNrUnits, zoomWidth, unitSize, left } = this.props
+
 
         let numbers = []
         const nNrs = 20
@@ -65,14 +63,9 @@ class Timeline extends PureComponent {
 
         return(
             <div style={style} onWheel={this.props.onWheel} onClick={this.onClick} className={classes.txt}>
-                <svg height="20" width="100%" style={{position:"absolute", zIndex: 1000, pointerEvents: "none"}}>
-                    <polygon points={`${l},10 ${m},18 ${r},10`} style={{fill: "white", stroke: "gray", strokeWidth:1 }}/>
-                </svg>
-
-                <svg height="100%" width="100%" style={{position:"absolute", zIndex: 10, pointerEvents: "none"}}>
-                    <line x1={String(m)} y1="20" x2={String(m)} y2="400" stroke="white" style={{strokeWidth: 1}}/>
-                </svg>
-
+                
+                <Playline zoomWidth={zoomWidth} unitSize={unitSize} left={left}></Playline>
+                
                 <div style={{color:"white", position: "relative"}}>
                     {numbers.map((e) => 
                     <div key={e.val} >
@@ -97,11 +90,6 @@ class Timeline extends PureComponent {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        time: state.globals.time,
 
-    }
-}
 
-export default connect(mapStateToProps)(Timeline)
+export default Timeline

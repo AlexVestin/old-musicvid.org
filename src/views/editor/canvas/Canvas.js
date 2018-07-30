@@ -4,6 +4,7 @@ import ThreeCanvas from './scenemanager';
 
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
+import PlaybackButtons from './playbackbuttons'
 import ExportModal from './export'
 
 import { setTime, togglePlaying, setPlaying, incrementTime, setDisabled } from '@redux/actions/globals' 
@@ -37,14 +38,13 @@ class Canvas extends Component {
     resizeCanvas = (height) => {
       const heightInPx =  (90 - height) * window.innerHeight / 100
 
-      console.log(heightInPx)
       if(heightInPx < 300) {
         this.setSize(260, 3/4)
-      } else if(heightInPx < 410) {
-        this.setSize(380, 3/4)
+      } else if(heightInPx < 420) {
+        this.setSize(400, 3/4)
       }
-      else if(heightInPx < 500) {
-        this.setSize(480, 3/4)
+      else if(heightInPx < 530) {
+        this.setSize(510, 3/4)
       }else if(heightInPx < 600) {
         this.setSize(610, 3/4)
       }else {
@@ -93,6 +93,10 @@ class Canvas extends Component {
     }
     componentWillUnmount() {
       this.stop()
+    }
+
+    shouldComponentUpdate = (props, state) => {
+      return state.width !== this.state.width || state.height !== this.state.height
     }
   
     renderScene = () => {
@@ -164,19 +168,17 @@ class Canvas extends Component {
       const {width, height, modalOpen} = this.state
       const { playing, time } = this.props
 
+      console.log("RENDERING???????????")
       return (
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
         	 <div >
               <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={width} height={height}></ThreeCanvas>
               <PlaybackPanel 
-                  encodeDisabled={this.props.audioInfo === null} 
                   width={width} 
-                  playing={playing} 
-                  time={time} 
+                  playing={playing}    
                   play={this.play} 
-                  stop={this.stop} 
-                  encode={this.openEncodeModal}
+                  stop={this.stop}              
               >
               </PlaybackPanel>
             </div>

@@ -135,7 +135,7 @@ export default class AudioManager {
         this.frameIdx++
         var buffer = this.buffers.pop()
 
-        if(buffer === EMPTY_BUFFER) {
+        if(buffer === EMPTY_BUFFER || buffer === undefined) {
             const left =  new Float32Array(Math.floor(this.sampleWindowSize * this.sampleRate))
             const right =  new Float32Array(Math.floor(this.sampleWindowSize * this.sampleRate))
             return {type: "audio", left, right, sampleRate: this.sampleRate }
