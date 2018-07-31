@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { selectLayer, dispatchAction } from '@redux/actions/items'
+import { selectLayer, dispatchAction, setSidebarWindowIndex } from '@redux/actions/items'
 import withHeader from '../withheader'
 import Delete from '@material-ui/icons/Delete'
-
+import EffectList from './effects'
+import GroupContainer from '../groupcontainer'
 import classes from '../item/items.css'
 class LayerList  extends React.Component {
 
@@ -49,6 +50,10 @@ class LayerList  extends React.Component {
                   )
               } 
               )}
+
+              <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
+                  <EffectList idxs={this.props.idxs}></EffectList>
+              </GroupContainer> 
           </div>
        </div>
     );
@@ -57,7 +62,8 @@ class LayerList  extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    layers: state.items.layers
+    layers: state.items.layers,
+    postProcessingEnabled: state.globals.postProcessingEnabled
   }
 }
 export default connect(mapStateToProps)(withHeader(LayerList))

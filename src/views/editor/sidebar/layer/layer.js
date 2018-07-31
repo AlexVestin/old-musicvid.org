@@ -3,11 +3,10 @@ import withHeader from '../withheader'
 
 import { connect } from 'react-redux'
 import { setSidebarWindowIndex,  editCamera, editControls, editLayer } from '@redux/actions/items'
-
 import GroupContainer from '../groupcontainer'
 import ConfigList from '../input'
 import ItemList from '../item/items'
-import EffectList from './effects'
+
 
 
 class Layer extends React.Component {
@@ -65,10 +64,6 @@ class Layer extends React.Component {
                     item={this.props.layer} 
                     addAutomation={this.addAutomation}>
                 </ConfigList>
-
-                <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
-                    <EffectList idxs={this.props.idxs}></EffectList>
-                </GroupContainer> 
             </div>
         );
     }

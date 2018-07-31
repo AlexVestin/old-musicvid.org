@@ -9,6 +9,7 @@ import * as FileSaver from "file-saver";
 import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
 import { setSidebarWindowIndex } from '@redux/actions/items'
+import RenderTarget from './three/postprocessing/rendertarget';
 
 import AudioManager from './audiomanager'
 
@@ -47,7 +48,6 @@ class ThreeCanvas extends Component {
     }
 
     setupScene = () =>  {
-        const background = new SceneContainer3D("background", this.width, this.height, this.renderer)
         const graphics   = new SceneContainer3D("graphics", this.width, this.height, this.renderer)
         const c2d = new SceneContainer2D("canvas2d", this.width, this.height, this.renderer)
 
@@ -58,12 +58,32 @@ class ThreeCanvas extends Component {
         this.mainCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 100);
         this.mainScene = new Scene();
 
-        /*this.mainScene.add(c2d.quad)   
+        this.mainScene.add(c2d.quad)   
         this.mainScene.add(graphics.quad)   
-        this.mainScene.add(background.quad)   
-        */
-        this.scenes = [background, c2d, graphics]
+        
+        this.scenes = [c2d, graphics]
+       
+
+        const sceneConfig = {
+            camera: this.mainCamera,
+            scene: this.mainScene,
+            renderer: this.renderer
+        }
+        this.renderTarget = new RenderTarget(this.width, this.height, sceneConfig)
+        this.postProcessingEnabled = true
         setSidebarWindowIndex(0);
+    }
+
+    removeEffect = (config) => {
+        this.renderTarget.removeEffect(config)
+    }
+
+    editEffect = (config, id) => {
+        this.renderTarget.editEffect(config, id)
+    }
+
+    createEffect = (type) => {
+        this.renderTarget.createEffect(type)
     }
 
     componentWillUnmount(){
@@ -129,6 +149,7 @@ class ThreeCanvas extends Component {
         const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null
         this.selectedItemId = state.items.selectedItemId
         var newLayer
+
         switch(type) {
             case "EDIT_LAYER":
                 scene.config[payload.key] = payload.value
@@ -170,13 +191,13 @@ class ThreeCanvas extends Component {
                 this.postProcessingEnabled = state.lastAction.payload
                 break;
             case "REMOVE_EFFECT":
-                scene.removeEffect(payload)
+                this.removeEffect(payload)
                 break;
             case "EDIT_EFFECT":
-                scene.editEffect(payload, state.items.effectId)
+                this.editEffect(payload, state.items.effectId)
                 break;
             case "CREATE_EFFECT":
-                scene.createEffect(state.lastAction.payload)
+                this.createEffect(state.lastAction.payload)
                 break;
             case "ADD_AUTOMATION_POINT":
                 scene.addAutomationPoint(payload.point, payload.key, this.selectedItemId)
@@ -291,17 +312,17 @@ class ThreeCanvas extends Component {
         this.renderer.clear()
         this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
         
-
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
-            scene.render(this.renderer, time, {mainScene: this.mainScene, mainCamera: this.mainCamera})
+            scene.render(this.renderer, this.postProcessingEnabled)
+            this.renderer.clearDepth()
         }))
-        /*
+        
         if(this.postProcessingEnabled) {
-            //console.log(this.mainScene.children
-            this.renderer.render(this.mainScene, this.mainCamera)
+            this.renderTarget.update(time, frequencyBins)
+            this.renderTarget.render()
         }
-        */
+        
     }
 
     setTime = (time, playing) => {
@@ -310,7 +331,7 @@ class ThreeCanvas extends Component {
     }
 
     render() {
-        const {width, height, hidden} = this.state
+        const { hidden} = this.state
         const hideCanvas = this.props.encoding || hidden
         return(
 

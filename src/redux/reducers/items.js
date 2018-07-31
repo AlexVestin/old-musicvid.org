@@ -4,7 +4,7 @@ import update from 'immutability-helper'
 
 export default function itemsReducer(state = {
     layers: {}, // scenes
-    passes: {},
+    passes: [],
     items: {},
     automations: {},
     cameras: {},
@@ -67,20 +67,17 @@ export default function itemsReducer(state = {
                 return {...state, automations, items}
             case "REMOVE_EFFECT":
 
-                const lId = state.selectedLayerId
-                idx = state.passes[state.selectedLayerId].findIndex(e => e.id === action.payload.id)
+                idx = state.passes.findIndex(e => e.id === action.payload.id)
                 //passes = [...state.passes[state.selectedLayerId].slice(0, idx), ...state.passes[state.selectedLayerId].slice(idx+1)]
-                passes =    update(state.passes, {[lId]: {$splice: [[idx, 1]]  }})
-                layers =    update(state.layers, {[lId]: {passes: {$splice: [[idx, 1]] }}})
-                return {...state, layers, passes}
+                passes =    update(state.passes, {$splice: [[idx, 1]]  })
+                return {...state, passes}
             case "ADD_EFFECT":
-                passes       = update(state.passes, {[state.selectedLayerId]: {$push: [action.payload] }})
-                layers       = update(state.layers, {[state.selectedLayerId]: {passes: {$push: [action.payload.id]}}})
-                return {...state, layers, passes, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT, effectId: action.payload.id} 
+                passes       = update(state.passes, {$push: [action.payload] })
+                return {...state, passes, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT, effectId: action.payload.id} 
             case "EDIT_EFFECT":
-                idx = state.passes[state.selectedLayerId].findIndex(e => e.id === state.effectId)
-                const pass = state.passes[state.selectedLayerId][idx]                
-                passes   = update(state.passes, {[state.selectedLayerId]: {$splice: [[idx, 1, {...pass, [action.payload.key]: action.payload.value}]] }})
+                idx = state.passes.findIndex(e => e.id === state.effectId)
+                const pass = state.passes[idx]                
+                passes   = update(state.passes, {$splice: [[idx, 1, {...pass, [action.payload.key]: action.payload.value}]] })
                 return {...state, passes }
             case "SELECT_EFFECT":
                 return { ...state, effectId: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT }
@@ -101,23 +98,22 @@ export default function itemsReducer(state = {
             case "ADD_3D_LAYER":
                 id          = action.payload.id
                 items       = update(state.items,  {[id]: {$set: {} }})
-                passes      = update(state.passes, {[id]: {$set: [] }})
+ 
                 
                 layers      = update(state.layers,  {[id]: 
                                 {$set: {...action.payload,  
-                                    items: [], passes: [], camera: action.payload.camera.id, 
+                                    items: [], camera: action.payload.camera.id, 
                                     controls: action.payload.controls.id, fog: action.payload.fog.id }}})
 
                 cameras     = update(state.cameras, {[id]: {$set: action.payload.camera }} )
                 controls    = update(state.controls, {[id]: {$set: action.payload.controls }} )
                 fog         = update(state.fog,  {[id]: {$set: action.payload.fog }} )
-                return {...state, items, layers, passes, cameras, controls, fog, selectedLayerId: id }
+                return {...state, items, layers, cameras, controls, fog, selectedLayerId: id }
             case "ADD_2D_LAYER":
                 id          = action.payload.id
                 items       = update(state.items,  {[id]: {$set: {} }})
-                passes      = update(state.passes, {[id]: {$set: [] }})
-                layers      = update(state.layers,  {[id]: {$set: {...action.payload, items: [], passes: []}}})
-                return {...state, items, layers, passes, selectedLayerId: id }
+                layers      = update(state.layers,  {[id]: {$set: {...action.payload, items: []}}})
+                return {...state, items, layers, selectedLayerId: id }
             case "SELECT_LAYER":
                 return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":

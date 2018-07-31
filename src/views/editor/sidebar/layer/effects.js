@@ -54,8 +54,8 @@ class EffectList extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        passes: state.items.passes[state.items.selectedLayerId],
-        postProcessingEnabled: state.items.layers[state.items.selectedLayerId].postProcessingEnabled
+        passes: state.items.passes,
+        postProcessingEnabled: state.globals.postProcessingEnabled
     }
 }
 

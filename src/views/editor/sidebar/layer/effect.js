@@ -34,7 +34,7 @@ class Effect extends React.PureComponent {
 
 const mapStateToProps = state => {
     return {
-        passes: state.items.passes[state.items.selectedLayerId],
+        passes: state.items.passes,
         effectId: state.items.effectId,
     }
 }

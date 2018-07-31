@@ -7,7 +7,6 @@ import CircleRings from './items/circlerings';
 import WaveletCanvas from './items/waveletcanvas';
 import Square from './items/square';
 import JSNation from './items/jsnation';
-import RenderTarget from '../three/postprocessing/rendertarget';
 import SimpleText from './items/text'
 
 export default class SceneContainer {
@@ -28,7 +27,6 @@ export default class SceneContainer {
             zIndex: 1,
             heightResolution: 1024,
             widthResolution: 1024,
-            enablePostProcessing: true,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
@@ -38,7 +36,6 @@ export default class SceneContainer {
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
                     zIndex: {type: "Number", value: 1},
-                    enablePostProcessing: {type: "Boolean", value: false}
                 }
             }],
             items: [],
@@ -58,45 +55,27 @@ export default class SceneContainer {
 
         this.canvas.width = width
         this.canvas.height = height
-        this.textureCanvas.width = 512;
-        this.textureCanvas.height = 512;
+        this.textureCanvas.width = 1024;
+        this.textureCanvas.height = 1024;
 
-        console.log(this.canvas)
-        console.log(this.textureCanvas)
 
         this.textureCtx = this.textureCanvas.getContext("2d");
         this.ctx =  this.canvas.getContext("2d");
 
         this.texture =  new THREE.CanvasTexture(this.textureCanvas)
-        console.log("-------------------", this.textureCanvas.width, this.textureCanvas.height)
         this.test = 0
-
-        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        const scene = new THREE.Scene();
-
-        this.sceneConfig = {
-            scene: scene,
-            camera: camera,
-            renderer
-        }
-
-        this.renderTarget = new RenderTarget(name, this.textureCanvas.width, this.textureCanvas.height, this.sceneConfig)
-        this.renderTarget.buffer.texture = this.texture
 
         this.quad = new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 
             new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
         );  
-        scene.add(this.quad)
-        
-        this.mainCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-        this.mainScene = new THREE.Scene();
-        this.internalQuad = new THREE.Mesh( 
+
+        this.mainScene = new THREE.Scene()
+        this.mainCamera= new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        this.mainScene.add(new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 
-            new THREE.MeshBasicMaterial( { map: this.renderTarget.buffer.texture, transparent: true } )
-        );
-        this.mainScene.add(this.internalQuad)
-        
+            new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
+        ))
     }
 
     removeEffect = (config) => {
@@ -186,17 +165,11 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
-        this.mainCamera.aspect = width / height;
-        this.renderTarget.setSize(width, height)
-        if (this.mainCamera.isPerspectiveCamera)
-            this.mainCamera.updateProjectionMatrix();
-
         this.width = width
         this.height = height
         this.canvas.width = width
         this.canvas.height = height
     }
-
 
     updateItem = (config, time) => {
         const item = this.items.find((e) => e.config.id === config.id)
@@ -220,7 +193,7 @@ export default class SceneContainer {
         }
     }
 
-    addOrRemove(toRender, rendering, scene, time) {
+    addOrRemove(toRender, rendering, time) {
         var i = rendering.length
         while (i--) {
             const e = rendering[i]
@@ -264,37 +237,22 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
-        if(this.config.shouldClear) {
-            this.ctx.fillStyle = "#" + this.config.clearColor
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
-        }
-        
-        
-        /*this.ctx.save()
-        this.addOrRemove(this.toRender, this.rendering, this.mainScene, time)
-        //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+        this.textureCtx.clearRect(0,0,this.textureCanvas.width, this.textureCanvas.height)
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+        this.addOrRemove(this.toRender, this.rendering, time)
         this.rendering = this.rendering.sort((a, b) => a.config.renderIndex - b.config.renderIndex)
+        this.ctx.save()
         this.rendering.forEach(item => item.animate(time, frequencyBins))
         this.ctx.restore()
-        */
 
-        this.ctx.save()
-        this.ctx.fillStyle = "#FF0000"
-        this.ctx.fillRect((this.canvas.width / 2) - 400/2, (this.canvas.height / 2) -400/2, 400, 400);
-        this.ctx.restore()
-
-        this.textureCtx.drawImage(this.canvas, 0, 0, this.textureCtx.width, this.textureCtx.height)
+        this.textureCtx.drawImage(this.canvas, 0, 0, this.textureCanvas.width, this.textureCanvas.height)
         this.texture.needsUpdate = true
     }
 
-    render = (renderer, time) => {
-
-        this.renderTarget.render( renderer, time )
-        renderer.render(this.mainScene, this.mainCamera)
-
-        //renderer.render(this.mainScene, this.mainCamera)
-        
+    render = ( renderer, postProcessingEnabled ) => {
+        if(!postProcessingEnabled)
+            renderer.render(this.mainScene, this.mainCamera)
     }
 
     setTime = (time, playing, sItemId) => {
@@ -320,15 +278,6 @@ export default class SceneContainer {
         this.items.forEach(e => { e.stop() })
         this.rendering = []
         this.toRender = []
-    }
-
-
-    dispose = () => {
-        let { camera, scene, light, controls } = this
-        camera.dispose()
-        scene.dispose()
-        light.dispose()
-        controls.dispose()
     }
 }
 

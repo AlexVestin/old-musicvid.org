@@ -64,7 +64,7 @@ class SidebarContainer extends React.Component {
         return (
             <div className={classes.root}>
                 {value === INDEXES.PROJECTSETTINGS && <ProjectSettings idxs={INDEXES} idx={2}></ProjectSettings>}
-                {value === INDEXES.LAYERS && <LayerList idx={0} ></LayerList>}
+                {value === INDEXES.LAYERS && <LayerList idx={0} idxs={INDEXES} ></LayerList>}
                 {value === INDEXES.AUDIO && <Audio idxs={INDEXES} idx={INDEXES.AUDIO}></Audio>}
                 {value >= 2 && <LayerContainer idxs={INDEXES} ></LayerContainer>}
             </div>
@@ -80,10 +80,7 @@ const mapStateToProps = state => {
     return {
         selectedItemId: state.items.selectedItemId,
         sideBarWindowIndex: state.items.sideBarWindowIndex,
-        selectedLayerId: state.items.selectedLayerId,    
-        
-        
-            
+        selectedLayerId: state.items.selectedLayerId,      
     }
 }
 

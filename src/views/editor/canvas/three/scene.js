@@ -10,7 +10,6 @@ import TessellatedText from './items/tessellatedtext'
 import Sphere from './items/sphere';
 import RandomGeometry from './items/randomgeometry';
 
-import RenderTarget from './postprocessing/rendertarget';
 import { add3DLayer, replaceCamera, replaceControls } from '@redux/actions/items'
 import cameraConfigs from './cameras/camera'
 import controlConfigs from './controls/config'
@@ -59,12 +58,10 @@ export default class SceneContainer {
             items: [],
             thing: 10,
             zIndex: 1,
-            enablePostProcessing:  true,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
                     zIndex: {type: "Number", value: 1},
-                    enablePostProcessing: {type: "Boolean", value: true}
                 }
             }],
             width,
@@ -84,15 +81,11 @@ export default class SceneContainer {
         
         add3DLayer(this.config)
 
-        this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
-
-        const mat = new THREE.MeshBasicMaterial({transparent: true, map: this.renderTarget.buffer.texture})
-        this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), mat);
-            
-        // If postprocessing
-        this.mainCamera =  new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
-        this.mainScene = new THREE.Scene()
-        this.mainScene.add(this.quad)
+        this.target = new THREE.WebGLRenderTarget(width, height)
+        this.quad = new THREE.Mesh( 
+            new THREE.PlaneBufferGeometry( 2, 2 ), 
+            new THREE.MeshBasicMaterial({transparent: true, map: this.target.texture})
+        );
     }
 
     editFog = (key, value) => {
@@ -190,17 +183,7 @@ export default class SceneContainer {
         }   
     }
     
-    removeEffect = (config) => {
-        this.renderTarget.removeEffect(config)
-    }
-
-    editEffect = (config, id) => {
-        this.renderTarget.editEffect(config, id)
-    }
-
-    createEffect = (type) => {
-        this.renderTarget.createEffect(type)
-    }
+    
 
     moveItem = (item, up) => {
         const delta =  up ? -1 : 1
@@ -295,7 +278,6 @@ export default class SceneContainer {
 
     setSize = (width, height) => {
         this.camera.aspect = width / height;
-        this.renderTarget.setSize(width, height)
         if (this.camera.isPerspectiveCamera)
             this.camera.updateProjectionMatrix();
     }
@@ -306,7 +288,6 @@ export default class SceneContainer {
         this.camera.position.set(30,30,200)
         this.cameraConfig = cameraConfigs.perspectiveConfig
         replaceCamera(this.cameraConfig)
-        this.renderTarget.setCamera(this.camera)
     }
 
     setLight = (scene) => {
@@ -405,21 +386,11 @@ export default class SceneContainer {
     animate = (time, frequencyBins) => {
         this.addOrRemove(this.toRender, this.rendering, this.scene, time)
         this.rendering.forEach(e =>  e.animate(time, frequencyBins))
-        this.renderTarget.update(time, frequencyBins)
         if(this.controls)this.controls.update()
     }
 
-    render = ( renderer, time, mainConfig ) => {
-        if(this.config.enablePostProcessing) {
-            this.quad.material.map.needsUpdate = true
-            this.renderTarget.render( renderer, time )
-           
-            renderer.render(this.mainScene, this.mainCamera)
-            this.renderTarget.effectComposer.swapBuffers()
-            
-        }else {
-            renderer.render(this.scene, this.camera)
-        }
+    render = ( renderer, postProcessingEnabled ) => {
+        renderer.render(this.scene, this.camera, postProcessingEnabled ? this.target : null, postProcessingEnabled)
     }
 
     setTime = (time, playing, sItemId) => {

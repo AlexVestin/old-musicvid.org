@@ -17,10 +17,10 @@ import HalftonePass from './passes/halftonepass';
 import TestShader from './shaders/testshader'
 
 export default class RenderTarget {
-    constructor(name, width, height, sceneConfig, isMain = false) {
+    constructor(width, height, sceneConfig, isMain = false) {
         this.config = {}
         this.config.id = Math.floor(Math.random() * 40000000)
-        this.config.name = name
+        this.config.name = "Effects"
         this.config.isMain = isMain
 
         this.width = width
@@ -40,28 +40,11 @@ export default class RenderTarget {
         const copyPass = new ShaderPass( CopyShader, undefined, "COPY" );
         //const fx =  new GlitchPass(64, undefined, "sepia")
         
-        
-        /*
-        const test1 = new ShaderPass(TestShader, undefined, "test1")
-        test1.material.uniforms.targetColor.value = new Vector3(0.3, 0.3, 0.7)
-        
-        const test2 = new ShaderPass(TestShader, undefined, "test1")
-        test2.material.uniforms.targetColor.value = new Vector3(0.3, 0, 0)
-
-        const test3 = new ShaderPass(TestShader, undefined, "test1")
-        test3.material.uniforms.targetColor.value = new Vector3(0., 0.9, 0)
-
-        const test4 = new ShaderPass(TestShader, undefined, "test1")
-        test4.material.uniforms.targetColor.value = new Vector3(0.3, 0.2, 1)
-        */
-        
+     
         this.effectComposer.addPass( this.renderPass )
         this.effectComposer.addPass( copyPass );
-        //this.effectComposer.addPass(test3)
-        //this.effectComposer.addPass(test4)
-        //this.effectComposer.swapBuffers()
+        copyPass.renderToScreen = true
 
-        
         this.passes = [ this.renderPass, copyPass ]
     }
 
@@ -73,8 +56,7 @@ export default class RenderTarget {
         this.passes.forEach( e => e.update(time, frequencyBins) )
     }
 
-    render = (renderer, time) => {
-        this.buffer.texture.needsUpdate = true
+    render = () => {
         this.effectComposer.render()
     }
 
@@ -109,7 +91,8 @@ export default class RenderTarget {
                 console.log("unknown EFFECTS type", type)
                 return
         }
-
+        fx.renderToScreen = true
+        this.passes[this.passes.length - 1].renderToScreen = false
         this.passes.push(fx)
         this.effectComposer.addPass(fx)
     }
