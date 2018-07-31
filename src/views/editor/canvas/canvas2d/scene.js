@@ -52,27 +52,25 @@ export default class SceneContainer {
         this.height = height
 
         add2DLayer(this.config)
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = 1024;
-        this.canvas.height = 1024;
-        this.ctx = this.canvas.getContext("2d");
+        this.textureCanvas = document.createElement('canvas');
+        this.textureCanvas.width = 1024;
+        this.textureCanvas.height = 1024;
+        this.ctx = this.textureCanvas.getContext("2d");
 
-        this.texture =  new THREE.CanvasTexture(this.canvas)
+        this.texture =  new THREE.CanvasTexture(this.textureCanvas)
         this.test = 0
+
+        this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        this.scene = new THREE.Scene();
         this.quad = new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 
             new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
-        );
+        );  
+        this.scene.add(this.camera)
 
-        this.internalQuad = new THREE.Mesh( 
-            new THREE.PlaneBufferGeometry( 2, 2 ), 
-            new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
-        );
 
         this.mainCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
         this.mainScene = new THREE.Scene();
-        this.mainScene.add(this.internalQuad)   
-
         this.sceneConfig = {
             scene: this.mainScene,
             camera: this.mainCamera,
@@ -80,6 +78,20 @@ export default class SceneContainer {
         }
 
         this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
+        this.renderTarget.buffer.texture = this.texture
+
+        this.internalQuad = new THREE.Mesh( 
+
+            new THREE.PlaneBufferGeometry( 2, 2 ), 
+            new THREE.MeshBasicMaterial( { map: this.renderTarget.buffer.texture, transparent: true } )
+        );
+
+       
+        this.mainScene.add(this.internalQuad)   
+
+        
+
+       
     }
 
     removeEffect = (config) => {
@@ -97,8 +109,8 @@ export default class SceneContainer {
     editSettings = (key, value) => {
         this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
-        if(key === "widthResolution") this.canvas.width = value    
-        if(key === "heightResolution") this.canvas.height = value    
+        if(key === "widthResolution") this.textureCanvas.width = value    
+        if(key === "heightResolution") this.textureCanvas.height = value    
     }
 
     moveItem = (item, up) => {
@@ -110,7 +122,7 @@ export default class SceneContainer {
     }
 
     addItem = (name, info, time) => {
-        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
+        info = {...info, name, time, canvas: this.textureCanvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
         let item; 
 
         switch (info.type) {
@@ -247,14 +259,14 @@ export default class SceneContainer {
     animate = (time, frequencyBins) => {
         if(this.config.shouldClear) {
             this.ctx.fillStyle = "#" + this.config.clearColor
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+            this.ctx.fillRect(0, 0, this.textureCanvas.width, this.textureCanvas.height)
         }
         
-        //this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height)
         this.ctx.save()
-        this.ctx.scale(1, this.width/this.height)        
-        this.ctx.translate( 0, -this.height / 4)
         
+        this.ctx.scale(1, this.width/this.height)        
+        
+        this.ctx.translate( 0, -( this.height / 4 / (this.height/this.width)))
         this.addOrRemove(this.toRender, this.rendering, this.mainScene, time)
         //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
@@ -267,6 +279,7 @@ export default class SceneContainer {
     render = (renderer, time) => {
         if( this.config.enablePostProcessing ) {
             this.renderTarget.render( renderer, time )
+            renderer.render(this.mainScene, this.mainCamera)
         }else {
             renderer.render(this.mainScene, this.mainCamera)
         }

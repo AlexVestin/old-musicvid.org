@@ -76,8 +76,8 @@ export default class SSAARenderPass extends Pass {
 
         // as we need to clear the buffer in this pass, clearColor must be set to something, defaults to black.
         this.clearColor = ( config.clearColor !== undefined ) ? config.clearColor : 0x000000;
-        this.clearAlpha = ( config.clearAlpha !== undefined ) ? config.clearAlpha : 0;
-
+		this.clearAlpha = ( config.clearAlpha !== undefined ) ? config.clearAlpha : 0;
+		
         if ( CopyShader === undefined ) console.error( "THREE.SSAARenderPass relies on THREE.CopyShader" );
 
         var copyShader = CopyShader;

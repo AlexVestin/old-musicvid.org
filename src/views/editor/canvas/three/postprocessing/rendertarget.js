@@ -15,7 +15,6 @@ import GlitchPass from './passes/glitchpass'
 import HalftonePass from './passes/halftonepass';
 
 import TestShader from './shaders/testshader'
-import { timingSafeEqual } from 'crypto';
 
 export default class RenderTarget {
     constructor(name, width, height, sceneConfig, isMain = false) {
@@ -42,9 +41,10 @@ export default class RenderTarget {
         const copyPass = new ShaderPass( CopyShader, undefined, "COPY" );
         //const fx =  new GlitchPass(64, undefined, "sepia")
         
+        /*
         const test1 = new ShaderPass(TestShader, undefined, "test1")
         test1.material.uniforms.targetColor.value = new Vector3(0.3, 0.3, 0.7)
-        /*
+        
         const test2 = new ShaderPass(TestShader, undefined, "test1")
         test2.material.uniforms.targetColor.value = new Vector3(0.3, 0, 0)
 
@@ -58,12 +58,9 @@ export default class RenderTarget {
         this.renderPass.unbiased = false;
         this.effectComposer.addPass( this.renderPass )
         this.effectComposer.addPass( copyPass );
-
-        this.effectComposer.addPass(test1)
         //this.effectComposer.addPass(test2)
         //this.effectComposer.addPass(test3)
         //this.effectComposer.addPass(test4)
-
         //this.effectComposer.swapBuffers()
 
         
@@ -113,6 +110,9 @@ export default class RenderTarget {
                 console.log("unknown EFFECTS type", type)
                 return
         }
+
+        fx.renderToScreen = true
+        this.effectComposer.passes[this.effectComposer.passes.length - 1].renderToScreen = false
         this.passes.push(fx)
         this.effectComposer.addPass(fx)
 

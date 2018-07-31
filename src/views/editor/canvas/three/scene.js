@@ -22,10 +22,6 @@ import SkyBox2 from './items/skybox2';
 import AudioCircle from './items/audiocircle';
 
 
-import FXAAShader from './postprocessing/shaders/fxaa'
-import ThreeCanvas from '../scenemanager';
-
-
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
 
@@ -89,14 +85,8 @@ export default class SceneContainer {
         add3DLayer(this.config)
 
         this.renderTarget = new RenderTarget(name, width, height, this.sceneConfig)
-        this.texture = this.renderTarget.buffer.texture
 
-        const mat = new THREE.MeshBasicMaterial({transparent: true, map: this.texture})
-        const fxaaMaterial = new THREE.ShaderMaterial(FXAAShader)
-        fxaaMaterial.uniforms.tDiffuse.value = this.texture;
-        fxaaMaterial.uniforms.resolution.value.x = 1 / (width * 2);
-        fxaaMaterial.uniforms.resolution.value.y = 1 / (height * 2);
-        
+        const mat = new THREE.MeshBasicMaterial({transparent: true, map: this.renderTarget.buffer.texture})
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), mat);
             
         // If postprocessing
@@ -422,7 +412,9 @@ export default class SceneContainer {
     render = ( renderer, time, mainConfig ) => {
         if(this.config.enablePostProcessing) {
             this.renderTarget.render( renderer, time )
+            //this.renderTarget.buffer.texture.needsUpdate = true
             renderer.render(this.mainScene, this.mainCamera)
+            
         }else {
             renderer.render(this.scene, this.camera)
         }

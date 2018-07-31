@@ -76,8 +76,8 @@ class ThreeCanvas extends Component {
         this.renderer.setSize( width, height );     
     }
 
-    shouldComponentUpdate(props) {
-        return this.encoding !== this.state.hidden || this.props.width !== props.width;
+    shouldComponentUpdate(props, state) {
+        return this.encoding !== this.state.hidden || this.props.width !== props.width || state.framesEncoded  !== this.state.framesEncoded;
     }
 
     initEncoder = (config, duration) => {

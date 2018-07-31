@@ -96,7 +96,7 @@ class Canvas extends Component {
     }
 
     shouldComponentUpdate = (props, state) => {
-      return state.width !== this.state.width || state.height !== this.state.height
+      return state.width !== this.state.width || state.height !== this.state.height || state.modalOpen !== this.state.modalOpen
     }
   
     renderScene = () => {
@@ -148,6 +148,7 @@ class Canvas extends Component {
     }
 
     openEncodeModal = () => {
+      console.log("+spdigijnm")
       this.setState({modalOpen: true})
     }
 
@@ -166,9 +167,8 @@ class Canvas extends Component {
   
     render() {
       const {width, height, modalOpen} = this.state
-      const { playing, time } = this.props
+      const { playing } = this.props
 
-      console.log("RENDERING???????????")
       return (
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
@@ -178,7 +178,8 @@ class Canvas extends Component {
                   width={width} 
                   playing={playing}    
                   play={this.play} 
-                  stop={this.stop}              
+                  stop={this.stop}   
+                  openEncodingModal={this.openEncodeModal}
               >
               </PlaybackPanel>
             </div>
