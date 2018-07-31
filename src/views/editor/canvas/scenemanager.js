@@ -295,7 +295,6 @@ class ThreeCanvas extends Component {
         this.scenes.forEach((scene => {
             scene.animate(this.time, frequencyBins)
             scene.render(this.renderer, time, {mainScene: this.mainScene, mainCamera: this.mainCamera})
-            this.renderer.clearDepth()
         }))
         /*
         if(this.postProcessingEnabled) {

@@ -411,9 +411,11 @@ export default class SceneContainer {
 
     render = ( renderer, time, mainConfig ) => {
         if(this.config.enablePostProcessing) {
+            this.quad.material.map.needsUpdate = true
             this.renderTarget.render( renderer, time )
-            //this.renderTarget.buffer.texture.needsUpdate = true
+           
             renderer.render(this.mainScene, this.mainCamera)
+            this.renderTarget.effectComposer.swapBuffers()
             
         }else {
             renderer.render(this.scene, this.camera)

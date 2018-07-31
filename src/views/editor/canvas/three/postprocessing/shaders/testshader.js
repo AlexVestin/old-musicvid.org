@@ -11,7 +11,7 @@ import { Vector3 } from 'three'
 export default {
 
 	uniforms: {
-        "targetColor": { value: new Vector3(0.2, 0.2, 0.2) }
+        "targetColor": { value: new Vector3(Math.random(), Math.random(), Math.random()) }
 	},
 
 	vertexShader: [

@@ -32,14 +32,14 @@ export default class RenderTarget {
             format: RGBAFormat,
             stencilBuffer: true,
         };
-       
         const { scene, camera, renderer } = sceneConfig
-        this.buffer = new WebGLRenderTarget( width, height, rtParameters )
+        this.buffer = new WebGLRenderTarget( width, height,  rtParameters )
         this.effectComposer = new EffectComposer(renderer, this.buffer)
         
         this.renderPass = new SSAAPass( {name: "SSAA", scene, camera} );
         const copyPass = new ShaderPass( CopyShader, undefined, "COPY" );
         //const fx =  new GlitchPass(64, undefined, "sepia")
+        
         
         /*
         const test1 = new ShaderPass(TestShader, undefined, "test1")
@@ -55,10 +55,8 @@ export default class RenderTarget {
         test4.material.uniforms.targetColor.value = new Vector3(0.3, 0.2, 1)
         */
         
-        this.renderPass.unbiased = false;
         this.effectComposer.addPass( this.renderPass )
         this.effectComposer.addPass( copyPass );
-        //this.effectComposer.addPass(test2)
         //this.effectComposer.addPass(test3)
         //this.effectComposer.addPass(test4)
         //this.effectComposer.swapBuffers()
@@ -76,7 +74,8 @@ export default class RenderTarget {
     }
 
     render = (renderer, time) => {
-        this.effectComposer.render(time)
+        this.buffer.texture.needsUpdate = true
+        this.effectComposer.render()
     }
 
     setSize = (width, height) => {
@@ -111,11 +110,8 @@ export default class RenderTarget {
                 return
         }
 
-        fx.renderToScreen = true
-        this.effectComposer.passes[this.effectComposer.passes.length - 1].renderToScreen = false
         this.passes.push(fx)
         this.effectComposer.addPass(fx)
-
     }
 
     removeEffect = (config) =>  {

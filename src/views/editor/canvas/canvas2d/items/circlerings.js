@@ -142,7 +142,6 @@ export default class CircleRings extends AudioImpactItem {
         //this.innerCircle.draw(this.ctx, true);
         
         let sum  = this.getImpactAmplitude(frequencyBins.bins)
-        console.log(sum)
         this.ships.forEach(ship => ship.draw(this.ctx, this.config, sum));
     }
 }
