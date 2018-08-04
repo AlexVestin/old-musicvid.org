@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 
-const colors = ["green", "red", "brown", "blue"]
+const colors = ["#001f3f"]
 
 export default class Clip extends PureComponent {
     constructor(props) {

@@ -2,10 +2,11 @@ import React from 'react';
 
 import Button from 'material-ui/Button'
 import { connect } from 'react-redux'
-import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio } from '@redux/actions/items'
+import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio, removeSound } from '@redux/actions/items'
+import Delete from '@material-ui/icons/Delete'
 
 import AudioItem from './audioitem'
-import List, { ListItem, ListItemText } from 'material-ui/List';
+import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
 import FFTSettings from './fftsettings'
 
@@ -47,8 +48,13 @@ class Audio extends React.Component {
                 <div>
                     <List>
                         {audioItems.map((item, i) => (
-                        <ListItem key={item.name} dense button className={classes.listItem} onClick={() => this.onClick(i)}>
+                        <ListItem disableRipple key={item.name} dense button className={classes.listItem} onClick={() => this.onClick(i)}>
                             <ListItemText primary={item.name} />
+                            <ListItemSecondaryAction>
+        
+                                    <Delete style={{cursor: "pointer"}}color="secondary" onClick={() => removeSound(item.id)}></Delete>
+
+                            </ListItemSecondaryAction>
                         </ListItem>
                         ))}
                     </List>

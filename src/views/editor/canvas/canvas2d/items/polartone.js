@@ -102,6 +102,12 @@ export default class WaveletCanvas extends BaseItem {
     }
 
 
+    setSize = (width, height) => {
+        this.width = width
+        this.height = height
+    }
+
+
     //const node = Analyser(audio, audiothis.ctx, { audible: true, stereo: false })
     //loop.on('tick', render).start()
 

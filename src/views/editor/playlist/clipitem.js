@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp'
 import Add from '@material-ui/icons/Add'
@@ -14,6 +14,7 @@ const pHeight = 35
 
 
 const clipStyle = {
+    boxSizing: "border-box",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -24,7 +25,7 @@ const clipStyle = {
 }
 
 
-class ClipItem extends Component {
+class ClipItem extends PureComponent {
     state = {expanded: false}
 
     //Expand clip view if automation is added

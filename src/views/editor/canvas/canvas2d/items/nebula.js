@@ -86,6 +86,11 @@ export default class Nebula extends BaseItem {
         }
     }
 
+    setSize = (width, height) => {
+        this.width = width
+        this.height = height
+    }
+
     animate = (newTime, frequencyBins) => {
         var	sortPuff = function(p1,p2) { return p1.p - p2.p; };	        
         if(this.oldTime === 0 ) {

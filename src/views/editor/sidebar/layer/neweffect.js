@@ -19,7 +19,7 @@ const effects = [
 class NewEffect extends React.Component {
 
     back = () => {
-        setSidebarWindowIndex(this.props.idxs.LAYER)
+        setSidebarWindowIndex(this.props.idxs.LAYERS)
     };
 
     createEffect = (type) => {
@@ -28,11 +28,10 @@ class NewEffect extends React.Component {
 
 
   render() {
-    console.log(this.props)
     return (
         <List>  
             {effects.map(e => (
-                <ListItem key={e} dense button >
+                <ListItem disableRipple key={e} dense button >
                     <ListItemText primary={e} onClick={() => this.createEffect(e.toUpperCase())}/>
                 </ListItem>
             ))} 
@@ -43,4 +42,4 @@ class NewEffect extends React.Component {
 
 
 
-export default withHeader(NewEffect)
+export default NewEffect

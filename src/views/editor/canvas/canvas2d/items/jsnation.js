@@ -52,6 +52,11 @@ export default class JSNation extends BaseItem {
             let transformer = 1.2;
             return (1 / (transformer - 1)) * (-Math.pow(intermediate, transformer) + transformer * intermediate);
         }
+
+        setSize = (width, height) => {
+            this.width = width
+            this.height = height
+        }
     
         // I'm not convinced this is a Savitsky-Golay smooth. I'm not sure what it is actually.
         savitskyGolaySmooth = (array) => {

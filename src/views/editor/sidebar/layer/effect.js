@@ -15,11 +15,12 @@ class Effect extends React.PureComponent {
 
     render() {
         const {  passes, effectId } = this.props
-
         const item = passes.find(e => e.id === effectId)
         const defaultConfig = item.defaultConfig;
         
         return (
+            
+
             <ConfigList 
                 handleChange={this.handleChange} 
                 defaultConfig={defaultConfig} 
@@ -39,4 +40,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(withHeader(Effect))
+export default connect(mapStateToProps)(Effect)

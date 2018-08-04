@@ -44,6 +44,8 @@ export default class RenderTarget {
         this.effectComposer.addPass( this.renderPass )
         this.effectComposer.addPass( copyPass );
         copyPass.renderToScreen = true
+        copyPass.renderPass = true
+        this.renderPass.renderPass = true
 
         this.passes = [ this.renderPass, copyPass ]
     }
@@ -53,6 +55,7 @@ export default class RenderTarget {
     }
 
     update = (time, frequencyBins) => {
+        console.log(this.passes)
         this.passes.forEach( e => e.update(time, frequencyBins) )
     }
 
@@ -99,6 +102,7 @@ export default class RenderTarget {
 
     removeEffect = (config) =>  {
         this.effectComposer.removePass(config)
+        this.passes[this.passes.length - 1].renderToScreen = true
     }
 
     editEffect = (config, id) => {

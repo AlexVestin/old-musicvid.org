@@ -25,13 +25,13 @@ export default class SceneContainer {
             clearAlpha: 1,
             shouldClear: true,
             zIndex: 1,
-            heightResolution: 1024,
-            widthResolution: 1024,
+            heightResolution: 2048,
+            widthResolution: 2048,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
-                    heightResolution: {type: "Number", value: 1024, tooltip: "Must be a power of two" },
-                    widthResolution: {type: "Number", value: 1024, tooltip: "Must be a power of two" },
+                    heightResolution: {type: "Number", value: 2048, tooltip: "Must be a power of two" },
+                    widthResolution: {type: "Number", value: 2048, tooltip: "Must be a power of two" },
                     clearColor: {type: "String", value: "000000"},
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
@@ -45,23 +45,21 @@ export default class SceneContainer {
             isThreeLayer: false
         }
 
-
         this.width = width
         this.height = height
 
         add2DLayer(this.config)
         this.textureCanvas = document.createElement('canvas');
-        this.canvas = document.createElement('canvas')
+        this.canvas = document.createElement("canvas")
 
-        this.canvas.width = width
-        this.canvas.height = height
+
         this.textureCanvas.width = 1024;
         this.textureCanvas.height = 1024;
-
-
         this.textureCtx = this.textureCanvas.getContext("2d");
-        this.ctx =  this.canvas.getContext("2d");
+        this.textureCtx.save()
 
+
+        
         this.texture =  new THREE.CanvasTexture(this.textureCanvas)
         this.test = 0
 
@@ -106,7 +104,7 @@ export default class SceneContainer {
     }
 
     addItem = (name, info, time) => {
-        info = {...info, name, time, canvas: this.canvas, ctx: this.ctx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
+        info = {...info, name, time, canvas: this.textureCanvas, ctx: this.textureCtx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
         let item; 
 
         switch (info.type) {
@@ -165,10 +163,18 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
+        this.textureCtx.restore()
+        this.textureCtx.save()
         this.width = width
         this.height = height
-        this.canvas.width = width
-        this.canvas.height = height
+
+        const [halftWidth, halfHeight] = [this.textureCanvas.width/2, this.textureCanvas.height/2]
+        
+        this.textureCtx.translate(halftWidth, halfHeight)
+        //this.textureCtx.scale(this.hAspect, this.wAspect)
+        this.textureCtx.scale(1, this.width/this.height)
+        this.textureCtx.translate(-halftWidth, -halfHeight)
+        
     }
 
     updateItem = (config, time) => {
@@ -237,22 +243,23 @@ export default class SceneContainer {
     }
 
     animate = (time, frequencyBins) => {
-        this.textureCtx.clearRect(0,0,this.textureCanvas.width, this.textureCanvas.height)
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
+        //this.textureCtx.clearRect(0,0,this.textureCanvas.width, this.textureCanvas.height)
+        this.textureCtx.clearRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
+        
         this.addOrRemove(this.toRender, this.rendering, time)
-        this.rendering = this.rendering.sort((a, b) => a.config.renderIndex - b.config.renderIndex)
-        this.ctx.save()
+        this.rendering = this.rendering.sort((a, b) => a.config.zIndex - b.config.zIndex)
+        
         this.rendering.forEach(item => item.animate(time, frequencyBins))
-        this.ctx.restore()
-
-        this.textureCtx.drawImage(this.canvas, 0, 0, this.textureCanvas.width, this.textureCanvas.height)
+        //this.textureCtx.drawImage(this.canvas, 0, 0, this.textureCanvas.width, this.textureCanvas.height)
         this.texture.needsUpdate = true
     }
 
-    render = ( renderer, postProcessingEnabled ) => {
+    render = ( renderer, postProcessingEnabled ) => { 
+
         if(!postProcessingEnabled)
             renderer.render(this.mainScene, this.mainCamera)
+
     }
 
     setTime = (time, playing, sItemId) => {
@@ -262,6 +269,9 @@ export default class SceneContainer {
     }
 
     play = (time) => {
+        this.rendering = []
+        this.toRender = []
+
         this.items.forEach(e => {
             const { start, duration } = e.config
             if(time - start >= 0 && time - start < duration ) {

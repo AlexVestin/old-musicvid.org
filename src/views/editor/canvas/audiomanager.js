@@ -156,6 +156,7 @@ export default class AudioManager {
         this.Module._init_r(this.fftSize)
     }
 
+
     getBins = (times, stepping) => {
         let bins = [], data = []
         

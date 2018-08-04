@@ -30,10 +30,10 @@ class EffectList extends React.Component {
                                 <Button disableRipple variant="raised" fullWidth onClick={() => selectEffect(pass.id)}> {pass.name} </Button>
                                 <div style={{display: "flex", flexDirection: "row"}}>
 
-                                    <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || passes[i-1].renderPass} disableRipple>
+                                    <Button style={{minWidth: 10, width: 10}} disabled={i <= 1 || passes[i-1].renderPass} disableRipple>
                                         <KeyboardArrowUp ></KeyboardArrowUp>
                                     </Button>
-                                    <Button style={{minWidth: 10, width: 10}} disabled={i === 0 || i === passes.length - 1} disableRipple>
+                                    <Button style={{minWidth: 10, width: 10}} disabled={i <= 1 || i === passes.length - 1} disableRipple>
                                         <KeyboardArrowDown ></KeyboardArrowDown>
                                     </Button>
 

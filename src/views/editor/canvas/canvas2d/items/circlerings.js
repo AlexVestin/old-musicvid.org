@@ -17,6 +17,7 @@ class SpaceShip {
         this.glow = false
     }
 
+
     draw = (ctx, config, amp) => {	
         if (this.angle > Math.PI * 2) this.angle -= Math.PI * 2;
 
@@ -87,41 +88,45 @@ export default class CircleRings extends AudioImpactItem {
             }
         })
         
-        this.W = config.canvas.width
-        this.H = config.canvas.height
+        this.width = config.canvas.width
+        this.height = config.canvas.height
         this.canvas = config.canvas
         this.ctx = config.ctx
 
-        this.innerCircle = new Circle(this.W, this.H);
+        this.innerCircle = new Circle(this.width, this.height);
         this.ships = [];
-
         
         this.getConfig()
         this.createShips()
         this.addItem()
     }
 
+    setSize = (width, height) => {
+        //this.width = width
+        //this.height = height
+
+        this.updateShips()
+
+    }
+
     _updateConfig = (config) => {
         this.config = config 
-        this.createShips()
+        this.updateShips()
     }
-            
-    createShips = ()  =>  {
-        this.ships = []
-        
-        for(var i = 0; i < this.config.ringCount; i++) {
-            var ship = new SpaceShip();
-            ship.x = this.W / 2;
-            ship.y = this.H / 2;
+
+    updateShips = () => {
+        this.ships.forEach((ship, i) => {
+            ship.x = this.width / 2;
+            ship.y = this.height / 2;
             ship.radius = 20 * (i + 2);
 
             if(this.config.type === "reverse")	{
-                if(i % 2 == 1)
+                if(i % 2 === 1)
                     ship.rotation_speed = -.03;//WARNING: Keep any rotation speeds really low or a head ache might ensue
             } else if(this.config.type === "vary") {
-                if(i % 2 == 0)
+                if(i % 2 === 0)
                     ship.rotation_speed = .04;
-                if(i % 3 == 0)
+                if(i % 3 === 0)
                     ship.rotation_speed = .02;
             }
             else if(this.config.type === "random") {
@@ -133,9 +138,15 @@ export default class CircleRings extends AudioImpactItem {
                 ship.wing_count = 100;
                 ship.steps = Math.PI * 2 / ship.wing_count;
             }
-
-            this.ships[i] = ship;
-        }
+        })
+    }
+            
+    createShips = ()  =>  {
+        this.ships = []
+        for(var i = 0; i< this.config.ringCount; i++) 
+            this.ships.push(new SpaceShip())
+        
+        this.updateShips()
     }
 
     animate = (time, frequencyBins) => {

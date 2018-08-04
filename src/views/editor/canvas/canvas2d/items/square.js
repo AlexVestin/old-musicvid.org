@@ -8,12 +8,26 @@ export default class Square extends BaseItem {
         this.ctx = config.ctx
         this.canvas = config.canvas
 
+        this.config.defaultConfig.push({
+            title: "Settings",
+            items: {
+                color: {type: "String", value: "EEE"}
+            }
+        })
+
+
+        this.getConfig()
         this.addItem()
     }
 
     animate = (time, freqBins) => {
         const { width, height } = this.canvas
-        this.ctx.fillStyle = "#FF0000"
+        this.ctx.fillStyle = "#" + this.config.color
         this.ctx.fillRect(0,0,width, height)
+    }
+
+    setSize = (width, height) => {
+        this.width = width
+        this.height = height
     }
 }

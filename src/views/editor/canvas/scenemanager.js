@@ -70,7 +70,7 @@ class ThreeCanvas extends Component {
             renderer: this.renderer
         }
         this.renderTarget = new RenderTarget(this.width, this.height, sceneConfig)
-        this.postProcessingEnabled = true
+
         setSidebarWindowIndex(0);
     }
 
@@ -91,9 +91,11 @@ class ThreeCanvas extends Component {
     }
 
     setSize(width, height, hidden) {
-        this.scenes.forEach(e => e.setSize(width, height))
+        if(!this.encoding) {
+            this.scenes.forEach(e => e.setSize(width, height))
+            this.renderer.setSize( width, height );     
+        }
         
-        this.renderer.setSize( width, height );     
     }
 
     shouldComponentUpdate(props, state) {
@@ -108,11 +110,12 @@ class ThreeCanvas extends Component {
 
     encoderInitialized = () => {
         setEncoding(true)
+        this.setSize(this.config.width, this.config.height, true)
         this.encoding = true
         this.encodedFrames = 0
         this.play(0)
 
-        this.setSize(this.config.width, this.config.height, true)
+        
         this.setState({width: this.config.width, height: this.config.height, hidden: true})
 
         this.startTime = performance.now()
@@ -241,7 +244,7 @@ class ThreeCanvas extends Component {
         this.scenes.push(layer)
         this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
         while (this.mainScene.children.length) {
-            this.mainScene.children.remove(this.mainScene.children[0]);
+            this.mainScene.remove(this.mainScene.children[0]);
         }
         this.scenes.forEach(e => this.mainScene.add(e.quad))
         setSidebarWindowIndex(0);

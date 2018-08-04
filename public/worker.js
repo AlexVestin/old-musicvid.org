@@ -16,7 +16,6 @@ if(usingJS) {
 }
 openVideo = (config) => {
     let { w, h, fps, bitrate, presetIdx } = config
-
     Module._open_video(w, h, fps, bitrate, presetIdx, fileType, fileType );
     frameSize = w*h*4
 }

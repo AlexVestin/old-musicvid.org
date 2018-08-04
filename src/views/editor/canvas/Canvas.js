@@ -25,8 +25,6 @@ class Canvas extends Component {
       this.frameId = 0
       this.lastTime = 0
       this.time = 0
-
-      
     }
 
     setSize = (width, aspect) => {
@@ -168,7 +166,7 @@ class Canvas extends Component {
     render() {
       const {width, height, modalOpen} = this.state
       const { playing } = this.props
-
+      console.log("canvas rerender")
       return (
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}

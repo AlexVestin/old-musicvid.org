@@ -45,10 +45,14 @@ export default class SimpleText extends BaseItem {
     }
 
     animate = (time, audioData) => {
-        const ws = 
         this.ctx.font =  `${this.config.fontSize * this.widthScale}pt ${this.config.font}`
         this.ctx.fillStyle = '#' + this.config.color;
         this.ctx.textAlign = this.config.textAlign
         this.ctx.fillText(this.config.text, this.config.x * this.widthScale, this.config.y*this.heightScale)
+    }
+
+    setSize = (width, height) => {
+        this.width = width
+        this.height = height
     }
 }
