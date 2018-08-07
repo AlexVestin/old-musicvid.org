@@ -15,7 +15,11 @@ const groupContainerStyle = {
 }
 
 class GroupContainer extends PureComponent {
-    state = {expanded: false}
+    constructor(props) {
+        super(props)
+        this.state = {expanded: props.expanded} 
+    } 
+    
 
     toggleExpanded = () => this.setState({expanded: !this.state.expanded})
     
@@ -32,7 +36,7 @@ class GroupContainer extends PureComponent {
             <div key={this.props.label} style={groupContainerStyle} className={classes.container}>
                 <div>
                     <GroupHeader addAction={addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
-                    {this.state.expanded && this.props.children}
+                    {(this.state.expanded ) && this.props.children}
                  </div>
             </div>  
         )

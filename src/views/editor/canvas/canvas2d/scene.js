@@ -53,14 +53,13 @@ export default class SceneContainer {
         this.canvas = document.createElement("canvas")
 
 
-        this.textureCanvas.width = 1024;
-        this.textureCanvas.height = 1024;
+        this.textureCanvas.width = width;
+        this.textureCanvas.height = height;
         this.textureCtx = this.textureCanvas.getContext("2d");
-        this.textureCtx.save()
 
 
-        
         this.texture =  new THREE.CanvasTexture(this.textureCanvas)
+        this.texture.minFilter = THREE.LinearFilter
         this.test = 0
 
         this.quad = new THREE.Mesh( 
@@ -163,18 +162,12 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
-        this.textureCtx.restore()
-        this.textureCtx.save()
         this.width = width
         this.height = height
+        this.textureCanvas.width = width
+        this.textureCanvas.height = height
 
-        const [halftWidth, halfHeight] = [this.textureCanvas.width/2, this.textureCanvas.height/2]
-        
-        this.textureCtx.translate(halftWidth, halfHeight)
-        //this.textureCtx.scale(this.hAspect, this.wAspect)
-        this.textureCtx.scale(1, this.width/this.height)
-        this.textureCtx.translate(-halftWidth, -halfHeight)
-        
+        this.items.forEach(item => item.setSize(width, height))
     }
 
     updateItem = (config, time) => {

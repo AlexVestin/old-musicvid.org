@@ -63,6 +63,10 @@ class Canvas extends Component {
     handleKeys = (e) => {
       var key = e.keyCode ? e.keyCode : e.which;
       switch(key) {
+        // Escape
+        case 27:
+          console.log("escape")
+          break;
 
         case 83:
           this.stop()
@@ -146,7 +150,6 @@ class Canvas extends Component {
     }
 
     openEncodeModal = () => {
-      console.log("+spdigijnm")
       this.setState({modalOpen: true})
     }
 

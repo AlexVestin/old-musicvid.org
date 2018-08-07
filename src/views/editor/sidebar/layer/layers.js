@@ -51,7 +51,7 @@ class LayerList  extends React.Component {
               } 
               )}
 
-              <GroupContainer disabled={this.props.postProcessingEnabled} label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
+              <GroupContainer  label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                   <EffectList idxs={this.props.idxs}></EffectList>
               </GroupContainer> 
           </div>
@@ -63,7 +63,6 @@ class LayerList  extends React.Component {
 const mapStateToProps = state => {
   return {
     layers: state.items.layers,
-    postProcessingEnabled: state.globals.postProcessingEnabled
   }
 }
 export default connect(mapStateToProps)(withHeader(LayerList))

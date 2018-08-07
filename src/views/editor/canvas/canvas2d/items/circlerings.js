@@ -102,8 +102,10 @@ export default class CircleRings extends AudioImpactItem {
     }
 
     setSize = (width, height) => {
-        //this.width = width
-        //this.height = height
+        this.width = width
+        this.height = height
+
+        console.log("??")
 
         this.updateShips()
 

@@ -17,8 +17,6 @@ const inputStyles = {
     List : {marginRight: 10}
 }
 
-
-
 class ConfigList extends PureComponent {
     handleChange = input => event =>  {
         var value = event.target.value
@@ -33,7 +31,7 @@ class ConfigList extends PureComponent {
         return(
             <div className={classes.root}>
                 {defaultConfig.map(group =>     
-                    <GroupContainer label={group.title} key={group.title}>
+                    <GroupContainer label={group.title} key={group.title} expanded={group.expanded}>
                             <InputContent item={item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></InputContent>
                     </GroupContainer>
                 )}

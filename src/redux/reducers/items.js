@@ -21,7 +21,6 @@ export default function itemsReducer(state = {
     audioIDx: 0,
     audioItemView: 0,
     effectId: 0,
-    postProcessingEnabled: false,
     initialized: false,
     }, action){
 
@@ -33,8 +32,6 @@ export default function itemsReducer(state = {
             case "EDIT_SETTINGS": 
                 settings =  update(state.settings, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return { ...state, settings }
-            case "SET_POST_PROCESSING_ENABLED":
-                return {...state, postProcessingEnabled: action.payload}
             case "EDIT_CAMERA": 
                 cameras =  update(state.cameras, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return {...state, cameras}

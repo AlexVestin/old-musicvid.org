@@ -8,6 +8,13 @@ export function incrementTime(item){
     );  
 }
 
+export function editProjectSettings(item){
+    store.dispatch({
+        type: "EDIT_PROJECT_SETTINGS",
+        payload: item
+    })
+}
+
 export function setAudioBufferSize(item){
     store.dispatch({
         type: "SET_AUDIO_BUFFER_SIZE",

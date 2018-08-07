@@ -39,8 +39,7 @@ export default class RenderTarget {
         this.renderPass = new SSAAPass( {name: "SSAA", scene, camera} );
         const copyPass = new ShaderPass( CopyShader, undefined, "COPY" );
         //const fx =  new GlitchPass(64, undefined, "sepia")
-        
-     
+
         this.effectComposer.addPass( this.renderPass )
         this.effectComposer.addPass( copyPass );
         copyPass.renderToScreen = true
@@ -55,7 +54,6 @@ export default class RenderTarget {
     }
 
     update = (time, frequencyBins) => {
-        console.log(this.passes)
         this.passes.forEach( e => e.update(time, frequencyBins) )
     }
 

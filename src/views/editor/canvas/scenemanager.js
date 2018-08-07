@@ -12,6 +12,7 @@ import { setSidebarWindowIndex } from '@redux/actions/items'
 import RenderTarget from './three/postprocessing/rendertarget';
 
 import AudioManager from './audiomanager'
+import { stat } from 'fs';
 
 
 class ThreeCanvas extends Component {
@@ -161,8 +162,6 @@ class ThreeCanvas extends Component {
                 const sceneToRemove = this.scenes.find(e => e.config.id === payload.id)
                 this.scenes = this.scenes.filter(e => e.config.id !== sceneToRemove.config.id)
                 this.mainScene.remove(sceneToRemove.quad)
-
-                console.log(this.scenes, this.mainScene.children)
                 break;
             case "EDIT_SETTINGS":
                 scene.editSettings(payload.key, payload.value)
@@ -190,8 +189,9 @@ class ThreeCanvas extends Component {
             case "EDIT_CAMERA":
                 scene.editCamera(payload.key, payload.value)
                 break
-            case "SET_POST_PROCESSING_ENABLED":
-                this.postProcessingEnabled = state.lastAction.payload
+            case "EDIT_PROJECT_SETTINGS":
+                if(payload.key === "postProcessingEnabled")
+                    this.postProcessingEnabled = payload.value
                 break;
             case "REMOVE_EFFECT":
                 this.removeEffect(payload)

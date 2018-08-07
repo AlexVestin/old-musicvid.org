@@ -20,7 +20,7 @@ const listItemStyle = {
 class ProjectSettings extends PureComponent {
 
     togglePostProcessingEnabled = () => {
-        setPostProcessingEnabled(!this.props.postProcessingEnabled)
+        //setPostProcessingEnabled(!this.props.postProcessingEnabled)
     }
 
     render() {

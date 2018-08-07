@@ -36,7 +36,10 @@ class PlaybackPanel extends PureComponent {
                         <StopIcon onClick={this.props.stop}></StopIcon>
                     </div>
 
+
+                    <Button disableRipple color="primary" type="raised" onClick={this.props.openFullScreen}>Fullscreen</Button>
                     <Button disableRipple color="secondary" type="raised" onClick={this.props.openEncodingModal}>Export</Button>
+                    
                 </div>
             </div>
 
