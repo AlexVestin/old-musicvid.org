@@ -18,6 +18,13 @@ export default class SceneContainer {
         this.toRender   = []
         this.rendering  = []
 
+        const resolutions = [
+            "2048x1080",
+            "1920x1080",
+            "1280x720",
+            "640x480"
+        ]
+
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
@@ -25,17 +32,15 @@ export default class SceneContainer {
             clearAlpha: 1,
             shouldClear: true,
             zIndex: 1,
-            heightResolution: 2048,
-            widthResolution: 2048,
+            internalResolution: "640x480",
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
-                    heightResolution: {type: "Number", value: 2048, tooltip: "Must be a power of two" },
-                    widthResolution: {type: "Number", value: 2048, tooltip: "Must be a power of two" },
                     clearColor: {type: "String", value: "000000"},
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
                     zIndex: {type: "Number", value: 1},
+                    internalResolution: {type: "List", options: resolutions, value: "640x480"}
                 }
             }],
             items: [],
@@ -50,8 +55,8 @@ export default class SceneContainer {
 
         add2DLayer(this.config)
         this.textureCanvas = document.createElement('canvas');
-        this.canvas = document.createElement("canvas")
-
+        this.internalCanvas = document.createElement("canvas")
+        this.internalCtx = this.internalCanvas.getContext("2d")
 
         this.textureCanvas.width = width;
         this.textureCanvas.height = height;
@@ -90,8 +95,10 @@ export default class SceneContainer {
     editSettings = (key, value) => {
         this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
-        if(key === "widthResolution") this.textureCanvas.width = value    
-        if(key === "heightResolution") this.textureCanvas.height = value    
+        if(key === "internalResolution") {
+            const [width, height] = value.split("x")
+            this.setSize(Number(width), Number(height))
+        }
     }
 
     moveItem = (item, up) => {
@@ -273,6 +280,12 @@ export default class SceneContainer {
             }else if (start > time) {
                 this.toRender.push(e)
             }
+        })
+    }
+
+    preProcess = () => {
+        return new Promise((resolve, reject) => {
+            resolve()
         })
     }
 

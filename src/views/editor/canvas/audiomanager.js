@@ -95,6 +95,18 @@ export default class AudioManager {
         })
     }
 
+    preProcess = (time) => {
+        this.stop()
+        this.time = time
+        return new Promise((resolve, reject) => {
+            const p1 = this.addAudioFrame(this.time, true, this.sampleWindowSize)
+            const p2 = this.addAudioFrame(this.time)
+            const p3 = this.addAudioFrame(this.time)
+
+            Promise.all([p1,p2, p3]).then(resolve)
+        })
+    }
+
     editFFT = (config) => {
         //this.fftTransformer.editConfig(config)
     }
@@ -148,6 +160,7 @@ export default class AudioManager {
     add = (sound) => {
         sound.windowSize = this.sampleWindowSize
         this.sounds.push(sound)
+        
         sound.setTime(this.time + this.sampleWindowSize * this.frameIdx )
     }
 
@@ -204,7 +217,6 @@ export default class AudioManager {
     setTime = (time) => {
         this.time = time
         this.sounds.forEach(e => e.setTime(time, this.sampleWindowSize))
-        this.buffers = []
     }
 
     play = (time) => {
@@ -212,22 +224,18 @@ export default class AudioManager {
         if(this.playing){
             this.stop()
         }else {
-            this.playing = true             
-            this.addAudioFrame(time, true, this.sampleWindowSize).then( () => {
-                this.startTime  =  this.audioCtx.currentTime
-                this.schedule(0)
-            })
-            
-            this.addAudioFrame().then(() => { this.schedule(1) })
-            this.addAudioFrame().then(() => { this.schedule(2) })
-
+            this.playing = true 
+            this.startTime = this.audioCtx.currentTime
             this.metronome.postMessage("start")
+            this.schedule(1)
+            //this.sounds.forEach(e => e.setTime(time, this.sampleWindowSize))   
         }
     }
 
     stop = () => {
         //this.bufferSources.forEach(e => e.stop())
         this.playing = false
+        this.firstPlay = true
         this.sampleBuffer = new Float32Array()
         this.sliceIndex = 0
         this.lastFFTIdx = 0

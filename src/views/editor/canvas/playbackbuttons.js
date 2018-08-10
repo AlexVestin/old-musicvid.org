@@ -3,9 +3,6 @@
 import React, {PureComponent} from 'react'
 import Button from 'material-ui/Button'
 
-import PlayIcon from '@material-ui/icons/PlayCircleOutline'
-import StopIcon from '@material-ui/icons/Stop'
-
 export default class ButtonGroup extends PureComponent  {
 
     render() {

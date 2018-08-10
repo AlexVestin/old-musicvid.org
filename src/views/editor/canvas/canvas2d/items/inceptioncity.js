@@ -141,12 +141,17 @@ export default class InceptionCity extends BaseItem {
         this.addItem()
     }
 
+    setSize = (width, height) => {
+        this.width = width
+        this.height = height
+    }
+
     _updateConfig = (config) => {
         const { lineRed, lineGreen, lineBlue, strokeRed, strokeGreen, strokeBlue, strokeAlpha } = config
         this.trails.forEach(t => t.colors = { lineRed, lineGreen, lineBlue, strokeRed, strokeGreen, strokeBlue, strokeAlpha })
     }
 
-    updateScene = function(time_now){
+    updateScene =  (time_now) => {
         var time_d = ((time_now - this.time_pre) * 1000) >> 0;
         this.trails.forEach(t => t.update(time_now * 1000))
         this.camera.x += (this.trails[0].pos.x - this.camera.x - 50) * 0.0002 * time_d;

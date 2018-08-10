@@ -147,7 +147,7 @@ export default class JSNation extends BaseItem {
     drawPoints = (points) => {
 
        
-        if (points.length == 0) {
+        if (points.length === 0) {
             return;
         }
 

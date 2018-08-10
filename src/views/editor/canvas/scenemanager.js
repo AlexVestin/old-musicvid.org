@@ -12,7 +12,6 @@ import { setSidebarWindowIndex } from '@redux/actions/items'
 import RenderTarget from './three/postprocessing/rendertarget';
 
 import AudioManager from './audiomanager'
-import { stat } from 'fs';
 
 
 class ThreeCanvas extends Component {
@@ -156,7 +155,7 @@ class ThreeCanvas extends Component {
 
         switch(type) {
             case "EDIT_LAYER":
-                scene.config[payload.key] = payload.value
+                scene.editSettings(payload.key, payload.value)
                 break;
             case "REMOVE_LAYER":
                 const sceneToRemove = this.scenes.find(e => e.config.id === payload.id)
@@ -190,8 +189,16 @@ class ThreeCanvas extends Component {
                 scene.editCamera(payload.key, payload.value)
                 break
             case "EDIT_PROJECT_SETTINGS":
-                if(payload.key === "postProcessingEnabled")
+                if(payload.key === "postProcessingEnabled") {
                     this.postProcessingEnabled = payload.value
+                }else if(payload.key === "resolution") {
+                    const [width, height] = payload.value.split("x")
+                    this.scenes.forEach(scene => {
+                        if(!scene.config.isThreeLayer)
+                            scene.setSize(Number(width), Number(height))
+                    })
+                }   
+                    
                 break;
             case "REMOVE_EFFECT":
                 this.removeEffect(payload)
@@ -255,8 +262,10 @@ class ThreeCanvas extends Component {
     }
 
     play = (time) => {
-        this.scenes.forEach(e => e.play(time))
-        this.audioManager.play(time, this.state.encoding)
+        this.preProcess(time, () => {
+            this.scenes.forEach(e => e.play(time))
+            this.audioManager.play(time, this.state.encoding)
+        })
     }
 
     saveBlob = (vid) => {
@@ -311,6 +320,7 @@ class ThreeCanvas extends Component {
     
 
     renderScene = (time, stepping) => { 
+        this.time = time
         const frequencyBins = this.audioManager.getBins(this.time, stepping)
         this.renderer.clear()
         this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
@@ -324,13 +334,30 @@ class ThreeCanvas extends Component {
         if(this.postProcessingEnabled) {
             this.renderTarget.update(time, frequencyBins)
             this.renderTarget.render()
-        }
-        
+        }        
+    }
+
+    preProcess = (time, callback) => {
+        const p1  = this.audioManager.preProcess(time)
+        let promises = this.scenes.map(scene => scene.preProcess())
+        Promise.all([...promises, p1]).then(function(values) {
+            console.log("hello");
+            callback()
+        });
     }
 
     setTime = (time, playing) => {
+        if(playing) {
+            this.preProcess(time, () => {
+            this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
+            this.audioManager.setTime(time)
+            this.audioManager.play(time)
+        })  
+    }else {
         this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
         this.audioManager.setTime(time)
+    }
+      
     }
 
     render() {

@@ -19,6 +19,7 @@ import TrackballControls from './controls/trackball';
 import SkyBox from './items/skybox';
 import SkyBox2 from './items/skybox2';
 import AudioCircle from './items/audiocircle';
+import { resolve } from 'path';
 
 
 export default class SceneContainer {
@@ -411,14 +412,18 @@ export default class SceneContainer {
         })
     }
 
+    preProcess = () => {
+        return new Promise((resolve, reject) => {
+            resolve()
+        })
+    }
+
     stop = () => {
         this.scene.children.forEach(e => e.visible = false)
         this.items.forEach(e => { e.stop() })
         this.rendering = []
         this.toRender = []
-        this.play(0)
     }
-
 
     dispose = () => {
         let { camera, scene, light, controls } = this

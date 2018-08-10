@@ -4,7 +4,6 @@ import ThreeCanvas from './scenemanager';
 
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
-import PlaybackButtons from './playbackbuttons'
 import ExportModal from './export'
 
 import { setTime, togglePlaying, setPlaying, incrementTime, setDisabled } from '@redux/actions/globals' 
@@ -102,7 +101,7 @@ class Canvas extends Component {
     }
   
     renderScene = () => {
-      var time = this.props.time
+      let time = this.props.time
       if(!this.props.encoding) {
         if(this.props.playing ) {
           //const time = frameId / fps
@@ -165,11 +164,16 @@ class Canvas extends Component {
         this.resizeCanvas(props.playlistHeight)
       }
     }
+
+    setFullScreen = () => {
+        this.savedWidth = this.state.width
+        this.savedHeight = this.state.height
+
+    }
   
     render() {
       const {width, height, modalOpen} = this.state
       const { playing } = this.props
-      console.log("canvas rerender")
       return (
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
@@ -181,6 +185,7 @@ class Canvas extends Component {
                   play={this.play} 
                   stop={this.stop}   
                   openEncodingModal={this.openEncodeModal}
+                  openFullScreen={this.setFullScreen}
               >
               </PlaybackPanel>
             </div>

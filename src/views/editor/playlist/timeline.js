@@ -35,6 +35,8 @@ class Timeline extends PureComponent {
 
         const t = x/(zoomWidth * unitSize) + left / (zoomWidth * unitSize)
         setTime(t)
+
+        console.log("setting time to: ", t)
     }
 
     convertTime = (sec) => {
