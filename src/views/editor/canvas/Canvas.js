@@ -61,6 +61,7 @@ class Canvas extends Component {
 
     handleKeys = (e) => {
       var key = e.keyCode ? e.keyCode : e.which;
+      console.log(key)
       switch(key) {
         // Escape
         case 27:

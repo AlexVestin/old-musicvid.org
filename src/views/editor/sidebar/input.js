@@ -19,6 +19,7 @@ const inputStyles = {
 
 class ConfigList extends PureComponent {
     handleChange = input => event =>  {
+
         var value = event.target.value
         if(input.type === "Boolean")value = !input.prev
         this.props.edit({key: input.key, value: value })
@@ -61,7 +62,8 @@ class InputContent extends PureComponent {
                         <div key={key} style={{width: "100%"}}>
                             {(config.type === "Number" || config.type ==="String") && <LabeledFieldWrapper {...props}>
                                 <input 
-                                    onChange={this.props.handleChange({type: config.type, key: key})} 
+                                    onKeyUp={(event) => event.stopPropagation()} 
+                                    onChange={this.props.handleChange({type: config.type, key: key})}
                                     value={item[key]} 
                                     disabled={config.disabled === true}   
                                     style={inputStyles[config.type]}

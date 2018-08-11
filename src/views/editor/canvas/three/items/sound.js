@@ -48,7 +48,6 @@ export default class Sound extends BaseItem {
 
     getAudioFrame = (time, first = false, sampleWindowSize) => {
         if(!this.left || !this.right)return
-
         if(first) {
             this.offset = Math.floor( (time - this.config.start + this.config.offsetLeft) * this.sampleRate)
             this.windowSize = sampleWindowSize

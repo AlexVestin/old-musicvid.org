@@ -1,5 +1,3 @@
-import AvForward10 from "material-ui/SvgIcon";
-
 const EMPTY_BUFFER = -1
 
 export default class AudioManager {
@@ -126,16 +124,7 @@ export default class AudioManager {
         }
     }
 
-    encodingStarted = () => {
-        this.stop()
-        this.time = 0
-        this.addAudioFrame(this.time, true, this.sampleWindowSize)
-        this.addAudioFrame(this.time)
-        this.addAudioFrame(this.time)
 
-        this.frameIdx = 0
-        this.encoding = true
-    }
 
     encodingFinished = () => {
         this.stop()
@@ -173,9 +162,8 @@ export default class AudioManager {
     getBins = (times, stepping) => {
         let bins = [], data = []
         
-        //TODO encoding lags behind by about a second (0.9 seconds) from regular playback, bad hack using magic number to fix
-        const time = this.encoding ? times + (4 * this.nrBufferSources * this.sampleWindowSize) :  times + (this.nrBufferSources * this.sampleWindowSize)
-        const idx = Math.floor((time - this.time) * this.sampleRate)
+        const time = times + (this.nrBufferSources * this.sampleWindowSize)
+        const idx = Math.floor((time - this.time) * this.sampleRate)        
 
         if(this.sampleBuffer.length >= this.fftSize) {
             const windowSize = this.fftSize;
@@ -215,6 +203,7 @@ export default class AudioManager {
     }
 
     setTime = (time) => {
+        this.stop(0)
         this.time = time
         this.sounds.forEach(e => e.setTime(time, this.sampleWindowSize))
     }
@@ -227,8 +216,8 @@ export default class AudioManager {
             this.playing = true 
             this.startTime = this.audioCtx.currentTime
             this.metronome.postMessage("start")
+            this.schedule(0)
             this.schedule(1)
-            //this.sounds.forEach(e => e.setTime(time, this.sampleWindowSize))   
         }
     }
 

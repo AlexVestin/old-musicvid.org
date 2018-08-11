@@ -19,8 +19,6 @@ export default class SimpleText extends BaseItem {
         super(config)   
 
 
-        this.width  = config.width
-        this.height  = config.height
 
 
         this.config.defaultConfig.push({
@@ -44,12 +42,14 @@ export default class SimpleText extends BaseItem {
     }
 
     animate = (time, audioData) => {
-        this.ctx.font =  `${this.config.fontSize * (this.width * this.height) / (640*640) }pt ${this.config.font}`
+        const { width, height } = this.canvas
+
+        this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`
         this.ctx.fillStyle = '#' + this.config.color;
         this.ctx.textAlign = this.config.textAlign
         this.ctx.textBaseline  = this.config.baseLine
         
-        this.ctx.fillText(this.config.text, this.config.x * this.width, this.config.y*this.height)
+        this.ctx.fillText(this.config.text, this.config.x * width, this.config.y* height)
     }
 
     setSize = (width, height) => {

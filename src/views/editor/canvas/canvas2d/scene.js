@@ -33,6 +33,7 @@ export default class SceneContainer {
             shouldClear: true,
             zIndex: 1,
             internalResolution: "640x480",
+            pixelRatio: 480,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
@@ -40,7 +41,8 @@ export default class SceneContainer {
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
                     zIndex: {type: "Number", value: 1},
-                    internalResolution: {type: "List", options: resolutions, value: "640x480"}
+                    internalResolution: {type: "List", options: resolutions, value: "640x480"},
+                    pixelRatio: {type: "Number", value: 480},
                 }
             }],
             items: [],
@@ -95,10 +97,8 @@ export default class SceneContainer {
     editSettings = (key, value) => {
         this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
-        if(key === "internalResolution") {
-            const [width, height] = value.split("x")
-            this.setSize(Number(width), Number(height))
-        }
+        if(key === "pixelRatio") this.setSize(this.width, this.height)
+
     }
 
     moveItem = (item, up) => {
@@ -171,10 +171,13 @@ export default class SceneContainer {
     setSize = (width, height) => {
         this.width = width
         this.height = height
-        this.textureCanvas.width = width
-        this.textureCanvas.height = height
 
-        this.items.forEach(item => item.setSize(width, height))
+        const aspect = width / height
+
+        this.textureCanvas.width =  aspect * this.config.pixelRatio
+        this.textureCanvas.height = this.config.pixelRatio
+
+        this.items.forEach(item => item.setSize( this.textureCanvas.width,  this.textureCanvas.height))
     }
 
     updateItem = (config, time) => {

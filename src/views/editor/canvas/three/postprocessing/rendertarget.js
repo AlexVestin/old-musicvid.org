@@ -93,14 +93,14 @@ export default class RenderTarget {
                 return
         }
         fx.renderToScreen = true
-        this.passes[this.passes.length - 1].renderToScreen = false
+        this.effectComposer.passes[this.effectComposer.passes.length - 1].renderToScreen = false
         this.passes.push(fx)
         this.effectComposer.addPass(fx)
     }
 
     removeEffect = (config) =>  {
         this.effectComposer.removePass(config)
-        this.passes[this.passes.length - 1].renderToScreen = true
+        this.effectComposer.passes[this.effectComposer.passes.length - 1].renderToScreen = true
     }
 
     editEffect = (config, id) => {

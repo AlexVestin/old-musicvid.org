@@ -115,13 +115,14 @@ class ThreeCanvas extends Component {
         this.encodedFrames = 0
         this.play(0)
 
-        
-        this.setState({width: this.config.width, height: this.config.height, hidden: true})
 
+        this.setState({width: this.config.width, height: this.config.height, hidden: true})
         this.startTime = performance.now()
-        this.encodeVideoFrame(this.time)
-        this.videoEncoder.sendFrame()
-        this.audioManager.encodingStarted()
+       
+        this.audioManager.preProcess(0).then(() => {
+            this.encodeVideoFrame(this.time)
+            this.videoEncoder.sendFrame()
+        })
     }
 
 
@@ -279,7 +280,7 @@ class ThreeCanvas extends Component {
             if( videoTs >= audioTs ) {
                 this.encodeAudioFrame()
             }else{
-                this.renderScene()
+                this.renderScene(this.time)
                 this.encodeVideoFrame()
             }
 
@@ -341,17 +342,17 @@ class ThreeCanvas extends Component {
         const p1  = this.audioManager.preProcess(time)
         let promises = this.scenes.map(scene => scene.preProcess())
         Promise.all([...promises, p1]).then(function(values) {
-            console.log("hello");
             callback()
         });
     }
 
     setTime = (time, playing) => {
         if(playing) {
-            this.preProcess(time, () => {
-            this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
             this.audioManager.setTime(time)
-            this.audioManager.play(time)
+            
+            this.preProcess(time, () => {
+                this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
+                this.audioManager.play(time)
         })  
     }else {
         this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
