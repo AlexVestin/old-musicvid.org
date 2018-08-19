@@ -1,7 +1,7 @@
 
 
 import React, {PureComponent} from 'react'
-import ConfigList from './input'
+import ConfigList from './input/input'
 import { removeSound } from '@redux/actions/items'
 
 import Delete  from '@material-ui/icons/Delete'

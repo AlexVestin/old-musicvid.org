@@ -8,7 +8,6 @@ import Delete from '@material-ui/icons/Delete'
 import AudioItem from './audioitem'
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 import { withStyles } from 'material-ui/styles';
-import FFTSettings from './fftsettings'
 
 const styles = theme => ({})
 
@@ -63,8 +62,6 @@ class Audio extends React.Component {
                 </div>
             } 
             {this.props.audioItemView === 1  && <AudioItem item={item} onBack={this.itemBack}></AudioItem>} 
-            {this.props.audioItemView === 2  && <FFTSettings onBack={this.itemBack}>hello</FFTSettings>}
-
             </div>
             
         );

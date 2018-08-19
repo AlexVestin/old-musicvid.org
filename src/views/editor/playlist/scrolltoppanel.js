@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import Draggable from 'react-draggable'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
@@ -6,7 +6,16 @@ import Timeline from './timeline'
 import classes from './scrolltoppanel.css'
 
 
-export default class ScrollTopPane extends PureComponent {
+export default class ScrollTopPane extends Component {
+
+    shouldComponentUpdate = (props) => {
+        
+        Object.keys(props.info).forEach(key => {
+            if (this.props.info[key] !== props.info[key]) return true
+        })
+
+        return false
+    }
 
     render() {
 
@@ -15,6 +24,9 @@ export default class ScrollTopPane extends PureComponent {
         const thumbWidth = ((width - 30) * (viewport[2] - viewport[0])) 
         
         const iconWidth = 15
+
+        console.log("updating", this.props)
+
         return (
             <div style={{ display: "flex", flexDirection: "row" }}>
                 <div style={{ minWidth: "20%", width: "20%", height: "100%", backgroundColor: "#434343" }}>

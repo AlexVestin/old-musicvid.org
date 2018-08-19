@@ -3,8 +3,8 @@ import withHeader from '../withheader'
 
 import { connect } from 'react-redux'
 import { setSidebarWindowIndex,  editCamera, editControls, editLayer } from '@redux/actions/items'
-import GroupContainer from '../groupcontainer'
-import ConfigList from '../input'
+import GroupContainer from '../input/groupcontainer'
+import ConfigList from '../input/input'
 import ItemList from '../item/items'
 
 
@@ -83,12 +83,3 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(withHeader(Layer)) 
-
-/*
-<ConfigList 
-    edit={editFog} 
-    defaultConfig={this.props.fog.defaultConfig} 
-    item={this.props.fog} 
-    addAutomation={this.addAutomation}>
-</ConfigList>
-*/

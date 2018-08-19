@@ -4,7 +4,7 @@ import { selectLayer, dispatchAction, setSidebarWindowIndex } from '@redux/actio
 import withHeader from '../withheader'
 import Delete from '@material-ui/icons/Delete'
 import EffectList from './effects'
-import GroupContainer from '../groupcontainer'
+import GroupContainer from '../input/groupcontainer'
 import classes from '../item/items.css'
 class LayerList  extends React.Component {
 

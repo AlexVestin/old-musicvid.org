@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 
 import Audio from './audio'
 import LayerList from './layer/layers'
-import ProjectSettings from './projectsettings'
+import ProjectSettings from './input/projectsettings'
 import LayerContainer from './layer/layercontainer'
 
 function TabContainer(props) {
