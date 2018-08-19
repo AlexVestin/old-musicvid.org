@@ -1,7 +1,7 @@
-importScripts("WasmEncoder1.js")
+importScripts("WasmEncoder10.js")
 
 let Module = {}
-WasmEncoder1(Module)
+WasmEncoder10(Module)
 
 let useAudio = false
 
@@ -9,7 +9,6 @@ const fileType = 1
 Module["onRuntimeInitialized"] = () => { 
     postMessage({action: "loaded"})
 };
-
 
 openVideo = (config) => {
     let { w, h, fps, bitrate, presetIdx } = config
