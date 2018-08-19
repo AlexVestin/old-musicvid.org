@@ -3,8 +3,7 @@
 //FROM https://github.com/caseif/vis.js
 
 import * as THREE from 'three'
-import { AudioreactiveItem } from './item';
-
+import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 /* *************************** */
 /* * Basic particle settings * */
 /* *************************** */
@@ -39,11 +38,8 @@ var bokehMinVelocity = maxParticleVelocity * 0.15; // the minimum velocity of bo
 var bokehMaxVelocity = maxParticleVelocity * 0.3; // the maximum velocity of bokeh
 
 var particleSize = minParticleSize;
-var ampLower = 7; // the lower bound for amplitude analysis (inclusive)
-var ampUpper = 30;
 var particleExponent = 4.5; // the power to raise velMult to after initial computation
 
-const spectrumHeight = 80
 
 var fleckZ = 150;
 
@@ -53,11 +49,11 @@ var color = "#FF0000"
 const resRatio  = 2
 var velocityResScale = Math.pow(resRatio, 5);
 
-var VIEW_ANGLE = 45, ASPECT = 720 / 480, NEAR = 0.1, FAR = 10000
+var VIEW_ANGLE = 45, ASPECT = 680 / 480
 
 var fleckVelocity = maxParticleVelocity * fleckVelocityScalar;
 
-export default  class Particles extends AudioreactiveItem {
+export default  class Particles extends AudioImpactItem {
     constructor(config) {
         super(config); 
         this.camera = config.sceneConfig.camera
@@ -296,14 +292,8 @@ export default  class Particles extends AudioreactiveItem {
         }
     }
 
-    update = (array) => {
-        var sum = 0;
-        for (var i = 4; i < 10; i++) {
-            sum += array[i] / 40;
-        }
-
-        this.velMult = sum / (10 - 4);
-
+    update = (amp) => {
+        this.velMult = amp / 512
         this.velMult = isNaN(this.velMult) ? 0 : this.velMult
         particleSize = this.velMult;
         this.velMult = Math.pow(this.velMult, particleExponent) * (1 - absMinParticleVelocity) + absMinParticleVelocity;
@@ -381,9 +371,9 @@ export default  class Particles extends AudioreactiveItem {
         return new THREE.Vector3(x, y, z);
     }
 
-    _animate = (time, frequencyBins) => {
-        const bins = this.getTransformedSpectrum(frequencyBins.bins)
-        this.update(bins)
+    _animate = (time, audioData) => {
+        const amp = this.getImpactAmplitude(audioData.bins)
+        this.update(amp)
         this.updateParticles()
 
     }

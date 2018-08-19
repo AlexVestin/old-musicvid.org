@@ -32,7 +32,7 @@ export default function withHeader(InputComponent) {
             return(
             <div style={root}>
                 <AppBar position="static" style={style}>
-                    {this.props.idx >= 2 &&
+                    {this.props.idx > 2 &&
                         <div style={{display: "flex", flexDirection: "row", marginTop: 3, justifyContent: "space-between"}}>
                             <div style={{display: "flex", flexDirection: "row"}}>
                                 <div style={{ minWidth: 20, minHeight: 20}}>

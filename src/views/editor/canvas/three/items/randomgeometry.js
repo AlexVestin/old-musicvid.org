@@ -1,9 +1,9 @@
 
 import * as THREE from 'three'
-import { AudioreactiveItem } from './item';
+import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 
 
-export default class RandomGeometry extends AudioreactiveItem {
+export default class RandomGeometry extends AudioImpactItem {
     constructor(config) {
         super(config)
 
@@ -47,10 +47,7 @@ export default class RandomGeometry extends AudioreactiveItem {
     }
 
     _updateConfig = (config) => {
-        this.move(config.X, config.Y, config.Z)
-
-        config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
-        config.barIndex = config.barIndex < 0 ?  0 : config.barIndex
+        this.move(config.x, config.y, config.z)
         this.config = config
     }
 
@@ -63,10 +60,10 @@ export default class RandomGeometry extends AudioreactiveItem {
         return color;
       }
     
-    _animate = (time, frequencyBins) => {
-        const { barIndex, threshold, deltaTime, strength } = this.config
-
-        if(frequencyBins.bins[0] && frequencyBins.bins[barIndex] * strength > threshold && this.lastTime + deltaTime <= time) {
+    _animate = (time, audioData) => {
+        const { threshold, coolDownTime } = this.config
+        const amp = this.getImpactAmplitude(audioData.bins)
+        if(amp > threshold && this.lastTime + coolDownTime <= time) {
             let c = this.bufferGeometries[Math.floor(Math.random() * this.bufferGeometries.length)]
             var geometry = new c( 50, Math.random() * 64, Math.random() * 32 );
             var material = new THREE.MeshBasicMaterial( { wireframe: true, color: this.getRandomColor() } );
@@ -77,11 +74,12 @@ export default class RandomGeometry extends AudioreactiveItem {
             geometry.dispose();
             material.dispose();
 
-            this.lastTime = time
+            this.lastTime = time    
         }else {
+            
             this.mesh.rotation.x += this.config.rotationX
             this.mesh.rotation.y += this.config.rotationY
             this.mesh.rotation.z += this.config.rotationZ            
-        }
+        }        
     }
 }

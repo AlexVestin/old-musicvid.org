@@ -2,7 +2,7 @@
 
 
 import * as THREE from 'three'
-import BaseItem from './item';
+import BaseItem from '../../itemtemplates/item'
 
 export default class SkyBox extends BaseItem {
     constructor(config) {

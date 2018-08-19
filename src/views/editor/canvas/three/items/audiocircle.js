@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import BaseItem from './item';
+import BaseItem from '../../itemtemplates/item'
 
 export default class AudioCircle extends BaseItem {
     constructor(config) {

@@ -9,7 +9,6 @@ const Title = (props) => {
     const autoIconWidth = 18
     const iconMarginTop = 2
 
-    console.log(props.key, props)
     return (
         <div style={{display: "flex", flexDirection: "row"}}>  
                 <Tooltip id="tooltip-top-start" title={props.tooltip ? props.tooltip : ""} placement="right-end">

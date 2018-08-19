@@ -3,10 +3,8 @@
 import React, {PureComponent} from 'react'
 import ConfigList from './input/input'
 import { removeSound } from '@redux/actions/items'
-
 import Delete  from '@material-ui/icons/Delete'
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import AppBar from 'material-ui/AppBar'
+
 export default class AudioItem extends PureComponent {
     removeSound = () => {
         removeSound(this.props.item.id)
@@ -19,14 +17,8 @@ export default class AudioItem extends PureComponent {
             <React.Fragment>
                 <div style={{width: "100%"}}>
 
-                
-                <AppBar position="static" style={{display: "flex" , flexDirection: "row", backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0, textAlign: "center"}}>
-                    <div style={{minWidth: 20, minHeight: 20, marginTop: 3}}>
-                        <KeyboardArrowLeft onClick={this.props.onBack} ></KeyboardArrowLeft>
-                    </div>
-                    <div style={{marginTop: 3, height: 12}}>{item.name} </div>
-                </AppBar>
-                <div style={{height: 28, width: "100%", display:"flex", flexDirection: "row", justifyContent: "flex-end", backgroundColor: "#AAA"}}> 
+                <div style={{height: 28, overflow: "hidden", width: "100%", display:"flex", flexDirection: "row", justifyContent: "space-between", backgroundColor: "#AAA"}}> 
+                      {item.name.substring(0, 40)}
                       <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
                           <Delete onClick={this.removeSound}  style={{cursor: "pointer"}}></Delete>
                       </div>

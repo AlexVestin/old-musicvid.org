@@ -123,8 +123,6 @@ class ThreeCanvas extends Component {
             this.scenes.forEach(e => e.play(0))
             this.encodeVideoFrame(this.time)
             this.videoEncoder.sendFrame()
-
-            console.log("??")
         })
     }
 
@@ -277,7 +275,6 @@ class ThreeCanvas extends Component {
     }
 
     encode = () => {
-        console.log("?????", "encode plz")
         if(this.encoding && this.encodedFrames <  this.duration * this.config.fps  && this.encodedFrames !== -1) { 
             const videoTs = (this.encodedFrames / this.config.fps ) 
             const audioTs = (this.audioManager.frameIdx * this.audioManager.sampleWindowSize) 

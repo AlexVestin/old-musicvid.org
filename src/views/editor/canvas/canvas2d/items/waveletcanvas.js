@@ -1,5 +1,5 @@
 // CREDIT: https://github.com/mattdesl/polartone
-import BaseItem from '../../three/items/item'
+import BaseItem from '../../itemtemplates/item'
 import createCamera from 'perspective-camera'
 import lerp from 'lerp'
 import { dispatchAction } from '@redux/actions/items'

@@ -32,7 +32,7 @@ export default class CustomInput extends PureComponent {
                     </input>
                 </LabeledFieldWrapper>}
 
-                {(type === "Link") && <LinkField {...this.props}></LinkField>}
+                {(type === "Link") && <LinkField value={value} keyVal={keyVal}></LinkField>}
                 {type === "List" && <LabeledFieldWrapper {...this.props} >
                 <select style={inputStyles[type]} value={name} onChange={this.props.handleChange({type: type, key: key})}>
                     {options.map(e => <option key={e}  value={e}>{e}</option>)}
@@ -58,12 +58,9 @@ export default class CustomInput extends PureComponent {
 
 class LinkField extends PureComponent {
     render() {
-        const item = this.props.item
-        const key = this.props.keyVal
-
         return(
-            <div key={key} style={{display: "flex", flexDirection: "row", marginTop: 10, marginleft: 10}}>
-                <a href={String(item[key])}>{String(key)}</a>
+            <div key={this.props.keyVal} style={{display: "flex", flexDirection: "row", marginTop: 10, marginleft: 10}}>
+                <a href={String(this.props.value)}>{this.props.keyVal}</a>
             </div>
         )
     }

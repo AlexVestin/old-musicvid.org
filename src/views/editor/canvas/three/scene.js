@@ -97,7 +97,7 @@ export default class SceneContainer {
     }
 
     editSettings = (key, value) => {
-        this.config.settings[key] = value
+        this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
     }
 
@@ -158,7 +158,7 @@ export default class SceneContainer {
             }else if (value === "PerspectiveCamera") {
                 this.cameraConfig = cameraConfigs.perspectiveConfig
                 this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000)
-                this.camera.position.set(30, 30, 200)
+                this.camera.position.set(0, 0, 200)
             }else {
                 alert("--------ERROR COULD NOT FIND CAMERA PROVIDED ----------")
                 return
@@ -295,7 +295,7 @@ export default class SceneContainer {
     setCamera = () => {
         const { width, height } = this.config
         this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000)
-        this.camera.position.set(30,30,200)
+        this.camera.position.set(0,0,200)
         this.cameraConfig = cameraConfigs.perspectiveConfig
         replaceCamera(this.cameraConfig)
     }
@@ -318,7 +318,7 @@ export default class SceneContainer {
        
             let controls = new OrbitControls(camera, renderer.domElement);
             controls.maxPolarAngle = Math.PI * 0.495;
-            controls.target.set(0, 10, 0);
+            controls.target.set(0, 0, 0);
             controls.panningMode = 1;
             controls.minDistance = 40.0;
             controls.maxDistance = 300.0;

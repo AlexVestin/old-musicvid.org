@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import { MeshItem } from './item';
+import MeshItem from '../../itemtemplates/meshitem'
 
 export default class Text3D extends MeshItem {
     constructor(config) {

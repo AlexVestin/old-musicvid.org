@@ -20,6 +20,7 @@ class PlaybackPanel extends PureComponent {
         return min+':'+sec;
     }
     render() {
+        // <Button disableRipple color="primary" type="raised" onClick={this.props.openFullScreen}>Fullscreen</Button>
 
         return(
             <div style={{display: "flex", flexDirection: "column", maxWidth: this.props.width}}>
@@ -37,7 +38,6 @@ class PlaybackPanel extends PureComponent {
                     </div>
 
 
-                    <Button disableRipple color="primary" type="raised" onClick={this.props.openFullScreen}>Fullscreen</Button>
                     <Button disableRipple color="secondary" type="raised" onClick={this.props.openEncodingModal}>Export</Button>
                     
                 </div>

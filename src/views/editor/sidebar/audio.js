@@ -4,10 +4,9 @@ import Button from 'material-ui/Button'
 import { connect } from 'react-redux'
 import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio, removeSound } from '@redux/actions/items'
 import Delete from '@material-ui/icons/Delete'
-
+import withHeader from './withheader'
 import AudioItem from './audioitem'
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
-import { withStyles } from 'material-ui/styles';
 
 const styles = theme => ({})
 
@@ -37,7 +36,7 @@ class Audio extends React.Component {
     }
 
     render() {
-        const { audioItems, classes } = this.props;
+        const { audioItems } = this.props;
         const item = audioItems[this.props.audioIdx]
 
         return (
@@ -47,7 +46,7 @@ class Audio extends React.Component {
                 <div>
                     <List>
                         {audioItems.map((item, i) => (
-                        <ListItem disableRipple key={item.name} dense button className={classes.listItem} onClick={() => this.onClick(i)}>
+                        <ListItem disableRipple key={item.name} dense button onClick={() => this.onClick(i)}>
                             <ListItemText primary={item.name} />
                             <ListItemSecondaryAction>
         
@@ -77,4 +76,6 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(Audio))
+
+
+export default connect(mapStateToProps)(withHeader((Audio)))

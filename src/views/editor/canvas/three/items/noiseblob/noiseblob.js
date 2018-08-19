@@ -1,4 +1,4 @@
-import BaseItem from '../item'
+import BaseItem from '../../../itemtemplates/item'
 import * as THREE from 'three'
 import PBR from './pbr'
 import SharedRenderer from './sharedrenderer'
@@ -169,8 +169,6 @@ export default class NoiseBlob extends BaseItem {
     
         if(!this.is_init){ 
             this.is_init = true;
-    
-            console.log("NoiseBlob : is initiated");
         }
     
         this.timer += 0.001

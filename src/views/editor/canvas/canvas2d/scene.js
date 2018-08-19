@@ -8,6 +8,7 @@ import WaveletCanvas from './items/waveletcanvas';
 import Square from './items/square';
 import JSNation from './items/jsnation';
 import SimpleText from './items/text'
+import KineticText from './items/kinetictypography';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -17,13 +18,6 @@ export default class SceneContainer {
         this.items      = []
         this.toRender   = []
         this.rendering  = []
-
-        const resolutions = [
-            "2048x1080",
-            "1920x1080",
-            "1280x720",
-            "640x480"
-        ]
 
         this.config = {
             id: Math.floor(Math.random() * 100000000),
@@ -113,6 +107,9 @@ export default class SceneContainer {
         let item; 
 
         switch (info.type) {
+            case "KINETIC TEXT":
+                item = new KineticText(info)
+            break;
             case "TEXT":
                 item = new SimpleText(info)
             break;

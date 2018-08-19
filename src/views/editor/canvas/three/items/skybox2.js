@@ -2,7 +2,7 @@
 
 
 import * as THREE from 'three'
-import BaseItem from './item';
+import BaseItem from '../../itemtemplates/item'
 //SKYBOX BY HAROON GHAZNI http://www.hghazni.com/
 
 

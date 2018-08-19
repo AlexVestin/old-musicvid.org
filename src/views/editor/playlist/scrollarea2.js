@@ -140,8 +140,6 @@ class ScrollArea2 extends PureComponent {
 
     zoomIn = (pos) => {
     
-        
-
         if(this.state.zoomWidth !== this.maxZoom) {
             const width = this.state.width - 30
             let z = this.state.zoomWidth + 0.5 + (this.state.zoomWidth * 8 / this.maxZoom)
@@ -162,7 +160,7 @@ class ScrollArea2 extends PureComponent {
 
     move = (delta) => {
         const width = this.state.width - 30
-        var x = this.state.horizontalPosition.x + delta * 2 
+        let x = this.state.horizontalPosition.x + delta * 2 
         const diff = this.viewport[2] - this.viewport[0]
         x = x > 0 ? x : 0
         //check > width + thumbwidth
@@ -220,7 +218,7 @@ class ScrollArea2 extends PureComponent {
                 <ScrollTopPanel
                         onDragHorizontal={this.onDragHorizontal}
                         horizontalPosition={this.state.horizontalPosition}
-                        moveHorizontal ={this.moveHorizontal}
+                        moveHorizontal={this.moveHorizontal}
                         onClickHorizontal={this.onClickHorizontal}
                         onMouseUp={this.stopMovingHorizontally}
                         info={info}

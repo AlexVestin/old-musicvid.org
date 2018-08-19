@@ -1,4 +1,4 @@
-import BaseItem from '../../three/items/item'
+import BaseItem from '../../itemtemplates/item'
 
 const fontList = [
     "Andale Mono",

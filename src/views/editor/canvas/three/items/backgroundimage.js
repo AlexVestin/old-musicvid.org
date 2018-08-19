@@ -1,4 +1,4 @@
-import BaseItem from "./item";
+import BaseItem from '../../itemtemplates/item'
 import * as THREE from 'three'
 
 export default class BackgroundImage extends BaseItem {

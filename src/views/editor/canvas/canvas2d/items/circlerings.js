@@ -1,4 +1,4 @@
-import AudioImpactItem from '../../three/items/audioimpactitem'
+import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 // CREDIT: http://cssdeck.com/labs/zeaklousedit
 
 class SpaceShip {

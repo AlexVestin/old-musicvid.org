@@ -7,7 +7,7 @@
 // using significant parts of it
 //////////////////////////////////////////////////////////////////////////////////
 
-import BaseItem from '../../three/items/item'
+import BaseItem from '../../itemtemplates/item'
 
 
 class Puff {

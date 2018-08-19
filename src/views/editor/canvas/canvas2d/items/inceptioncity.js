@@ -2,7 +2,7 @@
 // CREDIT https://github.com/raphamorim/canvas-experiments
 //////////////////////////////////////////////////////////////////////////////////
 
-import BaseItem from '../../three/items/item'
+import BaseItem from '../../itemtemplates/item'
 
 class Trail {
     constructor(pos, t, plan_i) {

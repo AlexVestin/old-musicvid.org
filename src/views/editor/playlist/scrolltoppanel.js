@@ -6,16 +6,21 @@ import Timeline from './timeline'
 import classes from './scrolltoppanel.css'
 
 
-export default class ScrollTopPane extends Component {
+class ArrowIcon extends Component  {
+    shouldComponentUpdate = () => false
 
-    shouldComponentUpdate = (props) => {
-        
-        Object.keys(props.info).forEach(key => {
-            if (this.props.info[key] !== props.info[key]) return true
-        })
-
-        return false
+    render() {
+        const direction = this.props.left ? -1 : 1
+        const style = {width: 15, height: 15}
+        const neProps = {style, onMouseUp: this.props.onMouseUp, onMouseDown: () => this.props.onMouseDown(direction), className: classes.button}
+        return (
+            <div style={{minWidth: 15, minHeight: 15}}>
+                {this.props.left ? <KeyboardArrowLeft {...neProps}></KeyboardArrowLeft> : <KeyboardArrowRight {...neProps}></KeyboardArrowRight>}
+            </div>
+        )
     }
+}
+export default class ScrollTopPane extends Component {
 
     render() {
 
@@ -23,10 +28,6 @@ export default class ScrollTopPane extends Component {
         const { onDragHorizontal, moveHorizontal, onWheel, horizontalPosition, onMouseUp, onClickHorizontal } = this.props
         const thumbWidth = ((width - 30) * (viewport[2] - viewport[0])) 
         
-        const iconWidth = 15
-
-        console.log("updating", this.props)
-
         return (
             <div style={{ display: "flex", flexDirection: "row" }}>
                 <div style={{ minWidth: "20%", width: "20%", height: "100%", backgroundColor: "#434343" }}>
@@ -34,9 +35,7 @@ export default class ScrollTopPane extends Component {
                 </div>
                 <div style={{ width: "100%" }}>
                     <div className={classes.group1} ref={ref => this.panelRef = ref} >
-                    <div style={{minWidth: iconWidth, minHeight: iconWidth}}>
-                        <KeyboardArrowLeft style={{width: iconWidth, height: iconWidth}} className={classes.button} onMouseUp={onMouseUp} onMouseDown={() => moveHorizontal(-1)} ></KeyboardArrowLeft>
-                    </div>
+                    <ArrowIcon onMouseDown={moveHorizontal} onMouseUp={onMouseUp} left={true} ></ArrowIcon>
                     <div className={classes.horizontalTrack} onClick={onClickHorizontal} >
                         <Draggable
                             axis="x"
@@ -47,9 +46,7 @@ export default class ScrollTopPane extends Component {
                         <div name="thumb" style={{ width: thumbWidth }} className={classes.horizontalThumb} onClick={(e) => e.stopPropagation()}></div>
                         </Draggable>
                     </div>
-                        <div style={{minWidth: iconWidth, minHeight: iconWidth}}>
-                        <KeyboardArrowRight style={{maxWidth: iconWidth, minWidth: iconWidth, width: iconWidth, height: iconWidth}} className={classes.button}  onMouseUp={onMouseUp} onMouseDown={() => moveHorizontal(1)}></KeyboardArrowRight>
-                        </div>
+                    <ArrowIcon onMouseDown={moveHorizontal} onMouseUp={onMouseUp} left={false} ></ArrowIcon>
                     </div>
 
                     <div style={{ display: "flex", flexDirection: "row" }}>

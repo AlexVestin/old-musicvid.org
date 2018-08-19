@@ -30,7 +30,8 @@ const items2D = [
   "Polartone",
   "Square",
   "jsnation",
-  "Text"
+  "Text",
+  "Kinetic Text"
 ]
 
 const styles = theme => ({

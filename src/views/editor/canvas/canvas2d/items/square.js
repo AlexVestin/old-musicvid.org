@@ -1,4 +1,4 @@
-import BaseItem from '../../three/items/item'
+import BaseItem from '../../itemtemplates/item'
 
 
 export default class Square extends BaseItem {

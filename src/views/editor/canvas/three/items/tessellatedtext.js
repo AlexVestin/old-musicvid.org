@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import {  AudioreactiveItem } from './item';
+import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 import { modify  } from './modifiers/tessellatemodifier'
 
 
@@ -32,7 +32,7 @@ const fragmentShader = [
 
 
 
-export default class TessellatedText extends AudioreactiveItem {
+export default class TessellatedText extends AudioImpactItem {
     constructor(config) {
         super(config)
 
@@ -142,7 +142,7 @@ export default class TessellatedText extends AudioreactiveItem {
         
     }
 
-    editConfig = (config) => {
+    _updateConfig = (config) => {
         const { text, fontSize } = this.config
         this.config = config
 
@@ -154,9 +154,10 @@ export default class TessellatedText extends AudioreactiveItem {
         }
     }
 
-    animate = (time, frequencyBins) => {
-        if(frequencyBins.bins[this.config.barIndex]) {
-            this.uniforms.amplitude.value = Math.random() * frequencyBins.bins[this.config.barIndex] / this.config.scale
+    animate = (time, audioData) => {
+        const amp = this.getImpactAmplitude(audioData.bins)
+        if(amp) {
+            this.uniforms.amplitude.value = Math.random() * amp / this.config.scale
         }
     }
 }

@@ -22,7 +22,6 @@ class Item extends React.PureComponent {
         addAutomation({key, automation})
     }
     editName =  event => {
-        console.log(event.target.value)
         editItem({key: "name", value: event.target.value})
     }
 
@@ -41,9 +40,9 @@ class Item extends React.PureComponent {
                         <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
                     
                         <div style={{display: "flex", flexDirection: "row"}}>
-                            <input style={{height: 18, padding:0, marginTop: 1, marginRight: 20}} onChange={this.editName} value={item.name} type="text"></input>
+                            <input style={{height: 18, padding:0, marginTop: 1, marginRight: 30}} onChange={this.editName} value={item.name} type="text"></input>
                             <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
-                                <Delete onClick={this.onDelete}  style={{cursor: "pointer"}}></Delete>
+                                <Delete onClick={this.onDelete}  style={{cursor: "pointer", marginRight: 10}}></Delete>
                             </div>
                         </div>
                     </div>

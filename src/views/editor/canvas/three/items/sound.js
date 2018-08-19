@@ -1,4 +1,4 @@
-import BaseItem from "./item";
+import BaseItem from '../../itemtemplates/item'
 import { addSound } from '@redux/actions/items'
 import { setDisabled } from '@redux/actions/globals'
 

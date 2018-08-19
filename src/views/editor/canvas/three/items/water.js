@@ -3,7 +3,7 @@
 
 import * as THREE from 'three'
 import ThreeWater from "./waterclass"
-import BaseItem from './item';
+import BaseItem from '../../itemtemplates/item'
 
 export default class Water extends BaseItem{
     constructor(config) {
@@ -42,7 +42,7 @@ export default class Water extends BaseItem{
         this.addItem()
     }
 
-    animate = (time, frequencyBins) => {
+    _animate = (time, frequencyBins) => {
         let { water, parameters } = this
         water.material.uniforms.time.value += 1.0 / 60.0;
         water.material.uniforms.size.value = parameters.size;

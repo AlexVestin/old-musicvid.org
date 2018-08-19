@@ -3,17 +3,13 @@ import { dispatchAction } from '@redux/actions/items'
 import { editProjectSettings } from '@redux/actions/globals'
 import ConfigList from './input';
 import { connect } from 'react-redux'
+
+import withHeader from '../withheader'
+
 class ProjectSettings extends PureComponent {
     constructor(props){
         super(props)
          
-        const resolutions = [
-            "2048x1080",
-            "1920x1080",
-            "1280x720",
-            "640x480"
-        ]
-
         this.config = {
             fps: 60,
             clipDuration: 180,
@@ -26,9 +22,7 @@ class ProjectSettings extends PureComponent {
                 items: {
                     fps: {type: "Number", value: 60, disabled: true},
                     clipDuration: {type: "Number", value: 180},
-                    audioBufferSize: {type: "Number", value: 0.1},
                     postProcessingEnabled: {type: "Boolean", value: false},
-                    resolution: { type: "List", options: resolutions, disabled: true }
                 }
             }]
         }
@@ -65,4 +59,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(ProjectSettings)
+export default connect(mapStateToProps)(withHeader(ProjectSettings))

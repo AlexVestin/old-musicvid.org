@@ -97,7 +97,6 @@ export default class AudioManager {
         this.stop()
         this.time = time
         return new Promise((resolve, reject) => {
-            console.log(time)
             const p1 = this.addAudioFrame(this.time, true, this.sampleWindowSize)
             const p2 = this.addAudioFrame(this.time)
             const p3 = this.addAudioFrame(this.time)

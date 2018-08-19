@@ -3,7 +3,7 @@
 
 
 import * as THREE from 'three';
-import BaseItem from './item'
+import BaseItem from '../../itemtemplates/item'
 import shader1 from "./shaders/nodetext/nodeText.vs"
 const shader2 = require("./shaders/nodetext/nodeText.fs")
 const shader3 = require("./shaders/nodetext/nodeTextPoints.fs")
@@ -124,8 +124,7 @@ export default class NodeText extends BaseItem {
       }
     });
 
-    console.log(shader2)
-    console.log(glslify(shader2))
+
     alert(glslify(shader2))
 
     // Define Material
@@ -169,7 +168,7 @@ export default class NodeText extends BaseItem {
     this.uniforms.prevIndex.value = (this.uniforms.prevIndex.value < max) ? this.uniforms.prevIndex.value + 1 : 0;
     this.uniforms.nextIndex.value = (this.uniforms.nextIndex.value < max) ? this.uniforms.nextIndex.value + 1 : 0;
   }
-  animate = (time, audioData) => {
+  _animate = (time, audioData) => {
     this.uniforms.time.value = time;
     if (this.isTransform) {
       this.uniforms.timeTransform.value =  Math.min(Math.max(this.uniforms.timeTransform.value + time, 0), this.durationTransform);

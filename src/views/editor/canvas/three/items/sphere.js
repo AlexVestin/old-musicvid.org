@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import { AudioreactiveItem } from './item';
+import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 
 
 const vertexShader = [
@@ -27,15 +27,12 @@ const fragmentShader = [
 
 
 
-export default class Sphere extends AudioreactiveItem {
+export default class Sphere extends AudioImpactItem {
     constructor(config) {
         super(config)
         this.bins = new THREE.Group()
 
         this.camera = config.sceneConfig.camera 
-        this.config.strength = 20
-        this.config.threshold = 0.01
-
 
         var radius = 30, segments = 68, rings = 38;
         var geometry1 = new THREE.SphereGeometry( radius, segments, rings );
@@ -129,34 +126,21 @@ export default class Sphere extends AudioreactiveItem {
 
     }
 
-    editConfig = (config) => {
+    _updateConfig = (config) => {
         config.barIndex = config.barIndex > 32 ?  32 : config.barIndex
         config.barIndex = config.barIndex < 0 ?  0 : config.barIndex
         this.config = config
     }
 
-    animate = (time, frequencyBins) => {
+    _animate = (time, audioData) => {
         const {sphere, vertices1} = this
-        const { barIndex, strength, threshold } = this.config
 
         const t = time * 4
         sphere.rotation.y = 0.02 * t;
         sphere.rotation.z = 0.02 * t;
 
-        const newDiff = (frequencyBins.bins[barIndex] / strength) - this.lastDiff
-        if(Math.abs(newDiff) > threshold && newDiff > 0 ) {
-            let diff = frequencyBins.bins[barIndex]
-            if(strength !== 0)
-                diff /= strength
-
-            if(diff<10 && !isNaN(diff)) {
-                sphere.scale.set(1+ diff,1 + diff, 1+ diff)
-                this.lastDiff = diff
-            }
-        }else {
-            this.lastDiff =  this.lastDiff - 0.001 >= 0 ? this.lastDiff - 0.01 : 0
-            sphere.scale.set(1 +this.lastDiff, 1 +this.lastDiff,1 +this.lastDiff)
-        }
+        const amp = this.getImpactAmplitude(audioData.bins) / 48
+        sphere.scale.set(1+ amp,1 + amp, 1+ amp)
         
         var geometry = sphere.geometry;
         var attributes = geometry.attributes;
