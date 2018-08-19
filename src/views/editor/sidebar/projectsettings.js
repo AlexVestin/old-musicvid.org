@@ -28,7 +28,7 @@ class ProjectSettings extends PureComponent {
                     clipDuration: {type: "Number", value: 180},
                     audioBufferSize: {type: "Number", value: 0.1},
                     postProcessingEnabled: {type: "Boolean", value: false},
-                    resolution: { type: "List", options: resolutions }
+                    resolution: { type: "List", options: resolutions, disabled: true }
                 }
             }]
         }

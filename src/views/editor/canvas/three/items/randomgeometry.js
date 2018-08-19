@@ -2,6 +2,7 @@
 import * as THREE from 'three'
 import { AudioreactiveItem } from './item';
 
+
 export default class RandomGeometry extends AudioreactiveItem {
     constructor(config) {
         super(config)
@@ -82,7 +83,5 @@ export default class RandomGeometry extends AudioreactiveItem {
             this.mesh.rotation.y += this.config.rotationY
             this.mesh.rotation.z += this.config.rotationZ            
         }
-
-        
     }
 }

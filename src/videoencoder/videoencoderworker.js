@@ -15,10 +15,10 @@ export default class VideoEncoder {
         this.encoding = false
     }
 
-    init = (videoConfig, audioConfig, oninit, getPixels) => {
+    init = (videoConfig, audioConfig, oninit, getFrame) => {
         this.worker.postMessage({action: "init", data: {audioConfig, videoConfig}})
         this.oninit = oninit
-        this.getFrame = getPixels
+        this.getFrame = getFrame
         this.closed = false
     }
 

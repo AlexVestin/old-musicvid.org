@@ -28,7 +28,7 @@ export default class Square extends BaseItem {
     animate = (time, freqBins) => {
         const { width, height } = this.canvas
         this.ctx.fillStyle = "#" + this.config.color
-        this.ctx.fillRect(this.config.x * width, this.config.y * height,this.config.width * width, this.config.height * height)
+        this.ctx.fillRect(this.config.x * width, this.config.y * height,this.config.width * width,  this.config.height * height)
     }
 
     setSize = (width, height) => {

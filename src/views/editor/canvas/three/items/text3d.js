@@ -20,8 +20,6 @@ export default class Text3D extends MeshItem {
 
         var loader = new THREE.FontLoader();
         this.mesh = new THREE.Mesh()
-
-        this.mesh = new THREE.Mesh()
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()

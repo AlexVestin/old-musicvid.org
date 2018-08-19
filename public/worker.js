@@ -3,7 +3,6 @@ importScripts("WasmEncoder1.js")
 let Module = {}
 WasmEncoder1(Module)
 
-let usingJS = false
 let useAudio = false
 
 const fileType = 1
@@ -11,9 +10,7 @@ Module["onRuntimeInitialized"] = () => {
     postMessage({action: "loaded"})
 };
 
-if(usingJS) {
-    postMessage({action: "loaded"})
-}
+
 openVideo = (config) => {
     let { w, h, fps, bitrate, presetIdx } = config
     Module._open_video(w, h, fps, bitrate, presetIdx, fileType, fileType );
@@ -51,8 +48,6 @@ openAudio = (config) => {
 
 writeHeader = () => {
     Module._write_header();
-    postMessage({action: "initialized"})
-    initialized = true
 } 
 
 close_stream = () => {
@@ -119,6 +114,7 @@ onmessage = (e) => {
             }
             writeHeader()
             postMessage({action: "initialized"})
+            initialized = true
             break;
         case "addFrame":
             addFrame(data.data)

@@ -18,9 +18,6 @@ export default class SimpleText extends BaseItem {
     constructor(config) {
         super(config)   
 
-
-
-
         this.config.defaultConfig.push({
             title: "Text settings",
             items: {

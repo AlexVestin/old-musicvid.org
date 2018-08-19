@@ -32,8 +32,7 @@ export default class SceneContainer {
             clearAlpha: 1,
             shouldClear: true,
             zIndex: 1,
-            internalResolution: "640x480",
-            pixelRatio: 480,
+            pixelRatio: 720,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
@@ -41,8 +40,8 @@ export default class SceneContainer {
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
                     zIndex: {type: "Number", value: 1},
-                    internalResolution: {type: "List", options: resolutions, value: "640x480"},
-                    pixelRatio: {type: "Number", value: 480},
+                    pixelRatio: {type: "Number", value: 720},
+                    scalePixelRatioOnExport: {type: "Boolean", value: true}
                 }
             }],
             items: [],
@@ -174,10 +173,15 @@ export default class SceneContainer {
 
         const aspect = width / height
 
-        this.textureCanvas.width =  aspect * this.config.pixelRatio
-        this.textureCanvas.height = this.config.pixelRatio
+        if(this.config.scalePixelRatioOnExport) {
+            this.textureCanvas.width =  aspect * height
+            this.textureCanvas.height = height
+        }else {
+            this.textureCanvas.width =  aspect * this.config.pixelRatio
+            this.textureCanvas.height = this.config.pixelRatio
+        }
 
-        this.items.forEach(item => item.setSize( this.textureCanvas.width,  this.textureCanvas.height))
+       this.items.forEach(item => item.setSize( this.textureCanvas.width,  this.textureCanvas.height))  
     }
 
     updateItem = (config, time) => {

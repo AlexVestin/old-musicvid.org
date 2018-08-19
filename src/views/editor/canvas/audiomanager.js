@@ -97,6 +97,7 @@ export default class AudioManager {
         this.stop()
         this.time = time
         return new Promise((resolve, reject) => {
+            console.log(time)
             const p1 = this.addAudioFrame(this.time, true, this.sampleWindowSize)
             const p2 = this.addAudioFrame(this.time)
             const p3 = this.addAudioFrame(this.time)
@@ -133,9 +134,9 @@ export default class AudioManager {
     }
 
     getEncodingFrame = () => {
-        this.frameIdx++
+        
         var buffer = this.buffers.pop()
-
+        this.frameIdx++
         if(buffer === EMPTY_BUFFER || buffer === undefined) {
             const left =  new Float32Array(Math.floor(this.sampleWindowSize * this.sampleRate))
             const right =  new Float32Array(Math.floor(this.sampleWindowSize * this.sampleRate))
@@ -162,7 +163,7 @@ export default class AudioManager {
     getBins = (times, stepping) => {
         let bins = [], data = []
         
-        const time = times + (this.nrBufferSources * this.sampleWindowSize)
+        const time = times +  ( (this.nrBufferSources - 1) * this.sampleWindowSize)
         const idx = Math.floor((time - this.time) * this.sampleRate)        
 
         if(this.sampleBuffer.length >= this.fftSize) {
@@ -182,11 +183,6 @@ export default class AudioManager {
             }finally {
                 this.Module._free(audio_p)
             }
-        }
-
-        if(stepping && (this.sampleBuffer.length <= this.fftSize)) {
-            this.addAudioFrame()
-            this.buffers.pop()
         }
        
         return { bins: bins, raw: data }

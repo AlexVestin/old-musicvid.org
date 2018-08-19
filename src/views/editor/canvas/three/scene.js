@@ -19,7 +19,7 @@ import TrackballControls from './controls/trackball';
 import SkyBox from './items/skybox';
 import SkyBox2 from './items/skybox2';
 import AudioCircle from './items/audiocircle';
-import { resolve } from 'path';
+import NoiseBlob from './items/noiseblob/noiseblob';
 
 
 export default class SceneContainer {
@@ -33,6 +33,9 @@ export default class SceneContainer {
         this.items = []
         this.toRender = []
         this.rendering = []
+
+        this.width = width
+        this.height = height
 
         this.cameraConfig   = cameraConfigs.orthoConfig
         this.controlConfig  = controlConfigs.orbitConfig
@@ -184,8 +187,6 @@ export default class SceneContainer {
         }   
     }
     
-    
-
     moveItem = (item, up) => {
         const delta =  up ? -1 : 1
         let i1 = this.items.find(e => e.config.id === item.id)
@@ -197,8 +198,11 @@ export default class SceneContainer {
     addItem = (name, info, time) => {
         info.name = name
         info.sceneId = this.config.id
+        info.renderer = this.renderer
         info.time = time
         info.renderIndex = this.items.length
+        info.width = this.width
+        info.height = this.height
         info.sceneConfig = {
             light: this.light,
             camera: this.camera,
@@ -207,6 +211,9 @@ export default class SceneContainer {
 
         let item;
         switch (info.type) {
+            case "NOISE BLOB":
+                item = new NoiseBlob(info)
+                break;
             case "AUDIO CIRCLE":
                 item = new AudioCircle(info)
                 break;
@@ -278,6 +285,8 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
+        this.width = width
+        this.height = height
         this.camera.aspect = width / height;
         if (this.camera.isPerspectiveCamera)
             this.camera.updateProjectionMatrix();

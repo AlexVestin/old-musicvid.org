@@ -74,7 +74,7 @@ const mapStateToProps = state => {
         selectedItem: state.items.items[state.items.selectedLayerId][state.items.selectedItemId],
         items: state.items.items,
         sideBarWindowIndex: state.items.sideBarWindowIndex,
-        postProcessingEnabled: state.items.postProcessingEnabled,
+        postProcessingEnabled: state.globals.postProcessingEnabled,
         layer: state.items.layers[state.items.selectedLayerId],
         camera: state.items.cameras[state.items.selectedLayerId],
         controls: state.items.controls[state.items.selectedLayerId],

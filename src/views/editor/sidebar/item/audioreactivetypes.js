@@ -19,7 +19,8 @@ const items3D = [
   "Skybox", 
   "Skybox2", 
   "Northern Lights",
-  "Audio Circle"
+  "Audio Circle",
+  "Noise Blob"
 ]
 
 const items2D = [
