@@ -58,7 +58,7 @@ export default class RandomGeometry extends AudioImpactItem {
           color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
-      }
+    }
     
     _animate = (time, audioData) => {
         const { threshold, coolDownTime } = this.config

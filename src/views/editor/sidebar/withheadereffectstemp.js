@@ -14,13 +14,8 @@ const  root = {
 export default function withHeader(InputComponent) {
     return class extends React.Component {
         back = () => {
-            setSidebarWindowIndex(this.props.backIdx)
+            setSidebarWindowIndex(this.props.idxs.LAYERS)
         }
-
-        layerClicked = () => {
-            if(this.props.idx !== this.props.idxs.LAYER)
-                setSidebarWindowIndex(this.props.idxs.LAYER)
-        } 
 
         onDelete = () => {
             console.log("delete", this.props)
@@ -35,17 +30,11 @@ export default function withHeader(InputComponent) {
                     {this.props.idx > 2 &&
                         <div style={{display: "flex", flexDirection: "row", marginTop: 3, justifyContent: "space-between"}}>
                             <div style={{display: "flex", flexDirection: "row"}}>
-                                
                                 <div style={{ minWidth: 20, minHeight: 20}}>
                                     <KeyboardArrowLeft onClick={this.back} className={classes.icon} ></KeyboardArrowLeft>
                                 </div>
-                                
-                                {this.props.layerName && <div onClick={this.layerClicked} className={classes.txt}>{this.props.layerName}</div>}
-                                {this.props.itemName && <div style={{marginLeft: 10}}>{" - "}</div>}
-                                {this.props.itemName && <div style={{marginLeft: 10}} className={classes.txt}>{this.props.itemName}</div>}
-                                
+                            
                             </div>
-
                         </div>
                     }
                 </AppBar>

@@ -3,6 +3,9 @@ import ConfigList from '../input/input'
 import { connect } from 'react-redux'
 import { editEffect, setSidebarWindowIndex, removeEffect } from '@redux/actions/items'
 
+import withHeader from '../withheadereffectstemp'
+
+
 class Effect extends React.PureComponent {
     back = () => {
         setSidebarWindowIndex(this.props.idxs.EFFECTS)
@@ -39,4 +42,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(Effect)
+export default connect(mapStateToProps)(withHeader(Effect))

@@ -20,37 +20,40 @@ export default class CustomInput extends PureComponent {
         return (
     
             <div key={key} style={{width: "100%"}}>
-                {(type === "Number" || type ==="String") && <LabeledFieldWrapper {...this.props}>
-                    <input 
-                        onKeyUp={(event) => event.stopPropagation()} 
-                        onChange={this.props.handleChange({type, key})}
-                        value={value} 
-                        disabled={disabled === true}   
-                        style={inputStyles[type]}
-                        type={type === "Number" ? "number" : "text"}
-                    >
-                    </input>
-                </LabeledFieldWrapper>}
+                {(type === "Number" || type ==="String") && 
+                    <LabeledFieldWrapper {...this.props}>
+                        <input 
+                            onKeyUp={(event) => event.stopPropagation()} 
+                            onChange={this.props.handleChange({type, key})}
+                            value={value} 
+                            disabled={disabled === true}   
+                            style={inputStyles[type]}
+                            type={type === "Number" ? "number" : "text"}
+                        >
+                        </input>
+                    </LabeledFieldWrapper>
+                }
 
                 {(type === "Link") && <LinkField value={value} keyVal={keyVal}></LinkField>}
                 {type === "List" && <LabeledFieldWrapper {...this.props} >
-                <select style={inputStyles[type]} value={name} onChange={this.props.handleChange({type: type, key: key})}>
-                    {options.map(e => <option key={e}  value={e}>{e}</option>)}
-                </select>
-
-                </LabeledFieldWrapper>}
+                    <select style={inputStyles[type]} value={name} onChange={this.props.handleChange({type: type, key: key})}>
+                        {options.map(e => <option key={e}  value={e}>{e}</option>)}
+                    </select>
+                    </LabeledFieldWrapper>
+                }
 
                 {(type === "Boolean") && 
-                <LabeledFieldWrapper {...this.props}>
-                    <input 
-                        type="checkbox"
-                        checked={value}
-                        onChange={this.props.handleChange({type: type, key: key, prev: value})} 
-                        disabled={disabled === true}    
-                        style={inputStyles[type]}>
-                    </input>
-                </LabeledFieldWrapper>}
-        </div>
+                    <LabeledFieldWrapper {...this.props}>
+                        <input 
+                            type="checkbox"
+                            checked={value}
+                            onChange={this.props.handleChange({type: type, key: key, prev: value})} 
+                            disabled={disabled === true}    
+                            style={inputStyles[type]}>
+                        </input>
+                    </LabeledFieldWrapper>
+                }
+            </div>
         )
     }
 }

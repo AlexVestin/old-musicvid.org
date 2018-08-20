@@ -19,13 +19,11 @@ var camera = {
 	},
 	zoom : 1,
 	display : {
-		x : window.innerWidth/2,
-		y : window.innerHeight/2,
+		x : 680/2,
+		y : 420/2,
 		z : 0
 	}
 };
-
-
 
 var affine = {
 	world : {
@@ -137,8 +135,6 @@ var affine = {
 	}
 };
 
-
-
 var vertex3d = function(param) {
 	this.affineIn = {};
 	this.affineOut = {};
@@ -163,8 +159,6 @@ var vertex3d = function(param) {
 		this.affineIn.position = {x:0,y:0,z:0};
 	};
 };
-
-
 
 vertex3d.prototype = {
 	vertexUpdate : function() {
@@ -228,7 +222,28 @@ var vibrateFlag = false;
 	
 
 let charsMap = {}
-	
+charsMap["@"] = [];
+for(var i=0; i<250; i++) {
+	charsMap["@"][i] = {theta:360*Math.random(), phi:360*Math.random()};
+};
+charsMap["_"] = [];
+for(var i=0; i<250; i++) {
+	charsMap["_"][i] = {theta:0, phi:0};
+};
+
+var initCharsMap = (buffer, i) => {
+	var theta = Math.floor(Math.random()*100);
+	var phi = Math.floor(Math.random()*100);
+	if(buffer[(theta*400+(phi*4))] === 0) {
+		charsMap[i].push({
+			theta: theta-50 + 360 * Math.round(Math.random()*2) - 1,
+			phi: phi-50 + 360 * Math.round(Math.random()*2) - 1
+		});
+	} else {
+		initCharsMap(buffer, i);
+	};
+}
+
 /* class */
 var	sphere = function(arg) {
 	this.flag = true;
@@ -245,40 +260,7 @@ var	sphere = function(arg) {
 		this.degree[j] = {theta:0, phi:0};
 		this.freeDegreeSpeed[j] = {theta:1*Math.random()-0.5, phi:1*Math.random()-0.5};
 	};
-	this.charsMap = {};
 
-	for(var i in chars) {
-		var buffer = arg.data.data;
-		this.charsMap[i] = [];
-		var self = this;
-		
-		for(var j=0; j<this.particleNum; j++) {
-			var redo = function() {
-				var theta = Math.floor(Math.random()*100);
-				var phi = Math.floor(Math.random()*100);
-				if(buffer[(theta*400+(phi*4))] == 0) {
-					self.charsMap[i].push(
-						{
-							theta:theta-50 + 360 * Math.round(Math.random()*2)-1,
-							phi:phi-50 + 360 * Math.round(Math.random()*2)-1
-						}
-					);
-				} else {
-					redo();
-				};
-			};
-			redo();	
-		};
-	};
-	this.charsMap["@"] = [];
-	for(var i=0; i<this.particleNum; i++) {
-		this.charsMap["@"][i] = {theta:360*Math.random(), phi:360*Math.random()};
-	};
-	this.charsMap["_"] = [];
-	for(var i=0; i<this.particleNum; i++) {
-		this.charsMap["_"][i] = {theta:0, phi:0};
-	};
-	
 	this.veticies = [];
 	for(var i=0; i<this.particleNum; i++) {
 		this.veticies[i] = new vertex3d({});
@@ -287,25 +269,26 @@ var	sphere = function(arg) {
 
 sphere.prototype = {
 	update : function() {
-		for(var i=0; i<this.charsMap[this.type].length; i++) {
+		this.flag = false
+		for(var i=0; i<charsMap[this.type].length; i++) {
 			if(this.degree[i].theta >= 30 && this.degree[i].phi >= 30) {
 				this.flag = true;
 				break;
-			} else {
-				this.flag = false;
-			};	
+			}
 		};
+		
 		this.radius =  this.radius + (this.targetRadius - this.radius) / 8;
 		this.center.x = this.center.x + (this.targetCenter.x - this.center.x) / 8;
 		this.center.y = this.center.y + (this.targetCenter.y - this.center.y) / 8;
 		this.center.z = this.center.z + (this.targetCenter.z - this.center.z) / 8;
-		for(var i=0; i<this.charsMap[this.type].length; i++) {
+		
+		for(var i=0; i<charsMap[this.type].length; i++) {
 			if(this.type === "@") {
-				this.charsMap[this.type][i].theta += this.freeDegreeSpeed[i].theta;
-				this.charsMap[this.type][i].phi += this.freeDegreeSpeed[i].phi;
+				charsMap[this.type][i].theta += this.freeDegreeSpeed[i].theta;
+				charsMap[this.type][i].phi += this.freeDegreeSpeed[i].phi;
 			};
-			this.degree[i].theta =this.degree[i].theta + (this.charsMap[this.type][i].theta-this.degree[i].theta)/(4+20*Math.random());
-			this.degree[i].phi = this.degree[i].phi + (this.charsMap[this.type][i].phi-this.degree[i].phi)/(4+20*Math.random());
+			this.degree[i].theta =this.degree[i].theta + (charsMap[this.type][i].theta-this.degree[i].theta)/(4+20*Math.random());
+			this.degree[i].phi = this.degree[i].phi + (charsMap[this.type][i].phi-this.degree[i].phi)/(4+20*Math.random());
 			if(vibrateFlag == true) {
 				var getPosition = polarToRectangle(this.degree[i].theta+90, this.degree[i].phi, this.radius+Math.random()*10);
 			} else {
@@ -316,7 +299,7 @@ sphere.prototype = {
 				y:getPosition.y,
 				z:getPosition.z
 			};
-			this.center.x
+
 			this.veticies[i].affineIn.position = {
 				x:this.center.x,
 				y:this.center.y,
@@ -326,7 +309,7 @@ sphere.prototype = {
 		};
 	},
 	draw : function(ctx) {
-		if(this.flag == true) {
+		if(this.flag) {
 			ctx.beginPath();
 			for(var i=0; i<this.veticies.length; i++) {
 				for(var j=i; j<this.veticies.length; j++) {
@@ -398,7 +381,7 @@ var chars = {
 
 	
 var textSet = [
-	{text:"WEBSPHERE", sphereRadius:140, sphereSpace:80, unitTime:100, time:1000},
+	{text:"TEXT", sphereRadius:140, sphereSpace:80, unitTime:100, time:1000},
 	{text:"THIS_IS", sphereRadius:120, sphereSpace:70, unitTime:120, time:4000},
 	{text:"EXPERIMENTAL", sphereRadius:120, sphereSpace:70, unitTime:50, time:2000},
 	{text:"TYPEFACE", sphereRadius:120, sphereSpace:70, unitTime:100, time:4000},
@@ -447,27 +430,39 @@ export default class KineticText extends AudioImpactItem {
 		this.canvas = config.canvas
 		this.ctx = config.ctx
 
+		const group = {
+			title: "Text",
+			items: {
+				text:  {type: "String", value: "TEXT"}
+			}
+		}
+
+		this.config.defaultConfig.push(group)
+		this.getConfig()
 		this.addItem()
 	}
 
 	bufferDraw = () => {
-		let increment = 0;
 		for(var i in chars) {
 			this.ctx.clearRect(0,0,100,100);
 			this.ctx.drawImage(this.bufferImages[i], 0, 0, 100, 100);
-			this.buffers[increment++] = this.ctx.getImageData(0,0,100,100);
+			this.buffers[i] = this.ctx.getImageData(0,0,100,100);
 		};
-
-		console.log(i)
 
 		this.setup()
 		this.initialized = true
 	};
 
 	setup = () => {
-
+		for(var i in chars) {
+			charsMap[i] = [];
+			for(var j=0; j<250; j++) {
+				initCharsMap(this.buffers[i].data, i);	
+			};
+		}
+		
 		for(var i=0; i<this.sphereNum; i++) {
-			this.s[i] = new sphere({data: this.buffers[i], radius:100, particleNum:250, center:{x:70*i - (this.sphereNum-1)*70/2,y:0,z:0}});
+			this.s[i] = new sphere({radius:100, particleNum:250, center:{x:70*i - (this.sphereNum-1)*70/2,y:0,z:0}});
 		};
 		
 		const textSetChangerIncrement = 0
@@ -491,6 +486,27 @@ export default class KineticText extends AudioImpactItem {
 		};
 	};
 
+	_updateConfig = (config) => {
+		this.textChanger(
+			config.text.toUpperCase(),
+			140,
+			100,
+			100
+		)
+
+		this.config = config
+	}
+
+	play = () => {
+
+		this.textChanger(
+			this.config.text.toUpperCase(),
+			140,
+			100,
+			100
+		)
+	}
+
 	changeText = () => {
 		this.textChanger(
 			textSet[0].text,
@@ -512,7 +528,6 @@ export default class KineticText extends AudioImpactItem {
 		let that = this
 		var changer = function() {
 			setTimeout(function() {
-				console.log(changeIncrement, text[changeIncrement])
 				that.s[changeIncrement].type = text[changeIncrement];
 				that.s[changeIncrement].targetCenter = center[changeIncrement]; 
 				that.s[changeIncrement].targetRadius = sphereRadius; 
@@ -527,8 +542,6 @@ export default class KineticText extends AudioImpactItem {
 			this.s[j].type = "_";
 		};
 		changer();
-
-		console.log(this.s)
 	};
 
 	setSize = (width, height) => {
@@ -536,15 +549,16 @@ export default class KineticText extends AudioImpactItem {
 		camera.display.y = height/2;
 	}
 	
-
 	_animate = (time, audioData) => {
 		const amp = this.getImpactAmplitude(audioData.bins);
 
 		if(this.initialized) {
 			if(amp > 100) {
+				camera.zoom = Math.random() * 1 + 1;
 				vibrateFlag = true;
 			} else {
 				vibrateFlag = false;
+				camera.zoom = 1;
 			};
 			
 			if(this.invertCV.execution() > 0.7) {
@@ -560,8 +574,6 @@ export default class KineticText extends AudioImpactItem {
 			this.ctx.strokeStyle = strokeColor;
 			this.update();
 			this.draw();
-
-			console.log(this.s)
 		}	
 	}
 

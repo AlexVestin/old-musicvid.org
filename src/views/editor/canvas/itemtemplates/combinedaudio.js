@@ -1,7 +1,7 @@
 
 
 import MeshItem from './meshitem'
-export default class AudioreactiveItem extends MeshItem {
+export default class AudioCombinedItem extends MeshItem {
     constructor(config) {
         super(config)
 
@@ -14,8 +14,7 @@ export default class AudioreactiveItem extends MeshItem {
                 spectrumEnd: { value: 10 / 2, type: "Number", tooltip: "the last bin rendered in the spectrum" },
                 spectrumScale: { value: 1, type: "Number", tooltip: "the logarithmic scale to adjust spectrum values to" },
                 
-            
-                enableTransformToVisualBins:{value: false, type: "Boolean", tooltip: "Transforms the frequency data to visual bins"},
+                enableUseBass:       {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
                 enableNormalizeAmplitude:   {value: true,  type: "Boolean", tooltip: "Normalizes the spectrumdata using the amplitude value"},
                 enableAverageTransform:     {value: true,  type: "Boolean", tooltip: "Averages data using neighbours"},
                 enableTailtTransform:       {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
@@ -55,8 +54,25 @@ export default class AudioreactiveItem extends MeshItem {
                 deltaRequired: {value: 0, type: "Number"}
             }
         }
-    
-        this.config.defaultConfig = [ group1, group2, group3, group4]
+        
+        const group5 = {
+            title: "Audio Impact Settings",
+            items: {
+                easeAmplitude: {type: "Boolean", value: false},
+                impactAmplitude: {type: "Number", value: 10},
+                threshold: {type: "Number", value: 40},
+                easeAmount: {type: "Number", value: 2.3},
+                minAmplitude: {type: "Number", value: 1},
+                maxAmplitude: {type: "Number", value: 99999},
+                lowerBinIndex: {type: "Number", value: 0},
+                upperBinIndex: {type: "Number", value: 12},
+                coolDownTime: {type: "Number", value: 0, tooltip: "Time in seconds until next impact can get triggered."}
+            }
+        }
+        this.config.defaultConfig = [ group1, group2, group3, group4, group5]
+
+        this.prevAmplitude = 0
+        this.prevTime = 0
         this.getConfig()
     }
 
@@ -109,15 +125,6 @@ export default class AudioreactiveItem extends MeshItem {
         return newArr;
     }
 
-    transformToVisualBins(array) {
-        const { spectrumSize, spectrumScale, spectrumEnd, spectrumStart } = this.config
-        var newArray = new Uint8Array(spectrumSize);
-        for (var i = 0; i < spectrumSize; i++) {
-            var bin = Math.pow(i / spectrumSize, spectrumScale) * (spectrumEnd - spectrumStart) + spectrumStart;
-            newArray[i] = array[Math.floor(bin) + spectrumStart] * (bin % 1)+ array[Math.floor(bin + 1) + spectrumStart] * (1 - (bin % 1))
-        }
-        return newArray;
-    }
 
     dropOffTransform = (arr) => {
         if(!this.cachedArr) {
@@ -140,7 +147,6 @@ export default class AudioreactiveItem extends MeshItem {
 
     getTransformedSpectrum(array) {
         var newArr = array.slice()
-        if(this.config.enableTransformToVisualBins) newArr = this.transformToVisualBins(newArr);
         if(this.config.enableNormalizeAmplitude)    newArr = this.normalizeAmplitude(newArr);
         if(this.config.enableAverageTransform)      newArr = this.averageTransform(newArr)
         if(this.config.enableTailtTransform)        newArr = this.tailTransform(newArr);
@@ -150,16 +156,29 @@ export default class AudioreactiveItem extends MeshItem {
         return newArr;
     }
 
+    /*
     normalizeAmplitude(array) {
         const { spectrumSize, amplitude } = this.config
-        let values = [];
+        var values = [];
+        for (var i = 0; i < spectrumSize; i++) {
+            values[i] = array[i] / 255 * amplitude;
+        }
+        return values;
+    }*/
+
+    normalizeAmplitude(array) {
+        const { spectrumSize, amplitude } = this.config
+        let values = new Array(array.length);
         let step = Math.floor(1024 / spectrumSize);
+
+        if(this.config.enableUseBass) step = 1;
         let inc = 0;
         for (var i = 0; i < spectrumSize; i++) {
+            values[i] = 0;
             for(var j = 0; j < step; j++) {
-                values[i] += (array[inc++] / 255 * amplitude) / step;
+                values[i] += (array[inc++] / 255) * amplitude;
             }
-            
+            values[i] /= step;
         }
         return values;
     }
@@ -245,22 +264,42 @@ export default class AudioreactiveItem extends MeshItem {
         return newArr;
     }
 
-    // top secret bleeding-edge shit in here
-    experimentalTransform(array) {
-        var resistance = 3; // magic constant
-        var newArr = [];
-        for (var i = 0; i < array.length; i++) {
-            var sum = 0;
-            var divisor = 0;
-            for (var j = 0; j < array.length; j++) {
-                var dist = Math.abs(i - j);
-                var weight = 1 / Math.pow(2, dist);
-                if (weight == 1) weight = resistance;
-                sum += array[j] * weight;
-                divisor += weight;
-            }
-            newArr[i] = sum / divisor;
+    smoothImpact = (amp) => {
+        const { threshold, easeAmount } = this.config
+        if(amp > this.prevAmplitude + threshold) {
+            this.prevAmplitude = amp
+        }else {
+            
+            this.prevAmplitude -= easeAmount
+            if(this.prevAmplitude < 0) this.prevAmplitude = 0
         }
-        return newArr;
+
+        return this.prevAmplitude
+    }
+
+
+    getImpactAmplitude = (frequencyBins) =>  {
+        const {lowerBinIndex, upperBinIndex, minAmplitude, maxAmplitude, impactAmplitude, easeAmplitude, easeAmount, threshold } = this.config
+
+        let sum = 0
+        for(let i = lowerBinIndex; i < upperBinIndex; i++) {
+            sum += frequencyBins[i] / (upperBinIndex - lowerBinIndex) 
+        }
+        sum *= impactAmplitude * 0.05
+        
+        if( sum < this.prevAmplitude + threshold && easeAmplitude ) {
+            sum = this.prevAmplitude - easeAmount
+        }
+
+        sum = sum < minAmplitude ? minAmplitude : sum
+        sum = sum > maxAmplitude ? maxAmplitude : sum
+
+        if(this.config.easeAmplitude) {
+            return this.smoothImpact(sum)
+        }
+       
+        this.prevAmplitude = sum
+        return isNaN(sum) ? 0 : sum
+        
     }
 }

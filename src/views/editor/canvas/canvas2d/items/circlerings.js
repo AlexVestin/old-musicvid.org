@@ -83,8 +83,6 @@ export default class CircleRings extends AudioImpactItem {
                 glow: {type: "Boolean", value: true},
                 shadowColor: {type: "String", value: "FFFFFF"},
                 shadowBlur: {type: "Number", value: 20},
-                shadowOffsetX: {type: "Number", value: 0},
-                shadowOffsetY: {type: "Number", value: 0},
             }
         })
         

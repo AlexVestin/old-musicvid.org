@@ -61,15 +61,13 @@ class ThreeCanvas extends Component {
         this.mainScene.add(c2d.quad)   
         this.mainScene.add(graphics.quad)   
         
-        this.scenes = [c2d, graphics]
-       
-
+        this.scenes = [c2d, graphics];
         const sceneConfig = {
             camera: this.mainCamera,
             scene: this.mainScene,
             renderer: this.renderer
-        }
-        this.renderTarget = new RenderTarget(this.width, this.height, sceneConfig)
+        };
+        this.renderTarget = new RenderTarget(this.width, this.height, sceneConfig);
 
         setSidebarWindowIndex(0);
     }

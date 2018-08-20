@@ -48,7 +48,6 @@ export default class NorthernLights extends BaseItem{
         );
 
         this.config.defaultConfig.push(group)
-        this.parameters = parameters
         this.mesh = this.water 
         
         this.mesh.name = String(this.config.id)
@@ -61,13 +60,14 @@ export default class NorthernLights extends BaseItem{
         this.water.material.uniforms.alpha.value =  config.alpha
         this.water.material.uniforms.size.value =  config.size
         this.water.material.uniforms.distortionScale.value =  config.distortionScale
+
+        this.config = config
     }
 
     _animate = (time, frequencyBins) => {
-        let { water, parameters } = this
+        let { water } = this
 
         water.material.uniforms.time.value += 1.0 / 60.0;
-       
     }
 }
 

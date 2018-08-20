@@ -1,7 +1,7 @@
 
 import React, { PureComponent } from 'react'
 import CustomInput from './custominput'
-import { connect } from 'react-redux'
+//import { connect } from 'react-redux'
 
 const inputContainer = {
     boxSizing: "border-box",

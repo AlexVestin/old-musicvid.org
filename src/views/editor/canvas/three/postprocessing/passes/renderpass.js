@@ -1,7 +1,7 @@
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-import Pass from './pass'
+import Pass from '../passtemplates/pass'
 export default class RenderPass extends Pass {
 
     constructor ( scene, camera, overrideMaterial, clearColor, clearAlpha=0 ) {

@@ -1,9 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import { setSidebarWindowIndex, createEffect } from '@redux/actions/items'
+import withHeader from '../withheadereffectstemp'
 
-import withHeader from '../withheader'
 
 
 const effects = [
@@ -42,4 +41,4 @@ class NewEffect extends React.Component {
 
 
 
-export default NewEffect
+export default withHeader(NewEffect)

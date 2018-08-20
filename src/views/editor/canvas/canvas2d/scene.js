@@ -9,6 +9,9 @@ import Square from './items/square';
 import JSNation from './items/jsnation';
 import SimpleText from './items/text'
 import KineticText from './items/kinetictypography';
+import CirclePlayer from './items/circleplayer';
+import TimeKeeper from './items/timekeeper';
+import TimeText from './items/timetext';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -107,6 +110,15 @@ export default class SceneContainer {
         let item; 
 
         switch (info.type) {
+            case "TIME TEXT":
+                item = new TimeText(info);
+            break;
+            case "TIME KEEPER":
+                item = new TimeKeeper(info);
+                break;
+            case "CIRCLE PLAYER":
+                item = new CirclePlayer(info);
+                break;
             case "KINETIC TEXT":
                 item = new KineticText(info)
             break;
@@ -165,9 +177,8 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
-        this.width = width
-        this.height = height
-
+        this.width = width;
+        this.height = height;
         const aspect = width / height
 
         if(this.config.scalePixelRatioOnExport) {
@@ -254,7 +265,11 @@ export default class SceneContainer {
         this.addOrRemove(this.toRender, this.rendering, time)
         this.rendering = this.rendering.sort((a, b) => a.config.zIndex - b.config.zIndex)
         
-        this.rendering.forEach(item => item.animate(time, frequencyBins))
+        this.rendering.forEach(item => {
+            this.textureCtx.save();
+            item.animate(time, frequencyBins);
+            this.textureCtx.restore();
+        } )
         //this.textureCtx.drawImage(this.canvas, 0, 0, this.textureCanvas.width, this.textureCanvas.height)
         this.texture.needsUpdate = true
     }
@@ -281,6 +296,7 @@ export default class SceneContainer {
             if(time - start >= 0 && time - start < duration ) {
                 this.rendering.push(e)
                 e.mesh.visible = true
+                e.play()
             }else if (start > time) {
                 this.toRender.push(e)
             }

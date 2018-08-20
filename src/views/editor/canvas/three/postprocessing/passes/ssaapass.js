@@ -15,8 +15,7 @@
 // before being used, thus these integers need to be scaled by 1/16.
 //
 // Sample patterns reference: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476218%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
-
-import Pass from './pass'
+import Pass from '../passtemplates/pass'
 import * as THREE from 'three'
 
 import CopyShader from '../shaders/copyshader'
@@ -60,7 +59,7 @@ export default class SSAARenderPass extends Pass {
         super(config.name)
         this.scene = config.scene;
         this.camera = config.camera;
-
+		this.config.renderPass = config.renderPass || false
 		const group = {
 			title: "audio reactive settings",
 			items: {

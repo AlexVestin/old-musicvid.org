@@ -13,7 +13,7 @@ const fontList = [
     "Lucida Sans Bold"
 ]
 
-export default class SimpleText extends BaseItem {
+export default class TimeText extends BaseItem {
 
     constructor(config) {
         super(config)   
@@ -21,14 +21,15 @@ export default class SimpleText extends BaseItem {
         this.config.defaultConfig.push({
             title: "Text settings",
             items: {
-                text: { type: "String", value: "Text" },
                 fontSize: {type:  "Number", value: 80},
                 baseLine: {type: "List", options: ["middle", "bottom", "top"], value: "middle"},
                 font: {type: "List", options: fontList, defaultIndex: 0, value: "Andele Mono"},
                 textAlign: {type: "List", options: ["center", "left", "right"], value: "center", defaultIndex: 0},
                 x: {type: "Number", value: 0.5},
                 y: {type: "Number", value: 0.5},
-                color: {type: "String", value: "FFFFFF"}
+                color: {type: "String", value: "FFFFFF"},
+                decimals: {type: "Number", value: 0},
+                useStartTime: {type: "Boolean", value: false}
             }
         })
 
@@ -39,15 +40,39 @@ export default class SimpleText extends BaseItem {
     }
 
     setStyle = () => {
-        this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`
+        this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`;
         this.ctx.fillStyle = '#' + this.config.color;
-        this.ctx.textAlign = this.config.textAlign
-        this.ctx.textBaseline  = this.config.baseLine
+        this.ctx.textAlign = this.config.textAlign;
+        this.ctx.textBaseline  = this.config.baseLine;
     }
+
+    toFixed = (number) => {
+        var s = number.toString();
+        if (s.indexOf('.') === -1) s += '.';
+        while (s.length < s.indexOf('.') + this.config.decimals) s += '0';
+        return s;
+    }
+    
+    formatTime = (seconds) => {
+        let m = String(Math.floor((seconds % 3600) / 60));
+        let s = String(seconds % 60).split(".")[0];
+        const dec = String(seconds).split(".")[1];
+
+        if(m.length === 1)m = "0" + m;
+        if(s.length === 1)s = "0" + s;
+
+        let formatted = m + ":" + s;
+        if(dec) {
+            formatted += "." + dec.substring(0, this.config.decimals);
+        }
+
+        return formatted; 
+      }
 
     animate = (time, audioData) => {
         this.setStyle();
-        this.ctx.fillText(this.config.text, this.config.x * this.canvas.width, this.config.y* this.canvas.height)
+        const t = this.formatTime(time.toFixed(this.config.decimals));
+        this.ctx.fillText(t, this.config.x * this.canvas.width, this.config.y * this.canvas.height);
     }
 
     setSize = (width, height) => {

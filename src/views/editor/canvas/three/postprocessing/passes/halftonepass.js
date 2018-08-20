@@ -6,7 +6,7 @@
  */
 
 import * as THREE from 'three'
-import Pass from './pass'
+import Pass from '../passtemplates/pass'
 import HalftoneShader from '../shaders/halftoneshader'
 
 export default class HalftonePass extends Pass {

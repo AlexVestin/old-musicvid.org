@@ -114,6 +114,7 @@ export default class BaseItem {
         if(itemId === config.id && this.automations.length > 0)updateItemConfig(config)
     }
 
+    setSize = (width, height) => {}
     //TODO remove // find better use
     _updateConfig = (config) => { this.config = config }
     _animate = () => {}

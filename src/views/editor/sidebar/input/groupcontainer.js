@@ -36,7 +36,7 @@ class GroupContainer extends PureComponent {
             <div key={this.props.label} style={groupContainerStyle} className={classes.container}>
                 <div>
                     <GroupHeader addAction={addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
-                    {(this.state.expanded ) && this.props.children}
+                    {(this.state.expanded  ) && this.props.children}
                  </div>
             </div>  
         )
@@ -46,7 +46,7 @@ class GroupContainer extends PureComponent {
 const GroupHeader = (props) => {
     const iconSize = 20
     return(
-        <div style={{backgroundColor: "#eee", display: "flex", flexDirection: "row", justifyContent:"space-between"}} onClick={props.toggleExpanded}>
+        <div style={{backgroundColor: "#DDD", display: "flex", flexDirection: "row", justifyContent:"space-between"}} onClick={props.toggleExpanded}>
         <p style={{ height: 20, margin: 5, fontSize: 16}}>{props.label} </p>
         <div style={{display: "flex", flexDirection: "row"}}>
             { props.addAction && 

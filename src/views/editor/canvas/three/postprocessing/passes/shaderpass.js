@@ -2,13 +2,15 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import Pass from './pass'
+import Pass from '../passtemplates/pass'
 import * as THREE from 'three' 
 export default class ShaderPass extends Pass  {
 
-    constructor(shader, textureID, name) {
+    constructor(shader, textureID, name, renderPass = false) {
         super(name);
         this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
+
+        this.config.renderPass = renderPass
 
         if ( shader instanceof THREE.ShaderMaterial ) {
             this.uniforms = shader.uniforms;

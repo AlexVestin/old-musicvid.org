@@ -31,7 +31,10 @@ const items2D = [
   "Square",
   "jsnation",
   "Text",
-  "Kinetic Text"
+  "Kinetic Text",
+  "Circle Player",
+  "Time Keeper",
+  "Time Text"
 ]
 
 const styles = theme => ({

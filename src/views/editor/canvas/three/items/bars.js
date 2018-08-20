@@ -72,7 +72,6 @@ export default class Bars extends AudioReactiveItem {
             this.move(config.x, config.y, config.z, config.spacing) 
         }
         this.config = config
-            
     }
 
     _animate = (time, audioData) => {
@@ -81,10 +80,11 @@ export default class Bars extends AudioReactiveItem {
 
         this.mesh.children.forEach( (e,i) => {
             var newScale = bins[i] > 1 ? bins[i] : 1 
-            if(shouldDropOff && newScale < e.scale.y || Math.abs(newScale - e.scale.y) < deltaRequired) {
+            if(shouldDropOff && (newScale < e.scale.y || Math.abs(newScale - e.scale.y) < deltaRequired)) {
                 newScale = e.scale.y - decreaseSpeed * (time - this._lastTime)  > 1 ? e.scale.y - decreaseSpeed * (time - this._lastTime) : 1
                 newScale = time - this._lastTime < 0 ? 1 : newScale
             }
+
             e.scale.set(scale , newScale, scale); 
             e.position.y = y + newScale/2 
         })

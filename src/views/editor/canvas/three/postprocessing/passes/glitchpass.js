@@ -2,7 +2,7 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import Pass from './pass'
+import Pass from '../passtemplates/audioreactivepass'
 import * as THREE from 'three'
 import DigitalGlitch from '../shaders/glitchshader'
 
@@ -10,18 +10,16 @@ export default class GlitchPass extends Pass {
     constructor( dt_size ) {
 		super("glitch")
 		const group = {
-			title: "audio reactive settings",
+			title: "Glitch Settings",
 			items: {
-				ampThreshold: {value: 2, type: "Number", tooltip: "Amount needed to trigger a glitch effect"},
+				shouldRandomTrigger: {value: true, type: "Boolean", tooltip: "Trigger a glitch at random times"},
 				amount: {value: 1, type: "Number", tooltip: "How strong the glitch will be"},
 			}
 		}
 		
 		this.config.defaultConfig.push(group)
-		this.config.ampThreshold = 2
 		this.config.amount = 1
 		
-
         if ( DigitalGlitch === undefined ) console.error( "THREE.GlitchPass relies on THREE.DigitalGlitch" );
 
         var shader = DigitalGlitch;
@@ -53,11 +51,7 @@ export default class GlitchPass extends Pass {
 	}
 	
 	update = (time, audioData) => {
-		let sum = 0
-		for(var i = 0; i < 13; i++) {
-			sum += audioData.bins[i] / 13
-		}
-		this.amp = sum / 100
+		this.amp = this.getImpactAmplitude(audioData.bins) / 2;
 	}
 
     render ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
@@ -66,7 +60,7 @@ export default class GlitchPass extends Pass {
 		this.uniforms[ 'seed' ].value = Math.random();//default seeding
 		this.uniforms[ 'byp' ].value = 0;
 		if(!this.amp)this.amp = 0
-		if ( this.amp > this.config.ampThreshold ) {
+		if ( this.amp > this.config.threshold ) {
 			this.uniforms[ 'amount' ].value = this.config.amount * Math.random() / 30;
 			this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
 			this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( - 1, 1 );
@@ -76,7 +70,7 @@ export default class GlitchPass extends Pass {
 			this.curF = 0;
 			this.generateTrigger();
 
-		} else if ( this.curF % this.randX < this.randX / 20 ) {
+		} else if ( this.config.shouldRandomTrigger && this.curF % this.randX < this.randX / 20 ) {
 
 			this.uniforms[ 'amount' ].value = Math.random() / 90 *  this.config.amount;
 			this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
@@ -85,10 +79,8 @@ export default class GlitchPass extends Pass {
 			this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( - 0.3, 0.3 );
 			this.uniforms[ 'seed_y' ].value = THREE.Math.randFloat( - 0.3, 0.3 );
 
-		} else if ( this.goWild == false ) {
-
+		} else if ( this.goWild === false ) {
 			this.uniforms[ 'byp' ].value = 1;
-
 		}
 
 		this.curF ++;
