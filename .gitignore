@@ -1,11 +1,10 @@
 .vscode/
 /build
 node_modules/
-
 *.a.out
 *.bc
-
 src/assets/
 src/webassembly/
 vendor/
 debug.log
+public/vid/

@@ -18,22 +18,25 @@ class Header extends PureComponent {
                     
             
                 </div>
-                <div className={classes.user_group}>
-                    <IconButton>
-                        <AccountCircle style={{}}></AccountCircle>
-                    </IconButton>
-                </div> 
+               
             </div>
         )
     }
 }
 
 /*
-<Button  style={{marginLeft: 50}} disableRipple> <Link className={classes.link} to="/"> Editor </Link></Button>
+                    <Button  style={{marginLeft: 50}} disableRipple> <Link className={classes.link} to="/"> Editor </Link></Button>
                     <Button  disableRipple> <Link className={classes.link} to="/landing"> Landing </Link> </Button>
 
                     <Button  disableRipple> <Link className={classes.link} to="/showcase"> Showcase </Link> </Button>
                     <Button  disableRipple> <Link className={classes.link} to="/daily"> info </Link> </Button>
+
+
+                     <div className={classes.user_group}>
+                    <IconButton>
+                        <AccountCircle style={{}}></AccountCircle>
+                    </IconButton>
+                </div> 
             */
 
 export default Header;

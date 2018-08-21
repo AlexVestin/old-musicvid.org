@@ -10,22 +10,29 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.canvas = config.canvas;
 
         const group = {
-            title: "Positioning",
+            title: "Spectrum",
             items: {
                 x: { type: "Number", value: 0.5},
                 y: { type: "Number", value: 0.5},
-                radius: {type: "Number", value: 200},
-                lineWidth: {type: "Number", value: 2},
+                radius: {type: "Number", value: 150},
+                lineWidth: {type: "Number", value: 4},
                 color: {type: "String", value: "FFFFFF"},
                 staticRotation: {type: "Number", value: 270},
                 mirror: {type: "Boolean", value: true},
-                fillEmblem: {type: "Boolean", value: true},
-                emblemColor: {type: "String", value: "FFFFFF"},
-                emblemMargin: {type: "Number", value: 0} 
             }   
         }
 
+        const emblemGroup = {
+            title: "Emblem",
+            items: {
+                fillEmblem: {type: "Boolean", value: true},
+                emblemColor: {type: "String", value: "FFFFFF"},
+                emblemMargin: {type: "Number", value: 10},
+            }
+        }
+
         this.config.defaultConfig.push(group);
+        this.config.defaultConfig.push(emblemGroup);
 
         this.config.defaultConfig.push({
             title: "Glow",
@@ -37,6 +44,13 @@ export default class CirclePlayer extends CombinedAudioItem {
         })
 
         this.getConfig();
+        this.config.impactAmplitude = 3;
+        this.config.spectrumSize = 64;
+        this.config.easeAmplitude = true;
+        this.config.easeAmount = 6.5;
+        this.config.amplitude = 5;
+        this.config.enableLogTransform = false;
+        this.config.enableCombineBins = false;
         this.addItem();
     }
 
@@ -76,11 +90,9 @@ export default class CirclePlayer extends CombinedAudioItem {
 
         
         this.setStyle();
-        
-        this.ctx.beginPath();
         this.ctx.moveTo(cx, cy);
         this.ctx.lineTo(cxOuter, cyOuter);
-        this.ctx.stroke();
+        
     }
 
     _animate = (time, audioData) => {
@@ -90,13 +102,15 @@ export default class CirclePlayer extends CombinedAudioItem {
         const amp = this.getImpactAmplitude(audioData.bins);
         const size = bins.length;
 
-        if(this.config.fillEmblem) {
+        const rad = (radius + amp / 4) - emblemMargin
+        if(this.config.fillEmblem && rad > 0) {
             this.ctx.fillStyle = '#' + this.config.emblemColor;
             this.ctx.beginPath();
-            this.ctx.arc((x  * this.canvas.width), (y * this.canvas.height), (radius + amp / 4) - emblemMargin, 0, 2 * Math.PI, false);
+            this.ctx.arc((x  * this.canvas.width), (y * this.canvas.height), rad, 0, 2 * Math.PI, false);
             this.ctx.fill();
         }
 
+        this.ctx.beginPath();
         if(this.config.mirror) {
             for(var i = 0; i < size; i++) {
                 this.drawTick(i, bins[i], size * 2, amp);
@@ -107,7 +121,7 @@ export default class CirclePlayer extends CombinedAudioItem {
                 this.drawTick(i, bins[i], size, amp);
             }
         }
-
+        this.ctx.stroke();
         
     }
 }

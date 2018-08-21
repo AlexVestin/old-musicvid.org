@@ -9,6 +9,7 @@
     min-height: 5vh;
     width: 100%;
     overflow: hidden;
+    border-bottom: 1px solid gray;
 }
 
 .user_group {
@@ -20,6 +21,10 @@
    width: 100%; 
    color: #f67600;
    text-align: center;
+   user-select: none;
+   cursor: pointer;
+   margin-left: 40px;
+   margin-top: 5px;
 }
 
 .header .logo h1  {

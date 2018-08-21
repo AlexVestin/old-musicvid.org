@@ -1,0 +1,39 @@
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+
+
+.container {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    background-color: #eee;
+
+}
+
+.title {
+    font-size: 30pt;
+    font-family: 'Montserrat', sans-serif;
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    color: #222;
+}
+
+.titleWrapper {
+    background-color: #666;
+    width: 100%;
+}
+
+.wrapper {
+    width: 85%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2%;
+}

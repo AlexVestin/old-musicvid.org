@@ -5,16 +5,25 @@ export default class AudioCombinedItem extends MeshItem {
     constructor(config) {
         super(config)
 
-        const group1 = {
-            title: "General fft settings",
+        this.fftSize = 1024;
+
+        const group0 = {
+            title: "Amplitude and size", 
             items: {
                 amplitude: { value: 9, type: "Number", tooltip: "Amplitude of the spectrum values" },
                 spectrumSize: { value: 32, type: "Number", tooltip: "number of bars in the spectrum" },
                 spectrumStart: { value: 0, type: "Number", tooltip: "the first bin rendered in the spectrum" },
-                spectrumEnd: { value: 10 / 2, type: "Number", tooltip: "the last bin rendered in the spectrum" },
+                spectrumEnd: { value: 1024, type: "Number", tooltip: "the last bin rendered in the spectrum" },
                 spectrumScale: { value: 1, type: "Number", tooltip: "the logarithmic scale to adjust spectrum values to" },
-                
-                enableUseBass:       {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
+            }
+        }
+
+        const group1 = {
+            title: "General fft settings",
+            items: {
+                enableLogTransform:         {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
+                enableCombineBins:          {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
+                combineBinsMethod:          {value: "Logarithmic", type: "List", options: ["Logarithmic", "Linear"]},
                 enableNormalizeAmplitude:   {value: true,  type: "Boolean", tooltip: "Normalizes the spectrumdata using the amplitude value"},
                 enableAverageTransform:     {value: true,  type: "Boolean", tooltip: "Averages data using neighbours"},
                 enableTailtTransform:       {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
@@ -69,7 +78,7 @@ export default class AudioCombinedItem extends MeshItem {
                 coolDownTime: {type: "Number", value: 0, tooltip: "Time in seconds until next impact can get triggered."}
             }
         }
-        this.config.defaultConfig = [ group1, group2, group3, group4, group5]
+        this.config.defaultConfig = [ group0, group1, group2, group3, group4, group5]
 
         this.prevAmplitude = 0
         this.prevTime = 0
@@ -125,7 +134,7 @@ export default class AudioCombinedItem extends MeshItem {
         return newArr;
     }
 
-
+    log = (arr) => arr.map(e => 20 * Math.log10(e))
     dropOffTransform = (arr) => {
         if(!this.cachedArr) {
             this.cachedArr = arr;
@@ -145,8 +154,50 @@ export default class AudioCombinedItem extends MeshItem {
         return newArr;
     }
 
+    transformToVisualBins = (array) => {
+        const { spectrumSize, spectrumScale } = this.config; 
+        const spectrumStart = 0;
+        const spectrumEnd = this.fftSize;
+
+        var newArray = new Float32Array(spectrumSize);
+        for (var i = 0; i < spectrumSize; i++) {
+            var bin = Math.pow(i / spectrumSize, spectrumScale) * (spectrumEnd - spectrumStart) + spectrumStart;
+            newArray[i] = array[Math.floor(bin) + spectrumStart] * (bin % 1) + array[Math.floor(bin + 1) + spectrumStart] * (1 - (bin % 1))
+        }
+
+        console.log("log")
+        return newArray;
+    }
+
+
+    combineBinsLinear = (arr) => {
+        let newArr = new Array(arr.length), inc = 0;
+        let step = Math.floor(this.fftSize / this.config.spectrumSize);
+        for(var i = 0; i < arr.length; i++) {
+            newArr[i] = 0;
+            for(var j = 0; j < step; j++) {
+                newArr[i] += arr[inc++]; 
+            }
+            newArr[i] /= step;
+        }
+
+        return newArr;
+    }
+
+    combineBins = (arr) => {
+        console.log(this.config.combineBinsMethod)
+        if(this.config.combineBinsMethod === "Linear") {
+            return this.combineBinsLinear(arr);
+        }else if(this.config.combineBinsMethod === "Logarithmic") {
+            return this.transformToVisualBins(arr);
+        }
+
+    }
+
     getTransformedSpectrum(array) {
         var newArr = array.slice()
+        if(this.config.enableLogTransform)          newArr = this.log(newArr);
+        if(this.config.enableCombineBins)           newArr = this.combineBins(newArr);
         if(this.config.enableNormalizeAmplitude)    newArr = this.normalizeAmplitude(newArr);
         if(this.config.enableAverageTransform)      newArr = this.averageTransform(newArr)
         if(this.config.enableTailtTransform)        newArr = this.tailTransform(newArr);
@@ -156,7 +207,7 @@ export default class AudioCombinedItem extends MeshItem {
         return newArr;
     }
 
-    /*
+    
     normalizeAmplitude(array) {
         const { spectrumSize, amplitude } = this.config
         var values = [];
@@ -164,24 +215,8 @@ export default class AudioCombinedItem extends MeshItem {
             values[i] = array[i] / 255 * amplitude;
         }
         return values;
-    }*/
-
-    normalizeAmplitude(array) {
-        const { spectrumSize, amplitude } = this.config
-        let values = new Array(array.length);
-        let step = Math.floor(1024 / spectrumSize);
-
-        if(this.config.enableUseBass) step = 1;
-        let inc = 0;
-        for (var i = 0; i < spectrumSize; i++) {
-            values[i] = 0;
-            for(var j = 0; j < step; j++) {
-                values[i] += (array[inc++] / 255) * amplitude;
-            }
-            values[i] /= step;
-        }
-        return values;
     }
+
 
     averageTransform(array) {
         var values = [];
