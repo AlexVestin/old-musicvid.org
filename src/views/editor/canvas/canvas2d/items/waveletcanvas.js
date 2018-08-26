@@ -195,8 +195,8 @@ export default class WaveletCanvas extends BaseItem {
         this.ctx.drawImage(this.internalCanvas, 0, 0)
 
         for (let i = 0; i < bufferLength; i++) {
-            const alpha = i / (bufferLength - 1)
-            const angle = lerp(startAngle + this.config.distance, startAngle, alpha)
+            const lAlpha = i / (bufferLength - 1)
+            const angle = lerp(startAngle + this.config.distance, startAngle, lAlpha)
             this.cursor[0] = Math.cos(angle) * radius
             this.cursor[2] = Math.sin(angle) * radius
 

@@ -1,5 +1,7 @@
 
 .container {
+    display:flex;
+    justify-content: space-between;
     height: 4vh;
     background-color: #bcbcbc;
     width: 100%;

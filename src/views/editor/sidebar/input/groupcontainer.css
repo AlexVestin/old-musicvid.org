@@ -7,3 +7,17 @@
     user-select: none;
 }
 
+.icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    min-width: 20px;
+    min-height: 20px;
+    margin-top: 3;
+    color: black;
+}
+
+.icon:hover {
+    color: #444;
+}
+

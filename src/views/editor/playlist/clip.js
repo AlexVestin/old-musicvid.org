@@ -193,6 +193,7 @@ export default class Clip extends PureComponent {
                 onClick={this.onClick}
                 style={{position:"relative", display: "flex", flexDirection: "row", zIndex: 2}} 
                 onMouseDown={this.onMouseDown}
+                draggable="false"
             >
                 <div 
                     style={{
@@ -209,7 +210,11 @@ export default class Clip extends PureComponent {
                         borderRadius: "0.12rem", 
                         borderWidth: 1,
                         borderColor: '#555555',
-                    }}>
+                    }}
+                    draggable="false"
+                    
+                    >
+                    
     
                     <div 
                         style={{
@@ -225,6 +230,8 @@ export default class Clip extends PureComponent {
                             WebkitUserSelect:"none",
                             msUserSelect:"none"
                         }}
+
+                        draggable="false"
                         >
                         {item.name}
                     </div>

@@ -7,7 +7,6 @@ const inputContainer = {
     boxSizing: "border-box",
     minWidth: "100%",
     overflow: "hidden",
-    marginBottom: 3
 }
 
 
@@ -20,10 +19,10 @@ class GroupContent extends PureComponent {
             <div style={inputContainer}>
                 {Object.keys(group.items).map((key, index) =>{
                     const config = group.items[key]
-                    const itemProps = { keyVal: key, type: config.type, value: item[key], disabled: config.disabled, options: config.options } 
-
+                    const itemProps = { tooltip: config.tooltip, keyVal: key, type: config.type, value: item[key], disabled: config.disabled, options: config.options } 
+ 
                     return(
-                        <CustomInput name={item.type} {...props} {...itemProps}></CustomInput>
+                            <CustomInput name={item.type} {...props} {...itemProps}></CustomInput>
                         )
                     }
                 )}

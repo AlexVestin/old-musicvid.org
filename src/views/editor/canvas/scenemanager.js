@@ -47,6 +47,8 @@ class ThreeCanvas extends Component {
         this.audioManager = new AudioManager()
     }
 
+
+
     setupScene = () =>  {
         const graphics   = new SceneContainer3D("graphics", this.width, this.height, this.renderer)
         const c2d = new SceneContainer2D("canvas2d", this.width, this.height, this.renderer)
@@ -363,6 +365,8 @@ class ThreeCanvas extends Component {
     render() {
         const { hidden} = this.state
         const hideCanvas = this.props.encoding || hidden
+
+        console.log("render")
         return(
 
             <div style={{  width: this.props.width, height: this.props.height, backgroundColor: "black"} } >

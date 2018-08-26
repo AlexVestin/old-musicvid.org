@@ -29,7 +29,7 @@ export default class ScrollTopPane extends Component {
         const thumbWidth = ((width - 30) * (viewport[2] - viewport[0])) 
         
         return (
-            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ display: "flex", flexDirection: "row" }} draggable="false">
                 <div style={{ minWidth: "20%", width: "20%", height: "100%", backgroundColor: "#434343" }}>
                     <div style={{ height: 35, backgroundColor: "#666666", width: "calc(100% - 1px)", borderBottom: "2px solid #232323" }}></div>
                 </div>

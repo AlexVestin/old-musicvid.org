@@ -11,11 +11,11 @@ const Title = (props) => {
 
     return (
         <div style={{display: "flex", flexDirection: "row"}}>  
-                <Tooltip id="tooltip-top-start" title={props.tooltip ? props.tooltip : ""} placement="right-end">
-                    <div style={{width: autoIconWidth, height: autoIconWidth}}>
-                        <Help style={{ marginTop: iconMarginTop, width: autoIconWidth, height: autoIconWidth, color: "black"}}></Help>                  
-                    </div>
-                </Tooltip>
+            <Tooltip id="tooltip-top-start" title={props.tooltip ? props.tooltip : ""} placement="right-end">
+                <div style={{width: autoIconWidth, height: autoIconWidth}}>
+                    <Help style={{ marginTop: iconMarginTop, width: autoIconWidth, height: autoIconWidth, color: props.tooltip ? "black" : "gray"}}></Help>                  
+                </div>
+            </Tooltip>
             <div style={{ marginTop: 4, marginLeft: 5, fontSize: 14 }}>{props.keyVal}</div>  
         </div>
     )
@@ -42,9 +42,9 @@ export default class LabeledFieldWrapper extends PureComponent {
 
     render() {
         let { keyVal, disabled, tooltip, type, disableAutomations } = this.props
-        
+
         return(
-            <div key={keyVal} style={{width: "95%", display: "flex", flexDirection: "row", justifyContent:"space-between", marginTop: 10}}>
+            <div key={keyVal} style={{width: "95%", display: "flex", flexDirection: "row", justifyContent:"space-between", marginBottom: 3, marginTop: 3}}>
                 <Title tooltip={tooltip} keyVal={keyVal}></Title>
                 
                 <div style={{display: "flex", flexDirection: "row"}}>

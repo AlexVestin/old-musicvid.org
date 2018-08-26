@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux'
-
+import Button from 'material-ui/Button'
 
 import Audio from './audio'
 import LayerList from './layer/layers'

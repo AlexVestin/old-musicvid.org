@@ -43,6 +43,7 @@ class GroupContainer extends PureComponent {
     }
 }
 
+
 const GroupHeader = (props) => {
     const iconSize = 20
     return(
@@ -51,17 +52,17 @@ const GroupHeader = (props) => {
         <div style={{display: "flex", flexDirection: "row"}}>
             { props.addAction && 
                 <div style={{minWidth: iconSize, minHeight: iconSize, marginTop: 3}}>
-                    <AddBox onClick={props.addAction} style={{marginTop: 3, width: iconSize, height: iconSize}}></AddBox>
+                    <AddBox onClick={props.addAction} className={classes.icon}></AddBox>
                 </div>
             }
-            { props.expanded && 
-            <div style={{minWidth: iconSize, minHeight: iconSize, marginTop: 3}}>
-                <KeyboardArrowUp></KeyboardArrowUp>
-            </div>}
-            { !props.expanded &&
-            <div style={{minWidth: iconSize, minHeight: iconSize, marginTop: 3}}>
-                <KeyboardArrowDown ></KeyboardArrowDown>
-            </div>
+            { props.expanded ? 
+                <div className={classes.icon}>
+                    <KeyboardArrowUp></KeyboardArrowUp>
+                </div>
+            :
+                <div  className={classes.icon} >
+                    <KeyboardArrowDown ></KeyboardArrowDown>
+                </div>
             }
         </div>
     </div>

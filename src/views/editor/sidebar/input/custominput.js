@@ -19,7 +19,7 @@ export default class CustomInput extends PureComponent {
         const key = keyVal
         return (
     
-            <div key={key} style={{width: "100%"}}>
+            <div key={key} style={{width: "100%", borderBottom: "1px solid #e0e0e0"}}>
                 {(type === "Number" || type ==="String") && 
                     <LabeledFieldWrapper {...this.props}>
                         <input 

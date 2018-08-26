@@ -29,7 +29,7 @@ class Canvas extends Component {
     setSize = (width, aspect) => {
       if(this.state.width === width) return
       this.setState({width: width, height: (width * aspect) >> 0})
-      this.displayRenderer.setSize(width, (width * aspect) >> 0)
+      this.sceneManager.setSize(width, (width * aspect) >> 0)
     }
 
     resizeCanvas = (height) => {
@@ -51,7 +51,7 @@ class Canvas extends Component {
   
     componentDidMount() {
       this.encodedFrames = 0;
-      this.displayRenderer = this.ThreeRenderer
+      this.sceneManager = this.ThreeRenderer
       window.requestAnimationFrame(this.renderScene)
 
       window.onkeyup = this.handleKeys
@@ -109,12 +109,14 @@ class Canvas extends Component {
             let now = performance.now()
             time = (now - this.lastTime) / 1000 + this.props.time
           
-            incrementTime(time)
+            
+            incrementTime(time);
+            //incrementTime(time)
             this.lastTime = now
           }
         }
         
-        this.displayRenderer.renderScene(time)
+        this.sceneManager.renderScene(time)
       }
       if(!this.state.encoding || !this.videoEncoder.isWorker)
           window.requestAnimationFrame(this.renderScene)
@@ -123,28 +125,28 @@ class Canvas extends Component {
     
     stop = () => {
       this.frameId = 0
-      this.displayRenderer.stop()
+      this.sceneManager.stop()
       setPlaying(false)
       setTime(0)
     }
 
     play = () => {
       this.lastTime = performance.now()
-      this.displayRenderer.play(this.props.time, !this.props.playing)
+      this.sceneManager.play(this.props.time, !this.props.playing)
       togglePlaying()
       
     }
 
     incrementFrame = () => {
-      var time = this.props.time + (1 / this.displayRenderer.fps)
-      this.displayRenderer.renderScene(time, true)
+      var time = this.props.time + (1 / this.sceneManager.fps)
+      this.sceneManager.renderScene(time, true)
       incrementTime(time)
     }
 
     decrementFrame = () => {
-      var time = this.props.time - (1 / this.displayRenderer.fps)
+      var time = this.props.time - (1 / this.sceneManager.fps)
       time = time > 0 ? time : 0
-      this.displayRenderer.renderScene(time, true)
+      this.sceneManager.renderScene(time, true)
       incrementTime(time)
     }
 
@@ -156,7 +158,7 @@ class Canvas extends Component {
       this.stop()
       setDisabled(true)
       this.setState({modalOpen: false})
-      this.displayRenderer.initEncoder(config, useAudioDuration)
+      this.sceneManager.initEncoder(config, useAudioDuration)
     }
 
     componentWillReceiveProps = (props) => {
@@ -174,6 +176,8 @@ class Canvas extends Component {
     render() {
       const {width, height, modalOpen} = this.state
       const { playing } = this.props
+
+      console.log("render")
       return (
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}

@@ -61,7 +61,7 @@ class Timeline extends PureComponent {
         }
 
         return(
-            <div style={style} onWheel={this.props.onWheel} onClick={this.onClick} className={classes.txt}>
+            <div style={style} onWheel={this.props.onWheel} onClick={this.onClick} className={classes.txt} draggable="false">
                 
                 <Playline zoomWidth={zoomWidth} unitSize={unitSize} left={left}></Playline>
                 

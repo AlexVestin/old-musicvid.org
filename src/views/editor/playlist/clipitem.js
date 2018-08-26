@@ -117,7 +117,8 @@ class ClipItem extends PureComponent {
                 </div>
 
                 {shouldDrawClip &&
-                    <div style={{height: panelHeight}}>
+                    <div style={{height: panelHeight}} draggable="false">
+                        
                         <Clip 
                             selectItem={item.type === "SOUND" ? selectAudio : selectItem}
                             edit={item.type === "SOUND" ? editAudio : editItem}

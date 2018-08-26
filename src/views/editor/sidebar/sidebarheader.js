@@ -9,6 +9,8 @@ import Button from 'material-ui/Button'
     handleChange = (event, value) => {
         
         setSidebarWindowIndex(value)
+
+        console.log("??")
     };
 
     shouldComponentUpdate(props) {
@@ -24,6 +26,8 @@ import Button from 'material-ui/Button'
                     <Tab idx={1} selectedIdx={idx} label="Audio"></Tab>
                     <Tab idx={2} selectedIdx={idx} label="Settings"></Tab>
                 </div>
+
+                <Button color="primary">Export Video</Button>
            </div>
         )
     }

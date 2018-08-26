@@ -15,15 +15,7 @@ export default class ButtonGroup extends PureComponent  {
                     <Button disabled={this.props.disabled} onClick={this.props.stop}>Stop</Button>      
                 </div>    
     
-                <div style={{minHeight: "30px", height:"30px", marginLeft: "auto"}} >
-                    <Button 
-                        onClick={this.props.encode} 
-                        variant="raised" 
-                        color="secondary"
-                                                    >
-                        Export Video
-                    </Button>
-                </div>
+                
         </div>
         )
     }

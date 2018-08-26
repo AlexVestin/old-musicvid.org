@@ -19,7 +19,7 @@ class ClipInfoBar extends PureComponent {
         allItems = [...allItems, ...this.props.audioItems].sort((a, b) => a.index - b.index )
 
         return (
-            <div style={{width: "100%"}} >
+            <div style={{width: "100%"}} draggable="false">
                 <div style={{position: "absolute", width: "20%", height: "100%", backgroundColor: "#434343"}}></div>
                 {items && allItems.map((item, index) => 
                       <ClipItem key={item.id} info={this.props.info} item={item} index={index}></ClipItem>

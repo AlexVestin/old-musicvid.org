@@ -26,9 +26,9 @@ class SimpleTabs extends React.PureComponent {
             this.tabValue = value
 
         return (
-            <div className={classes.wrapper} >
+            <div className={classes.wrapper} draggable="false">
                 <div className={classes.header} style={{minHeight: 12, height: 12, backgroundColor: "#434343"}}></div>
-                <div className={classes.scrollbarWrapper}>
+                <div className={classes.scrollbarWrapper} draggable="false">
                     <ScrollArea2 maxNrUnits={this.props.clipDuration} items={this.props.items}> </ScrollArea2>
                 </div>
             </div>
