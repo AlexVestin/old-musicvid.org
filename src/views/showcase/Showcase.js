@@ -9,8 +9,8 @@ export default class Showcase extends PureComponent {
     constructor(props) {
         super(props);
 
-        this.videoWidth = 480;
-        this.videoHeight = 320;
+        this.videoWidth = 1280;
+        this.videoHeight = 720;
     }
 
     render() {

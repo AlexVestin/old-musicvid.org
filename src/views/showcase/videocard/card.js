@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react'
 import classes from "./videocard.css"
+import Youtube from 'react-youtube'
 
 import Audiotrack from '@material-ui/icons/Audiotrack'
 export default class VideoCard extends PureComponent {
@@ -20,21 +21,22 @@ export default class VideoCard extends PureComponent {
     hover = () => this.setState({mouseEntered: !this.state.mouseEntered})
 
     render() {
-        const {title, artist, itemsUsed, song, videoLength, resolution, fps, bitrate, exportTime, fileSize, date, preset, posterUrl} = this.props.demo
+        const {title, artist, itemsUsed, song, videoLength, resolution, fps, bitrate, exportTime, fileSize, date, preset, posterUrl, videoId} = this.props.demo
 
         return(
             <div className={classes.cardWrapper}>
                 
                 <div style={{textAlign: "center", transform: "translateY(15px)"}}><b >{title}</b></div>
-                    <br/>
-
-                <video poster={posterUrl} controls={true} className={classes.video} width={this.width} height={this.height} muted="" data-reactid=".0.1.0.0">
-                    <source type="video/mp4" data-reactid=".0.1.0.0.0" src={this.props.demo.url}/>>
-                </video>
+                <br/>
+                
+                <Youtube 
+                    videoId={videoId}
+                    opts={{width: this.props.width, height: this.props.height}}
+                ></Youtube>
+                
 
                 <div className={classes.cardInfo}>
                     <div className={classes.title}>
-                
                         <Audiotrack style={classes.icon}></Audiotrack> {artist} - {song}                    
                     </div>
                     
@@ -62,3 +64,10 @@ export default class VideoCard extends PureComponent {
         )
     }
 }
+
+
+/*
+<video poster={posterUrl} controls={true} className={classes.video} width={this.width} height={this.height} muted="" data-reactid=".0.1.0.0">
+                    <source type="video/mp4" data-reactid=".0.1.0.0.0" src={this.props.demo.url}/>>
+                </video>
+                */
