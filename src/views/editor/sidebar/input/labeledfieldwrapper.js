@@ -9,9 +9,30 @@ const Title = (props) => {
     const autoIconWidth = 18
     const iconMarginTop = 2
 
+    const showTooltip = (props.min !== undefined || props.max !== undefined || props.tooltip !== undefined);
+    const toolTip = showTooltip ? 
+        (
+            <div>
+                {props.tooltip ? props.tooltip  : ""}
+                {props.tooltip && <br/>}
+                {props.min !== undefined && 
+                    <React.Fragment>{"  min: " + props.min}</React.Fragment>
+                }
+                {props.max !== undefined && 
+                    <React.Fragment>{"  max: " + props.max}</React.Fragment>
+                }
+            </div>
+        ) 
+    :
+        "" 
+
     return (
         <div style={{display: "flex", flexDirection: "row"}}>  
-            <Tooltip id="tooltip-top-start" title={props.tooltip ? props.tooltip : ""} placement="right-end">
+            <Tooltip 
+                id="tooltip-top-start" 
+                title={toolTip} 
+                placement="right">
+                
                 <div style={{width: autoIconWidth, height: autoIconWidth}}>
                     <Help style={{ marginTop: iconMarginTop, width: autoIconWidth, height: autoIconWidth, color: props.tooltip ? "black" : "gray"}}></Help>                  
                 </div>
@@ -41,11 +62,11 @@ const AutomationIcon = (props) => {
 export default class LabeledFieldWrapper extends PureComponent {
 
     render() {
-        let { keyVal, disabled, tooltip, type, disableAutomations } = this.props
+        let { keyVal, disabled, tooltip, type, disableAutomations, min, max } = this.props
 
         return(
             <div key={keyVal} style={{width: "95%", display: "flex", flexDirection: "row", justifyContent:"space-between", marginBottom: 3, marginTop: 3}}>
-                <Title tooltip={tooltip} keyVal={keyVal}></Title>
+                <Title tooltip={tooltip} min={min} max={max} keyVal={keyVal}></Title>
                 
                 <div style={{display: "flex", flexDirection: "row"}}>
                     {type === "Number" && disabled !== true && !disableAutomations &&

@@ -50,8 +50,13 @@ export default class BaseItem {
         const c = {...config}
         c.defaultConfig.forEach(group => {
             Object.keys(group.items).forEach(key => {
-                if( group.items[key].type === "Number") {
+                const { type, max, min } = group.items[key]
+
+                if( type === "Number") {
                     c[key] = this.checkNum(c[key])
+
+                    if(c[key] > max)c[key] = max
+                    if(c[key] < min)c[key] = min
                 }
             })
         })

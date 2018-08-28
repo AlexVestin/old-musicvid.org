@@ -11,7 +11,7 @@ export default class AudioreactiveItem extends MeshItem {
             title: "Amplitude and size", 
             items: {
                 amplitude: { value: 9, type: "Number", tooltip: "Amplitude of the spectrum values" },
-                spectrumSize: { value: 32, type: "Number", tooltip: "number of bars in the spectrum" },
+                spectrumSize: { max: 1024, step: 1, min: 1, value: 32, type: "Number", tooltip: "number of bars in the spectrum" },
                 spectrumStart: { value: 0, type: "Number", tooltip: "the first bin rendered in the spectrum" },
                 spectrumEnd: { value: 1024, type: "Number", tooltip: "the last bin rendered in the spectrum" },
                 spectrumScale: { value: 2.5, type: "Number", tooltip: "the logarithmic scale to adjust spectrum values to" },

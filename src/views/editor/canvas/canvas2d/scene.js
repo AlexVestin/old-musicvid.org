@@ -37,7 +37,7 @@ export default class SceneContainer {
                     clearAlpha: {type: "Number", value: 1},
                     shouldClear: {type: "Boolean", value: true},
                     zIndex: {type: "Number", value: 1},
-                    pixelRatio: {type: "Number", value: 720},
+                    pixelRatio: {type: "Number", value: 720, min: 1, max: 2048},
                     scalePixelRatioOnExport: {type: "Boolean", value: true}
                 }
             }],

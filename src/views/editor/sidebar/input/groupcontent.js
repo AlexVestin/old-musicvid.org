@@ -19,7 +19,17 @@ class GroupContent extends PureComponent {
             <div style={inputContainer}>
                 {Object.keys(group.items).map((key, index) =>{
                     const config = group.items[key]
-                    const itemProps = { tooltip: config.tooltip, keyVal: key, type: config.type, value: item[key], disabled: config.disabled, options: config.options } 
+                    const itemProps = { 
+                        tooltip: config.tooltip, 
+                        keyVal: key, 
+                        type: config.type, 
+                        value: item[key], 
+                        disabled: config.disabled, 
+                        options: config.options, 
+                        min: config.min, 
+                        max:config.max, 
+                        step: config.step 
+                    } 
  
                     return(
                             <CustomInput name={item.type} {...props} {...itemProps}></CustomInput>

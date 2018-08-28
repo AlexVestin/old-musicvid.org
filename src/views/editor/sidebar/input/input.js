@@ -11,7 +11,6 @@ import classes from "./input.css"
 
 class ConfigList extends Component {
     handleChange = input => event =>  {
-        
         var value = event.target.value
         if(input.type === "Boolean")value = !input.prev
         this.props.edit({key: input.key, value: value })
@@ -24,7 +23,7 @@ class ConfigList extends Component {
             <div className={classes.root}>
                 {defaultConfig.map(group =>     
                     <GroupContainer label={group.title} key={group.title} expanded={group.expanded}>
-                            <GroupContent item={this.props.item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
+                        <GroupContent item={this.props.item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
                     </GroupContainer>
                 )}
             </div> 

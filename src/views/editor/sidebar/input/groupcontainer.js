@@ -1,18 +1,9 @@
 import React, { PureComponent } from 'react'
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp'
-
 import AddBox from '@material-ui/icons/AddBox'
-
 import classes from './groupcontainer.css'
 
-const groupContainerStyle = {
-    width: "100%",       
-    overflow: "hidden",
-    borderBottom: "1px solid #b2b2b2",
-    transition: "height 1s ease-in-out",
-    minHeight: 0,
-}
 
 class GroupContainer extends PureComponent {
     constructor(props) {
@@ -33,7 +24,7 @@ class GroupContainer extends PureComponent {
         const addAction = this.props.addAction ?  this.addAction : undefined
 
         return(
-            <div key={this.props.label} style={groupContainerStyle} className={classes.container}>
+            <div key={this.props.label} className={classes.container}>
                 <div>
                     <GroupHeader addAction={addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
                     {(this.state.expanded  ) && this.props.children}
@@ -45,27 +36,27 @@ class GroupContainer extends PureComponent {
 
 
 const GroupHeader = (props) => {
-    const iconSize = 20
+
     return(
-        <div style={{backgroundColor: "#DDD", display: "flex", flexDirection: "row", justifyContent:"space-between"}} onClick={props.toggleExpanded}>
-        <p style={{ height: 20, margin: 5, fontSize: 16}}>{props.label} </p>
-        <div style={{display: "flex", flexDirection: "row"}}>
-            { props.addAction && 
-                <div style={{minWidth: iconSize, minHeight: iconSize, marginTop: 3}}>
-                    <AddBox onClick={props.addAction} className={classes.icon}></AddBox>
-                </div>
-            }
-            { props.expanded ? 
-                <div className={classes.icon}>
-                    <KeyboardArrowUp></KeyboardArrowUp>
-                </div>
-            :
-                <div  className={classes.icon} >
-                    <KeyboardArrowDown ></KeyboardArrowDown>
-                </div>
-            }
+        <div className={classes.headerWrapper} onClick={props.toggleExpanded}>
+            <p style={{ height: 20, margin: 5, fontSize: 16}}>{props.label} </p>
+            <div style={{display: "flex", flexDirection: "row"}}>
+                { props.addAction && 
+                    <div className={classes.iconWrapper}>
+                        <AddBox onClick={props.addAction} className={classes.icon} style={{width: 17, height: 17}}></AddBox>
+                    </div>
+                }
+                { props.expanded ? 
+                    <div className={classes.iconWrapper}>
+                        <KeyboardArrowUp className={classes.icon}></KeyboardArrowUp>
+                    </div>
+                :
+                    <div className={classes.iconWrapper}>
+                        <KeyboardArrowDown className={classes.icon} ></KeyboardArrowDown>
+                    </div>
+                }
+            </div>
         </div>
-    </div>
     )
 }
 

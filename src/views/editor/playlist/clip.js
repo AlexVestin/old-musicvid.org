@@ -211,8 +211,7 @@ export default class Clip extends PureComponent {
                         borderWidth: 1,
                         borderColor: '#555555',
                     }}
-                    draggable="false"
-                    
+                    draggable="false"                    
                     >
                     
     

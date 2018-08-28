@@ -3,10 +3,10 @@ import React, { PureComponent } from 'react'
 import LabeledFieldWrapper from './labeledfieldwrapper'
 
 const inputStyles = {
-    Number: {marginRight: 10, width: 40, minWidth: 40, marginLeft: 5},
+    Number: {marginRight: 10, width: 50, minWidth: 50, marginLeft: 5},
     String: { minWidth: "25%", marginRight: 10, marginLeft: 5},
     Link: { width: 50, marginLeft: 10 },
-    Boolean: {marginLeft: 10, height: 12, width: 12, marginTop: 5, marginRight: 20 - 6},
+    Boolean: {marginLeft: 10, height: 12, width: 12, marginTop: 5, marginRight: 14},
     List : {marginRight: 10}
 }
 
@@ -15,12 +15,29 @@ export default class CustomInput extends PureComponent {
 
     render() {
 
-        const {  keyVal, type, value, disabled, name, options } = this.props
+        const {  keyVal, type, value, disabled, name, options, min, max, step } = this.props
         const key = keyVal
         return (
     
             <div key={key} style={{width: "100%", borderBottom: "1px solid #e0e0e0"}}>
-                {(type === "Number" || type ==="String") && 
+                {type === "Number" && 
+                    <LabeledFieldWrapper {...this.props}>
+                        <input 
+                            onKeyUp={(event) => event.stopPropagation()} 
+                            onChange={this.props.handleChange({type, key, min, max})}
+                            value={value} 
+                            disabled={disabled === true}   
+                            style={inputStyles[type]}
+                            type={"number"}
+                            min={min || Number.MIN_VALUE}
+                            max={max || Number.MAX_VALUE}
+                            step={step || 1}
+                        >
+                        </input>
+                    </LabeledFieldWrapper>
+                }
+
+                {type === "String" &&
                     <LabeledFieldWrapper {...this.props}>
                         <input 
                             onKeyUp={(event) => event.stopPropagation()} 
@@ -28,7 +45,7 @@ export default class CustomInput extends PureComponent {
                             value={value} 
                             disabled={disabled === true}   
                             style={inputStyles[type]}
-                            type={type === "Number" ? "number" : "text"}
+                            type={"text"}
                         >
                         </input>
                     </LabeledFieldWrapper>

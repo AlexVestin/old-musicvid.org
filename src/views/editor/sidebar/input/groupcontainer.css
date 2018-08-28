@@ -5,19 +5,39 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+    width: 100%;    
+    overflow: hidden;
+    border-bottom: 1px solid #b2b2b2;
+    
 }
 
-.icon {
+.iconWrapper {
     display: flex;
     align-items: center;
     cursor: pointer;
-    min-width: 20px;
-    min-height: 20px;
+    min-width: 15px;
+    min-height: 15px;
+
     margin-top: 3;
     color: black;
+}
+
+.icon {
+
 }
 
 .icon:hover {
     color: #444;
 }
 
+.headerWrapper {
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #DDD;
+}
+
+.wrapper {
+}
