@@ -16,6 +16,7 @@ class ProjectSettings extends PureComponent {
             audioBufferSize: 0.1,
             postProcessingEnabled: false,
             resolution: "680x480",
+            masterVolume: 100,
             defaultConfig: [{
                 title: "Project settings",
                 expanded: true,
@@ -23,6 +24,7 @@ class ProjectSettings extends PureComponent {
                     fps: {type: "Number", value: 60, disabled: true},
                     clipDuration: {type: "Number", value: 180},
                     postProcessingEnabled: {type: "Boolean", value: false},
+                    masterVolume: {type: "Number", min: 0, max: 100, value: 100}
                 }
             }]
         }
@@ -55,7 +57,8 @@ const mapStateToProps = state => {
         audioBufferSize: state.globals.audioBufferSize,
         postProcessingEnabled: state.globals.postProcessingEnabled,
         resolution: state.globals.resolution,
-        expanded: true
+        expanded: true,
+        masterVolume: state.globals.masterVolume
     }
 }
 

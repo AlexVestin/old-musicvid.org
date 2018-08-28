@@ -97,7 +97,9 @@ class Canvas extends Component {
     }
 
     shouldComponentUpdate = (props, state) => {
-      return state.width !== this.state.width || state.height !== this.state.height || state.modalOpen !== this.state.modalOpen
+      let shouldUpdate = state.width !== this.state.width || state.height !== this.state.height
+      shouldUpdate = shouldUpdate || state.modalOpen !== this.state.modalOpen || props.playing !== this.props.playing
+      return  shouldUpdate
     }
   
     renderScene = () => {
@@ -134,7 +136,6 @@ class Canvas extends Component {
       this.lastTime = performance.now()
       this.sceneManager.play(this.props.time, !this.props.playing)
       togglePlaying()
-      
     }
 
     incrementFrame = () => {

@@ -27,7 +27,7 @@
    margin-top: 5px;
 }
 
-.header .logo h1  {
+.header .logo .logolink  {
     font-family: "proxima-nova", sans-serif;
     font-weight: 700;
     height: 100%;

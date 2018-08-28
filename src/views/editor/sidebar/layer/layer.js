@@ -2,14 +2,17 @@ import React from 'react';
 import withHeader from '../withheader'
 
 import { connect } from 'react-redux'
-import { setSidebarWindowIndex,  editCamera, editControls, editLayer } from '@redux/actions/items'
+import { setSidebarWindowIndex,  editCamera, editControls, editLayer, dispatchAction } from '@redux/actions/items'
 import GroupContainer from '../input/groupcontainer'
 import ConfigList from '../input/input'
 import ItemList from '../item/items'
-
+import NameInput from './nameinput'
+import AlertDialog from '../removemodal'
 
 
 class Layer extends React.Component {
+
+    state = {modalOpen: false};
 
     back = () => {
         setSidebarWindowIndex(this.props.idxs.LAYERS)
@@ -27,15 +30,24 @@ class Layer extends React.Component {
             setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS2D)
         }
     }
+
+    closeModal = () => this.setState({modalOpen: false});
+
+    removeItem = () => {
+        dispatchAction({type: "REMOVE_LAYER", payload: this.props.layer})
+    }
+
+    removeMe = () => {
+        this.setState({modalOpen: true});
+    }
     
     render() {
         return (
             <div style={{height: "100%", overflowY: "scroll"}}>
                 
-                <div style= {{margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24, overflow: "hidden"}}>
-                    <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
-                    <input style={{height: 18, padding:0, marginTop: 1, marginRight: 10}} onChange={this.editName} value={this.props.layer.name} type="text"></input>
-                </div>
+               <AlertDialog open={this.state.modalOpen} yesResponse={this.removeItem} handleClose={this.closeModal}></AlertDialog>
+               <NameInput onDelete={this.removeMe} value={this.props.layer.name} edit={this.editName}></NameInput>
+               
                 <GroupContainer label={"Items"} addAction={this.addAction}>
                     <ItemList idxs={this.props.idxs}></ItemList>
                 </GroupContainer>

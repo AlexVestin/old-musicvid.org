@@ -4,7 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import List, { ListItem,  ListItemText } from 'material-ui/List';
 import { setSidebarWindowIndex, createItem } from '@redux/actions/items'
 import {connect} from 'react-redux'
-
+import withHeader from '../withheader'
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
 import AppBar from 'material-ui/AppBar'
 
@@ -37,15 +37,6 @@ const items2D = [
   "Time Text"
 ]
 
-const styles = theme => ({
-  root: {
-    height: "100%", // height of the header/appbar
-    width: '100%',
-    overflowY:  "scroll",
-    backgroundColor: theme.palette.background.paper,
-  },
-});
-
 class AudioReactiveTypeList extends React.Component {  
   setWindow = () => {
     this.props.setWindow(4)
@@ -60,35 +51,19 @@ class AudioReactiveTypeList extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
     const items = this.props.layer.isThreeLayer ? items3D : items2D
     return (
-
-      <div className={classes.root}>
-       <AppBar position="static" style={{display: "flex" , flexDirection: "row", backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0, textAlign: "center"}}>
-            <div style={{minWidth: 20, minHeight: 20, marginTop: 3}}>
-                <KeyboardArrowLeft onClick={this.back} ></KeyboardArrowLeft>
-            </div>
-            <div style={{marginTop: 3, height: 12}}>{this.props.layer.name} </div>
-        </AppBar>
-
-
         <List>
           {items.map(value => (
-            <ListItem key={value} dense button className={classes.listItem} onClick={() => this.add(value)}>
+            <ListItem key={value} dense button onClick={() => this.add(value)}>
               <ListItemText primary={value} />
             </ListItem>
           ))}
         </List>
-
-      </div>
     );
   }
 }
 
-AudioReactiveTypeList.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = state => {
   return {
@@ -96,4 +71,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps)(withStyles(styles)(AudioReactiveTypeList) )
+export default connect(mapStateToProps)(withHeader(AudioReactiveTypeList) )

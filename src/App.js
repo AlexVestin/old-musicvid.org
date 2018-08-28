@@ -16,9 +16,9 @@ class App extends Component {
         <div className={classes.wrapper}>
           <Header></Header>
           <Switch>
-            <Route path="/landing" component={Landing}></Route>
+            <Route path="/editor" component={Editor}></Route>
             <Route path="/showcase" component={Showcase}></Route>
-            <Route path="/" component={Editor}></Route>
+            <Route path="/" component={Landing}></Route>
             
           </Switch>
           <footer className={classes.footer}></footer>

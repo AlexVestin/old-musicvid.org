@@ -68,7 +68,6 @@ export default class Bars extends AudioReactiveItem {
                 e.material.color.setHex("0x" + config.color)
             })
             
-
             this.move(config.x, config.y, config.z, config.spacing) 
         }
         this.config = config

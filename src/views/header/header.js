@@ -13,7 +13,7 @@ class Header extends PureComponent {
             <div className={classes.header}>
                 <div className={classes.user_group}>
                     <div className={classes.logo}>
-                        <h1>musicvid.org</h1>
+                        <Link to="/" style={{textDecoration: "none", color: "#f67600"}}><h1 className={classes.logolink} to={"/"}>musicvid.org</h1></Link>
                     </div>
                     
             

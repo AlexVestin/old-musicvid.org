@@ -2,7 +2,7 @@
 
 import React, {PureComponent} from 'react'
 import ConfigList from './input/input'
-import { removeSound } from '@redux/actions/items'
+import { removeSound, editAudio } from '@redux/actions/items'
 import Delete  from '@material-ui/icons/Delete'
 
 export default class AudioItem extends PureComponent {
@@ -25,7 +25,7 @@ export default class AudioItem extends PureComponent {
                   </div>
             
                 <ConfigList 
-                    handleChange={() => {}} 
+                    edit={editAudio} 
                     defaultConfig={item.defaultConfig} 
                     item={item} 
                     onDelete={this.removeSound} 

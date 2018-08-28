@@ -3,8 +3,7 @@ import ConfigList from '../input/input'
 import { connect } from 'react-redux'
 import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '@redux/actions/items'
 import withHeader from '../withheader'
-import Delete from '@material-ui/icons/Delete'
-
+import NameInput from '../layer/nameinput'
 
 class Item extends React.PureComponent {
     back = () => {
@@ -36,16 +35,7 @@ class Item extends React.PureComponent {
         return (
             <div style={{ height: "calc(100% - 30px)", overflowX: "hidden"}}>
                 <div style={{flexGrow: 1, height: "100%", overflowY: "scroll", overflowX: "hidden"}}>
-                    <div style= {{overflow: "hidden", margin: 5, marginTop: 10, display: "flex", justifyContent:"space-between", flexDirection:"row", width: "100%", height: 24}}>
-                        <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
-                    
-                        <div style={{display: "flex", flexDirection: "row"}}>
-                            <input style={{height: 18, padding:0, marginTop: 1, marginRight: 30}} onChange={this.editName} value={item.name} type="text"></input>
-                            <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
-                                <Delete onClick={this.onDelete}  style={{cursor: "pointer", marginRight: 10}}></Delete>
-                            </div>
-                        </div>
-                    </div>
+                <NameInput value={item.name} edit={this.editName} onDelete={this.removeItem}></NameInput>
                     
                 <ConfigList 
                     edit={editItem} 

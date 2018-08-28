@@ -1,4 +1,4 @@
-import BaseItem from '../../itemtemplates/item'
+import BaseItem from './itemtemplates/item'
 import { addSound } from '@redux/actions/items'
 import { setDisabled } from '@redux/actions/globals'
 
@@ -10,9 +10,11 @@ export default class Sound extends BaseItem {
 
         const audioGroup = {
             title: "Audio Info",
+
             items: {
                 sampleRate: {value: 0, type: "Number", tooltip: "", disabled: true},
                 channels: {value: 0, type: "Number",  tooltip: "", disabled: true},
+                volume: {value: 100, type: "Number", tooltip: "Volume", min: 0, max: 100}
             }
         }
         
@@ -38,9 +40,6 @@ export default class Sound extends BaseItem {
         this.offset = 0
     }
 
-    getEncodeFrame = (time, fps) => {
-
-    }
 
     setTime = (time) => {
         this.offset = Math.floor( (time - this.config.start + this.config.offsetLeft) * this.sampleRate)
@@ -61,7 +60,7 @@ export default class Sound extends BaseItem {
 
             buffer.length = length
             this.offset += length
-            return { buffer, sampleRate: this.sampleRate, channels: this.channels }
+            return { buffer, sampleRate: this.sampleRate, channels: this.channels, volume: this.config.volume }
         }else{
             this.offset += length
             return

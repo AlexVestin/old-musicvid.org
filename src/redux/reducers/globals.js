@@ -9,6 +9,7 @@ export default function playbackReducer(state = {
     fftSettings: {},
     audioBufferSize: 0.1,
     postProcessingEnabled: false,
+    masterVolume: 100,
 
     }, action){
         switch(action.type){
@@ -30,6 +31,7 @@ export default function playbackReducer(state = {
             case "INCREMENT_FRAME":
                 return {...state, frameId: state.frameId + 1}
             case "TOGGLE_PLAYING":
+                console.log("toggleeee", state.playing)
                 return {...state, playing: !state.playing}
             case "SET_PLAYING":
                 return {...state, playing: action.payload}

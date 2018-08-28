@@ -1,0 +1,16 @@
+
+
+.buttonsWrapper {
+    margin: auto;
+    align-items: center;
+}
+
+.icon {
+    color:#333;
+    width: 30px !important;
+    height: 30px !important;
+}
+
+.icon:hover {
+    color: #555;
+}

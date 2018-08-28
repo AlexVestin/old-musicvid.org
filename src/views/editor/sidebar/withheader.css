@@ -3,8 +3,30 @@
 .icon {
     cursor: pointer;
 }
+
+.container {
+    width: 100%;
+    height: 100%;
+}
+
+
+.bar {
+    background-color: #676767;
+    height: 30px;
+    min-height: 30px;
+    width: 100%;
+    margin: 0;
+    color: #fff;
+}
+
+.textWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+}
+
 .txt {
-    margin-top: 3px;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;

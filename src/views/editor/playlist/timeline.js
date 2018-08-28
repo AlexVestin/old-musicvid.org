@@ -37,6 +37,22 @@ class Timeline extends PureComponent {
         setTime(t)
     }
 
+    formatTime = (seconds) => {
+        let m = String(Math.floor((seconds % 3600) / 60));
+        let s = String(seconds % 60).split(".")[0];
+        const dec = String(seconds).split(".")[1];
+
+        if(m.length === 1)m = "0" + m;
+        if(s.length === 1)s = "0" + s;
+
+        let formatted = m + ":" + s;
+        if(dec) {
+            formatted += "." + dec.substring(0, 2);
+        }
+
+        return formatted; 
+      }
+
     convertTime = (sec) => {
         var min = Math.floor(sec/60);
         (min >= 1) ? sec = sec - (min*60) : min = '00';
@@ -77,7 +93,7 @@ class Timeline extends PureComponent {
                                 transform: "translateX(-50%)",
                                 overflow: "hidden"
                                 }}>
-                            {this.convertTime(e.val)}
+                            {this.formatTime(e.val)}
                         </div>
                         <div style={{backgroundColor:"white", width:1, height: 5, top:15, position:"absolute", zIndex: 10000, pointerEvents: "none", left: e.x}}></div>
                     </div>

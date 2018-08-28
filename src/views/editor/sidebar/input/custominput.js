@@ -29,8 +29,8 @@ export default class CustomInput extends PureComponent {
                             disabled={disabled === true}   
                             style={inputStyles[type]}
                             type={"number"}
-                            min={min || Number.MIN_VALUE}
-                            max={max || Number.MAX_VALUE}
+                            min={(min !== undefined) ? min : Number.NEGATIVE_INFINITY}
+                            max={(max !== undefined) ? max : Number.POSITIVE_INFINITY}
                             step={step || 1}
                         >
                         </input>

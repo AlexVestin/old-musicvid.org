@@ -32,7 +32,7 @@ class GroupContent extends PureComponent {
                     } 
  
                     return(
-                            <CustomInput name={item.type} {...props} {...itemProps}></CustomInput>
+                            <CustomInput key={key} name={item.type} {...props} {...itemProps}></CustomInput>
                         )
                     }
                 )}

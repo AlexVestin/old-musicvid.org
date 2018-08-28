@@ -3,11 +3,17 @@ import React, { PureComponent } from 'react'
 import BrightnessAuto from '@material-ui/icons/BrightnessAuto'
 import Help from '@material-ui/icons/Help'
 import Tooltip from 'material-ui/Tooltip';
+import classes from './labeledfieldwrapper.css'
+
+const iconStyle = {
+    width: 18,
+    height: 18,
+    marginTop: 2
+}
 
 
 const Title = (props) => {
     const autoIconWidth = 18
-    const iconMarginTop = 2
 
     const showTooltip = (props.min !== undefined || props.max !== undefined || props.tooltip !== undefined);
     const toolTip = showTooltip ? 
@@ -31,10 +37,13 @@ const Title = (props) => {
             <Tooltip 
                 id="tooltip-top-start" 
                 title={toolTip} 
-                placement="right">
+                placement="bottom">
                 
                 <div style={{width: autoIconWidth, height: autoIconWidth}}>
-                    <Help style={{ marginTop: iconMarginTop, width: autoIconWidth, height: autoIconWidth, color: props.tooltip ? "black" : "gray"}}></Help>                  
+                    <Help 
+                        className={classes.helpIcon} 
+                        style={{...iconStyle, color: showTooltip ? "black" : "gray"}}>
+                    </Help>                  
                 </div>
             </Tooltip>
             <div style={{ marginTop: 4, marginLeft: 5, fontSize: 14 }}>{props.keyVal}</div>  

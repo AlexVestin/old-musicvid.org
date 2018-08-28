@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux'
-import Button from 'material-ui/Button'
 
 import Audio from './audio'
 import LayerList from './layer/layers'
@@ -46,21 +45,12 @@ class SidebarContainer extends React.Component {
         NEWEFFECT: 10,
         ADDRESOURCEOPTIONS2D: 11,
     }
-    
-    state = {
-        tabValue: 0,
-        contentValue: 0,
-    };
 
     render() {
         const { classes } = this.props;
         const value = this.props.sideBarWindowIndex
-        
-        if(value <= 2)
-            this.tabValue = value
-
         const INDEXES = SidebarContainer.INDEXES
- 
+
         return (
             <div className={classes.root}>
                 {value === INDEXES.PROJECTSETTINGS && <ProjectSettings idxs={INDEXES} idx={2}></ProjectSettings>}

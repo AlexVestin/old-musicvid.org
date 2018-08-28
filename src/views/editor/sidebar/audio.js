@@ -8,8 +8,6 @@ import withHeader from './withheader'
 import AudioItem from './audioitem'
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 
-const styles = theme => ({})
-
 class Audio extends React.Component {
 
     componentDidMount() {
@@ -49,9 +47,7 @@ class Audio extends React.Component {
                         <ListItem disableRipple key={item.name} dense button onClick={() => this.onClick(i)}>
                             <ListItemText primary={item.name} />
                             <ListItemSecondaryAction>
-        
-                                    <Delete style={{cursor: "pointer"}}color="secondary" onClick={() => removeSound(item.id)}></Delete>
-
+                                <Delete style={{cursor: "pointer"}}color="secondary" onClick={() => removeSound(item.id)}></Delete>
                             </ListItemSecondaryAction>
                         </ListItem>
                         ))}

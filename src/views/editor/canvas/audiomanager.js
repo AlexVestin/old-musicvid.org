@@ -25,6 +25,7 @@ export default class AudioManager {
         this.time = 0
 
         this.encoding = false
+        this.masterVolume = 100
 
         this.metronome = new Worker("audioworker.js")
         this.metronome.onmessage = (e) => {
@@ -71,8 +72,19 @@ export default class AudioManager {
                         
                         const bufferSource = that.offlineCtx.createBufferSource();
                         bufferSource.buffer = buf;
-                        bufferSource.connect(that.offlineCtx.destination)
+                        if(frame.volume !== 100 || that.masterVolume !== 100) {
+                            const gainNode = that.offlineCtx.createGain();
+                            gainNode.gain.value = ((frame.volume) / 100) * that.masterVolume / 100;
+
+                            console.log(gainNode.gain.value)
+                            bufferSource.connect(gainNode);
+                            gainNode.connect(that.offlineCtx.destination)
+                        }else {
+                            bufferSource.connect(that.offlineCtx.destination)
+                            
+                        }
                         buffersToSchedule.push(bufferSource)
+   
                     }
                 })   
             }
@@ -193,8 +205,11 @@ export default class AudioManager {
 
     editSound = (soundConfig) => {
         const sound = this.sounds.find(e => e.config.id === soundConfig.id)
+        
+        if(sound.config.start !== soundConfig.start || sound.config.offsetLeft !== soundConfig.offsetLeft)
+            sound.setTime(this.time + this.sampleWindowSize * this.frameIdx )
+        
         sound.config = soundConfig
-        sound.setTime(this.time + this.sampleWindowSize * this.frameIdx )
     }
 
     setTime = (time) => {

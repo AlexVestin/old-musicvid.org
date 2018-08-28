@@ -1,15 +1,6 @@
 import React from 'react'
 import { setSidebarWindowIndex } from '@redux/actions/items' 
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-
-import AppBar from 'material-ui/AppBar'
 import classes from './withheader.css'
-
-const  root = {
-    height: "100%", // height of the header/appbar
-    width: '100%',
-}
-
 
 export default function withHeader(InputComponent) {
     return class extends React.Component {
@@ -22,33 +13,31 @@ export default function withHeader(InputComponent) {
                 setSidebarWindowIndex(this.props.idxs.LAYER)
         } 
 
+        layersClicked = () => {
+            if(this.props.idx !== this.props.idxs.LAYERS)
+                setSidebarWindowIndex(this.props.idxs.LAYERS)
+        }
+
         onDelete = () => {
             console.log("delete", this.props)
         }
 
         render() { 
-
-            const style = { backgroundColor: "#676767", height: 30, minHeight: 30, width: "100%", margin: 0}
             return(
-            <div style={root}>
-                <AppBar position="static" style={style}>
-                    {this.props.idx > 2 &&
-                        <div style={{display: "flex", flexDirection: "row", marginTop: 3, justifyContent: "space-between"}}>
-                            <div style={{display: "flex", flexDirection: "row"}}>
-                                
-                                <div style={{ minWidth: 20, minHeight: 20}}>
-                                    <KeyboardArrowLeft onClick={this.back} className={classes.icon} ></KeyboardArrowLeft>
-                                </div>
-                                
-                                {this.props.layerName && <div onClick={this.layerClicked} className={classes.txt}>{this.props.layerName}</div>}
-                                {this.props.itemName && <div style={{marginLeft: 10}}>{" - "}</div>}
-                                {this.props.itemName && <div style={{marginLeft: 10}} className={classes.txt}>{this.props.itemName}</div>}
-                                
-                            </div>
-
+            <div className={classes.container}>
+                <div className={classes.bar}>
+                    {(this.props.idx > 2 || this.props.idx === 0) &&
+                        <div className={classes.textWrapper} >
+                            
+                            <div onClick={this.layersClicked} className={classes.txt} style={{marginLeft: 10}}>Layers</div>
+                            {this.props.layerName && <div style={{marginLeft: 10,marginRight: 10}}>{"|"}</div>}
+                            {this.props.layerName && <div onClick={this.layerClicked} className={classes.txt}>{this.props.layerName}</div>}
+                            {this.props.itemName && <div style={{marginLeft: 10, marginRight: 10}}>{"|"}</div>}
+                            {this.props.itemName && <div className={classes.txt}>{this.props.itemName}</div>}
+                            
                         </div>
                     }
-                </AppBar>
+                </div>
 
                 <InputComponent {...this.props}></InputComponent>
             </div>

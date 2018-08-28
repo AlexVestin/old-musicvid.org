@@ -27,18 +27,18 @@ export default class SceneContainer {
             name: name,
             clearColor: "000000",
             clearAlpha: 1,
-            shouldClear: true,
+            shouldUseClearRect: true,
             zIndex: 1,
             pixelRatio: 720,
             defaultConfig: [ {
                 title: "Settings", 
                 items: {
-                    clearColor: {type: "String", value: "000000"},
-                    clearAlpha: {type: "Number", value: 1},
-                    shouldClear: {type: "Boolean", value: true},
-                    zIndex: {type: "Number", value: 1},
-                    pixelRatio: {type: "Number", value: 720, min: 1, max: 2048},
-                    scalePixelRatioOnExport: {type: "Boolean", value: true}
+                    clearColor: {type: "String", value: "000000", tooltip: "Color of the background when clearing, not used when shouldUseClearRect is checked"},
+                    clearAlpha: {type: "Number", value: 1, tooltip: "Alpha of the background when clearing, not used when shouldUseClearRect is checked"},
+                    shouldUseClearRect: {type: "Boolean", value: true, tooltip: "Clears the entire canvas, more performant than using a clear color"},
+                    zIndex: {type: "Number", value: 1, tooltip: "Position of this layer relative to other layers"},
+                    pixelRatio: {type: "Number", value: 720, min: 1, max: 2048, tooltip: "resolution of the canvas the items are drawn to, uses an automatic aspect ratio"},
+                    scalePixelRatioOnExport: {type: "Boolean", value: true, tooltip: "Scales the pixelRatio on export in case it doesn't match the output value, this will make the video look different when exporting"}
                 }
             }],
             items: [],
@@ -94,6 +94,7 @@ export default class SceneContainer {
         this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
         if(key === "pixelRatio") this.setSize(this.width, this.height)
+        if(key === "shouldUseClearRect") this.shouldUseClearRect = value
 
     }
 
@@ -260,7 +261,16 @@ export default class SceneContainer {
     animate = (time, frequencyBins) => {
     
         //this.textureCtx.clearRect(0,0,this.textureCanvas.width, this.textureCanvas.height)
-        this.textureCtx.clearRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
+        if(this.shouldUseClearRect) {
+            this.textureCtx.clearRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
+        }else {
+            this.textureCtx.save();
+            this.textureCtx.fillStyle = this.config.clearColor;
+            this.textureCtx.globalAlpha = this.config.clearAlpha;
+            this.textureCtx.fillRect(0,0, this.textureCanvas.width, this.textureCanvas.height)
+            this.textureCtx.restore();
+        }
+        
         
         this.addOrRemove(this.toRender, this.rendering, time)
         this.rendering = this.rendering.sort((a, b) => a.config.zIndex - b.config.zIndex)

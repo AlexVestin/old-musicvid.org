@@ -2,7 +2,7 @@ import SceneContainer3D from './three/scene'
 import SceneContainer2D from './canvas2d/scene'
 
 import React, { Component } from 'react';
-import Sound from "./three/items/sound"
+import Sound from "./sound"
 import store from '@redux/store'
 import { OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
@@ -193,13 +193,9 @@ class ThreeCanvas extends Component {
             case "EDIT_PROJECT_SETTINGS":
                 if(payload.key === "postProcessingEnabled") {
                     this.postProcessingEnabled = payload.value
-                }else if(payload.key === "resolution") {
-                    const [width, height] = payload.value.split("x")
-                    this.scenes.forEach(scene => {
-                        if(!scene.config.isThreeLayer)
-                            scene.setSize(Number(width), Number(height))
-                    })
-                }   
+                }else if(payload.key === "masterVolume") {
+                    this.audioManager.masterVolume = payload.value
+                }
                     
                 break;
             case "REMOVE_EFFECT":
