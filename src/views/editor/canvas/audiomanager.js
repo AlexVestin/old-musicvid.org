@@ -52,7 +52,7 @@ export default class AudioManager {
         var firstLength = first.length, result = new Float32Array(firstLength + second.length);
 
         result.set(first);
-        result.set(second, firstLength);
+        result.set(second, firstLength); 
         return result;
     }
 

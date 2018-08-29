@@ -4,7 +4,7 @@ import classes from './showcase.css'
 
 import Demos from './demos'
 
-export default class Showcase extends PureComponent {
+class Showcase extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -28,3 +28,5 @@ export default class Showcase extends PureComponent {
     }
 }
 
+
+export default Showcase

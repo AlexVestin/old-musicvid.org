@@ -1,42 +1,39 @@
 import React, {PureComponent} from 'react'
 import classes from './header.css'
-import Button from 'material-ui/Button'
-import IconButton from 'material-ui/IconButton'
-
-import AccountCircle from '@material-ui/icons/AccountCircle'
 import { Link } from 'react-router-dom'
 
-class Header extends PureComponent {
+import NavGroup from './navbar'
+import LoginGroup from './login'
+import {connect} from 'react-redux'
 
+class Header extends PureComponent {
     render() {
-        return (
+         return (
             <div className={classes.header}>
                 <div className={classes.user_group}>
                     <div className={classes.logo}>
-                        <Link to="/" style={{textDecoration: "none", color: "#f67600"}}><h1 className={classes.logolink} to={"/"}>musicvid.org</h1></Link>
+                        <Link to="/" style={{textDecoration: "none", color: "#f67600"}}><h1 className={classes.logolink} to={"/register"}>musicvid.org</h1></Link>
                     </div>
                     
-            
+                    {!this.props.isAuthenticated
+                        ?
+                        <React.Fragment>{!this.props.fetching && <LoginGroup></LoginGroup>} </React.Fragment>
+                        :
+                        <NavGroup></NavGroup>
+                    }
                 </div>
-               
             </div>
         )
     }
 }
 
-/*
-                    <Button  style={{marginLeft: 50}} disableRipple> <Link className={classes.link} to="/"> Editor </Link></Button>
-                    <Button  disableRipple> <Link className={classes.link} to="/landing"> Landing </Link> </Button>
+const mapStateToProps = state => {
+    return {
+        isAuthenticated: state.auth.isAuthenticated,
+        fetching: state.auth.fetching
+    }
+}
 
-                    <Button  disableRipple> <Link className={classes.link} to="/showcase"> Showcase </Link> </Button>
-                    <Button  disableRipple> <Link className={classes.link} to="/daily"> info </Link> </Button>
 
 
-                     <div className={classes.user_group}>
-                    <IconButton>
-                        <AccountCircle style={{}}></AccountCircle>
-                    </IconButton>
-                </div> 
-            */
-
-export default Header;
+export default connect(mapStateToProps)(Header);

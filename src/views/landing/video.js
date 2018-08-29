@@ -15,12 +15,15 @@ export default class VideoCard extends PureComponent {
 
     render() {
         return(
-            <div className={classes.cardWrapper} style={{marginTop: 25}}>       
-                <Youtube 
-                    videoId={ this.props.videoId}
-                    opts={{width: this.props.width, height: this.props.height}}
-                >
-                </Youtube>
+            <div className={classes.cardWrapper} style={{marginTop: 25}}>
+                <div style={{ backgroundColor: "rgba(200, 200, 200, 0.3)", width: this.props.width, height: this.props.height}}>       
+                    <Youtube 
+                        
+                        videoId={ this.props.videoId}
+                        opts={{width: this.props.width, height: this.props.height}}
+                    >
+                    </Youtube>
+                </div>
             </div>
         )
     }

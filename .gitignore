@@ -7,3 +7,4 @@ src/webassembly/
 vendor/
 debug.log
 public/vid/
+*.env

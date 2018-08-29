@@ -93,6 +93,7 @@ module.exports = {
       '@': path.resolve(__dirname, '../src'),
       '@redux': path.resolve(__dirname, '../src/redux'),
       '@views': path.resolve(__dirname, '../src/views'),
+      '@backend': path.resolve(__dirname, '../src/firebase'),
       
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/

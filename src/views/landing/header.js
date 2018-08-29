@@ -4,8 +4,6 @@ import Video from './video'
 import { Link } from 'react-router-dom' 
 
 
-
-
 const bootstrapButtonStyle = {
     marginLeft: 15,
     marginRight: 15,
@@ -15,11 +13,11 @@ const bootstrapButtonStyle = {
     padding: '6px 12px',
     border: '1px solid',
     backgroundColor: '#007bff',
-    borderColor: '#007bff'
+    borderColor: '#007bff',
+    width: 95,
+    textAlign: "center"
 }
   
-
-
 export default class Header extends PureComponent {
 
     render() {
@@ -32,7 +30,8 @@ export default class Header extends PureComponent {
                     
                     <div className={classes.buttonWrapper}>
                         <Link style={bootstrapButtonStyle} className={classes.button} to="/editor">open editor</Link>
-                        <Link style={bootstrapButtonStyle} className={classes.button} to="/showcase">showcase videos</Link>
+                        <Link style={bootstrapButtonStyle} className={classes.button} to="/tutorial">tutorials</Link>
+                        <Link style={bootstrapButtonStyle} className={classes.button} to="/showcase">showcase</Link>
                     </div>
 
                     <Video width={720} height={480} videoId="qOO7wx-iqbM"></Video>

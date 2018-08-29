@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import App from './views/App';
 import { unregister } from './registerServiceWorker'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import store from './redux/store'
@@ -11,14 +11,16 @@ import { JssProvider } from 'react-jss'
 import {createGenerateClassName} from './generateclassname'
 
 
+let  basename = "musicvid.org"
 if (process.env.NODE_ENV !== 'production') {
     const {whyDidYouUpdate} = require('why-did-you-update');
     whyDidYouUpdate(React);
-  }
+    basename = ""
+}
 
 const generateClassName = createGenerateClassName()
 const app = (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
         <Provider store={store} >
             <JssProvider generateClassName={generateClassName}>
                 <App />
