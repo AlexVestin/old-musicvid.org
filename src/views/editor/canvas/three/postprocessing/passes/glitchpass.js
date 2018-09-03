@@ -9,16 +9,34 @@ import DigitalGlitch from '../shaders/glitchshader'
 export default class GlitchPass extends Pass {
     constructor( dt_size ) {
 		super("glitch")
+
+		this.config = {
+			...this.config,
+			shouldDistX: true,
+			shouldDistY: true,
+			shouldAngle: true,
+			shouldSeedX: true,
+			shouldSeedY: true,
+			amount: 1,
+			col_s: 0.05
+		}
 		const group = {
 			title: "Glitch Settings",
+			
 			items: {
 				shouldRandomTrigger: {value: true, type: "Boolean", tooltip: "Trigger a glitch at random times"},
 				amount: {value: 1, type: "Number", tooltip: "How strong the glitch will be"},
+				col_s: {value: 0.04, type: "Number"},
+				shouldAngle: {value:true, type:"Boolean"},
+				shouldSeedX: {value:true, type:"Boolean"},
+				shouldSeedY: {value:true, type:"Boolean"},
+				shouldDistX: {value:true, type:"Boolean"},
+				shouldDistY: {value:true, type:"Boolean"},
 			}
 		}
 		
 		this.config.defaultConfig.push(group)
-		this.config.amount = 1
+		
 		
         if ( DigitalGlitch === undefined ) console.error( "THREE.GlitchPass relies on THREE.DigitalGlitch" );
 
@@ -59,14 +77,15 @@ export default class GlitchPass extends Pass {
 		this.uniforms[ "tDiffuse" ].value = readBuffer.texture;
 		this.uniforms[ 'seed' ].value = Math.random();//default seeding
 		this.uniforms[ 'byp' ].value = 0;
+		this.uniforms[ 'col_s' ].value = this.config.col_s;
 		if(!this.amp)this.amp = 0
 		if ( this.amp > this.config.threshold ) {
 			this.uniforms[ 'amount' ].value = this.config.amount * Math.random() / 30;
-			this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
-			this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( - 1, 1 );
-			this.uniforms[ 'seed_y' ].value = THREE.Math.randFloat( - 1, 1 );
-			this.uniforms[ 'distortion_x' ].value = THREE.Math.randFloat( 0, 1 );
-			this.uniforms[ 'distortion_y' ].value = THREE.Math.randFloat( 0, 1 );
+			if(this.config.shouldAngle)this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
+			if(this.config.shouldSeedX)this.uniforms[ 'seed_x' ].value = THREE.Math.randFloat( - 1, 1 );
+			if(this.config.shouldSeedY)this.uniforms[ 'seed_y' ].value = THREE.Math.randFloat( - 1, 1 );
+			if(this.config.shouldDistX)this.uniforms[ 'distortion_x' ].value = THREE.Math.randFloat( 0, 1 );
+			if(this.config.shouldDistY)this.uniforms[ 'distortion_y' ].value = THREE.Math.randFloat( 0, 1 );
 			this.curF = 0;
 			this.generateTrigger();
 

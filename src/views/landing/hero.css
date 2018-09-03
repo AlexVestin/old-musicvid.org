@@ -35,8 +35,11 @@
     border-color: #005cbf !important;
 }
 .button {
+    box-sizing: border-box;
     text-decoration: none;
     font-family: 'Work Sans', sans-serif;
+    border-radius: 0.2em;
+    height: 35px;
 }
    
 .description {

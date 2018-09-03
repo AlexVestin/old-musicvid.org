@@ -24,7 +24,7 @@ export default  {
 		"seed_y":		{ value: 0.02 },//-1,1
 		"distortion_x":	{ value: 0.5 },
 		"distortion_y":	{ value: 0.6 },
-		"col_s":		{ value: 0.05 }
+		"col_s":		{ value: 0.3 }
 	},
 
 	vertexShader: [

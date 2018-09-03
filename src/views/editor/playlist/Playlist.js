@@ -36,13 +36,17 @@ export default class Playlist extends PureComponent {
 
     onMouseUp = (event) => {
         const { dy, height } = this.state
-        this.mouseDown = false
+       
+        if(this.mouseDown) {
+            let h =  dy + height
+            h = h > this.maxheight ? this.maxheight : h
+            h = h < this.minHeight ? this.minHeight : h
+            this.setState({height: h, dy: 0})
+            dispatchAction({type: "UPDATE_PLAYLIST_HEIGHT", payload: h })
+        }
 
-        let h =  dy + height
-        h = h > this.maxheight ? this.maxheight : h
-        h = h < this.minHeight ? this.minHeight : h
-        this.setState({height: h, dy: 0})
-        dispatchAction({type: "UPDATE_PLAYLIST_HEIGHT", payload: h })
+
+        this.mouseDown = false
     }
 
     onMouseMove = (e) => {

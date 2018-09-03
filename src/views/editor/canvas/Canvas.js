@@ -64,7 +64,6 @@ class Canvas extends Component {
       switch(key) {
         // Escape
         case 27:
-          console.log("escape")
           break;
 
         case 83:
@@ -178,7 +177,6 @@ class Canvas extends Component {
       const {width, height, modalOpen} = this.state
       const { playing } = this.props
 
-      console.log("render")
       return (
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}

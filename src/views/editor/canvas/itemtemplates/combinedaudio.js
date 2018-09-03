@@ -164,8 +164,6 @@ export default class AudioCombinedItem extends MeshItem {
             var bin = Math.pow(i / spectrumSize, spectrumScale) * (spectrumEnd - spectrumStart) + spectrumStart;
             newArray[i] = array[Math.floor(bin) + spectrumStart] * (bin % 1) + array[Math.floor(bin + 1) + spectrumStart] * (1 - (bin % 1))
         }
-
-        console.log("log")
         return newArray;
     }
 
@@ -185,7 +183,6 @@ export default class AudioCombinedItem extends MeshItem {
     }
 
     combineBins = (arr) => {
-        console.log(this.config.combineBinsMethod)
         if(this.config.combineBinsMethod === "Linear") {
             return this.combineBinsLinear(arr);
         }else if(this.config.combineBinsMethod === "Logarithmic") {

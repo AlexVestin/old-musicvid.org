@@ -1,8 +1,5 @@
 import BaseItem from '../../itemtemplates/item'
-import * as THREE from 'three'
 import Demuxer from '@/videoencoder/demuxer.js'
-
-
 
 export default class Video extends BaseItem {
     constructor(config) {
@@ -12,37 +9,18 @@ export default class Video extends BaseItem {
         fr.onload = () => {            
             this.bytes = new Uint8Array(fr.result)
             this.bytesLoaded = true
-
         }
 
-        this.setupTexture()
         fr.readAsArrayBuffer(config.file) 
 
         this.ac = new AudioContext()
         this.decoder = new Demuxer(this.onDecoderReady)
-
-        config.sceneConfig.scene.background = this.tex
-
-        this.scene = config.sceneConfig.scene
         this.playAudio = config.keepAudio
-        this.config.name = config.name
+        
+        this.ctx = config.ctx;
+        this.canvas = config.canvas;
     }
 
-    setupTexture = () => {
-        this.texData = new Uint8Array(1280*720*3)
-        this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType)
-        this.tex.flipY = true
-        
-
-        this.mesh = new THREE.Mesh()
-
-        /*
-        this.mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(2, 2, 0.001),
-            new THREE.MeshBasicMaterial()
-        );
-        */
-    }   
 
     onDecoderReady = () => {
         if(this.bytesLoaded) {
@@ -66,30 +44,26 @@ export default class Video extends BaseItem {
         this.sound = info.audio
         
         this.config.duaration = this.info.duration;
-              
-        this.tex = new THREE.DataTexture(this.texData, this.info.width, this.info.height, THREE.RGBFormat, THREE.UnsignedByteType);
-        this.tex.flipY = true
-        this.mesh.material.map = this.tex
-        this.tex.needsUpdate = true
 
-        this.playing = true
+        console.log(info.videoInfo.width)
+        this.imageData = this.ctx.createImageData(this.info.width, this.info.width);
+
         this.decoderReady = true
-
         this.config.duration = this.info.duration
         this.config.maxDuration = this.info.duration
         
         this.addItem() 
-
-        this.scene.background = this.tex
     }
 
 
     onframe = (frame, shouldUpdate) => {
-
         if(shouldUpdate) {
-            this.texData.set(frame)
-            this.tex.needsUpdate = true
+            this.imageData.data = frame;
+            this.ctx.putImageData(this.imageData, 0, 0);
+            
         }
+            
+        
     }
 
     animate = (time) => {

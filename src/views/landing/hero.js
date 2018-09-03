@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import classes from './header.css'
+import classes from './hero.css'
 import Video from './video'
 import { Link } from 'react-router-dom' 
 
@@ -14,7 +14,7 @@ const bootstrapButtonStyle = {
     border: '1px solid',
     backgroundColor: '#007bff',
     borderColor: '#007bff',
-    width: 95,
+    width: 125,
     textAlign: "center"
 }
   

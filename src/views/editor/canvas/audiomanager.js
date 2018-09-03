@@ -76,7 +76,6 @@ export default class AudioManager {
                             const gainNode = that.offlineCtx.createGain();
                             gainNode.gain.value = ((frame.volume) / 100) * that.masterVolume / 100;
 
-                            console.log(gainNode.gain.value)
                             bufferSource.connect(gainNode);
                             gainNode.connect(that.offlineCtx.destination)
                         }else {

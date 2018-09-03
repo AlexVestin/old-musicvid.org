@@ -24,7 +24,7 @@ class Layer extends React.Component {
     }
 
     addAction = () => {
-        if(this.props.layer.isThreeLayer){
+        if(this.props.layer.layerType === 1){
             setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)
         } else {
             setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS2D)
@@ -42,6 +42,7 @@ class Layer extends React.Component {
     }
     
     render() {
+
         return (
             <div style={{height: "100%", overflowY: "scroll"}}>
                 

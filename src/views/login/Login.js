@@ -43,7 +43,6 @@ class Login extends PureComponent {
         const password = this.passwordRef.current.getValue()
 
         app.auth().fetchProvidersForEmail(email).then((providers) => {
-            console.log(providers)
             if (providers.length !== 0 && providers.indexOf("password") === -1){
                 this.setState({emailError: "This email is connected to either a Facebook or Google login"})
             }else {

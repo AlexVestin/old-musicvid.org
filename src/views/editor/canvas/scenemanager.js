@@ -8,7 +8,7 @@ import { OrthographicCamera, Scene, WebGLRenderer } from 'three'
 import * as FileSaver from "file-saver";
 import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
-import { setSidebarWindowIndex } from '@redux/actions/items'
+import { setSidebarWindowIndex, dispatchAction } from '@redux/actions/items'
 import RenderTarget from './three/postprocessing/rendertarget';
 
 import AudioManager from './audiomanager'
@@ -17,6 +17,8 @@ import AudioManager from './audiomanager'
 class ThreeCanvas extends Component {
     constructor(props) {
         super(props)
+        dispatchAction({type: "RESET_REDUCER"})
+
         this.state = {
             width: props.width,
             height: props.height,
@@ -45,25 +47,15 @@ class ThreeCanvas extends Component {
         this.encodedFrames = 0
         this.setupScene()
         this.audioManager = new AudioManager()
+        
     }
 
 
-
     setupScene = () =>  {
-        const graphics   = new SceneContainer3D("graphics", this.width, this.height, this.renderer)
-        const c2d = new SceneContainer2D("canvas2d", this.width, this.height, this.renderer)
-
-        graphics.setCamera()
-        graphics.setControls()
-        graphics.controls.enabled = false
-
-        this.mainCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 100);
+        this.mainCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 10);
         this.mainScene = new Scene();
+        this.scenes = [];
 
-        this.mainScene.add(c2d.quad)   
-        this.mainScene.add(graphics.quad)   
-        
-        this.scenes = [c2d, graphics];
         const sceneConfig = {
             camera: this.mainCamera,
             scene: this.mainScene,
@@ -138,6 +130,8 @@ class ThreeCanvas extends Component {
 
     handleChange = () => {
         const state             = store.getState()
+
+        
         this.time               = state.globals.time
         
         const audioInfo         = state.items.audioInfo
@@ -362,7 +356,6 @@ class ThreeCanvas extends Component {
         const { hidden} = this.state
         const hideCanvas = this.props.encoding || hidden
 
-        console.log("render")
         return(
 
             <div style={{  width: this.props.width, height: this.props.height, backgroundColor: "black"} } >

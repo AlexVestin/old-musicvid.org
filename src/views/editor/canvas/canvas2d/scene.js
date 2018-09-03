@@ -12,6 +12,7 @@ import KineticText from './items/kinetictypography';
 import CirclePlayer from './items/circleplayer';
 import TimeKeeper from './items/timekeeper';
 import TimeText from './items/timetext';
+import Video from './items/video';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -45,7 +46,7 @@ export default class SceneContainer {
             width,
             height,
             passes: [],
-            isThreeLayer: false
+            layerType: 2
         }
 
         this.width = width
@@ -110,7 +111,11 @@ export default class SceneContainer {
         info = {...info, name, time, canvas: this.textureCanvas, ctx: this.textureCtx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
         let item; 
 
+        console.log(name, info, time)
         switch (info.type) {
+            case "VIDEO":
+                item = new Video(info);
+            break;
             case "TIME TEXT":
                 item = new TimeText(info);
             break;

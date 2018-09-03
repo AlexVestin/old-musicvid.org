@@ -2,7 +2,7 @@ const controlTypes = ["OrbitControl", "TrackballControl"]
 const orbitGroup = {
     title: "Controls",
     items: {
-        enabled: {value: false, type: "Boolean"},
+        controlsEnabled: {value: false, type: "Boolean"},
         type: {value: 0, type: "List", options: controlTypes},
         maxPolarAngle: {value:  Math.PI * 0.495, type: "Number"},
         panningMode: {type: "List", options: ["1", "0"], tooltip: "0/1 for horizontal/vertical panning"},
@@ -17,7 +17,7 @@ const orbitGroup = {
 const trackballGroup = {
     title: "Controls",
     items: {
-        enabled: {value: false, type: "Boolean"},
+        controlsEnabled: {value: false, type: "Boolean"},
         type: {value: 0, type: "List", options: controlTypes},
         rotateSpeed: {value: 1.0, type: "Number"},
         zoomSpeed: {value: 1.2, type: "Number"},
@@ -33,7 +33,7 @@ const trackballGroup = {
 
 export default {
     orbitConfig: {
-        enabled: false,
+        controlsEnabled: false,
         type: "OrbitControl",
         defaultConfig: [orbitGroup],
         panningMode: 1,
@@ -46,7 +46,7 @@ export default {
     },
 
     trackballConfig: {
-        enabled: true,
+        controlsEnabled: true,
         type: "TrackballControl",
         defaultConfig: [trackballGroup],
         rotateSpeed: 1.0,

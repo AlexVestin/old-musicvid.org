@@ -2,7 +2,8 @@
 import SidebarContainer from '@/views/editor/sidebar/sidebarcontainer'
 import update from 'immutability-helper'
 
-export default function itemsReducer(state = {
+
+const baseSettings  = {
     layers: {}, // scenes
     passes: [],
     items: {},
@@ -22,10 +23,14 @@ export default function itemsReducer(state = {
     audioItemView: 0,
     effectId: 0,
     initialized: false,
-    }, action){
+}
+
+export default function itemsReducer(state = baseSettings, action){
 
         var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem
         switch(action.type){  
+            case "RESET_REDUCER":
+                return {...baseSettings}
             case "EDIT_FOG": 
                 fog =  update(state.fog, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return { ...state, fog }
@@ -33,6 +38,7 @@ export default function itemsReducer(state = {
                 settings =  update(state.settings, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return { ...state, settings }
             case "EDIT_CAMERA": 
+                
                 cameras =  update(state.cameras, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return {...state, cameras}
             case "EDIT_CONTROLS": 
@@ -100,7 +106,8 @@ export default function itemsReducer(state = {
                 layers      = update(state.layers,  {[id]: 
                                 {$set: {...action.payload,  
                                     items: [], camera: action.payload.camera.id, 
-                                    controls: action.payload.controls.id, fog: action.payload.fog.id }}})
+                                    controls: action.payload.controls.id, fog: action.payload.fog.id }}}
+                                )
 
                 cameras     = update(state.cameras, {[id]: {$set: action.payload.camera }} )
                 controls    = update(state.controls, {[id]: {$set: action.payload.controls }} )

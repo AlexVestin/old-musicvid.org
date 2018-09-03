@@ -15,8 +15,11 @@ export default class CustomInput extends PureComponent {
 
     render() {
 
+        
+
         const {  keyVal, type, value, disabled, name, options, min, max, step } = this.props
         const key = keyVal
+
         return (
     
             <div key={key} style={{width: "100%", borderBottom: "1px solid #e0e0e0"}}>

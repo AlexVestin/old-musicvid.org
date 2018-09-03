@@ -1,12 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import List, { ListItem,  ListItemText } from 'material-ui/List';
 import { setSidebarWindowIndex, createItem } from '@redux/actions/items'
 import {connect} from 'react-redux'
 import withHeader from '../withheader'
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import AppBar from 'material-ui/AppBar'
 
 const items3D = [
   "Bars", 
@@ -21,6 +17,11 @@ const items3D = [
   "Northern Lights",
   "Audio Circle",
   "Noise Blob"
+]
+
+const bgItems = [
+  "Video",
+  "Image"
 ]
 
 const items2D = [
@@ -51,7 +52,23 @@ class AudioReactiveTypeList extends React.Component {
   }
 
   render() {
-    const items = this.props.layer.isThreeLayer ? items3D : items2D
+
+    let items;
+
+    console.log(this.props.layer)
+    switch(this.props.layer.layerType){
+      case 0:
+        items = bgItems;
+        break;
+      case 1:
+        items = items3D;
+        break;
+      case 2:
+        items = items2D;
+        break;
+      default:  
+    }
+
     return (
         <List>
           {items.map(value => (

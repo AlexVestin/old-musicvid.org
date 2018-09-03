@@ -11,10 +11,10 @@ import { JssProvider } from 'react-jss'
 import {createGenerateClassName} from './generateclassname'
 
 
-let  basename = "musicvid.org"
+let  basename = ""
 if (process.env.NODE_ENV !== 'production') {
     const {whyDidYouUpdate} = require('why-did-you-update');
-    whyDidYouUpdate(React);
+    //whyDidYouUpdate(React);
     basename = ""
 }
 

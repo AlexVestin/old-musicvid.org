@@ -28,7 +28,7 @@ export default class SceneContainer {
         this.scene = new THREE.Scene()
         this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
         this.renderer = renderer
-        this.setLight(this.scene)
+        //this.setLight(this.scene)
 
         this.items = []
         this.toRender = []
@@ -55,7 +55,6 @@ export default class SceneContainer {
             }] 
         }
 
-        this.scene.fog = new THREE.Fog(0xfffff, 1, 1000)
         this.config = {
             id: Math.floor(Math.random() * 100000000),
             name: name,
@@ -74,7 +73,7 @@ export default class SceneContainer {
             camera: this.cameraConfig,
             controls: this.controlConfig,
             fog: this.fogConfig,
-            isThreeLayer: true
+            layerType: 1
         }
 
         this.sceneConfig = {
@@ -103,6 +102,7 @@ export default class SceneContainer {
 
     editControls = (key, value) => {
         if(key === "type") {
+
             this.controls.dispose()
             if(value === "TrackballControl") {
                 this.controls = new TrackballControls(this.camera, this.sceneConfig.renderer.domElement)
@@ -110,7 +110,7 @@ export default class SceneContainer {
                 
             }else if(value === "OrbitControl") {
                 this.controls = new OrbitControls(this.camera, this.sceneConfig.renderer.domElement)
-               
+            
                 this.camera.lookAt(this.controls.target);
                 this.controlConfig = controlConfigs.orbitConfig
             }else {
@@ -120,7 +120,8 @@ export default class SceneContainer {
             replaceControls(this.controlConfig)
             return
         }
-
+        
+    
         switch(key) {
             case "maxDistance":
             case "minDistance":
@@ -150,15 +151,17 @@ export default class SceneContainer {
 
     editCamera = (key, value) => {
         const { width, height } = this.config
-      
         if(key === "type") {
             if(value === "OrthographicCamera") {
                 this.cameraConfig = cameraConfigs.orthoConfig
-                this.camera = new THREE.OrthographicCamera()
+                this.camera = new THREE.OrthographicCamera(1, 1, 1, -1, 0, 10)
+
             }else if (value === "PerspectiveCamera") {
                 this.cameraConfig = cameraConfigs.perspectiveConfig
                 this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000)
                 this.camera.position.set(0, 0, 200)
+
+                console.log(this.camera)
             }else {
                 alert("--------ERROR COULD NOT FIND CAMERA PROVIDED ----------")
                 return
@@ -167,18 +170,19 @@ export default class SceneContainer {
             replaceCamera(this.cameraConfig)
         }
 
+
         if(this.cameraConfig.type === "PerspectiveCamera") {
             switch(key) {
                 case "x":
                 case "y":
                 case "z":
-                this.camera.position[key] = value; 
+                this.camera.position[key] = Number(value); 
                 break;
                 case "fov":
                 case "aspect":
                 case "near":
                 case "far":
-                this.camera[key] = value;
+                this.camera[key] = Number(value);
                 this.camera.updateProjectionMatrix();
                 break;
                 default:
