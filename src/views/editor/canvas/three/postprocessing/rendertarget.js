@@ -1,6 +1,6 @@
 
 
-import { WebGLRenderTarget, LinearFilter, RGBAFormat, Vector3 } from 'three'
+import { WebGLRenderTarget, LinearFilter, RGBAFormat, Vector3, Vector2 } from 'three'
 
 import EffectComposer from './effectcomposer'
 import BloomPass from './passes/bloompass'
@@ -15,6 +15,7 @@ import GlitchPass from './passes/glitchpass'
 import HalftonePass from './passes/halftonepass';
 
 import TestShader from './shaders/testshader'
+import PixelPass from './passes/pixelpass'
 
 export default class RenderTarget {
     constructor(width, height, sceneConfig, isMain = false) {
@@ -68,6 +69,9 @@ export default class RenderTarget {
     createEffect = (type) =>  {
         var fx;
         switch(type) {
+            case "PIXEL":
+                fx = new PixelPass({width: this.width, height: this.height});
+            break;
             case "TEST SHADER":
                 fx = new ShaderPass(TestShader, undefined, "ytes")
                 const [r,g,b] = [Math.random(), Math.random(), Math.random()]

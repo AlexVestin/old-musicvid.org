@@ -12,7 +12,7 @@ import KineticText from './items/kinetictypography';
 import CirclePlayer from './items/circleplayer';
 import TimeKeeper from './items/timekeeper';
 import TimeText from './items/timetext';
-import Video from './items/video';
+import Image from './items/image';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer) {
@@ -95,8 +95,6 @@ export default class SceneContainer {
         this.config[key] = value
         if(key === "zIndex") this.quad.renderOrder = value
         if(key === "pixelRatio") this.setSize(this.width, this.height)
-        if(key === "shouldUseClearRect") this.shouldUseClearRect = value
-
     }
 
     moveItem = (item, up) => {
@@ -113,8 +111,8 @@ export default class SceneContainer {
 
         console.log(name, info, time)
         switch (info.type) {
-            case "VIDEO":
-                item = new Video(info);
+            case "IMAGE":
+                item = new Image(info);
             break;
             case "TIME TEXT":
                 item = new TimeText(info);
@@ -265,9 +263,9 @@ export default class SceneContainer {
 
     animate = (time, frequencyBins) => {
     
-        //this.textureCtx.clearRect(0,0,this.textureCanvas.width, this.textureCanvas.height)
-        if(this.shouldUseClearRect) {
+        if(this.config.shouldUseClearRect) {
             this.textureCtx.clearRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
+            
         }else {
             this.textureCtx.save();
             this.textureCtx.fillStyle = this.config.clearColor;

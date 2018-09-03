@@ -53,7 +53,7 @@ class Layer extends React.Component {
                     <ItemList idxs={this.props.idxs}></ItemList>
                 </GroupContainer>
 
-                {this.props.layer.isThreeLayer &&
+                {this.props.layer.layerType === 1 &&
                     <React.Fragment>
                         <ConfigList 
                             edit={editCamera} 

@@ -21,7 +21,7 @@ export default class Video extends BaseItem {
         this.ac = new AudioContext()
         this.decoder = new Demuxer(this.onDecoderReady)
 
-        config.sceneConfig.scene.background = this.tex
+        //config.sceneConfig.scene.background = this.tex
 
         this.scene = config.sceneConfig.scene
         this.playAudio = config.keepAudio
@@ -33,15 +33,10 @@ export default class Video extends BaseItem {
         this.tex = new THREE.DataTexture(this.texData, 1280, 720, THREE.RGBFormat, THREE.UnsignedByteType)
         this.tex.flipY = true
         
-
-        this.mesh = new THREE.Mesh()
-
-        /*
         this.mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(2, 2, 0.001),
-            new THREE.MeshBasicMaterial()
+            new THREE.PlaneGeometry(2, 2),
+            new THREE.MeshBasicMaterial({map: this.tex})
         );
-        */
     }   
 
     onDecoderReady = () => {
@@ -80,7 +75,7 @@ export default class Video extends BaseItem {
         
         this.addItem() 
 
-        this.scene.background = this.tex
+        //this.scene.background = this.tex
     }
 
 

@@ -70,6 +70,9 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 	// If auto-rotate is enabled, you must call controls.update() in your animation loop
 	this.autoRotate = false;
 	this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
+	this.autoRotateSpeedLeft = 2.0;
+	this.autoRotateSpeedUp = 2.0;
+	this.up = false;
 
 	// Set to false to disable use of the keys
 	this.enableKeys = true;
@@ -149,9 +152,8 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 			spherical.setFromVector3( offset );
 
 			if ( scope.autoRotate && state === STATE.NONE ) {
-
-				rotateLeft( getAutoRotationAngle() );
-
+				rotateLeft(2 * Math.PI / 60 / 60 * Number(scope.autoRotateSpeedLeft))
+				rotateUp(2 * Math.PI / 60 / 60 * Number(scope.autoRotateSpeedUp))
 			}
 
 			spherical.theta += sphericalDelta.theta;
@@ -299,8 +301,18 @@ export default class OrbitControls extends THREE.EventDispatcher  {
 
 	function rotateUp( angle ) {
 
-		sphericalDelta.phi -= angle;
+		if(scope.autoRotate) {
+			const delta =  scope.up ? angle : -angle; 
+			const phi = spherical.phi - delta; 
+			if(phi < scope.minPolarAngle) scope.up = false;
+			if(phi > scope.maxPolarAngle) scope.up = true;
+			sphericalDelta.phi -= delta;
+		}else {
+			sphericalDelta.phi -= angle;
+		}
+		
 
+	
 	}
 
 	var panLeft = function () {

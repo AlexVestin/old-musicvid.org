@@ -28,7 +28,6 @@ export default class SceneContainer {
         this.scene = new THREE.Scene()
         this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
         this.renderer = renderer
-        //this.setLight(this.scene)
 
         this.items = []
         this.toRender = []
@@ -102,7 +101,6 @@ export default class SceneContainer {
 
     editControls = (key, value) => {
         if(key === "type") {
-
             this.controls.dispose()
             if(value === "TrackballControl") {
                 this.controls = new TrackballControls(this.camera, this.sceneConfig.renderer.domElement)
@@ -110,7 +108,7 @@ export default class SceneContainer {
                 
             }else if(value === "OrbitControl") {
                 this.controls = new OrbitControls(this.camera, this.sceneConfig.renderer.domElement)
-            
+               
                 this.camera.lookAt(this.controls.target);
                 this.controlConfig = controlConfigs.orbitConfig
             }else {
@@ -120,8 +118,7 @@ export default class SceneContainer {
             replaceControls(this.controlConfig)
             return
         }
-        
-    
+
         switch(key) {
             case "maxDistance":
             case "minDistance":
@@ -134,7 +131,13 @@ export default class SceneContainer {
             case "zoomSpeed":
             case "staticMoving":
             case "dynamicDampingFactor":
+            case "autoRotateSpeedUp":
+            case "autoRotateSpeedLeft":
+            case "autoRotate":
                 this.controls[key] = value
+                break;
+            case "controlsEnabled":
+                this.controls.enabled = value;
                 break;
             case "targetX":
             case "targetY":
@@ -146,22 +149,25 @@ export default class SceneContainer {
         }
 
 
+        console.log(key)
+
+
         this.controls.update()
     }
 
     editCamera = (key, value) => {
         const { width, height } = this.config
+      
         if(key === "type") {
             if(value === "OrthographicCamera") {
                 this.cameraConfig = cameraConfigs.orthoConfig
-                this.camera = new THREE.OrthographicCamera(1, 1, 1, -1, 0, 10)
-
+                this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
             }else if (value === "PerspectiveCamera") {
                 this.cameraConfig = cameraConfigs.perspectiveConfig
                 this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000)
-                this.camera.position.set(0, 0, 200)
+                this.camera.position.set(0, 0, 10)
 
-                console.log(this.camera)
+                this.setControls();
             }else {
                 alert("--------ERROR COULD NOT FIND CAMERA PROVIDED ----------")
                 return
@@ -170,19 +176,18 @@ export default class SceneContainer {
             replaceCamera(this.cameraConfig)
         }
 
-
         if(this.cameraConfig.type === "PerspectiveCamera") {
             switch(key) {
                 case "x":
                 case "y":
                 case "z":
-                this.camera.position[key] = Number(value); 
+                this.camera.position[key] = value; 
                 break;
                 case "fov":
                 case "aspect":
                 case "near":
                 case "far":
-                this.camera[key] = Number(value);
+                this.camera[key] = value;
                 this.camera.updateProjectionMatrix();
                 break;
                 default:
@@ -331,6 +336,7 @@ export default class SceneContainer {
         }
         this.controls = controls
         
+        replaceControls(controlConfigs.orbitConfig)
     }
 
     updateItem = (config, time) => {
@@ -438,12 +444,4 @@ export default class SceneContainer {
         this.toRender = []
     }
 
-    dispose = () => {
-        let { camera, scene, light, controls } = this
-        camera.dispose()
-        scene.dispose()
-        light.dispose()
-        controls.dispose()
-    }
 }
-
