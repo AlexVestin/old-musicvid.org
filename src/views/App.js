@@ -8,7 +8,7 @@ import Info from './info/Info'
 import MissingPage from './missing/Missing'
  
 
-import { base, app } from '../firebase/firebase'
+import { app } from '../firebase/firebase'
 import { setIsAuthenticated } from '@redux/actions/auth'
 
 class App extends Component {
@@ -62,7 +62,6 @@ class App extends Component {
             <Route component={MissingPage}></Route> 
   
           </Switch>
-          <footer className={classes.footer}></footer>
        </div>
 
     );

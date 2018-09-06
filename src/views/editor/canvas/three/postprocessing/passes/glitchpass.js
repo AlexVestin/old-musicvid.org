@@ -17,7 +17,7 @@ export default class GlitchPass extends Pass {
 			shouldAngle: true,
 			shouldSeedX: true,
 			shouldSeedY: true,
-			amount: 1,
+			amount: 0.2,
 			col_s: 0.05
 		}
 		const group = {
@@ -25,7 +25,7 @@ export default class GlitchPass extends Pass {
 			
 			items: {
 				shouldRandomTrigger: {value: true, type: "Boolean", tooltip: "Trigger a glitch at random times"},
-				amount: {value: 1, type: "Number", tooltip: "How strong the glitch will be"},
+				amount: {value: 0.2, type: "Number", tooltip: "How strong the glitch will be"},
 				col_s: {value: 0.04, type: "Number"},
 				shouldAngle: {value:true, type:"Boolean"},
 				shouldSeedX: {value:true, type:"Boolean"},

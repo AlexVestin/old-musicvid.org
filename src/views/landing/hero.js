@@ -26,15 +26,15 @@ export default class Header extends PureComponent {
                 <div className={classes.wrapper}>
                     
                     <h1 className={classes.description}>musicvid.org</h1>
-                    <h3 className={classes.subtitle}>Free online music video editor</h3>
+                    <h3 className={classes.subtitle}>Free online music video creator.</h3>
+                    <br/>
+                    <h3 className={classes.subdescriptor}>Create unique audio visualizations and animation in minutes, powered by designers from all around the web.</h3>
                     
+                    <Video width={720} height={480} videoId="qOO7wx-iqbM"></Video>
+
                     <div className={classes.buttonWrapper}>
                         <Link style={bootstrapButtonStyle} className={classes.button} to="/editor">open editor</Link>
-                        <Link style={bootstrapButtonStyle} className={classes.button} to="/tutorial">tutorials</Link>
-                        <Link style={bootstrapButtonStyle} className={classes.button} to="/showcase">showcase</Link>
                     </div>
-
-                    <Video width={720} height={480} videoId="qOO7wx-iqbM"></Video>
                 </div>
             </div>
         )

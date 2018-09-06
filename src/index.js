@@ -15,12 +15,12 @@ let  basename = ""
 if (process.env.NODE_ENV !== 'production') {
     const {whyDidYouUpdate} = require('why-did-you-update');
     //whyDidYouUpdate(React);
-    basename = ""
+    basename = "musicvid.org"
 }
 
 const generateClassName = createGenerateClassName()
 const app = (
-    <BrowserRouter basename={basename}>
+    <BrowserRouter >
         <Provider store={store} >
             <JssProvider generateClassName={generateClassName}>
                 <App />
