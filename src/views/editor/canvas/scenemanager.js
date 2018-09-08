@@ -17,7 +17,9 @@ import AudioManager from './audiomanager'
 class ThreeCanvas extends Component {
     constructor(props) {
         super(props)
-        dispatchAction({type: "RESET_REDUCER"})
+        
+        
+            
 
         this.state = {
             width: props.width,
@@ -30,6 +32,7 @@ class ThreeCanvas extends Component {
     }
 
     componentDidMount() {    
+
         this.mount = this.mountRef
         this.width = this.mount.clientWidth
         this.height = this.mount.clientHeight
@@ -38,16 +41,61 @@ class ThreeCanvas extends Component {
         this.renderer.setClearColor('#000000')
         this.renderer.setSize(this.width, this.height)
         this.renderer.autoClear = false;
-        
+
         this.unsubscribe = store.subscribe(this.handleChange)
-        
         this.mount.appendChild(this.renderer.domElement)
         this.gl = this.renderer.getContext();
-
         this.encodedFrames = 0
-        this.setupScene()
-        this.audioManager = new AudioManager()
+
+        console.log(this.props)
+        if(!this.props.loadFromFile) {
+            dispatchAction({type: "RESET_REDUCER"})
+            this.setupScene()
+            this.audioManager = new AudioManager()
         
+        }else {
+            this.setupScene()
+            this.audioManager = new AudioManager()
+            this.loadFromFile()
+        }
+    }
+
+    addPassFromFile = () => {
+
+    }
+
+    addLayerFromFile = (layer) => {
+        let loadedLayer;
+        if(layer.layerType === 0) {
+            console.log(layer, "LAYERTYPE 0")
+        }else {
+            loadedLayer = new SceneContainer2D(layer.name, this.width, this.height, this.renderer, layer)
+            this.addLayer(loadedLayer)
+        }
+
+        return loadedLayer;
+
+    }
+
+    loadFromFile = () => {
+        const project = store.getState().items
+        for(var key in project.layers) {
+            const layer = this.addLayerFromFile(project.layers[key])
+
+            
+            project.layers[key].items.forEach(itemId => {
+                const item = project.items[key][itemId]
+                console.log(item)
+                layer.addItem(item.type, item, 0, item)
+                
+            })
+            
+        }
+
+        for(var key in project.passes) {
+            const pass = project.passes[key]
+            this.addPassFromFile(pass)
+        }
     }
 
 

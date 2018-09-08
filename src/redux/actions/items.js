@@ -24,6 +24,14 @@ export function editAutomationPoint(item) {
     );
 }
 
+export function loadProjectFromFile(item) {
+    store.dispatch({
+        type: "LOAD_PROJECT_FROM_FILE",
+        payload: item
+        } 
+    );
+}
+
 export function editCamera(item) {
     store.dispatch({
         type: "EDIT_CAMERA",

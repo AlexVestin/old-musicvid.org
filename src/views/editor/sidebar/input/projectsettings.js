@@ -3,8 +3,10 @@ import { dispatchAction } from '@redux/actions/items'
 import { editProjectSettings } from '@redux/actions/globals'
 import ConfigList from './input';
 import { connect } from 'react-redux'
-
+import Button from '@material-ui/core/Button'
 import withHeader from '../withheader'
+import * as FileSaver from 'file-saver'
+import store from '@redux/store'
 
 class ProjectSettings extends PureComponent {
     constructor(props){
@@ -36,16 +38,26 @@ class ProjectSettings extends PureComponent {
 
     }
 
+    saveAsTemplate = () => {
+        console.log()
+        var blob = new Blob([JSON.stringify(store.getState().items)], {type: "application/json"});
+        FileSaver.saveAs(blob, "proj.json")
+    }
     render() {
 
         return(
-            <ConfigList
-                edit={editProjectSettings} 
-                defaultConfig={this.config.defaultConfig} 
-                item={{...this.props}} 
-                addAutomation={this.addAutomation}
-            >
-            </ConfigList>
+            <div>
+                <ConfigList
+                    edit={editProjectSettings} 
+                    defaultConfig={this.config.defaultConfig} 
+                    item={{...this.props}} 
+                    addAutomation={this.addAutomation}
+                >
+                </ConfigList>
+
+                <Button onClick={this.saveAsTemplate}>Save project as template</Button>
+                <Button >export to video</Button>
+            </div>
         )
     }
 }

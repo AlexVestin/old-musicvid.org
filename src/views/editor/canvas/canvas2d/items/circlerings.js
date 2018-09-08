@@ -64,27 +64,36 @@ var Circle = function(W, H) {
 };
 
 export default class CircleRings extends AudioImpactItem {
-    constructor(config) {
+    constructor(config, configFromFile) {
         super(config)
 
-        this.config.defaultConfig.push({
-            title: "Settings",
-            items: {
-                type: {type: "List", options: [ 'random', 'unify', 'reverse', 'vary', 'compact' ]},
-                ringCount: {type: "Number", value: 10},
-                thickness: {type: "Number", value: 3},
-                radius: {type: "Number", value: 20},
-            }
-        })
+        if(!configFromFile) {
+            this.config.defaultConfig.push({
+                title: "Settings",
+                items: {
+                    type: {type: "List", options: [ 'random', 'unify', 'reverse', 'vary', 'compact' ]},
+                    ringCount: {type: "Number", value: 10},
+                    thickness: {type: "Number", value: 3},
+                    radius: {type: "Number", value: 20},
+                }
+            })
+    
+            this.config.defaultConfig.push({
+                title: "Glow",
+                items: {
+                    glow: {type: "Boolean", value: true},
+                    shadowColor: {type: "String", value: "FFFFFF"},
+                    shadowBlur: {type: "Number", value: 20},
+                }
+            })
 
-        this.config.defaultConfig.push({
-            title: "Glow",
-            items: {
-                glow: {type: "Boolean", value: true},
-                shadowColor: {type: "String", value: "FFFFFF"},
-                shadowBlur: {type: "Number", value: 20},
-            }
-        })
+            this.getConfig()
+            
+            this.addItem()
+        }else {
+            this.config = {...configFromFile}
+        }
+      
         
         this.width = config.canvas.width
         this.height = config.canvas.height
@@ -93,10 +102,8 @@ export default class CircleRings extends AudioImpactItem {
 
         this.innerCircle = new Circle(this.width, this.height);
         this.ships = [];
-        
-        this.getConfig()
         this.createShips()
-        this.addItem()
+      
     }
 
     setSize = (width, height) => {

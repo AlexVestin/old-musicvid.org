@@ -181,7 +181,7 @@ class Canvas extends Component {
         <div className={classes.canvas_wrapper} >
           {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
         	 <div >
-              <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={width} height={height}></ThreeCanvas>
+              <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={width} height={height} loadFromFile={this.props.loadFromFile}></ThreeCanvas>
               <PlaybackPanel 
                   width={width} 
                   playing={playing}    
@@ -206,7 +206,8 @@ const mapStateToProps = state => {
     disabled: state.globals.disabled,
     encoding: state.globals.encoding,
     audioInfo: state.items.audioInfo,
-    playlistHeight: state.window.playlistHeight
+    playlistHeight: state.window.playlistHeight,
+    loadFromFile: state.items.loadFromFile
   }
 }
 

@@ -23,14 +23,24 @@ const baseSettings  = {
     audioItemView: 0,
     effectId: 0,
     initialized: false,
+    loadFromFile: false,
 }
 
 export default function itemsReducer(state = baseSettings, action){
 
         var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem
         switch(action.type){  
+            case "LOAD_PROJECT_FROM_FILE":
+                return {...action.payload, loadFromFile: true}
+            case "SET_LOAD_FROM_FILE":
+                return {...state, laodFromFile: action.payload}
+
             case "RESET_REDUCER":
-                return {...baseSettings}
+                if(state.loadFromFile){
+                    return {...baseSettings}
+                }
+                
+                return {...state, loadFromFile: false}
             case "EDIT_FOG": 
                 fog =  update(state.fog, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return { ...state, fog }

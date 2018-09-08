@@ -20,6 +20,7 @@ class App extends Component {
     privacy: null,
     login: null,
     logout: null,
+    templates: null
   }
 
   componentDidMount() {
@@ -30,6 +31,7 @@ class App extends Component {
     import("./info/Privacy").then((mod) => this.setState(() => ({ privacy: mod.default })))
     import("./showcase/Showcase").then((mod) => this.setState(() => ({ showcase: mod.default })))
     import("./login/Logout").then((mod) => this.setState(() => ({ logout: mod.default })))
+    import("./templates/Templates").then((mod) => this.setState(() => ({ templates: mod.default })))
 
 
       this.removeAuthListener = app.auth().onAuthStateChanged((user) => {
@@ -54,6 +56,7 @@ class App extends Component {
           <Switch>
             <Route path="/editor" component={this.state.editor}></Route>
             <Route path="/showcase" component={this.state.showcase}></Route>
+            <Route path="/templates" component={this.state.templates}></Route>
             <Route path="/register" component={this.state.register}></Route>
             <Route path="/login" component={this.state.login}></Route>
             <Route path="/logout" component={this.state.logout}></Route>

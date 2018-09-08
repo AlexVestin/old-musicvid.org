@@ -15,7 +15,7 @@ import TimeText from './items/timetext';
 import Image from './items/image';
 
 export default class SceneContainer {
-    constructor(name, width, height, renderer) {
+    constructor(name, width, height, renderer, config) {
 
         this.renderer = renderer
 
@@ -23,36 +23,43 @@ export default class SceneContainer {
         this.toRender   = []
         this.rendering  = []
 
-        this.config = {
-            id: Math.floor(Math.random() * 100000000),
-            name: name,
-            clearColor: "000000",
-            clearAlpha: 1,
-            shouldUseClearRect: true,
-            zIndex: 1,
-            pixelRatio: 720,
-            defaultConfig: [ {
-                title: "Settings", 
-                items: {
-                    clearColor: {type: "String", value: "000000", tooltip: "Color of the background when clearing, not used when shouldUseClearRect is checked"},
-                    clearAlpha: {type: "Number", value: 1, tooltip: "Alpha of the background when clearing, not used when shouldUseClearRect is checked"},
-                    shouldUseClearRect: {type: "Boolean", value: true, tooltip: "Clears the entire canvas, more performant than using a clear color"},
-                    zIndex: {type: "Number", value: 1, tooltip: "Position of this layer relative to other layers"},
-                    pixelRatio: {type: "Number", value: 720, min: 1, max: 2048, tooltip: "resolution of the canvas the items are drawn to, uses an automatic aspect ratio"},
-                    scalePixelRatioOnExport: {type: "Boolean", value: true, tooltip: "Scales the pixelRatio on export in case it doesn't match the output value, this will make the video look different when exporting"}
-                }
-            }],
-            items: [],
-            width,
-            height,
-            passes: [],
-            layerType: 2
+        if(!config) {
+            this.config = {
+                id: Math.floor(Math.random() * 100000000),
+                name: name,
+                clearColor: "000000",
+                clearAlpha: 1,
+                shouldUseClearRect: true,
+                zIndex: 1,
+                pixelRatio: 720,
+                defaultConfig: [ {
+                    title: "Settings", 
+                    items: {
+                        clearColor: {type: "String", value: "000000", tooltip: "Color of the background when clearing, not used when shouldUseClearRect is checked"},
+                        clearAlpha: {type: "Number", value: 1, tooltip: "Alpha of the background when clearing, not used when shouldUseClearRect is checked"},
+                        shouldUseClearRect: {type: "Boolean", value: true, tooltip: "Clears the entire canvas, more performant than using a clear color"},
+                        zIndex: {type: "Number", value: 1, tooltip: "Position of this layer relative to other layers"},
+                        pixelRatio: {type: "Number", value: 720, min: 1, max: 2048, tooltip: "resolution of the canvas the items are drawn to, uses an automatic aspect ratio"},
+                        scalePixelRatioOnExport: {type: "Boolean", value: true, tooltip: "Scales the pixelRatio on export in case it doesn't match the output value, this will make the video look different when exporting"}
+                    }
+                }],
+                items: [],
+                width,
+                height,
+                passes: [],
+                layerType: 2
+            }
+
+            add2DLayer(this.config)
+        }else {
+            this.config = {...config}
         }
 
+        
         this.width = width
         this.height = height
 
-        add2DLayer(this.config)
+        
         this.textureCanvas = document.createElement('canvas');
         this.internalCanvas = document.createElement("canvas")
         this.internalCtx = this.internalCanvas.getContext("2d")
@@ -61,10 +68,8 @@ export default class SceneContainer {
         this.textureCanvas.height = height;
         this.textureCtx = this.textureCanvas.getContext("2d");
 
-
         this.texture =  new THREE.CanvasTexture(this.textureCanvas)
         this.texture.minFilter = THREE.LinearFilter
-        this.test = 0
 
         this.quad = new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 
@@ -105,14 +110,26 @@ export default class SceneContainer {
         i2.config.renderIndex = i2.config.renderIndex - delta
     }
 
-    addItem = (name, info, time) => {
-        info = {...info, name, time, canvas: this.textureCanvas, ctx: this.textureCtx, sceneId: this.config.id, renderIndex: this.items.length, height: this.height, width: this.width}
+    addItem = (name, info, time, config) => {
+        info = {
+            ...info, 
+            type: name, 
+            name, 
+            time, 
+            canvas: this.textureCanvas, 
+            ctx: this.textureCtx, 
+            sceneId: this.config.id, 
+            renderIndex: this.items.length, 
+            height: this.height, 
+            width: this.width
+        }
+        
+        if(config)info.type = config.itemType
         let item; 
-
-        console.log(name, info, time)
+    
         switch (info.type) {
             case "IMAGE":
-                item = new Image(info);
+                item = new Image(info, config);
             break;
             case "TIME TEXT":
                 item = new TimeText(info);
@@ -121,7 +138,7 @@ export default class SceneContainer {
                 item = new TimeKeeper(info);
                 break;
             case "CIRCLE PLAYER":
-                item = new CirclePlayer(info);
+                item = new CirclePlayer(info, config);
                 break;
             case "KINETIC TEXT":
                 item = new KineticText(info)
@@ -148,7 +165,7 @@ export default class SceneContainer {
                 item = new InceptionCity(info)
                 break;
             case "CIRCLE RINGS":
-                item = new CircleRings(info)
+                item = new CircleRings(info, config)
                 break;
             default:
                 console.log("unkown config type while adding object")

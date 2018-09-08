@@ -13,8 +13,8 @@ export default function playbackReducer(state = {
 
     }, action){
         switch(action.type){
-            case "EDIT_PROJECT_SETTINGS":
 
+            case "EDIT_PROJECT_SETTINGS":
                 return {...state, [action.payload.key]: action.payload.value}
             case "SET_AUDIO_BUFFER_SIZE":
                 return {...state, audioBufferSize: action.payload}

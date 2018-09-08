@@ -1,7 +1,7 @@
 import CombinedAudioItem from "../../itemtemplates/combinedaudio";
 
 export default class CirclePlayer extends CombinedAudioItem {
-    constructor(config) {
+    constructor(config, configFromFile) {
         super(config);
         this.buffer = null;
         this.duration = 0;
@@ -9,49 +9,53 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.ctx = config.ctx;
         this.canvas = config.canvas;
 
-        const group = {
-            title: "Spectrum",
-            items: {
-                x: { type: "Number", value: 0.5},
-                y: { type: "Number", value: 0.5},
-                radius: {type: "Number", value: 150},
-                lineWidth: {type: "Number", value: 4},
-                color: {type: "String", value: "FFFFFF"},
-                staticRotation: {type: "Number", value: 270},
-                mirror: {type: "Boolean", value: true},
-            }   
-        }
-
-        const emblemGroup = {
-            title: "Emblem",
-            items: {
-                fillEmblem: {type: "Boolean", value: true},
-                emblemColor: {type: "String", value: "FFFFFF"},
-                emblemMargin: {type: "Number", value: 10},
+        if(!configFromFile) {
+            const group = {
+                title: "Spectrum",
+                items: {
+                    x: { type: "Number", value: 0.5},
+                    y: { type: "Number", value: 0.5},
+                    radius: {type: "Number", value: 150},
+                    lineWidth: {type: "Number", value: 4},
+                    color: {type: "String", value: "FFFFFF"},
+                    staticRotation: {type: "Number", value: 270},
+                    mirror: {type: "Boolean", value: true},
+                }   
             }
-        }
-
-        this.config.defaultConfig.push(group);
-        this.config.defaultConfig.push(emblemGroup);
-
-        this.config.defaultConfig.push({
-            title: "Glow",
-            items: {
-                glow: {type: "Boolean", value: true},
-                shadowColor: {type: "String", value: "FFFFFF"},
-                shadowBlur: {type: "Number", value: 20},
+    
+            const emblemGroup = {
+                title: "Emblem",
+                items: {
+                    fillEmblem: {type: "Boolean", value: true},
+                    emblemColor: {type: "String", value: "FFFFFF"},
+                    emblemMargin: {type: "Number", value: 10},
+                }
             }
-        })
-
-        this.getConfig();
-        this.config.impactAmplitude = 3;
-        this.config.spectrumSize = 64;
-        this.config.easeAmplitude = true;
-        this.config.easeAmount = 6.5;
-        this.config.amplitude = 5;
-        this.config.enableLogTransform = false;
-        this.config.enableCombineBins = false;
-        this.addItem();
+    
+            this.config.defaultConfig.push(group);
+            this.config.defaultConfig.push(emblemGroup);
+    
+            this.config.defaultConfig.push({
+                title: "Glow",
+                items: {
+                    glow: {type: "Boolean", value: true},
+                    shadowColor: {type: "String", value: "FFFFFF"},
+                    shadowBlur: {type: "Number", value: 20},
+                }
+            })
+    
+            this.getConfig();
+            this.config.impactAmplitude = 3;
+            this.config.spectrumSize = 64;
+            this.config.easeAmplitude = true;
+            this.config.easeAmount = 6.5;
+            this.config.amplitude = 5;
+            this.config.enableLogTransform = false;
+            this.config.enableCombineBins = false;
+            this.addItem();
+        }else {
+            this.config = {...configFromFile}
+        }
     }
 
     _updateConfig = (config) => { 

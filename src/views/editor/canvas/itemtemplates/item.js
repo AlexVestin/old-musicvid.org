@@ -33,6 +33,7 @@ export default class BaseItem {
         this.config.movable     = true
         this.config.sceneId     = config.sceneId
         this.config.automations = []        
+        this.config.itemType    = config.type 
         
         this.mesh = {}
         this.automations = []
