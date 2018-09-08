@@ -12,6 +12,7 @@ export default class Landing extends PureComponent {
         super()
 
         this.ref = React.createRef()
+        this.examplesRef = React.createRef();
         this.state = { scrollY: 0}
     }
     state = {scrollPosition: 0}
@@ -27,14 +28,19 @@ export default class Landing extends PureComponent {
         window.removeEventListener('scroll', this.onScroll, false);
     }
 
+    scrollToContent = (content) => {
+        console.log(this.examplesRef.current, this.examplesRef)
+        this.examplesRef.current.scrollIntoView({behavior: 'smooth', alignToTop: true, block: "start", inline: "nearest"});
+    }
+
 
 
     render() {
         
         return(
             <div className={classes.container} ref={ el => this.ref = el}>
-                <Hero></Hero>
-                <Examples></Examples>
+                <Hero scrollTo={this.scrollToContent}></Hero>
+                <Examples ref={this.examplesRef}></Examples>
                 <Footer></Footer>
             </div>
         )

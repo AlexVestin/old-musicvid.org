@@ -49,6 +49,24 @@
     font-weight: 600;
 }
 
+@keyframes fadeIn {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.arrowDown {
+    cursor: pointer;
+    color: #bbb;
+    height: 40px !important;
+    width: 40px !important;
+    margin-top: 25px;
+    -moz-animation: fadeIn 2s infinite;
+    -webkit-animation: fadeIn 2s infinite;
+    -o-animation: fadeIn 2s infinite;
+    animation: fadeIn 2s infinite;
+}
+
    
 .description {
     color: #f67600;

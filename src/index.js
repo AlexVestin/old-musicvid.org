@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './views/App';
 import { unregister } from './registerServiceWorker'
-import injectTapEventPlugin from 'react-tap-event-plugin'
 import store from './redux/store'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
@@ -30,5 +29,4 @@ const app = (
 )
 
 unregister();
-injectTapEventPlugin();
 ReactDOM.render(app, document.getElementById('root'));

@@ -19,10 +19,11 @@ class App extends Component {
     register: null,
     privacy: null,
     login: null,
-    logout: null
+    logout: null,
   }
 
   componentDidMount() {
+    
     import("./editor/Editor").then((mod) => this.setState(() => ({ editor: mod.default })))
     import("./login/Login").then((mod) => this.setState(() => ({ login: mod.default })))
     import("./login/Register").then((mod) => this.setState(() => ({ register: mod.default })))
@@ -59,8 +60,7 @@ class App extends Component {
             <Route path="/info" component={Info}></Route>
             <Route path="/privacy" component={this.state.privacy}></Route>
             <Route exact path="/" component={Landing}></Route>
-            <Route component={MissingPage}></Route> 
-  
+            <Route component={MissingPage}></Route>   
           </Switch>
        </div>
 
