@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
-import ClipItem from './clipitem'
+import ClipItem from './track'
 
 class ClipInfoBar extends PureComponent {
 

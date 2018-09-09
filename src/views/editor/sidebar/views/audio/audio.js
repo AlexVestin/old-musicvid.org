@@ -4,7 +4,7 @@ import Button from 'material-ui/Button'
 import { connect } from 'react-redux'
 import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio, removeSound } from '@redux/actions/items'
 import Delete from '@material-ui/icons/Delete'
-import withHeader from './withheader'
+import withHeader from '../../HOC/withheader'
 import AudioItem from './audioitem'
 import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
 

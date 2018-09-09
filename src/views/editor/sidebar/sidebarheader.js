@@ -4,7 +4,10 @@ import { connect } from 'react-redux'
 import classes from './sidebarheader.css'
 import Button from 'material-ui/Button'
 
- class SidebarHeader extends Component {
+
+
+
+class SidebarHeader extends Component {
     
     handleChange = (event, value) => {        
         setSidebarWindowIndex(value)

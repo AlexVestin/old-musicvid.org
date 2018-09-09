@@ -1,7 +1,7 @@
 import React from 'react';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import { setSidebarWindowIndex, createEffect } from '@redux/actions/items'
-import withHeader from '../withheadereffectstemp'
+import withHeader from '../../HOC/withheadereffectstemp'
 
 
 

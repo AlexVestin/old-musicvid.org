@@ -1,13 +1,14 @@
 import React from 'react';
-import withHeader from '../withheader'
+
 
 import { connect } from 'react-redux'
 import { setSidebarWindowIndex,  editCamera, editControls, editLayer, dispatchAction } from '@redux/actions/items'
-import GroupContainer from '../input/groupcontainer'
-import ConfigList from '../input/input'
+import withHeader from '../../HOC/withheader'
 import ItemList from '../item/items'
 import NameInput from './nameinput'
-import AlertDialog from '../removemodal'
+import AlertDialog from '../../modals/removemodal'
+import GroupContainer from '../../input/groupcontainer'
+import ConfigList from '../../input/input'
 
 
 class Layer extends React.Component {

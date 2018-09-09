@@ -1,8 +1,8 @@
 import React from 'react';
-import ConfigList from '../input/input'
+import ConfigList from '../../input/input'
 import { connect } from 'react-redux'
 import { editItem, setSidebarWindowIndex, removeItem, addAutomation } from '@redux/actions/items'
-import withHeader from '../withheader'
+import withHeader from '../../HOC/withheader'
 import NameInput from '../layer/nameinput'
 
 class Item extends React.PureComponent {

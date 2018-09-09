@@ -8,7 +8,6 @@ import classes from './clipinfobar.css'
 import Clip from './clip'
 import { editItem, editAudio, selectItem, selectAudio } from '@redux/actions/items'
 import { connect } from 'react-redux'
-import KeyframeTracks from './keyframes';
 
 const pHeight = 35
 
@@ -133,17 +132,7 @@ class ClipItem extends PureComponent {
                             maxNrUnits={maxNrUnits}
                         >
                         </Clip>
-                        {this.state.expanded && 
-                            <KeyframeTracks
-                                left={left}
-                                zoomWidth={zoomWidth}
-                                zoomHeight={zoomHeight}
-                                itemRightOffset={itemRightOffset}
-                                unitSize={unitSize}
-                                pHeight={pHeight}
-                                automations={automations}
-                            ></KeyframeTracks>
-                        }
+                        
                     </div>    
                 }
 

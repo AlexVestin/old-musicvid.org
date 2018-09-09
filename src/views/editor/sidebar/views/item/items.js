@@ -1,9 +1,7 @@
 import React from 'react';
-
-import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux'
+import Delete from '@material-ui/icons/Delete';
 import { selectItem, removeItem, dispatchAction } from '@redux/actions/items'
-
 import classes from './items.css'
 
 class ItemList extends React.Component {

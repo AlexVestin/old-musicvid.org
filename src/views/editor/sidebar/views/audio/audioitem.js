@@ -1,9 +1,9 @@
 
 
 import React, {PureComponent} from 'react'
-import ConfigList from './input/input'
+import ConfigList from '../../input/input'
 import { removeSound, editAudio } from '@redux/actions/items'
-import NameInput from './layer/nameinput'
+import NameInput from '../layer/nameinput'
 
 export default class AudioItem extends PureComponent {
     removeSound = () => {

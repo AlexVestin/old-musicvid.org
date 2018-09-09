@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react'
 import { dispatchAction } from '@redux/actions/items'
 import { editProjectSettings } from '@redux/actions/globals'
-import ConfigList from './input';
+import ConfigList from '../../input/input';
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import withHeader from '../withheader'
+import withHeader from '../../HOC/withheader'
 import * as FileSaver from 'file-saver'
 import store from '@redux/store'
 
@@ -52,7 +52,6 @@ class ProjectSettings extends PureComponent {
         FileSaver.saveAs(blob, "proj.json")
     }
     render() {
-        console.log({...this.props})
         return(
             <div>
                 <ConfigList

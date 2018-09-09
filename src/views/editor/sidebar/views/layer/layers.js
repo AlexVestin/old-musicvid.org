@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { selectLayer, dispatchAction, setSidebarWindowIndex } from '@redux/actions/items'
-import withHeader from '../withheader'
+import withHeader from '../../HOC/withheader'
 import Delete from '@material-ui/icons/Delete'
 import EffectList from './effects'
-import GroupContainer from '../input/groupcontainer'
+import GroupContainer from '../../input/groupcontainer'
 import classes from '../item/items.css'
 class LayerList  extends React.Component {
 

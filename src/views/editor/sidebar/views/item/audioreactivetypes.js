@@ -2,7 +2,7 @@ import React from 'react';
 import List, { ListItem,  ListItemText } from 'material-ui/List';
 import { setSidebarWindowIndex, createItem } from '@redux/actions/items'
 import {connect} from 'react-redux'
-import withHeader from '../withheader'
+import withHeader from '../../HOC/withheader'
 
 const items3D = [
   "Bars", 

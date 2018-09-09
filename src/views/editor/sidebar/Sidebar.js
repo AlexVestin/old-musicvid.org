@@ -1,15 +1,19 @@
 import React, { PureComponent } from 'react'
-import SimpleTabs from "./sidebarcontainer"
+import {connect } from 'react-redux'
 import classes from "./sidebar.css"
+import Audio from './views/audio/audio'
+import LayerList from './views/layer/layers'
+import ProjectSettings from './views/settings/projectsettings'
+import LayerContainer from './views/layer/layercontainer'
+import indices from './indices'
 
-export default class Sidebar extends PureComponent {
+const resizeStyle={height: "100%", width: 6, backgroundColor: "gray", cursor: "col-resize"} 
+class Sidebar extends PureComponent {
 
     constructor(props) {
         super(props)
         this.minWidth = (300 / window.innerWidth) * 100
         this.state = { width: 25, dx: 0 } 
-
-        
     }
 
     componentWillUnmount() {
@@ -42,15 +46,34 @@ export default class Sidebar extends PureComponent {
         }
     }
 
+    
+
     render() {
-        const resizeStyle={height: "100%", width: 6, backgroundColor: "gray", cursor: "col-resize"} 
+        
         const { dx, width } = this.state
+        const value = this.props.sideBarWindowIndex
+
         return ( 
             <div className={classes.wrapper} style={{width: width + dx + "%"}}>
                 
-                <SimpleTabs className={classes.tabs}></SimpleTabs>
+                <div className={classes.root}>
+                    {value === indices.PROJECTSETTINGS && <ProjectSettings idxs={indices} idx={2}></ProjectSettings>}
+                    {value === indices.LAYERS && <LayerList idx={0} idxs={indices} ></LayerList>}
+                    {value === indices.AUDIO && <Audio idxs={indices} idx={indices.AUDIO}></Audio>}
+                    {value >= 2 && <LayerContainer idxs={indices} ></LayerContainer>}
+                </div>
                 <div onMouseDown={this.onMouseDown} style={resizeStyle}></div>
             </div>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        selectedItemId: state.items.selectedItemId,
+        sideBarWindowIndex: state.items.sideBarWindowIndex,
+        selectedLayerId: state.items.selectedLayerId,      
+    }
+}
+
+export default connect(mapStateToProps)(Sidebar);

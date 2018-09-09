@@ -1,10 +1,9 @@
 import React from 'react';
-import  withHeader from '../withheader';
 import List, { ListItem, ListItemText } from 'material-ui/List';
-
 import { createItem, setSidebarWindowIndex } from '@redux/actions/items'
 import { connect } from 'react-redux'
-import Modal from '../modal'
+import  withHeader from '../../HOC/withheader';
+import Modal from '../../modals/modal'
 
 class AddResourceOptions2D extends React.Component {
 

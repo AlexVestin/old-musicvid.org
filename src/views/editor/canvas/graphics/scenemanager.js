@@ -1,18 +1,20 @@
 import SceneContainer3D from './three/scene'
 import SceneContainer2D from './canvas2d/scene'
+import RenderTarget from './three/postprocessing/rendertarget';
 
 import React, { Component } from 'react';
-import Sound from "./sound"
+
 import store from '@redux/store'
 import { OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
 import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
 import { setSidebarWindowIndex, dispatchAction } from '@redux/actions/items'
-import RenderTarget from './three/postprocessing/rendertarget';
 
-import AudioManager from './audiomanager'
 
+
+import AudioManager from '../audio/audiomanager'
+import Sound from "../audio/sound"
 
 class ThreeCanvas extends Component {
     constructor(props) {

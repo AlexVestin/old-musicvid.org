@@ -1,11 +1,11 @@
 
 import React, { Component } from 'react'
-import ThreeCanvas from './scenemanager';
+import ThreeCanvas from './graphics/scenemanager';
 
 import classes from './canvas.css'
-import PlaybackPanel from './playback'
-import ExportModal from './export'
-import LinkFilesModal from './linkfilesmodal'
+import PlaybackPanel from './canvas-ui/playback'
+import ExportModal from './canvas-ui/export'
+import LinkFilesModal from './canvas-ui/linkfilesmodal'
 
 import { dispatchAction } from '@redux/actions/items' 
 import { setTime, togglePlaying, setPlaying, incrementTime, setDisabled } from '@redux/actions/globals' 

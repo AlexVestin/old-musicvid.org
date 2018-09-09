@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react'
-import SimpleTabs from './tabs'
+import classes from './playlist.css'
+import { connect } from 'react-redux'
+import ScrollArea from './scrollarea'
 import { dispatchAction } from '@redux/actions/items'
 
-export default class Playlist extends PureComponent {
+class Playlist extends PureComponent {
 
     constructor(props) {
         super(props)
@@ -69,8 +71,23 @@ export default class Playlist extends PureComponent {
         return (
             <div draggable="false" style={{position: "relative", height: height + dy + "%", width: "100%", minHeight: this.minHeightPx, maxHeight: this.maxHeightPx}}>
                 <div onSelectCapture={() => false} draggable="false" style={resizeStyle} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}></div>
-                <SimpleTabs></SimpleTabs>
+                <div className={classes.wrapper} draggable="false">
+                <div className={classes.header} style={{minHeight: 12, height: 12, backgroundColor: "#434343"}}></div>
+                <div className={classes.scrollbarWrapper} draggable="false">
+                    <ScrollArea maxNrUnits={this.props.clipDuration} items={this.props.items}> </ScrollArea>
+                </div>
+            </div>
             </div>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        selectedItem: state.items.selectedItem,
+        items: state.items.items,
+        clipDuration: state.globals.clipDuration
+    }
+}
+
+export default connect(mapStateToProps)(Playlist);

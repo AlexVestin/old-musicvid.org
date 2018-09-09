@@ -1,5 +1,5 @@
 import React from 'react';
-import withHeader from '../withheader';
+import withHeader from '../../HOC/withheader';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
 import Button from 'material-ui/Button'

@@ -1,5 +1,5 @@
 
-import SidebarContainer from '@/views/editor/sidebar/sidebarcontainer'
+import indices from '@/views/editor/sidebar/indices'
 import update from 'immutability-helper'
 
 
@@ -88,18 +88,18 @@ export default function itemsReducer(state = baseSettings, action){
                 return {...state, passes}
             case "ADD_EFFECT":
                 passes       = update(state.passes, {$push: [action.payload] })
-                return {...state, passes, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT, effectId: action.payload.id} 
+                return {...state, passes, sideBarWindowIndex: indices.EFFECT, effectId: action.payload.id} 
             case "EDIT_EFFECT":
                 idx = state.passes.findIndex(e => e.id === state.effectId)
                 const pass = state.passes[idx]                
                 passes   = update(state.passes, {$splice: [[idx, 1, {...pass, [action.payload.key]: action.payload.value}]] })
                 return {...state, passes }
             case "SELECT_EFFECT":
-                return { ...state, effectId: action.payload, sideBarWindowIndex: SidebarContainer.INDEXES.EFFECT }
+                return { ...state, effectId: action.payload, sideBarWindowIndex: indices.EFFECT }
             case "REMOVE_SOUND":
                 idx         = state.audioItems.findIndex(e => e.id === action.payload) 
                 audioItems  = [...state.audioItems.slice(0, idx), ...state.audioItems.slice(idx+1)]
-                return {...state, audioItems, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: 0}
+                return {...state, audioItems, sideBarWindowIndex: indices.AUDIO, audioItemView: 0}
             case "CREATE_SOUND":
                 return {...state, audioInfo: action.payload}
             case "ADD_SOUND": 
@@ -131,11 +131,11 @@ export default function itemsReducer(state = baseSettings, action){
                 layers      = update(state.layers,  {[id]: {$set: {...action.payload, items: []}}})
                 return {...state, items, layers, selectedLayerId: id }
             case "SELECT_LAYER":
-                return {...state, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER, selectedLayerId: action.payload }
+                return {...state, sideBarWindowIndex: indices.LAYER, selectedLayerId: action.payload }
             case "SET_SIDEBAR_WINDOW_INDEX":
                 return {...state, sideBarWindowIndex: action.payload }
             case "SELECT_ITEM":
-                return {...state, selectedItemId: action.payload.itemId, selectedLayerId: action.payload.layerId, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM }
+                return {...state, selectedItemId: action.payload.itemId, selectedLayerId: action.payload.layerId, sideBarWindowIndex: indices.ITEM }
 
             case "ADD_ITEM":
                 id          = action.payload.id
@@ -144,17 +144,17 @@ export default function itemsReducer(state = baseSettings, action){
                 layers      = update(state.layers, {[state.selectedLayerId]: {items: {$push: [id]}}})
                 automations = update(state.automations, {[id]: {$set: [] }}) 
 
-                return {...state, items, layers, automations, selectedItemId: id, sideBarWindowIndex: SidebarContainer.INDEXES.ITEM }
+                return {...state, items, layers, automations, selectedItemId: id, sideBarWindowIndex: indices.ITEM }
             case "REMOVE_LAYER":
                 id = action.payload.id
                 layers  = update(state.layers, {$unset: [id] })
-                return {...state, layers, sideBarWindowIndex: SidebarContainer.INDEXES.LAYERS }
+                return {...state, layers, sideBarWindowIndex: indices.LAYERS }
            
             case "REMOVE_ITEM":
                 idx     = state.layers[state.selectedLayerId].items.findIndex(e => e === action.payload.id)
                 items   = update(state.items,  {[state.selectedLayerId]: {$unset: [action.payload.id]}})  
                 layers  = update(state.layers, {[state.selectedLayerId]: {items: {$splice: [[idx, 1]]}}})
-                return {...state, items, layers, selectedItemId: -1, sideBarWindowIndex: SidebarContainer.INDEXES.LAYER}
+                return {...state, items, layers, selectedItemId: -1, sideBarWindowIndex: indices.LAYER}
             
             case "TOGGLE_ITEMS_ENABLED":
                 const s = {...state.items[state.selectedLayerId][state.selectedItemId], ...action.payload}
@@ -173,7 +173,7 @@ export default function itemsReducer(state = baseSettings, action){
                 return {...state, audioItemView: action.payload}
             case "SELECT_AUDIO_ITEM": 
                 idx = state.audioItems.findIndex(e => e.id === action.payload.itemId)
-                return {...state, audioIdx: idx, sideBarWindowIndex: SidebarContainer.INDEXES.AUDIO, audioItemView: 1}
+                return {...state, audioIdx: idx, sideBarWindowIndex: indices.AUDIO, audioItemView: 1}
             case "EDIT_AUDIO_ITEM": 
                 var value = action.value
                 if(action.key === "offsetLeft")

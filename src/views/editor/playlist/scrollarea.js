@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react'
 import Draggable from 'react-draggable'
 import classes from "./scrollarea.css"
 
-import ScrollTopPanel from './scrolltoppanel'
-import ClipInfoBar from './clipinfobar'
+import ScrollTopPanel from './seekerpanel/scrolltoppanel'
+import ClipInfoBar from './track/clipinfobar'
 
 import { connect } from 'react-redux'
 

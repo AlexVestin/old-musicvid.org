@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 
-class Playline extends PureComponent {
+class Seeker extends PureComponent {
 
 
     render() {
@@ -32,4 +32,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(Playline)
+export default connect(mapStateToProps)(Seeker)

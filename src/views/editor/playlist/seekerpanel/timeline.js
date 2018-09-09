@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { setTime } from '@redux/actions/globals'
-import Playline from './playline'
+import Seeker from './seeker'
 
 import classes from './timeline.css'
 const style = {
@@ -79,7 +79,7 @@ class Timeline extends PureComponent {
         return(
             <div style={style} onWheel={this.props.onWheel} onClick={this.onClick} className={classes.txt} draggable="false">
                 
-                <Playline zoomWidth={zoomWidth} unitSize={unitSize} left={left}></Playline>
+                <Seeker zoomWidth={zoomWidth} unitSize={unitSize} left={left}></Seeker>
                 
                 <div style={{color:"white", position: "relative"}}>
                     {numbers.map((e) => 

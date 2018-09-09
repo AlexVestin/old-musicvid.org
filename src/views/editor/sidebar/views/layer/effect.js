@@ -1,9 +1,9 @@
 import React from 'react';
-import ConfigList from '../input/input'
+import ConfigList from '../../input/input'
 import { connect } from 'react-redux'
 import { editEffect, setSidebarWindowIndex, removeEffect } from '@redux/actions/items'
 
-import withHeader from '../withheadereffectstemp'
+import withHeader from '../../HOC/withheadereffectstemp'
 
 
 class Effect extends React.PureComponent {
