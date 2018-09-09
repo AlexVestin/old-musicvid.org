@@ -23,10 +23,9 @@ import NoiseBlob from './items/noiseblob/noiseblob';
 
 
 export default class SceneContainer {
-    constructor(name, width, height, renderer) {
+    constructor(name, width, height, renderer, fileConfig, camera, controls) {
 
         this.scene = new THREE.Scene()
-        this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
         this.renderer = renderer
 
         this.items = []
@@ -36,43 +35,51 @@ export default class SceneContainer {
         this.width = width
         this.height = height
 
-        this.cameraConfig   = cameraConfigs.orthoConfig
-        this.controlConfig  = controlConfigs.orbitConfig
-        this.fogConfig      = {
-            near: 500, 
-            far: 2000, 
-            color: "0xcce0ff", 
-            enabled: false,
-            defaultConfig: [{
-                title: "Fog", 
-                items: {
-                    enabled:    { value: false, type: "Boolean" },
-                    near:       { value: 500, type: "Number"},
-                    far:        { value: 2000, type: "Number"},
-                    color:      { value: "333333", type: "String"},
-                }
-            }] 
-        }
+        if(!fileConfig) {
+            this.cameraConfig   = cameraConfigs.perspectiveConfig
+            this.controlConfig  = controlConfigs.orbitConfig
+            this.fogConfig      = {
+                near: 500, 
+                far: 2000, 
+                color: "0xcce0ff", 
+                enabled: false,
+                defaultConfig: [{
+                    title: "Fog", 
+                    items: {
+                        enabled:    { value: false, type: "Boolean" },
+                        near:       { value: 500, type: "Number"},
+                        far:        { value: 2000, type: "Number"},
+                        color:      { value: "333333", type: "String"},
+                    }
+                }] 
+            }
 
-        this.config = {
-            id: Math.floor(Math.random() * 100000000),
-            name: name,
-            items: [],
-            thing: 10,
-            zIndex: 1,
-            defaultConfig: [ {
-                title: "Settings", 
-                items: {
-                    zIndex: {type: "Number", value: 1},
-                }
-            }],
-            width,
-            height,
-            passes: [],
-            camera: this.cameraConfig,
-            controls: this.controlConfig,
-            fog: this.fogConfig,
-            layerType: 1
+            this.config = {
+                id: Math.floor(Math.random() * 100000000),
+                name: name,
+                items: [],
+                thing: 10,
+                zIndex: 1,
+                defaultConfig: [ {
+                    title: "Settings", 
+                    items: {
+                        zIndex: {type: "Number", value: 1},
+                    }
+                }],
+                width,
+                height,
+                passes: [],
+                camera: this.cameraConfig,
+                controls: this.controlConfig,
+                fog: this.fogConfig,
+                layerType: 1
+            }
+
+            add3DLayer(this.config)
+        }else {
+            this.cameraConfig   = camera
+            this.controlConfig  = controls
+            this.config = {...fileConfig}
         }
 
         this.sceneConfig = {
@@ -81,13 +88,14 @@ export default class SceneContainer {
             renderer
         }
         
-        add3DLayer(this.config)
-
         this.target = new THREE.WebGLRenderTarget(width, height)
         this.quad = new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 
             new THREE.MeshBasicMaterial({transparent: true, map: this.target.texture})
         );
+
+        this.setCamera()
+        this.setControls()
     }
 
     editFog = (key, value) => {
@@ -148,10 +156,6 @@ export default class SceneContainer {
             default:   
         }
 
-
-        console.log(key)
-
-
         this.controls.update()
     }
 
@@ -204,7 +208,7 @@ export default class SceneContainer {
         i2.config.renderIndex = i2.config.renderIndex - delta
     }
 
-    addItem = (name, info, time) => {
+    addItem = (name, info, time, config) => {
         info.name = name
         info.sceneId = this.config.id
         info.renderer = this.renderer
@@ -218,52 +222,54 @@ export default class SceneContainer {
             scene: this.scene
         }
 
+        if(config)info.type = config.itemType
+
         let item;
         switch (info.type) {
             case "NOISE BLOB":
-                item = new NoiseBlob(info)
+                item = new NoiseBlob(info, config)
                 break;
             case "AUDIO CIRCLE":
-                item = new AudioCircle(info)
+                item = new AudioCircle(info, config)
                 break;
             case "NORTHERN LIGHTS":
-                item = new NorthernLights(info)
+                item = new NorthernLights(info, config)
                 break;
             case "SKYBOX2":
-                item = new SkyBox2(info)
+                item = new SkyBox2(info, config)
                 break;
             case "SKYBOX":
-                item = new SkyBox(info)
+                item = new SkyBox(info, config)
                 break;
             case "PARTICLES":
-                item = new Particles(info)
+                item = new Particles(info, config)
                 break;
             case "IMAGE":
-                item = new BackgroundImage(info)
+                item = new BackgroundImage(info, config)
                 break;
             case "BARS":
-                item = new Bars(info)
+                item = new Bars(info, config)
                 break;
             case "TEXT3D":
-                item = new Text3D(info)
+                item = new Text3D(info, config)
                 break;
             case "WATER":
-                item = new Water(info)
+                item = new Water(info, config)
                 break;
             case "VIDEO":
-                item = new Video(info)
+                item = new Video(info, config)
                 break;
             case "TESSELATED TEXT":
-                item = new TessellatedText(info)
+                item = new TessellatedText(info, config)
                 break;
             case "SPHERE":
-                item = new Sphere(info)
+                item = new Sphere(info, config)
                 break;
             case "RANDOM GEOMETRY":
-                item = new RandomGeometry(info)
+                item = new RandomGeometry(info, config)
                 break;
             default:
-                console.log("unkown config type while adding object")
+                console.log("unkown config type while adding object", info.type)
         }
 
         this.items.push(item)
@@ -303,40 +309,38 @@ export default class SceneContainer {
 
     setCamera = () => {
         const { width, height } = this.config
-        this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 20000)
-        this.camera.position.set(0,0,200)
-        this.cameraConfig = cameraConfigs.perspectiveConfig
-        replaceCamera(this.cameraConfig)
-    }
-
-    setLight = (scene) => {
-        let light = new THREE.DirectionalLight(0xffffff, 0.8);
-        light.position.set(- 30, 30, 30);
-        light.castShadow = true;
-        light.shadow.camera.top = 45;
-        light.shadow.camera.right = 40;
-        light.shadow.camera.left = light.shadow.camera.bottom = -40;
-        light.shadow.camera.near = 1;
-        light.shadow.camera.far = 200;
-        scene.add(light);
-        this.light = light
+        if(this.cameraConfig.type === "PerspectiveCamera") {
+            const { far, near, fov, x, y, z } = this.cameraConfig
+            this.camera = new THREE.PerspectiveCamera(fov, width / height, near, far)
+            this.camera.position.set(x,y,z)        
+        }else {
+            const { far, near, left, top, bottom, right } = this.cameraConfig
+            this.camera = new THREE.OrthographicCamera(left, right, top, bottom, near, far)
+        }
     }
 
     setControls = (config) => {
         const { camera, renderer } = this
-       
-            let controls = new OrbitControls(camera, renderer.domElement);
-            controls.maxPolarAngle = Math.PI * 0.495;
-            controls.target.set(0, 0, 0);
-            controls.panningMode = 1;
-            controls.minDistance = 40.0;
-            controls.maxDistance = 300.0;
-        if(this.config.name !== "background") {
-            camera.lookAt(controls.target);
+        let controls;
+        this.controls = {}
+
+        if(this.cameraConfig.type !== "OrthographicCamera") {
+            if(this.controlConfig.type === "OrbitControl") {
+                controls = new OrbitControls(camera, renderer.domElement);
+                const { maxPolarAngle, targetX, targetY, targetZ, panningMode, minDistance, maxDistance, enabled } = this.controlConfig
+                controls.maxPolarAngle = maxPolarAngle;
+                controls.target.set(targetX, targetY, targetZ);
+                controls.panningMode = panningMode;
+                controls.minDistance = minDistance;
+                controls.maxDistance = maxDistance;
+                controls.enabled = enabled;
+                camera.lookAt(controls.target);
+            }else {
+    
+            }
+
+            this.controls = controls
         }
-        this.controls = controls
-        
-        replaceControls(controlConfigs.orbitConfig)
     }
 
     updateItem = (config, time) => {

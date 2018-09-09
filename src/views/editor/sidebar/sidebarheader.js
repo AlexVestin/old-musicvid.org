@@ -26,8 +26,6 @@ import Button from 'material-ui/Button'
                     <Tab idx={1} selectedIdx={idx !== 5 ? idx : 0} label="Audio"></Tab>
                     <Tab idx={2} selectedIdx={idx !== 5 ? idx : 0} label="Settings"></Tab>
                 </div>
-
-                <Button color="primary">Export Video</Button>
            </div>
         )
     }

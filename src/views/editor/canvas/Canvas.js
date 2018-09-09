@@ -5,7 +5,9 @@ import ThreeCanvas from './scenemanager';
 import classes from './canvas.css'
 import PlaybackPanel from './playback'
 import ExportModal from './export'
+import LinkFilesModal from './linkfilesmodal'
 
+import { dispatchAction } from '@redux/actions/items' 
 import { setTime, togglePlaying, setPlaying, incrementTime, setDisabled } from '@redux/actions/globals' 
 import { connect } from 'react-redux';
 
@@ -17,7 +19,8 @@ class Canvas extends Component {
         width: 640,
         height: 480,
         info: "",
-        modalOpen: false
+        linkFiles: [],
+        openLinkFilesModal: false
       };
 
       this.frames = 60
@@ -96,9 +99,13 @@ class Canvas extends Component {
     }
 
     shouldComponentUpdate = (props, state) => {
-      let shouldUpdate = state.width !== this.state.width || state.height !== this.state.height
-      shouldUpdate = shouldUpdate || state.modalOpen !== this.state.modalOpen || props.playing !== this.props.playing
+      let shouldUpdate = state.width !== this.state.width || state.height !== this.state.height || this.state.openLinkFilesModal !== state.openLinkFilesModal
+      shouldUpdate = shouldUpdate || props.exportVideo !== this.props.exportVideo || props.playing !== this.props.playing
       return  shouldUpdate
+    }
+
+    linkFiles = (files) => {
+      this.setState({linkFiles: files, openLinkFilesModal: true})
     }
   
     renderScene = () => {
@@ -150,14 +157,10 @@ class Canvas extends Component {
       incrementTime(time)
     }
 
-    openEncodeModal = () => {
-      this.setState({modalOpen: true})
-    }
-
     startEncoding = (config, useAudioDuration) => {
       this.stop()
       setDisabled(true)
-      this.setState({modalOpen: false})
+      dispatchAction({type:"SET_EXPORT", payload: false})
       this.sceneManager.initEncoder(config, useAudioDuration)
     }
 
@@ -170,18 +173,25 @@ class Canvas extends Component {
     setFullScreen = () => {
         this.savedWidth = this.state.width
         this.savedHeight = this.state.height
-
     }
   
     render() {
-      const {width, height, modalOpen} = this.state
-      const { playing } = this.props
+      const {width, height, openLinkFilesModal, linkFiles } = this.state
+      const { playing, exportVideo } = this.props
 
       return (
         <div className={classes.canvas_wrapper} >
-          {modalOpen && <ExportModal open={modalOpen} startEncoding={this.startEncoding} onCancel={() => this.setState({modalOpen: false})}></ExportModal>}
+         <ExportModal open={exportVideo} startEncoding={this.startEncoding} onCancel={() => dispatchAction({type:"SET_EXPORT", payload: false})}></ExportModal>
+          <LinkFilesModal onCancel={() => this.setState({openLinkFilesModal: false})} files={linkFiles} open={openLinkFilesModal}></LinkFilesModal>
         	 <div >
-              <ThreeCanvas ref={ref => this.ThreeRenderer= ref } width={width} height={height} loadFromFile={this.props.loadFromFile}></ThreeCanvas>
+              <ThreeCanvas 
+                ref={ref => this.ThreeRenderer= ref } 
+                width={width} 
+                height={height} 
+                loadFromFile={this.props.loadFromFile}
+                linkFiles={this.linkFiles}
+                >
+              </ThreeCanvas>
               <PlaybackPanel 
                   width={width} 
                   playing={playing}    
@@ -207,7 +217,8 @@ const mapStateToProps = state => {
     encoding: state.globals.encoding,
     audioInfo: state.items.audioInfo,
     playlistHeight: state.window.playlistHeight,
-    loadFromFile: state.items.loadFromFile
+    loadFromFile: state.items.loadFromFile,
+    exportVideo: state.globals.exportVideo
   }
 }
 

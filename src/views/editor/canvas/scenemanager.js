@@ -18,9 +18,6 @@ class ThreeCanvas extends Component {
     constructor(props) {
         super(props)
         
-        
-            
-
         this.state = {
             width: props.width,
             height: props.height,
@@ -47,7 +44,6 @@ class ThreeCanvas extends Component {
         this.gl = this.renderer.getContext();
         this.encodedFrames = 0
 
-        console.log(this.props)
         if(!this.props.loadFromFile) {
             dispatchAction({type: "RESET_REDUCER"})
             this.setupScene()
@@ -64,38 +60,63 @@ class ThreeCanvas extends Component {
 
     }
 
-    addLayerFromFile = (layer) => {
+    addLayerFromFile = (layer, project) => {
         let loadedLayer;
-        if(layer.layerType === 0) {
-            console.log(layer, "LAYERTYPE 0")
+        
+        if(layer.layerType === 1) {
+            const camera = project.cameras[layer.id]
+            const controls = project.controls[layer.id]
+
+            loadedLayer = new SceneContainer3D(layer.name, this.width, this.height, this.renderer, layer, camera, controls)
         }else {
             loadedLayer = new SceneContainer2D(layer.name, this.width, this.height, this.renderer, layer)
-            this.addLayer(loadedLayer)
         }
 
+        this.addLayer(loadedLayer)
         return loadedLayer;
+    }
 
+    loadLayerItems = (layer,project, key) => {
+        let files = []
+        project.layers[key].items.forEach(itemId => {
+            const item = project.items[key][itemId]
+            if(item.itemType === "VIDEO" || item.itemType === "IMAGE"){
+                files.push(item)
+            }else {
+                
+                layer.addItem(item.itemType, item, 0, item)
+            }  
+        })
+
+        return files;
     }
 
     loadFromFile = () => {
         const project = store.getState().items
+        
+        let files = []
         for(var key in project.layers) {
-            const layer = this.addLayerFromFile(project.layers[key])
-
-            
-            project.layers[key].items.forEach(itemId => {
-                const item = project.items[key][itemId]
-                console.log(item)
-                layer.addItem(item.type, item, 0, item)
-                
-            })
-            
+            const layer = this.addLayerFromFile(project.layers[key], project)
+            files.concat(this.loadLayerItems(layer, project, key))
         }
 
         for(var key in project.passes) {
             const pass = project.passes[key]
             this.addPassFromFile(pass)
         }
+
+         
+        for(var key in project.audioItems) {
+            const audioItem = project.audioItems[key]
+            files.push(audioItem)
+        }
+
+        dispatchAction({type: "RESET_AUDIO_FILES"})
+        this.props.linkFiles(files, this.filesLinked)
+    }
+
+    filesLinked = (linked) => {
+        console.log(linked)
     }
 
 
@@ -135,7 +156,6 @@ class ThreeCanvas extends Component {
             this.scenes.forEach(e => e.setSize(width, height))
             this.renderer.setSize( width, height );     
         }
-        
     }
 
     shouldComponentUpdate(props, state) {
@@ -178,8 +198,6 @@ class ThreeCanvas extends Component {
 
     handleChange = () => {
         const state             = store.getState()
-
-        
         this.time               = state.globals.time
         
         const audioInfo         = state.items.audioInfo
@@ -198,6 +216,13 @@ class ThreeCanvas extends Component {
         var newLayer
 
         switch(type) {
+            case "ADD_LINKED_FILE":
+                if(payload.config.type === "SOUND") {
+                    this.audioManager.add(new Sound(payload.file, payload.config))
+                }else if(true){
+
+                }
+                break;
             case "EDIT_LAYER":
                 scene.editSettings(payload.key, payload.value)
                 break;
@@ -211,9 +236,6 @@ class ThreeCanvas extends Component {
                 break;
             case "CREATE_3D_LAYER":
                 newLayer   = new SceneContainer3D("new 3d graphics", this.width, this.height, this.renderer)
-                newLayer.setCamera()
-                newLayer.setControls()
-                newLayer.controls.enabled = false
                 this.addLayer(newLayer)
                 break;
             case "CREATE_2D_LAYER":
@@ -237,6 +259,9 @@ class ThreeCanvas extends Component {
                     this.postProcessingEnabled = payload.value
                 }else if(payload.key === "masterVolume") {
                     this.audioManager.masterVolume = payload.value
+                }else if(payload.key === "fftSize") {
+                    this.scenes.forEach(scene => scene.setFFTSize(Number(payload.value)))
+                    this.audioManager.setFFTSize(Number(payload.value))
                 }
                     
                 break;
@@ -271,7 +296,7 @@ class ThreeCanvas extends Component {
                 this.setTime(this.time, this.playing)
                 break;
             case "CREATE_SOUND":
-                this.audioManager.add(new Sound(audioInfo, () => {if(this.props.playing)this.sound.play(this.props.time)}))
+                this.audioManager.add(new Sound(audioInfo))
                 break;
             case "EDIT_AUDIO_ITEM":
                 this.audioManager.editSound(audioItems[audioIdx])

@@ -13,6 +13,9 @@ import CirclePlayer from './items/circleplayer';
 import TimeKeeper from './items/timekeeper';
 import TimeText from './items/timetext';
 import Image from './items/image';
+import Circle2 from './items/nation2'
+import Polartone from './items/polartone'
+
 
 export default class SceneContainer {
     constructor(name, width, height, renderer, config) {
@@ -82,6 +85,8 @@ export default class SceneContainer {
             new THREE.PlaneBufferGeometry( 2, 2 ), 
             new THREE.MeshBasicMaterial( { map: this.texture, transparent: true } )
         ))
+
+        this.setSize(this.width, this.height);
     }
 
     removeEffect = (config) => {
@@ -110,6 +115,10 @@ export default class SceneContainer {
         i2.config.renderIndex = i2.config.renderIndex - delta
     }
 
+    setFFTSize = (value) => {
+        this.items.forEach(item => item.setFFTSize(value))
+    }
+
     addItem = (name, info, time, config) => {
         info = {
             ...info, 
@@ -128,47 +137,50 @@ export default class SceneContainer {
         let item; 
     
         switch (info.type) {
+            case "CIRCLE2":
+                item = new Circle2(info, config);
+                break;
             case "IMAGE":
                 item = new Image(info, config);
             break;
             case "TIME TEXT":
-                item = new TimeText(info);
+                item = new TimeText(info, config);
             break;
             case "TIME KEEPER":
-                item = new TimeKeeper(info);
+                item = new TimeKeeper(info, config);
                 break;
             case "CIRCLE PLAYER":
                 item = new CirclePlayer(info, config);
                 break;
             case "KINETIC TEXT":
-                item = new KineticText(info)
+                item = new KineticText(info, config)
             break;
             case "TEXT":
-                item = new SimpleText(info)
+                item = new SimpleText(info, config)
             break;
             case "JSNATION":
-                item = new JSNation(info)
+                item = new JSNation(info, config)
             break;
             case "SQUARE":
-                item = new Square(info)
+                item = new Square(info, config)
             break;
             case "POLARTONE":
-                item = new WaveletCanvas(info)
+                item = new Polartone(info, config)
             break;
             case "WAVELET CANVAS":
-                item = new WaveletCanvas(info)
+                item = new WaveletCanvas(info, config)
                 break;
             case "NEBULOSA":
-                item = new Nebula(info)
+                item = new Nebula(info, config)
                 break;
             case "INCEPTION CITY":
-                item = new InceptionCity(info)
+                item = new InceptionCity(info, config)
                 break;
             case "CIRCLE RINGS":
                 item = new CircleRings(info, config)
                 break;
             default:
-                console.log("unkown config type while adding object")
+                console.log("unkown config type while adding object", info.type)
         }
 
         this.items.push(item)

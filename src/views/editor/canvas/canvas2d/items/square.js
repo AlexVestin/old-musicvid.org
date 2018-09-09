@@ -2,27 +2,32 @@ import BaseItem from '../../itemtemplates/item'
 
 
 export default class Square extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
 
         this.ctx = config.ctx
         this.canvas = config.canvas
 
-        this.config.defaultConfig.push({
-            title: "Settings",
-            items: {
-                color: {type: "String", value: "EEE"},
-                x: {type: "Number", value: 0 },
-                y: {type: "Number", value: 0 },
-                height: {type: "Number", value: 1 },
-                width: {type: "Number", value: 1 },
-            }
-        })
-
-        this.aspectRatio = config.height / config.width
-
-        this.getConfig()
-        this.addItem()
+        if(!fileConfig) {
+            this.config.defaultConfig.push({
+                title: "Settings",
+                items: {
+                    color: {type: "String", value: "EEE"},
+                    x: {type: "Number", value: 0 },
+                    y: {type: "Number", value: 0 },
+                    height: {type: "Number", value: 1 },
+                    width: {type: "Number", value: 1 },
+                }
+            })
+    
+            this.aspectRatio = config.height / config.width
+    
+            this.getConfig()
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+        }
+       
     }
 
     animate = (time, freqBins) => {

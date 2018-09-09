@@ -98,9 +98,7 @@ export default class SSAARenderPass extends Pass {
         this.quad2 = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), this.copyMaterial );
         this.quad2.frustumCulled = false; // Avoid getting clipped
 		this.scene2.add( this.quad2 );
-	
-		this.addEffect(this.config)
-    }
+	}
 
 
     dispose () {

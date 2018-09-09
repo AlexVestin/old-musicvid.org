@@ -15,7 +15,7 @@ export default class AudioManager {
         this.frameIdx = 0
         this.channels = 2
 
-        this.startSampleWindowSize = 0.1
+        this.startSampleWindowSize = 0.2
         this.sampleWindowSize = this.startSampleWindowSize
 
         this.sampleBuffer = new Float32Array() 
@@ -169,12 +169,18 @@ export default class AudioManager {
         this.Module._init_r(this.fftSize)
     }
 
+    setFFTSize = (value) => {
+        this.fftSize = value;
+        this.Module._init_r(this.fftSize)
+    }
+
 
     getBins = (times, stepping) => {
         let bins = [], data = []
         
         const time = times +  ( (this.nrBufferSources - 1) * this.sampleWindowSize)
-        const idx = Math.floor((time - this.time) * this.sampleRate)        
+        let idx = Math.floor((time - this.time) * this.sampleRate) - (this.fftSize / 2)
+        if (idx < 0 ) idx = 0;    
 
         if(this.sampleBuffer.length >= this.fftSize) {
             const windowSize = this.fftSize;

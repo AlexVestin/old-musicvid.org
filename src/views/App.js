@@ -6,7 +6,7 @@ import Header from './header/header'
 import Landing from './landing/Landing'
 import Info from './info/Info'
 import MissingPage from './missing/Missing'
- 
+import RoadMap from './roadmap/Roadmap'
 
 import { app } from '../firebase/firebase'
 import { setIsAuthenticated } from '@redux/actions/auth'
@@ -62,6 +62,7 @@ class App extends Component {
             <Route path="/logout" component={this.state.logout}></Route>
             <Route path="/info" component={Info}></Route>
             <Route path="/privacy" component={this.state.privacy}></Route>
+            <Route path="/roadmap" component={RoadMap}></Route>
             <Route exact path="/" component={Landing}></Route>
             <Route component={MissingPage}></Route>   
           </Switch>

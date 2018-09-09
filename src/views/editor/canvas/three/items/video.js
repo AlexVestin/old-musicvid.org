@@ -2,8 +2,6 @@ import BaseItem from '../../itemtemplates/item'
 import * as THREE from 'three'
 import Demuxer from '@/videoencoder/demuxer.js'
 
-
-
 export default class Video extends BaseItem {
     constructor(config) {
         super(config) 
@@ -20,8 +18,6 @@ export default class Video extends BaseItem {
 
         this.ac = new AudioContext()
         this.decoder = new Demuxer(this.onDecoderReady)
-
-        //config.sceneConfig.scene.background = this.tex
 
         this.scene = config.sceneConfig.scene
         this.playAudio = config.keepAudio
@@ -72,10 +68,8 @@ export default class Video extends BaseItem {
 
         this.config.duration = this.info.duration
         this.config.maxDuration = this.info.duration
-        
+        this.config.localFile = true
         this.addItem() 
-
-        //this.scene.background = this.tex
     }
 
 

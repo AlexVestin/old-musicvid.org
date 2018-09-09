@@ -15,7 +15,7 @@ export default class JSNation extends BaseItem {
                     keepBins: {type: "Number", value: 13},
                     smoothingPasses: {type: "Number", value: 1},
                     smoothingPoints: {type: "Number", value: 3},
-                    radius: {type: "Number", value:  300}
+                    radius: {type: "Number", value:  180}
                 }
             })
 

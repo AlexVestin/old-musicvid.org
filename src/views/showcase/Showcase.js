@@ -9,8 +9,8 @@ class Showcase extends PureComponent {
     constructor(props) {
         super(props);
 
-        this.videoWidth = 1280;
-        this.videoHeight = 720;
+        this.videoWidth = 460;
+        this.videoHeight = 240;
     }
 
     render() {

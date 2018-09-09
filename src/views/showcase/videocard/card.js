@@ -36,9 +36,14 @@ export default class VideoCard extends PureComponent {
                 
 
                 <div className={classes.cardInfo}>
-                    <div className={classes.title}>
-                        <Audiotrack style={classes.icon}></Audiotrack> {artist} - {song}                    
+                    
+                    
+                    <div className={classes.topGroupWrapper}>
+                        <div className={classes.title}><Audiotrack style={classes.icon}></Audiotrack> {artist} - {song} </div>
+                        <button disabled>template</button>
                     </div>
+
+                    
                     
                     
                     {this.state.expanded && 

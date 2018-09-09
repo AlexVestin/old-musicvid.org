@@ -126,6 +126,7 @@ export default class BaseItem {
     _animate = () => {}
     stop = () => {}
     play = () => {}
+    setFFTSize = (value) => {}
     
     
 } 

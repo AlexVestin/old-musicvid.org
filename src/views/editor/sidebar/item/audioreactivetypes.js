@@ -16,7 +16,8 @@ const items3D = [
   "Skybox2", 
   "Northern Lights",
   "Audio Circle",
-  "Noise Blob"
+  "Noise Blob",
+  
 ]
 
 const bgItems = [
@@ -35,7 +36,9 @@ const items2D = [
   "Kinetic Text",
   "Circle Player",
   "Time Keeper",
-  "Time Text"
+  "Time Text",
+  "Circle2",
+  "Wavelet Canvas"
 ]
 
 class AudioReactiveTypeList extends React.Component {  

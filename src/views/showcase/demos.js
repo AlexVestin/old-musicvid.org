@@ -47,6 +47,60 @@ export default {
         videoId: "qOO7wx-iqbM"
         
     },
+    3: {
+        title: "Spectrum bars demo",
+        url: "vid/demo2.mp4",
+        posterUrl: "img/poster.png",
+        itemsUsed: ["Bars", "Skybox2", "Particles", "Text"],
+        song: "Backbone",
+        artist: "Droeloe feat. Nevve",
+        exportTime: "12min 43sec",
+        videoLength: "3min 15 sec",
+        resolution: "1280x720",
+        bitrate: "6000k",
+        preset: "Ultrafast",
+        fps: "60",
+        fileSize: "142MB",
+        date: "2018-08-21",
+        videoId: "qOO7wx-iqbM"
+        
+    },
+    4: {
+        title: "Spectrum bars demo",
+        url: "vid/demo2.mp4",
+        posterUrl: "img/poster.png",
+        itemsUsed: ["Bars", "Skybox2", "Particles", "Text"],
+        song: "Backbone",
+        artist: "Droeloe feat. Nevve",
+        exportTime: "12min 43sec",
+        videoLength: "3min 15 sec",
+        resolution: "1280x720",
+        bitrate: "6000k",
+        preset: "Ultrafast",
+        fps: "60",
+        fileSize: "142MB",
+        date: "2018-08-21",
+        videoId: "qOO7wx-iqbM"
+        
+    },
+    5: {
+        title: "Spectrum bars demo",
+        url: "vid/demo2.mp4",
+        posterUrl: "img/poster.png",
+        itemsUsed: ["Bars", "Skybox2", "Particles", "Text"],
+        song: "Backbone",
+        artist: "Droeloe feat. Nevve",
+        exportTime: "12min 43sec",
+        videoLength: "3min 15 sec",
+        resolution: "1280x720",
+        bitrate: "6000k",
+        preset: "Ultrafast",
+        fps: "60",
+        fileSize: "142MB",
+        date: "2018-08-21",
+        videoId: "qOO7wx-iqbM"
+        
+    },
    
 
 

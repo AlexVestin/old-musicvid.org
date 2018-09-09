@@ -38,7 +38,7 @@ export default class RenderTarget {
         this.effectComposer = new EffectComposer(renderer, this.buffer)
         
         this.renderPass = new SSAAPass( {name: "SSAA", scene, camera, renderPass: true} );
-        const copyPass = new ShaderPass( CopyShader, undefined, "COPY", true);
+        const copyPass = new ShaderPass( CopyShader, undefined, "COPY", true, false);
         //const fx =  new GlitchPass(64, undefined, "sepia")
 
         this.effectComposer.addPass( this.renderPass )
@@ -47,7 +47,7 @@ export default class RenderTarget {
         copyPass.renderPass = true
         this.renderPass.renderPass = true
 
-        this.passes = [ this.renderPass, copyPass ]
+        this.passes = [ ]
     }
 
     setCamera = (camera) => {

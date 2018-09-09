@@ -5,7 +5,7 @@ import lerp from 'lerp'
 import { dispatchAction } from '@redux/actions/items'
 
 export default class WaveletCanvas extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
         const shape = [config.canvas.width, config.canvas.height]
 
@@ -27,54 +27,9 @@ export default class WaveletCanvas extends BaseItem {
 
         this.positions = []
 
-        this.config.defaultConfig.push({
-            title: "Settings",
-            items: {
-                useFFTBins: {type: "Boolean", value: false},
-                amplitude: {type: "Number", value: 3},
-                capacity: {type: "Number", value: 900},
-                distance: {type: "Number", value: 0.25},
-                extent: {type: "Number", value: 3},
-                x: {type: "Number", value: 0},
-                y: {type: "Number", value: 4},
-                z: {type: "Number", value: 0},
-                scale: {type: "Number", value: 1},
-                songDuration: {type: "Number", value: 180}
-            }
-        })
-
-        const colorGroup = {
-            title: "Colors",
-            items: {
-                shiftingColors: {type: "Boolean", value: true},
-                shiftSpeed: {type: "Number", value: 0.1},
-                shiftingDarkness: {type:"Number", value: 30, tooltip: "Upper bound for shifting color values"},
-                red: {type: "Number", value: 225, disabled: true},
-                blue: {type: "Number", value: 225, disabled: true},
-                green: {type: "Number", value: 225, disabled: true},
-                alpha: {type: "Number", value: 0.5},
-            }
-        }
-
-        const glowGroup = {
-            title: "Glow",
-            items: {
-                glow: {type: "Boolean", value: false},
-                shiftingGlowColors: {type: "Boolean", value: false},
-                shadowColor: {type: "String", value: "FFFFFF"},
-                shadowBlur: {type: "Number", value: 20},
-                shadowOffsetX: {type: "Number", value: 0},
-                shadowOffsetY: {type: "Number", value: 0},
-            }
-        }
-        this.config.defaultConfig.push(colorGroup)
-        this.config.defaultConfig.push(glowGroup)
-        this.colorGroupIndex = this.config.defaultConfig.findIndex(e => e.title === colorGroup.title)
-
         this.cursor = [0, 0, 0] 
         this.dpr = window.devicePixelRatio
-        this.getConfig()
-        this.addItem()
+        
 
         this.startRed = (Math.random() * 255) >> 0
         this.startGreen = (Math.random() * 255) >> 0
@@ -85,6 +40,62 @@ export default class WaveletCanvas extends BaseItem {
         this.glowGreen = 0
         this.glowRed = 0
         this.glowBlue = 0
+
+        if(!fileConfig) {
+            this.config.defaultConfig.push({
+                title: "Settings",
+                items: {
+                    useFFTBins: {type: "Boolean", value: false},
+                    amplitude: {type: "Number", value: 25},
+                    capacity: {type: "Number", value: 1000},
+                    distance: {type: "Number", value: 0.1},
+                    extent: {type: "Number", value: 0.25},
+                    x: {type: "Number", value: 0},
+                    y: {type: "Number", value: 3.5},
+                    z: {type: "Number", value: 0},
+                    scale: {type: "Number", value: 1},
+                    songDuration: {type: "Number", value: 180},
+                    lineJoin: {type: "List", value: "round", options: ["round", "miter", "bevel"]},
+                    lineWidth: {type: "Number", value: 1},
+                }
+            })
+    
+            const colorGroup = {
+                title: "Colors",
+                items: {
+                    shiftingColors: {type: "Boolean", value: true},
+                    shiftSpeed: {type: "Number", value: 0.1},
+                    shiftingDarkness: {type:"Number", value: 90, tooltip: "Upper bound for shifting color values"},
+                    red: {type: "Number", value: 225, disabled: true},
+                    blue: {type: "Number", value: 225, disabled: true},
+                    green: {type: "Number", value: 225, disabled: true},
+                    alpha: {type: "Number", value: 0.2},
+                }
+            }
+    
+            const glowGroup = {
+                title: "Glow",
+                items: {
+                    glow: {type: "Boolean", value: false},
+                    shiftingGlowColors: {type: "Boolean", value: false},
+                    shadowColor: {type: "String", value: "FFFFFF"},
+                    shadowBlur: {type: "Number", value: 20},
+                    shadowOffsetX: {type: "Number", value: 0},
+                    shadowOffsetY: {type: "Number", value: 0},
+                }
+            }
+            this.config.defaultConfig.push(colorGroup)
+            this.config.defaultConfig.push(glowGroup)
+            
+            this.getConfig()
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+            this.updateConfig(this.config)
+        }
+
+        this.colorGroupIndex = this.config.defaultConfig.findIndex(e => e.title === "Colors")
+
     }
 
     stop = () => {
@@ -114,6 +125,37 @@ export default class WaveletCanvas extends BaseItem {
 
         this.camera.viewport =  [0, 0, width, height]
 
+    }
+
+    setStyle = (dt) => {
+        const alpha = this.config.alpha || 0.25
+        
+        if(this.config.shiftingColors) {
+            const cs =  128 - this.config.shiftingDarkness
+            this.red = (cs + Math.sin(this.startRed + (dt * this.config.shiftSpeed)) * cs) >> 0
+            this.blue =  (cs + Math.sin(this.startGreen + (dt * this.config.shiftSpeed)) * cs) >> 0
+            this.green =  (cs + Math.sin(this.startBlue + (dt * this.config.shiftSpeed)) * cs) >> 0 
+            this.internalCtx.strokeStyle = `rgba(${this.red}, ${this.blue}, ${this.green}, ${alpha})`
+        }else {
+            this.internalCtx.strokeStyle = `rgba(${this.config.red}, ${this.config.blue}, ${this.config.green}, ${alpha})`
+        }
+       
+        if(this.config.glow ===  true) {
+            const cs =  128 - this.config.shiftingDarkness
+            this.glowRed = (cs + Math.sin(this.startRed + (dt * this.config.shiftSpeed)) * cs) >> 0
+            this.glowBlue =  (cs + Math.sin(this.startGreen + (dt * this.config.shiftSpeed)) * cs) >> 0
+            this.glowGreen =  (cs + Math.sin(this.startBlue + (dt * this.config.shiftSpeed)) * cs) >> 0 
+
+            this.ctx.shadowColor = `rgb(${this.glowRed}, ${this.glowBlue}, ${this.glowGreen})`
+            this.ctx.shadowBlur = this.config.shadowBlur;
+            this.ctx.shadowOffsetX = 0;
+            this.ctx.shadowOffsetY = 0;
+        } else {
+            this.ctx.shadowBlur = 0;
+        }
+
+        this.internalCtx.lineWidth = this.config.lineWidth
+        this.internalCtx.lineJoin = this.config.lineJoin
     }
 
 
@@ -152,38 +194,11 @@ export default class WaveletCanvas extends BaseItem {
 
         let radius = 1 - dur
         const startAngle = this.time
-        const alpha = this.config.alpha || 0.25
-        
-        if(this.config.shiftingColors) {
-            const cs =  128 - this.config.shiftingDarkness
-            this.red = (cs + Math.sin(this.startRed + (dt * this.config.shiftSpeed)) * cs) >> 0
-            this.blue =  (cs + Math.sin(this.startGreen + (dt * this.config.shiftSpeed)) * cs) >> 0
-            this.green =  (cs + Math.sin(this.startBlue + (dt * this.config.shiftSpeed)) * cs) >> 0 
-            this.internalCtx.strokeStyle = `rgba(${this.red}, ${this.blue}, ${this.green}, ${alpha})`
-        }else {
-            this.internalCtx.strokeStyle = `rgba(${this.config.red}, ${this.config.blue}, ${this.config.green}, ${alpha})`
-        }
-       
-        if(this.config.glow ===  true) {
-            const cs =  128 - this.config.shiftingDarkness
-            this.glowRed = (cs + Math.sin(this.startRed + (dt * this.config.shiftSpeed)) * cs) >> 0
-            this.glowBlue =  (cs + Math.sin(this.startGreen + (dt * this.config.shiftSpeed)) * cs) >> 0
-            this.glowGreen =  (cs + Math.sin(this.startBlue + (dt * this.config.shiftSpeed)) * cs) >> 0 
-
-            this.ctx.shadowColor = `rgb(${this.glowRed}, ${this.glowBlue}, ${this.glowGreen})`
-            this.ctx.shadowBlur = this.config.shadowBlur;
-            this.ctx.shadowOffsetX = 0;
-            this.ctx.shadowOffsetY = 0;
-        } else {
-            this.ctx.shadowBlur = 0;
-        }
         
         
-        this.internalCtx.lineWidth = 1
-        this.internalCtx.lineJoin = 'round'
+        this.setStyle(dt)
         this.internalCtx.beginPath()
 
-        
         for (let i = this.positions.length - 1; i >= 0; i--) {
             var pos = this.positions[i]
             this.internalCtx.lineTo(pos[0], pos[1])

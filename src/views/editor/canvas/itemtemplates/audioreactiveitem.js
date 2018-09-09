@@ -7,7 +7,7 @@ export default class AudioreactiveItem extends MeshItem {
 
         this.fftSize = 1024;
 
-        const group0 = {
+        this.group0 = {
             title: "Amplitude and size", 
             items: {
                 amplitude: { value: 9, type: "Number", tooltip: "Amplitude of the spectrum values" },
@@ -18,7 +18,7 @@ export default class AudioreactiveItem extends MeshItem {
             }
         }
 
-        const group1 = {
+        this.group1 = {
             title: "General fft settings",
             items: {
                 enableLogTransform:         {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
@@ -33,7 +33,7 @@ export default class AudioreactiveItem extends MeshItem {
             }
         }
     
-        const group2 = {
+        this.group2 = {
             title: "Exponential settings",
             items: {
                 spectrumMaxExponent: { value: 2, type: "Number", tooltip: "the max exponent to raise spectrum values to" },
@@ -42,7 +42,7 @@ export default class AudioreactiveItem extends MeshItem {
             }
         }
     
-        const group3 = {
+        this.group3 = {
             title: "Group smoothing and slopes",
             items: {
                 smoothingPoints: { value: 3, type: "Number", tooltip: "points to use for algorithmic smoothing. Must be an odd number." },
@@ -56,7 +56,7 @@ export default class AudioreactiveItem extends MeshItem {
             }
         }
 
-        const group4 = {
+        this.group4 = {
             title: "Deltasmoothing",
             items: {
                 dropOffAmount: { value: 0.80, type: "Number"},
@@ -64,8 +64,18 @@ export default class AudioreactiveItem extends MeshItem {
             }
         }
         
-        this.config.defaultConfig = [ group0, group1, group2, group3, group4]
+        this.config.defaultConfig.push(this.group0)
+        this.config.defaultConfig.push(this.group1)
+        this.config.defaultConfig.push(this.group2)
+        this.config.defaultConfig.push(this.group3)
+        this.config.defaultConfig.push(this.group4)
         this.getConfig()
+    }
+
+    setFFTSize = (value) => {
+        this.fftSize = value / 2;
+        this.group0.items.spectrumEnd.max = this.fftSize;
+        this.group0.items.spectrumSize.max = this.fftSize;
     }
 
 
@@ -78,6 +88,10 @@ export default class AudioreactiveItem extends MeshItem {
                 }
             })
         })
+    }
+
+    setFFTSize = (value) => {
+
     }
 
     // mostly for debugging purposes

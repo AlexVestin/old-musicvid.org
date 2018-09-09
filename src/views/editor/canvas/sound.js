@@ -5,35 +5,40 @@ import { setDisabled } from '@redux/actions/globals'
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 export default class Sound extends BaseItem {
-    constructor(config, onload){
+    constructor(config, fileConfig){
         super(config)
 
-        const audioGroup = {
-            title: "Audio Info",
-
-            items: {
-                sampleRate: {value: 0, type: "Number", tooltip: "", disabled: true},
-                channels: {value: 0, type: "Number",  tooltip: "", disabled: true},
-                volume: {value: 100, type: "Number", tooltip: "Volume", min: 0, max: 100}
+        if(!fileConfig) {
+            const audioGroup = {
+                title: "Audio Info",
+    
+                items: {
+                    sampleRate: {value: 0, type: "Number", tooltip: "", disabled: true},
+                    channels: {value: 0, type: "Number",  tooltip: "", disabled: true},
+                    volume: {value: 100, type: "Number", tooltip: "Volume", min: 0, max: 100}
+                }
             }
-        }
-        
-        // don't allow editing, TODO fix audio editing
-        //this.config.defaultConfig[0].items.name.disabled = false
-        this.config.defaultConfig[1].items.start.disabled = true
-        this.config.defaultConfig[1].items.duration.disabled = true
-        
-        this.config.defaultConfig.push(audioGroup)
+            
+            // don't allow editing, TODO fix audio editing
+            //this.config.defaultConfig[0].items.name.disabled = false
+            this.config.defaultConfig[1].items.start.disabled = true
+            this.config.defaultConfig[1].items.duration.disabled = true
+            
+            this.config.defaultConfig.push(audioGroup)
+    
+            this.config.type = "SOUND"
 
-        this.config.type = "SOUND"
-        this.onload = onload
+            this.loadSound(config.file, true)
+            this.getConfig()
+        }else {
+            this.loadSound(config, false)
+            this.config = {...fileConfig}
+        }
+       
         this.soundDataBuffer = []
         this.startTime = -1
         this.loaded = false
         this.fftSize = 4096
-
-        this.loadSound(config.file, (data) => this.fftData = data)
-        this.getConfig()
 
         this.ac = new AudioContext()
         this.lastIdx = -1
@@ -67,7 +72,7 @@ export default class Sound extends BaseItem {
         }
     }
 
-    loadSound = (file, callback) => {
+    loadSound = (file, shouldAddNewItem) => {
         let that = this
         var reader = new FileReader();
             reader.onload = function(ev) {
@@ -84,14 +89,9 @@ export default class Sound extends BaseItem {
                     that.sampleRate = buffer.sampleRate
                     that.channels = 2
                     that.duration = buffer.duration;
-
-                    that.config.points = that.generateSvgWaveform(that.left)
                 
-                    addSound(that.config)
+                    if(true)addSound(that.config)
                     setDisabled(false)
-
-                    if(that.onload !== undefined)
-                        that.onload()
                 });
             }
         
@@ -106,25 +106,5 @@ export default class Sound extends BaseItem {
         }else {
             reader.readAsArrayBuffer(file)
         }
-    }
-
-    generateSvgWaveform = ( decodedAudioData ) => {
-        const NUMBER_OF_BUCKETS = Math.floor(this.duration * 3); // number of "bars" the waveform should have
-        let bucketDataSize = Math.floor(decodedAudioData.length / NUMBER_OF_BUCKETS,);
-        let buckets = [];
-        for (var i = 0; i < NUMBER_OF_BUCKETS; i++) {
-            let startingPoint = i * bucketDataSize;
-            let endingPoint = i * bucketDataSize + bucketDataSize;
-            let max = 0;
-            for (var j = startingPoint; j < endingPoint; j++) {
-                if (decodedAudioData[j] > max) {
-                    max = decodedAudioData[j];
-                }
-            }
-            let size = Math.abs(max);
-            buckets.push(size / 2);
-        }
-
-        return buckets
     }
 }

@@ -5,7 +5,7 @@ export default class AudioImpactItem extends MeshItem {
     constructor(config) {
         super(config)
 
-        this.config.defaultConfig.push({
+        this.group0 = {
             title: "Audio Impact Settings",
             items: {
                 easeAmplitude: {type: "Boolean", value: false},
@@ -18,11 +18,17 @@ export default class AudioImpactItem extends MeshItem {
                 upperBinIndex: {type: "Number", value: 12},
                 coolDownTime: {type: "Number", value: 0, tooltip: "Time in seconds until next impact can get triggered."}
             }
-        })
+        }
+
+        this.config.defaultConfig.push(this.group0)
 
         this.prevAmplitude = 0
         this.prevTime = 0
         this.getConfig()
+    }
+    setFFTSize = (value) => {
+        this.fftSize = value / 2;
+        this.group0.items.upperBinIndex.max = this.fftSize; 
     }
 
     smooth = (amp) => {

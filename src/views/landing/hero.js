@@ -20,10 +20,6 @@ const bootstrapButtonStyle = {
   
 export default class Header extends PureComponent {
 
-    scroll = () => {
-        this.props.scrollTo()
-    }
-
     render() {
         return(
             <div className={classes.container}  ref={this.props.forwardRef}>

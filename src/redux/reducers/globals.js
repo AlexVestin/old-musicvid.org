@@ -10,10 +10,15 @@ export default function playbackReducer(state = {
     audioBufferSize: 0.1,
     postProcessingEnabled: false,
     masterVolume: 100,
+    exportVideo: false,
+    fftSize: "2048",
 
     }, action){
         switch(action.type){
-
+            case "SET_GLOBAL_SETTINGS":
+                return {...state, ...action.payload, time: 0, playing: false}
+            case "SET_EXPORT":
+                return {...state, exportVideo: action.payload}
             case "EDIT_PROJECT_SETTINGS":
                 return {...state, [action.payload.key]: action.payload.value}
             case "SET_AUDIO_BUFFER_SIZE":
@@ -31,7 +36,6 @@ export default function playbackReducer(state = {
             case "INCREMENT_FRAME":
                 return {...state, frameId: state.frameId + 1}
             case "TOGGLE_PLAYING":
-                console.log("toggleeee", state.playing)
                 return {...state, playing: !state.playing}
             case "SET_PLAYING":
                 return {...state, playing: action.payload}

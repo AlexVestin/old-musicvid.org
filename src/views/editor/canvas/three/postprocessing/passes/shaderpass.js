@@ -6,7 +6,7 @@ import Pass from '../passtemplates/pass'
 import * as THREE from 'three' 
 export default class ShaderPass extends Pass  {
 
-    constructor(shader, textureID, name, renderPass = false) {
+    constructor(shader, textureID, name, renderPass = false, shouldAdd = true) {
         super(name);
         this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
 
@@ -34,7 +34,7 @@ export default class ShaderPass extends Pass  {
         this.quad.frustumCulled = false; // Avoid getting clipped
         this.scene.add( this.quad );
 
-        if(name)this.addEffect(this.config)
+        if(name && shouldAdd)this.addEffect(this.config)
     }
 
     render( renderer, writeBuffer, readBuffer, delta, maskActive ) {

@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import classes from './examples.css'
 import img from './poster.png'
+import upcoming from './upcoming.jpg'
+import things from './bg.jpg'
 
 export default React.forwardRef((props, ref) => (
     <div  className={classes.container} ref={ref}>
@@ -9,32 +11,33 @@ export default React.forwardRef((props, ref) => (
             <div className={classes.grid}>
                 
                 <div className={classes.itemImageWrapper}>
-                    <img src={img} className={classes.itemImage}></img>
+                    <img src={things} className={classes.itemImage}></img>
                 </div>
 
                 <div className={classes.itemTextWrapper}>
                     <div className={classes.itemTitle}>
                         Template projects
                     </div>
-                    <div> 
+                    <div className={classes.subTitle}> 
                         Browse template projects, simply import media (background images, and audio) and you're good to go.
                     </div>
-                    <a href="/templates">Open templates</a>
+                    <a className={classes.link} href="/templates">Open templates</a>
                 </div>
 
             <div className={classes.itemTextWrapper}>
                 <div className={classes.itemTitle}>
-                    Gallery
+                    Roadmap
                 </div>
-                <div> 
-                    Explore videos created with the musicvid.org editor
+                <div className={classes.subTitle}> 
+                    This site is still in its' infancy, and there are many exciting updates coming up. 
+                     
                 </div>
 
-                <a href="/showcase">Browse showcase</a>
+                <a className={classes.link} href="/roadmap">Browse showcase</a>
             </div>
 
             <div className={classes.itemImageWrapper}>
-                <img src={img} className={classes.itemImage}></img>
+                <img src={upcoming} className={classes.itemImage}></img>
             </div>
 
             <div className={classes.itemImageWrapper}>
@@ -44,11 +47,11 @@ export default React.forwardRef((props, ref) => (
                 <div className={classes.itemTitle}>
                     Tutorial
                 </div>
-                <div> 
+                <div className={classes.subTitle}> 
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et convallis metus, 
                     non ultricies justo. Praesent metus sapien
                 </div>
-                <a href="/tutorial">Browse tutorials</a>
+                <a className={classes.link} href="/tutorial">Browse tutorials</a>
             </div>
 
             </div>

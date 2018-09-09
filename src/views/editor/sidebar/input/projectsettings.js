@@ -8,6 +8,9 @@ import withHeader from '../withheader'
 import * as FileSaver from 'file-saver'
 import store from '@redux/store'
 
+
+const fftSizes = [ "2048", "4096", "8192" ]
+
 class ProjectSettings extends PureComponent {
     constructor(props){
         super(props)
@@ -19,6 +22,7 @@ class ProjectSettings extends PureComponent {
             postProcessingEnabled: false,
             resolution: "680x480",
             masterVolume: 100,
+            fftSize: "2048",
             defaultConfig: [{
                 title: "Project settings",
                 expanded: true,
@@ -26,7 +30,8 @@ class ProjectSettings extends PureComponent {
                     fps: {type: "Number", value: 60, disabled: true},
                     clipDuration: {type: "Number", value: 180},
                     postProcessingEnabled: {type: "Boolean", value: false},
-                    masterVolume: {type: "Number", min: 0, max: 100, value: 100}
+                    masterVolume: {type: "Number", min: 0, max: 100, value: 100},
+                    fftSize: {type: "List", options: fftSizes, value: "2048"}
                 }
             }]
         }
@@ -38,13 +43,16 @@ class ProjectSettings extends PureComponent {
 
     }
 
+    exportVideo = () => {
+        dispatchAction({type: "SET_EXPORT", payload: true})
+    }
     saveAsTemplate = () => {
-        console.log()
-        var blob = new Blob([JSON.stringify(store.getState().items)], {type: "application/json"});
+        const projectSettings = JSON.stringify({items: store.getState().items, globals:store.getState().globals})
+        var blob = new Blob([projectSettings], {type: "application/json"});
         FileSaver.saveAs(blob, "proj.json")
     }
     render() {
-
+        console.log({...this.props})
         return(
             <div>
                 <ConfigList
@@ -56,7 +64,7 @@ class ProjectSettings extends PureComponent {
                 </ConfigList>
 
                 <Button onClick={this.saveAsTemplate}>Save project as template</Button>
-                <Button >export to video</Button>
+                <Button onClick={this.exportVideo}>export to video</Button>
             </div>
         )
     }
@@ -70,7 +78,8 @@ const mapStateToProps = state => {
         postProcessingEnabled: state.globals.postProcessingEnabled,
         resolution: state.globals.resolution,
         expanded: true,
-        masterVolume: state.globals.masterVolume
+        masterVolume: state.globals.masterVolume,
+        fftSize: state.globals.fftSize,
     }
 }
 

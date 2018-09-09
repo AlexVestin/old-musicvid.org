@@ -14,10 +14,7 @@ const inputStyles = {
 export default class CustomInput extends PureComponent {
 
     render() {
-
-        
-
-        const {  keyVal, type, value, disabled, name, options, min, max, step } = this.props
+        const {  keyVal, type, value, disabled, options, min, max, step } = this.props
         const key = keyVal
 
         return (
@@ -55,9 +52,11 @@ export default class CustomInput extends PureComponent {
                 }
 
                 {(type === "Link") && <LinkField value={value} keyVal={keyVal}></LinkField>}
+                
                 {type === "List" && <LabeledFieldWrapper {...this.props} >
-                    <select style={inputStyles[type]} value={name} onChange={this.props.handleChange({type: type, key: key})}>
-                        {options.map(e => <option key={e}  value={e}>{e}</option>)}
+                    
+                    <select style={inputStyles[type]} value={value} onChange={this.props.handleChange({type: type, key: key})}>
+                        {options.map(e => <option key={e} value={e}>{e}</option>)}
                     </select>
                     </LabeledFieldWrapper>
                 }
