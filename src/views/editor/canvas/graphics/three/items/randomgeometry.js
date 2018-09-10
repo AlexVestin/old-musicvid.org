@@ -4,21 +4,28 @@ import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 
 
 export default class RandomGeometry extends AudioImpactItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
 
-        const rotationGroup = {
-            title: "Rotation",
-            items: {
-               rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick"},
-               rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick"},
-               rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick"},
+        
+        if(!fileConfig) {
+            const rotationGroup = {
+                title: "Rotation",
+                items: {
+                   rotationX: {value: 0, type: "Number", tooltip: "Rotation in X axis per tick"},
+                   rotationY: {value: 0, type: "Number", tooltip: "Rotation in Y axis per tick"},
+                   rotationZ: {value: 0, type: "Number", tooltip: "Rotation in Z axis per tick"},
+                }
             }
+    
+            this.config.defaultConfig.push(rotationGroup)
+            this.getConfig()
+            this.config.strength = 1
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
         }
-
-        this.config.defaultConfig.push(rotationGroup)
-        this.getConfig()
-        this.config.strength = 1
+       
 
         this.mesh = new THREE.Mesh()
         var geometry = new THREE.SphereBufferGeometry( 50, Math.random() * 64, Math.random() * 32 );
@@ -34,7 +41,7 @@ export default class RandomGeometry extends AudioImpactItem {
             THREE.PolyhedronBufferGeometry,
         ]
 
-        this.addItem()
+       
     }
 
     move = (x, y, z) => {

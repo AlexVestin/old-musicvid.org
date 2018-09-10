@@ -10,8 +10,8 @@ import Pass from '../passtemplates/pass'
 import HalftoneShader from '../shaders/halftoneshader'
 
 export default class HalftonePass extends Pass {
-    constructor ( width, height, name ) {
-        super(name)
+    constructor ( config, fileConfig ) {
+        super(config)
 
         const params = {
 			shape: 1,
@@ -25,24 +25,32 @@ export default class HalftonePass extends Pass {
 			greyscale: false,
 			disable: false
         };
+
+
+        if(!fileConfig) {
+            this.config = {...this.config, ...params}
+            this.config.defaultConfig.push({
+                title: "Config",
+                items: {
+                    shape: {value: 1, type: "Number"},
+                    radius: {type: "Number"},
+                    rotateR: {type: "Number"},
+                    rotateB:{type: "Number"},
+                    rotateG: {type: "Number"},
+                    scatter: {type: "Number"},
+                    blending: {type: "Number"},
+                    blendingMode: {type: "Number"},
+                    greyscale: {type: "Boolean"},
+                    disable: {type: "Boolean"}
+                }
+            })
+            this.addEffect(this.config)
+        }else {
+            this.config = {...fileConfig}
+        }
         
-        this.config = {...this.config, ...params}
-        this.config.defaultConfig.push({
-            title: "Config",
-            items: {
-                shape: {value: 1, type: "Number"},
-                radius: {type: "Number"},
-                rotateR: {type: "Number"},
-                rotateB:{type: "Number"},
-                rotateG: {type: "Number"},
-                scatter: {type: "Number"},
-                blending: {type: "Number"},
-                blendingMode: {type: "Number"},
-                greyscale: {type: "Boolean"},
-                disable: {type: "Boolean"}
-            }
-        })
-        
+      
+        this.config.type = config.type;
         this.uniforms = THREE.UniformsUtils.clone( HalftoneShader.uniforms );
         this.material = new THREE.ShaderMaterial( {
             uniforms: this.uniforms,
@@ -51,8 +59,8 @@ export default class HalftonePass extends Pass {
         } );
 
         // set params
-        this.uniforms.width.value = width;
-        this.uniforms.height.value = height;
+        this.uniforms.width.value = config.width;
+        this.uniforms.height.value = config.height;
 
         for ( var key in params ) {
             if ( params.hasOwnProperty( key ) && this.uniforms.hasOwnProperty( key ) ) {
@@ -65,7 +73,6 @@ export default class HalftonePass extends Pass {
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), null );
         this.quad.frustumCulled = false;
         this.scene.add( this.quad );
-        this.addEffect(this.config)
 
     };
 

@@ -1,6 +1,6 @@
 
 
-import { WebGLRenderTarget, LinearFilter, RGBAFormat, Vector3, Vector2 } from 'three'
+import { WebGLRenderTarget, LinearFilter, RGBAFormat } from 'three'
 
 import EffectComposer from './effectcomposer'
 import BloomPass from './passes/bloompass'
@@ -14,7 +14,6 @@ import SSAAPass from './passes/ssaapass'
 import GlitchPass from './passes/glitchpass'
 import HalftonePass from './passes/halftonepass';
 
-import TestShader from './shaders/testshader'
 import PixelPass from './passes/pixelpass'
 
 export default class RenderTarget {
@@ -38,7 +37,7 @@ export default class RenderTarget {
         this.effectComposer = new EffectComposer(renderer, this.buffer)
         
         this.renderPass = new SSAAPass( {name: "SSAA", scene, camera, renderPass: true} );
-        const copyPass = new ShaderPass( CopyShader, undefined, "COPY", true, false);
+        const copyPass = new ShaderPass( CopyShader, {name: "Copypass", shouldAdd: false, type: "COPY"} );
         //const fx =  new GlitchPass(64, undefined, "sepia")
 
         this.effectComposer.addPass( this.renderPass )
@@ -66,31 +65,32 @@ export default class RenderTarget {
         this.effectComposer.setSize(width, height)
     }
 
-    createEffect = (type) =>  {
+    addFromFile = (pass) => {
+        console.log(pass)
+        this.createEffect(pass.type, pass)
+    }
+    createEffect = (type, fileConfig) =>  {
+
+        console.log("???", type)
         var fx;
         switch(type) {
             case "PIXEL":
-                fx = new PixelPass({width: this.width, height: this.height});
+                fx = new PixelPass({type, width: this.width, height: this.height, name: "Pixelpass"}, fileConfig);
             break;
-            case "TEST SHADER":
-                fx = new ShaderPass(TestShader, undefined, "ytes")
-                const [r,g,b] = [Math.random(), Math.random(), Math.random()]
-                fx.material.uniforms.targetColor.value = new Vector3(r, g, b)
-                break;
             case "COLOR SHADER":
-                fx = new ColorPass(ColorShader, undefined, "color")
+                fx = new ColorPass(ColorShader, {name: "color", type}, fileConfig)
                 break;
             case "SEPIA":
-                fx = new ShaderPass(SepiaShader, undefined, "sepia")
+                fx = new ShaderPass(SepiaShader, {name: "sepia", type}, fileConfig)
                 break;
             case "GLITCH":
-                fx = new GlitchPass(64)
+                fx = new GlitchPass({type, name: "Glitch"}, 64, fileConfig)
                 break;
             case "BLOOM":
-                fx = new BloomPass(0.5)
+                fx = new BloomPass({type, name: "Bloom"}, 0.5, fileConfig)
                 break;
             case "RGB HALFTONE":
-                fx = new HalftonePass(this.width, this.height, "halftone")
+                fx = new HalftonePass({width: this.width, height: this.height, name: "halftone"}, fileConfig)
                 break;
             default:
                 console.log("unknown EFFECTS type", type)

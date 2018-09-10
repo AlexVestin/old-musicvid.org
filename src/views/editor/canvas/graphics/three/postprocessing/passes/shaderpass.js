@@ -6,11 +6,9 @@ import Pass from '../passtemplates/pass'
 import * as THREE from 'three' 
 export default class ShaderPass extends Pass  {
 
-    constructor(shader, textureID, name, renderPass = false, shouldAdd = true) {
-        super(name);
-        this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
-
-        this.config.renderPass = renderPass
+    constructor(shader, config, fileConfig) {
+        super(config);
+        this.textureID = "tDiffuse";
 
         if ( shader instanceof THREE.ShaderMaterial ) {
             this.uniforms = shader.uniforms;
@@ -33,8 +31,12 @@ export default class ShaderPass extends Pass  {
         this.quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), null );
         this.quad.frustumCulled = false; // Avoid getting clipped
         this.scene.add( this.quad );
-
-        if(name && shouldAdd)this.addEffect(this.config)
+        
+        if(config) {
+            this.config.type = config.type
+            if(!(config.shouldAdd === false || fileConfig !== undefined)) 
+                this.addEffect(this.config)
+        } 
     }
 
     render( renderer, writeBuffer, readBuffer, delta, maskActive ) {

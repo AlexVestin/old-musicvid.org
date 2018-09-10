@@ -19,7 +19,6 @@ class App extends Component {
       return <div></div>
     }
       
-
     return (
         <div className={classes.wrapper}>
           <Prompt message={location => location.pathname !== "/editor" ? "Are you sure you want to exit editor, all progress will be lost" : true}></Prompt>

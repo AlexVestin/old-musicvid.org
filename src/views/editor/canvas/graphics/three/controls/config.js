@@ -2,7 +2,7 @@ const controlTypes = ["OrbitControl", "TrackballControl"]
 const orbitGroup = {
     title: "Controls",
     items: {
-        controlsEnabled: {value: false, type: "Boolean"},
+        controlsEnabled: {value: true, type: "Boolean"},
         autoRotate: {type: "Boolean", value: false},
         autoRotateSpeedLeft: {type: "Number", value: 2.0},
         autoRotateSpeedUp: {type: "Number", value: 2.0},
@@ -37,7 +37,7 @@ const trackballGroup = {
 
 export default {
     orbitConfig: {
-        controlsEnabled: false,
+        controlsEnabled: true,
         type: "OrbitControl",
         autoRotate: false,
         autoRotateSpeedUp: 2.0,

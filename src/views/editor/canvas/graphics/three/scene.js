@@ -3,7 +3,6 @@ import OrbitControls from './controls/orbitcontrols'
 
 import Bars from './items/bars'
 import Text3D from './items/text3d'
-import Water from './items/water';
 import BackgroundImage from './items/backgroundimage'
 import Video from './items/video'
 import TessellatedText from './items/tessellatedtext'
@@ -159,6 +158,10 @@ export default class SceneContainer {
         this.controls.update()
     }
 
+    setFFTSize = (value) => {
+        this.items.forEach(item => item.setFFTSize(value))
+    }
+
     editCamera = (key, value) => {
         const { width, height } = this.config
       
@@ -253,9 +256,6 @@ export default class SceneContainer {
             case "TEXT3D":
                 item = new Text3D(info, config)
                 break;
-            case "WATER":
-                item = new Water(info, config)
-                break;
             case "VIDEO":
                 item = new Video(info, config)
                 break;
@@ -319,7 +319,7 @@ export default class SceneContainer {
         }
     }
 
-    setControls = (config) => {
+    setControls = () => {
         const { camera, renderer } = this
         let controls;
         this.controls = {}
@@ -327,12 +327,15 @@ export default class SceneContainer {
         if(this.cameraConfig.type !== "OrthographicCamera") {
             if(this.controlConfig.type === "OrbitControl") {
                 controls = new OrbitControls(camera, renderer.domElement);
-                const { maxPolarAngle, targetX, targetY, targetZ, panningMode, minDistance, maxDistance, enabled } = this.controlConfig
+                const { maxPolarAngle, targetX, targetY, targetZ, panningMode, minDistance, maxDistance, enabled, autoRotateSpeedLeft, autoRotateSpeedRight, autoRotate } = this.controlConfig
                 controls.maxPolarAngle = maxPolarAngle;
                 controls.target.set(targetX, targetY, targetZ);
                 controls.panningMode = panningMode;
                 controls.minDistance = minDistance;
                 controls.maxDistance = maxDistance;
+                controls.autoRotate = autoRotate;
+                controls.autoRotateSpeedLeft = autoRotateSpeedLeft;
+                controls.autoRotateSpeedRight = autoRotateSpeedRight;
                 controls.enabled = enabled;
                 camera.lookAt(controls.target);
             }else {

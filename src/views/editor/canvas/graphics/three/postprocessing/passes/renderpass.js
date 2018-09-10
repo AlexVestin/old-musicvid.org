@@ -4,7 +4,7 @@
 import Pass from '../passtemplates/pass'
 export default class RenderPass extends Pass {
 
-    constructor ( scene, camera, overrideMaterial, clearColor, clearAlpha=0 ) {
+    constructor ( scene, camera, overrideMaterial, clearColor, clearAlpha = 0 ) {
         super("render")
         this.scene = scene;
 		this.camera = camera;

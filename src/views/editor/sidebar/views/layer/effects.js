@@ -5,7 +5,6 @@ import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown';
 import Delete from '@material-ui/icons/Delete';
 
-
 import { connect } from 'react-redux'
 import { setSidebarWindowIndex, selectEffect, removeEffect } from '@redux/actions/items'
 

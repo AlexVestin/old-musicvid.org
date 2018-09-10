@@ -1,3 +1,4 @@
+import KissFFT from './kissFFT' 
 const EMPTY_BUFFER = -1
 
 export default class AudioManager {
@@ -35,7 +36,7 @@ export default class AudioManager {
         this.metronome.postMessage( { interval: this.sampleWindowSize * 1000 } )
         
         this.Module  = {};
-        window.KissFFT(this.Module)
+        KissFFT(this.Module)
         this.Module["onRuntimeInitialized"] = () => { 
             this.onModuleLoaded()
         };
@@ -127,6 +128,7 @@ export default class AudioManager {
                 this.bufferSources[index] = this.audioCtx.createBufferSource()
                 this.bufferSources[index].buffer = buffer
                 this.bufferSources[index].connect(this.audioCtx.destination)
+                if(this.frameIdx === 0) this.startTime = this.audioCtx.currentTime
                 this.bufferSources[index].start(this.startTime + this.sampleWindowSize * this.frameIdx)
             }
             
@@ -224,20 +226,21 @@ export default class AudioManager {
     }
 
     play = (time) => {
+        this.audioCtx = new AudioContext()
         this.time = time
-        if(this.playing){
-            this.stop()
-        }else {
-            this.playing = true 
-            this.startTime = this.audioCtx.currentTime
-            this.metronome.postMessage("start")
-            this.schedule(0)
-            this.schedule(1)
-        }
+        this.playing = true 
+       
+        this.metronome.postMessage("start")
+        this.schedule(0)
+        this.schedule(1)
+        console.log("play")
     }
 
     stop = () => {
+
+        console.log("stop")
         //this.bufferSources.forEach(e => e.stop())
+        if(this.audioCtx.state !== "closed")this.audioCtx.close()    
         this.playing = false
         this.firstPlay = true
         this.sampleBuffer = new Float32Array()

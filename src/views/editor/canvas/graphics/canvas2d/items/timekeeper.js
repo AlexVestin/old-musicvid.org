@@ -1,37 +1,42 @@
 import BaseItem from "../../itemtemplates/item";
 
 export default class TimeKeeper extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config);
 
         this.ctx = config.ctx;
         this.canvas = config.canvas;
 
-        const group = {
-            title: "Positioning",
-            items: {
-                x: { type: "Number", value: 0.1},
-                y: { type: "Number", value: 0.8},
-                lineWidth: {type: "Number", value: 5},
-                width: {type: "Number", value: 0.8},
-                color: {type: "String", value: "FFFFFF"},
-                songDuration: {type: "Number", value: 180}
-            }   
-        }
-
-        this.config.defaultConfig.push(group);
-
-        this.config.defaultConfig.push({
-            title: "Glow",
-            items: {
-                glow: {type: "Boolean", value: true},
-                shadowColor: {type: "String", value: "FFFFFF"},
-                shadowBlur: {type: "Number", value: 20},
+        if(!fileConfig) {
+            const group = {
+                title: "Positioning",
+                items: {
+                    x: { type: "Number", value: 0.1},
+                    y: { type: "Number", value: 0.8},
+                    lineWidth: {type: "Number", value: 5},
+                    width: {type: "Number", value: 0.8},
+                    color: {type: "String", value: "FFFFFF"},
+                    songDuration: {type: "Number", value: 180}
+                }   
             }
-        })
-
-        this.getConfig();
-        this.addItem();
+    
+            this.config.defaultConfig.push(group);
+    
+            this.config.defaultConfig.push({
+                title: "Glow",
+                items: {
+                    glow: {type: "Boolean", value: true},
+                    shadowColor: {type: "String", value: "FFFFFF"},
+                    shadowBlur: {type: "Number", value: 20},
+                }
+            })
+    
+            this.getConfig();
+            this.addItem();
+        }else {
+            this.config = {...fileConfig}
+        }
+      
     }
 
     _updateConfig = (config) => { 

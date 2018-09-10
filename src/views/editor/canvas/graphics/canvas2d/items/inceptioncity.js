@@ -109,7 +109,7 @@ class Trail {
 
 
 export default class InceptionCity extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config) 
         this.canvas = config.canvas;
         this.ctx = config.ctx;
@@ -122,23 +122,28 @@ export default class InceptionCity extends BaseItem {
         this.camera = {x: 0, y: 0, z:-2};
         
 
-        this.config.defaultConfig.push({
-            title: "Settings",
-            items: {
-                x: {type: "Number", value: 0},
-                y: {type: "Number", value: 0},
-                lineRed: {type: "Number", value: 255},
-                lineGreen: {type: "Number", value: 255},
-                lineBlue: {type: "Number", value: 255},
-                strokeRed: {type: "Number", value: 255},
-                strokeGreen: {type: "Number", value: 255},
-                strokeBlue: {type: "Number", value: 255},
-                strokeAlpha: {type: "Number", value: 1}
-            }
-        })
-
-        this.getConfig()
-        this.addItem()
+        if(!fileConfig) {
+            this.config.defaultConfig.push({
+                title: "Settings",
+                items: {
+                    x: {type: "Number", value: 0},
+                    y: {type: "Number", value: 0},
+                    lineRed: {type: "Number", value: 255},
+                    lineGreen: {type: "Number", value: 255},
+                    lineBlue: {type: "Number", value: 255},
+                    strokeRed: {type: "Number", value: 255},
+                    strokeGreen: {type: "Number", value: 255},
+                    strokeBlue: {type: "Number", value: 255},
+                    strokeAlpha: {type: "Number", value: 1}
+                }
+            })
+    
+            this.getConfig()
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+        }
+        
     }
 
     setSize = (width, height) => {

@@ -64,10 +64,10 @@ var Circle = function(W, H) {
 };
 
 export default class CircleRings extends AudioImpactItem {
-    constructor(config, configFromFile) {
+    constructor(config, fileConfig) {
         super(config)
 
-        if(!configFromFile) {
+        if(!fileConfig) {
             this.config.defaultConfig.push({
                 title: "Settings",
                 items: {
@@ -91,7 +91,7 @@ export default class CircleRings extends AudioImpactItem {
             
             this.addItem()
         }else {
-            this.config = {...configFromFile}
+            this.config = {...fileConfig}
         }
       
         

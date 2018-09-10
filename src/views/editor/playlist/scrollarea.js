@@ -117,7 +117,6 @@ class ScrollArea2 extends PureComponent {
         this.viewport[0] = this.viewport[0] + diff
         this.viewport[2] = this.viewport[2] - diff
 
-        const d =  (this.viewport[2] - this.viewport[0])
         if(Math.abs( this.viewport[0] - this.viewport[2]) > 1) {
             this.viewport[0] = 0
             this.viewport[2] = 1

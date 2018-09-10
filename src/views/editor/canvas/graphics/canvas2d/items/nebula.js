@@ -35,21 +35,26 @@ class Puff {
 
 
 export default class Nebula extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
 
-        this.config.defaultConfig.push( {
-            title: "Configs",
-            items: {
-                speed: {type: "Number", value: 100 },
-                x: {type: "Number", value: 0 },
-                y: {type: "Number", value: 0 },
-                width: {type: "Number", value: 720 },
-                height: {type: "Number", value: 480 }
-            }
-        })
-
-        this.getConfig()
+        if(!fileConfig) {
+            this.config.defaultConfig.push( {
+                title: "Configs",
+                items: {
+                    speed: {type: "Number", value: 100 },
+                    x: {type: "Number", value: 0 },
+                    y: {type: "Number", value: 0 },
+                    width: {type: "Number", value: 720 },
+                    height: {type: "Number", value: 480 }
+                }
+            })
+    
+            this.getConfig()
+        }else {
+            this.config = {...fileConfig}
+        }
+       
 
         this.canvas = document.createElement('canvas');	
         this.canvas2 = config.canvas
@@ -82,7 +87,7 @@ export default class Nebula extends BaseItem {
         img.src = '/img/nebula.jpg';
         img.onload = () => { 
             this.ctx3.drawImage(img, 0,0, config.canvas.width, config.canvas.height); 
-            this.addItem();
+            if(!fileConfig)this.addItem();
         }
     }
 

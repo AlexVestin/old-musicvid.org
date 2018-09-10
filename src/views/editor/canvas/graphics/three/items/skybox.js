@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import BaseItem from '../../itemtemplates/item'
 
 export default class SkyBox extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
         var cubeTextureLoader = new THREE.CubeTextureLoader();
         cubeTextureLoader.setPath( 'img/skyboxes/skyboxsun25deg/' );
@@ -37,7 +37,13 @@ export default class SkyBox extends BaseItem {
         this.mesh = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
         
         this.mesh.name = String(this.config.id)
-        this.addItem()
+
+        if(!fileConfig) {
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+        }
+        
     }
 
     animate = (time, frequencyBins) => {

@@ -1,14 +1,20 @@
 import React, {PureComponent} from 'react'
 import classes from "./videocard.css"
 import Youtube from 'react-youtube'
-
+import { Redirect } from 'react-router-dom'
+import { loadProjectFromFile, dispatchAction } from '@redux/actions/items'
 import Audiotrack from '@material-ui/icons/Audiotrack'
+
+
+const devPath = "http://localhost:3000/"
+const prodPath = "https://musicvid.org/"
+
 export default class VideoCard extends PureComponent {
 
     constructor(props) {
         super(props);
 
-        this.state = { expanded: false, mouseEntered: false }
+        this.state = { expanded: false, mouseEntered: false, redirect: false }
 
         this.width = props.width;
         this.height = props.height;
@@ -16,12 +22,28 @@ export default class VideoCard extends PureComponent {
         this.videoRef = React.createRef();
     }
 
+    openTemplate = () => {
+        fetch(devPath + this.props.demo.templateUrl)
+        .then(res => {console.log(res); return res.json()})
+        .then( response => {
+            dispatchAction({type: "SET_GLOBAL_SETTINGS", payload: response.globals})
+            loadProjectFromFile(response.items)
+            this.setState({redirect: true})
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
     toggleExpanded = () => this.setState({expanded: !this.state.expanded})
 
     hover = () => this.setState({mouseEntered: !this.state.mouseEntered})
 
     render() {
-        const {title, artist, itemsUsed, song, videoLength, resolution, fps, bitrate, exportTime, fileSize, date, preset, posterUrl, videoId} = this.props.demo
+        const {title, artist, itemsUsed, song, videoLength, resolution, fps, bitrate, exportTime, fileSize, date, preset, templateUrl, videoId} = this.props.demo
+
+        if (this.state.redirect === true) {
+            return <Redirect to='/editor' />
+        }
 
         return(
             <div className={classes.cardWrapper}>
@@ -40,12 +62,9 @@ export default class VideoCard extends PureComponent {
                     
                     <div className={classes.topGroupWrapper}>
                         <div className={classes.title}><Audiotrack style={classes.icon}></Audiotrack> {artist} - {song} </div>
-                        <button disabled>template</button>
+                        <button onClick={this.openTemplate} disabled={!templateUrl}>template</button>
                     </div>
 
-                    
-                    
-                    
                     {this.state.expanded && 
                     <div className={classes.moreInfoExpandedWrapper}>
                            <div className={classes.moreInfoExpanded}> 

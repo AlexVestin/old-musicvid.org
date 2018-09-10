@@ -28,7 +28,7 @@ const fragmentShader = [
 
 
 export default class Sphere extends AudioImpactItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
         this.bins = new THREE.Group()
 
@@ -80,7 +80,13 @@ export default class Sphere extends AudioImpactItem {
         this.mesh = this.sphere
 
         this.lastDiff = 0
-        this.addItem()
+
+        if(!fileConfig) {
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+        }
+        
 
     }
 

@@ -3,7 +3,7 @@ import ItemSkeleton from '../../../itemtemplates/itemskeleton'
 
 
 export default class Pass extends ItemSkeleton {
-    constructor(name) {
+    constructor(config) {
         super();
 
         this.enabled = true;
@@ -11,7 +11,7 @@ export default class Pass extends ItemSkeleton {
         this.clear = false;
         this.renderToScreen = false;
 
-        this.config.name = name
+        if(config)this.config.name = config.name
         this.config.id = Math.floor(Math.random() * 10000000)
         this.addEffect = addEffect
     }

@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import MeshItem from '../../itemtemplates/meshitem'
 
 export default class Text3D extends MeshItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
 
         const group = {
@@ -23,7 +23,15 @@ export default class Text3D extends MeshItem {
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()
-            .then((mesh) => this.addItem())
+            .then((mesh) => {
+            
+                if(!fileConfig) {
+                    this.addItem()
+                }else {
+                    this.config = {...fileConfig}
+                }
+
+            })
         })    
     }
 

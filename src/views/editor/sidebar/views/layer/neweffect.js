@@ -8,11 +8,7 @@ import withHeader from '../../HOC/withheadereffectstemp'
 const effects = [
     "Sepia", 
     "Glitch", 
-    "Anti Alias",
-    "Bloom", 
     "RGB Halftone",
-    "Color Shader",
-    "Test Shader",
     "Pixel"
 ]
 

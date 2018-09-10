@@ -33,7 +33,7 @@ const fragmentShader = [
 
 
 export default class TessellatedText extends AudioImpactItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
 
         const group = {
@@ -57,7 +57,13 @@ export default class TessellatedText extends AudioImpactItem {
         loader.load('optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()
-            .then((mesh) => this.addItem())
+            .then((mesh) =>  {
+                    if(!fileConfig) {
+                        this.addItem()
+                    }else {
+                        this.config = {...fileConfig}
+                    }
+            })
         })    
 
         this.amplitude = 0

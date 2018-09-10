@@ -20,6 +20,8 @@ const bootstrapButtonStyle = {
   
 export default class Header extends PureComponent {
 
+    
+
     render() {
         return(
             <div className={classes.container}  ref={this.props.forwardRef}>

@@ -153,40 +153,6 @@ export default class Clip extends PureComponent {
 
         
         const HEADER_SIZE = 12
-        //const startIndex = Math.floor(((l / (zoomWidth * unitSize)) * item.sampleRate) / item.precision)
-        //const totalLength = (item.maxDuration * zoomWidth * unitSize) + this.state.resizeRightDx - this.state.resizeLeftDx
-        //const newpoints = item.points.slice(startIndex, item.points.length -1)
-      
-        /*
-          let stringPoints = ""
-        item.points.forEach((e, i) => stringPoints += String(e[0])  +"," + String(e[1]) + " ")
-
-        const BUCKET_WIDTH = 1
-        const nrPoints = 100
-           
-        let count = 0
-
-         {item.points.map((bucket, i) => {
-                        const bucketSVGHeight = bucket * height;
-                        return(
-                            <div
-                                key={i}
-                                style={{
-                                    position: "absolute",
-                                    zIndex: 10,
-                                    marginTop: HEADER_SIZE / 2,
-                                    left: (i / item.points.length) * w,
-                                    top: ~~(height - bucketSVGHeight) / 2.0,
-                                    height: ~~bucketSVGHeight,
-                                    width: BUCKET_WIDTH,
-                                    backgroundColor: "white",
-                                }}
-                                /> 
-                            ) 
-                        }
-                    )}
-        */
-
      
         return (
             <div 

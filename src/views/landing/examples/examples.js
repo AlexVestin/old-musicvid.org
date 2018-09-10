@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react'
+import { Link } from 'react-router-dom'
 import classes from './examples.css'
 import img from './poster.png'
-import upcoming from './upcoming.jpg'
-import things from './bg.jpg'
+import upcoming from './upcoming2.jpg'
+import things from './bg2.jpg'
 
 export default React.forwardRef((props, ref) => (
-    <div  className={classes.container} ref={ref}>
+    <div className={classes.container} ref={ref}>
         <div className={classes.wrapper}>
             <div className={classes.title}>Create </div>
             <div className={classes.grid}>
@@ -21,7 +22,7 @@ export default React.forwardRef((props, ref) => (
                     <div className={classes.subTitle}> 
                         Browse template projects, simply import media (background images, and audio) and you're good to go.
                     </div>
-                    <a className={classes.link} href="/templates">Open templates</a>
+                    <Link className={classes.link} to="/templates">Open templates</Link>
                 </div>
 
             <div className={classes.itemTextWrapper}>
@@ -33,7 +34,7 @@ export default React.forwardRef((props, ref) => (
                      
                 </div>
 
-                <a className={classes.link} href="/roadmap">Browse showcase</a>
+                <Link className={classes.link} to="/roadmap">Browse showcase</Link>
             </div>
 
             <div className={classes.itemImageWrapper}>
@@ -51,7 +52,7 @@ export default React.forwardRef((props, ref) => (
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et convallis metus, 
                     non ultricies justo. Praesent metus sapien
                 </div>
-                <a className={classes.link} href="/tutorial">Browse tutorials</a>
+                <Link className={classes.link} to="/tutorial">Browse tutorials</Link>
             </div>
 
             </div>

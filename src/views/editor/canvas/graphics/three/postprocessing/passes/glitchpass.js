@@ -7,35 +7,42 @@ import * as THREE from 'three'
 import DigitalGlitch from '../shaders/glitchshader'
 
 export default class GlitchPass extends Pass {
-    constructor( dt_size ) {
-		super("glitch")
+    constructor( config, dt_size, fileConfig ) {
+		super(config)
 
-		this.config = {
-			...this.config,
-			shouldDistX: true,
-			shouldDistY: true,
-			shouldAngle: true,
-			shouldSeedX: true,
-			shouldSeedY: true,
-			amount: 0.2,
-			col_s: 0.05
-		}
-		const group = {
-			title: "Glitch Settings",
-			
-			items: {
-				shouldRandomTrigger: {value: true, type: "Boolean", tooltip: "Trigger a glitch at random times"},
-				amount: {value: 0.2, type: "Number", tooltip: "How strong the glitch will be"},
-				col_s: {value: 0.04, type: "Number"},
-				shouldAngle: {value:true, type:"Boolean"},
-				shouldSeedX: {value:true, type:"Boolean"},
-				shouldSeedY: {value:true, type:"Boolean"},
-				shouldDistX: {value:true, type:"Boolean"},
-				shouldDistY: {value:true, type:"Boolean"},
+		if(!fileConfig) {
+			this.config = {
+				...this.config,
+				shouldDistX: true,
+				shouldDistY: true,
+				shouldAngle: true,
+				shouldSeedX: true,
+				shouldSeedY: true,
+				amount: 0.2,
+				col_s: 0.05
 			}
+			const group = {
+				title: "Glitch Settings",
+				
+				items: {
+					shouldRandomTrigger: {value: true, type: "Boolean", tooltip: "Trigger a glitch at random times"},
+					amount: {value: 0.2, type: "Number", tooltip: "How strong the glitch will be"},
+					col_s: {value: 0.04, type: "Number"},
+					shouldAngle: {value:true, type:"Boolean"},
+					shouldSeedX: {value:true, type:"Boolean"},
+					shouldSeedY: {value:true, type:"Boolean"},
+					shouldDistX: {value:true, type:"Boolean"},
+					shouldDistY: {value:true, type:"Boolean"},
+				}
+			}
+			
+			this.config.defaultConfig.push(group)
+			this.addEffect(this.config)
+		}else {
+			this.config = {...fileConfig}
 		}
-		
-		this.config.defaultConfig.push(group)
+
+		this.config.type = config.type
 		
 		
         if ( DigitalGlitch === undefined ) console.error( "THREE.GlitchPass relies on THREE.DigitalGlitch" );
@@ -65,7 +72,7 @@ export default class GlitchPass extends Pass {
         this.goWild = false;
         this.curF = 0;
 		this.generateTrigger();
-		this.addEffect(this.config)
+		
 	}
 	
 	update = (time, audioData) => {

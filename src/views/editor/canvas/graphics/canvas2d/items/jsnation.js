@@ -2,23 +2,31 @@ import BaseItem from '../../itemtemplates/item'
 
 
 export default class JSNation extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
             this.spectrumCache = []
 
-            this.config.defaultConfig.push({
-                title: "Settings",
-                items: {
-                    spectrumCount: {type: "Number", value: 8},
-                    spectrumHeightScalar: {type: "Number", value: 0.12},
-                    startBin: {type: "Number", value: 0},
-                    keepBins: {type: "Number", value: 13},
-                    smoothingPasses: {type: "Number", value: 1},
-                    smoothingPoints: {type: "Number", value: 3},
-                    radius: {type: "Number", value:  180}
-                }
-            })
-
+            if(!fileConfig) {
+                this.config.defaultConfig.push({
+                    title: "Settings",
+                    items: {
+                        spectrumCount: {type: "Number", value: 8},
+                        spectrumHeightScalar: {type: "Number", value: 0.12},
+                        startBin: {type: "Number", value: 0},
+                        keepBins: {type: "Number", value: 13},
+                        smoothingPasses: {type: "Number", value: 1},
+                        smoothingPoints: {type: "Number", value: 3},
+                        radius: {type: "Number", value:  180}
+                    }
+                })
+                
+                
+                this.getConfig()
+                this.addItem()
+            }else {
+                this.config = {...fileConfig}
+            }
+           
             this.ctx = config.ctx
             this.canvas = config.canvas
 
@@ -30,8 +38,6 @@ export default class JSNation extends BaseItem {
 
             this.resolutionMultiplier = 1
 
-            this.getConfig()
-            this.addItem()
         }
 
         transform = function(spectrum) {

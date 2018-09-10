@@ -2,7 +2,7 @@ import BaseItem from '../../itemtemplates/item'
 import * as THREE from 'three'
 
 export default class BackgroundImage extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config) 
 
 
@@ -28,8 +28,14 @@ export default class BackgroundImage extends BaseItem {
             texture.minFilter = THREE.NearestFilter
             this.mesh.material.map = texture
             this.mesh.material.needsUpdate = true
-            this.config.name = config.name
-            this.addItem()
+            
+            if(!fileConfig) {
+                this.config.name = config.name
+                this.addItem()
+            }else {
+                this.config = {...fileConfig}
+            }
+            
             //config.sceneConfig.scene.add(this.mesh)
         }
         

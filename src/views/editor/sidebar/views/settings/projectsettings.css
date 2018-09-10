@@ -1,0 +1,23 @@
+.buttonWrapper {
+    margin-top: 10px;
+}
+
+.button {
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Work Sans', sans-serif;
+    border-radius: 0.2em;
+    height: 35px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #0069d9 !important;
+    border-color: #0062cc !important;
+}
+
+.button:active{
+    box-shadow: none !important;
+    background-color: #0062cc !important;
+    border-color: #005cbf !important;
+}

@@ -13,7 +13,7 @@ const shader5 = require("./shaders/nodetext/nodeTextWire.fs")
 const glslify = require("glslify")
 
 export default class NodeText extends BaseItem {
-  constructor(config) {
+  constructor(config, fileConfig) {
     super(config)
 
 
@@ -40,13 +40,18 @@ export default class NodeText extends BaseItem {
         value: 0
       },
     };
-
-    this.config.defaultConfig.push({
+     
+    if(!fileConfig) {
+      this.config.defaultConfig.push({
         title: "Settings",
         items: {
             test: {type: "Number", value: 10}
-        }
-    })
+          }
+      })
+    }else {
+      this.config = {...fileConfig}
+    }
+    
     
     this.isTransform = false;
     this.obj = null;
@@ -55,7 +60,7 @@ export default class NodeText extends BaseItem {
 
     this.mesh = new THREE.Group()
     let loader = new THREE.FontLoader()
-    loader.load('optimer_regular.typeface.json', (font) => {
+    loader.load('fonts/optimer_regular.typeface.json', (font) => {
         this.createObj(font)
         this.getConfig()
         this.addItem()

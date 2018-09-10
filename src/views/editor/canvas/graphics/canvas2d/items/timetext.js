@@ -15,28 +15,34 @@ const fontList = [
 
 export default class TimeText extends BaseItem {
 
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)   
 
-        this.config.defaultConfig.push({
-            title: "Text settings",
-            items: {
-                fontSize: {type:  "Number", value: 80},
-                baseLine: {type: "List", options: ["middle", "bottom", "top"], value: "middle"},
-                font: {type: "List", options: fontList, defaultIndex: 0, value: "Andele Mono"},
-                textAlign: {type: "List", options: ["center", "left", "right"], value: "center", defaultIndex: 0},
-                x: {type: "Number", value: 0.5},
-                y: {type: "Number", value: 0.5},
-                color: {type: "String", value: "FFFFFF"},
-                decimals: {type: "Number", value: 0},
-                useStartTime: {type: "Boolean", value: false}
-            }
-        })
-
+        if(!fileConfig) {
+            this.config.defaultConfig.push({
+                title: "Text settings",
+                items: {
+                    fontSize: {type:  "Number", value: 80},
+                    baseLine: {type: "List", options: ["middle", "bottom", "top"], value: "middle"},
+                    font: {type: "List", options: fontList, defaultIndex: 0, value: "Andele Mono"},
+                    textAlign: {type: "List", options: ["center", "left", "right"], value: "center", defaultIndex: 0},
+                    x: {type: "Number", value: 0.5},
+                    y: {type: "Number", value: 0.5},
+                    color: {type: "String", value: "FFFFFF"},
+                    decimals: {type: "Number", value: 0},
+                    useStartTime: {type: "Boolean", value: false}
+                }
+            })
+            
+            this.getConfig()
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+        }
+       
         this.ctx = config.ctx
         this.canvas = config.canvas
-        this.getConfig()
-        this.addItem()
+        
     }
 
     setStyle = () => {

@@ -1,7 +1,7 @@
 import CombinedAudioItem from "../../itemtemplates/combinedaudio";
 
 export default class CirclePlayer extends CombinedAudioItem {
-    constructor(config, configFromFile) {
+    constructor(config, fileConfig) {
         super(config);
         this.buffer = null;
         this.duration = 0;
@@ -9,7 +9,7 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.ctx = config.ctx;
         this.canvas = config.canvas;
 
-        if(!configFromFile) {
+        if(!fileConfig) {
             const group = {
                 title: "Spectrum",
                 items: {
@@ -55,7 +55,7 @@ export default class CirclePlayer extends CombinedAudioItem {
             this.config.enableCombineBins = false;
             this.addItem();
         }else {
-            this.config = {...configFromFile}
+            this.config = {...fileConfig}
         }
     }
 

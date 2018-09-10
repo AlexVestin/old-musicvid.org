@@ -7,8 +7,8 @@ import PixelShader from '../shaders/pixelshader'
 import * as THREE from 'three' 
 export default class PixelPass extends Pass  {
 
-    constructor(config) {
-        super("Pixelshader");
+    constructor(config, fileConfig) {
+        super(config);
         this.textureID = "tDiffuse";
         this.renderPass = false;
         this.uniforms = THREE.UniformsUtils.clone( PixelShader.uniforms );
@@ -28,17 +28,21 @@ export default class PixelPass extends Pass  {
         this.quad.frustumCulled = false; // Avoid getting clipped
         this.scene.add( this.quad );
 
-        this.config.pixelSize = 4;
-        this.config.defaultConfig.push({
-            title: "Pixel settings",
-            items: {
-                pixelSize: {type: "Number", value: 4}
-            }
-        })
-        this.addEffect(this.config)
 
-
+        if(!fileConfig) {
+            this.config.pixelSize = 4;
+            this.config.defaultConfig.push({
+                title: "Pixel settings",
+                items: {
+                    pixelSize: {type: "Number", value: 4}
+                }
+            })
+            this.addEffect(this.config)
+        }else {
+            this.config = {...fileConfig}
+        }
         
+        this.config.type = config.type
     }
 
     render( renderer, writeBuffer, readBuffer, delta, maskActive ) {

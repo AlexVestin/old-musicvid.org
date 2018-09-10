@@ -7,7 +7,6 @@ import withHeader from '../../HOC/withheader'
 const items3D = [
   "Bars", 
   "Text3D", 
-  "Water", 
   "Tesselated Text", 
   "Sphere", 
   "Random Geometry", 
@@ -16,8 +15,7 @@ const items3D = [
   "Skybox2", 
   "Northern Lights",
   "Audio Circle",
-  "Noise Blob",
-  
+  "Noise Blob",  
 ]
 
 const bgItems = [

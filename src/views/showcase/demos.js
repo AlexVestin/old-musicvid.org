@@ -16,7 +16,8 @@ export default {
         fps: "60",
         fileSize: "62MB",
         date: "2018-08-26",
-        videoId: "oy_MlmSTIy8"
+        videoId: "oy_MlmSTIy8",
+        templateUrl: "templates/fxtemplate.json"
         
     },
     1: {

@@ -400,7 +400,7 @@ var textSet = [
 
 export default class KineticText extends AudioImpactItem {
 
-	constructor(config) {
+	constructor(config, fileConfig) {
 		super(config)
 		this.sphereNum = 20
 
@@ -430,17 +430,23 @@ export default class KineticText extends AudioImpactItem {
 		this.canvas = config.canvas
 		this.ctx = config.ctx
 
-		const group = {
-			title: "Text",
-			items: {
-				text:  {type: "String", value: "TEXT"}
+		
+		if(!fileConfig) {
+			const group = {
+				title: "Text",
+				items: {
+					text:  {type: "String", value: "TEXT"}
+				}
 			}
-		}
 
-		this.config.defaultConfig.push(group)
-		this.getConfig()
-		this.addItem()
-	}
+
+			this.config.defaultConfig.push(group)
+			this.getConfig()
+			this.addItem()
+		}else {
+			this.config = {...fileConfig}
+		}
+		}
 
 	bufferDraw = () => {
 		for(var i in chars) {

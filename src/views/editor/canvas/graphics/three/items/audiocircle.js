@@ -3,29 +3,36 @@ import * as THREE from 'three'
 import BaseItem from '../../itemtemplates/item'
 
 export default class AudioCircle extends BaseItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
         this.mesh = new THREE.Group()
 
-        const group = { 
-            title: "Stuff",
-            items: {
-                decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick"},
-                deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)"},    
-                color : {value: "FFFFFF", type: "String", tooltip: ""},
-                scale : {value: 0.5, type: "Number", tooltip: ""}
+        if(!fileConfig) {
+            const group = { 
+                title: "Stuff",
+                items: {
+                    decreaseSpeed: {value: 20, type: "Number", tooltip: "Amount bars will decrease in height each tick"},
+                    deltaRequired: {value: 0.12, type: "Number", tooltip: "Delta from previous tick needed to push the bars up (prevents flicker)"},    
+                    color : {value: "FFFFFF", type: "String", tooltip: ""},
+                    scale : {value: 0.5, type: "Number", tooltip: ""}
+                }
             }
+            this.config.defaultConfig.push(group)
+            this.getConfig()
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
         }
+       
 
         var geometry = new THREE.CircleGeometry( 32, 32 );
         geometry.center()
         var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
         this.mesh = new THREE.Mesh( geometry, material );
-        this.config.defaultConfig.push(group)
+       
 
 
-        this.getConfig()
-        this.addItem()
+       
     }
 
 

@@ -51,8 +51,7 @@ export default class Register extends PureComponent {
         app.auth().createUserWithEmailAndPassword(email, password).catch((error) => {
             var errorMessage = error.message;
             this.setState({errorMessage: errorMessage})
-        });
-          
+        });     
     }
 
     render() {

@@ -54,7 +54,7 @@ var VIEW_ANGLE = 45, ASPECT = 680 / 480
 var fleckVelocity = maxParticleVelocity * fleckVelocityScalar;
 
 export default  class Particles extends AudioImpactItem {
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config); 
         this.camera = config.sceneConfig.camera
         var particleCount =  baseParticleCount;
@@ -226,9 +226,14 @@ export default  class Particles extends AudioImpactItem {
        this.bokehSystem = bokehSystem
 
 
-       this.config.defaultConfig.push({title:  "TODO", items: {thing: {value: 0, type: "Number" }} })
-       this.getConfig()
-       this.addItem()
+
+       if(!fileConfig) {
+            this.getConfig()
+            this.addItem()
+       }else {
+           this.config = {...fileConfig}
+       }
+       
     }
 
     isInView(particle) {

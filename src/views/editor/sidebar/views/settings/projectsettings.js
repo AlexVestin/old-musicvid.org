@@ -8,8 +8,22 @@ import withHeader from '../../HOC/withheader'
 import * as FileSaver from 'file-saver'
 import store from '@redux/store'
 
-
+import classes from './projectsettings.css'
 const fftSizes = [ "2048", "4096", "8192" ]
+
+const bootstrapButtonStyle = {
+    marginLeft: 10,
+    marginRight: 10,
+    boxShadow: 'none',
+    color: "white",
+    fontSize: 14,
+    padding: '6px 12px',
+    border: '1px solid',
+    backgroundColor: '#007bff',
+    borderColor: '#007bff',
+    width: 125,
+    textAlign: "center"
+}
 
 class ProjectSettings extends PureComponent {
     constructor(props){
@@ -62,8 +76,11 @@ class ProjectSettings extends PureComponent {
                 >
                 </ConfigList>
 
-                <Button onClick={this.saveAsTemplate}>Save project as template</Button>
-                <Button onClick={this.exportVideo}>export to video</Button>
+                
+                <div className={classes.buttonWrapper}>
+                    <button onClick={this.saveAsTemplate} style={{...bootstrapButtonStyle, width: 180}} className={classes.button}>Save as template</button>
+                    <button onClick={this.exportVideo} style={bootstrapButtonStyle} className={classes.button}>Export video</button>
+                </div>
             </div>
         )
     }

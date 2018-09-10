@@ -121,7 +121,7 @@ float* fft_r_bins(float* data, unsigned size, unsigned bins, int window) {
     */
     return avg_result;
 }
-
+/*
 int main(int argc, const char **argv) {
     int size;
     float* audio = get_audio_buf("../assets/right1.raw", &size);
@@ -142,10 +142,10 @@ int main(int argc, const char **argv) {
     for(j = 0; j < nr_bins; j++) {
         printf("%" PRIu8 "\n", averages[j]);
     }
-    */
+    
         
     return 0;
 }
 
-
+*/
 

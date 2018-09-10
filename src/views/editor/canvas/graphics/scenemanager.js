@@ -58,8 +58,8 @@ class ThreeCanvas extends Component {
         }
     }
 
-    addPassFromFile = () => {
-
+    addPassFromFile = (pass) => {
+        this.renderTarget.addFromFile(pass)
     }
 
     addLayerFromFile = (layer, project) => {
@@ -78,7 +78,12 @@ class ThreeCanvas extends Component {
         return loadedLayer;
     }
 
-    loadLayerItems = (layer,project, key) => {
+    setFFTSize = (value) => {
+        
+        this.audioManager.setFFTSize(value, true)
+    }
+
+    loadLayerItems = (layer, project, key) => {
         let files = []
         project.layers[key].items.forEach(itemId => {
             const item = project.items[key][itemId]
@@ -94,7 +99,12 @@ class ThreeCanvas extends Component {
     }
 
     loadFromFile = () => {
-        const project = store.getState().items
+        const state = store.getState()
+        const project = state.items
+        const globals = state.globals
+
+        this.postProcessingEnabled = globals.postProcessingEnabled
+        
         
         let files = []
         for(var key in project.layers) {
@@ -107,12 +117,13 @@ class ThreeCanvas extends Component {
             this.addPassFromFile(pass)
         }
 
-         
         for(var key in project.audioItems) {
             const audioItem = project.audioItems[key]
             files.push(audioItem)
         }
 
+        this.scenes.forEach(scene => scene.setFFTSize(Number(globals.fftSize)))
+        this.audioManager.fftSize = Number(globals.fftSize)
         dispatchAction({type: "RESET_AUDIO_FILES"})
         this.props.linkFiles(files, this.filesLinked)
     }
@@ -262,8 +273,7 @@ class ThreeCanvas extends Component {
                 }else if(payload.key === "masterVolume") {
                     this.audioManager.masterVolume = payload.value
                 }else if(payload.key === "fftSize") {
-                    this.scenes.forEach(scene => scene.setFFTSize(Number(payload.value)))
-                    this.audioManager.setFFTSize(Number(payload.value))
+                    this.setFFTSize(Number(payload.value))
                 }
                     
                 break;
@@ -325,14 +335,21 @@ class ThreeCanvas extends Component {
     }
     stop = () => {
         this.scenes.forEach(e => e.stop())
-        this.audioManager.stop()
     }
 
     play = (time) => {
-        this.preProcess(time, () => {
-            this.scenes.forEach(e => e.play(time))
-            this.audioManager.play(time, this.state.encoding)
-        })
+        if(this.playing) {
+            this.audioManager.stop()
+            this.playing = false;
+        }else {
+            this.preProcess(time, () => {
+                this.scenes.forEach(e => e.play(time))
+                this.audioManager.play(time, this.state.encoding)
+            })
+            this.playing = true
+        }
+
+       
     }
 
     saveBlob = (vid) => {

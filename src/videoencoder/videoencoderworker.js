@@ -4,7 +4,7 @@ export default class VideoEncoder {
     constructor(onload){
 
         // in the public folder
-        this.worker = new Worker("worker.js")
+        this.worker = new Worker("encodeworker.js")
         this.worker.onmessage = this.onmessage;
 
         this.onload = onload

@@ -67,6 +67,7 @@ export default class Sound extends BaseItem {
             this.offset += length
             return { buffer, sampleRate: this.sampleRate, channels: this.channels, volume: this.config.volume }
         }else{
+
             this.offset += length
             return
         }
