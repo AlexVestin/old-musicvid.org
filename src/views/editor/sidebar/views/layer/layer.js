@@ -25,11 +25,7 @@ class Layer extends React.Component {
     }
 
     addAction = () => {
-        if(this.props.layer.layerType === 1){
-            setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS)
-        } else {
-            setSidebarWindowIndex(this.props.idxs.ADDRESOURCEOPTIONS2D)
-        }
+        setSidebarWindowIndex(this.props.idxs.ITEMPREVIEWS)
     }
 
     closeModal = () => this.setState({modalOpen: false});

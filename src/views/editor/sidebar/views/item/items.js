@@ -30,7 +30,10 @@ class ItemList extends React.Component {
                   {sortedItems.map((item, i) => {
                     return( 
                         <div key={item.id} className={classes.wrapper}>
-                            <div className={classes.listitem} onClick={() => this.selectItem(item)}> <div className={classes.itemName}>{item.name}</div>  </div>
+
+                            <div className={classes.listitem} onClick={() => this.selectItem(item)}> 
+                                <div className={classes.itemName}>{item.name}</div> 
+                            </div>
                             <div className={classes.listitemContainer}>
                               <div className={classes.button}  onClick={this.removeItem}>
                                   <Delete className={classes.icon}></Delete>

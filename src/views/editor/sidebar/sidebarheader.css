@@ -1,35 +1,22 @@
 
 .container {
     display:flex;
-    justify-content: space-between;
-    height: 4vh;
     background-color: #bcbcbc;
     width: 100%;
+    justify-content: baseline;
 }
 .tab_container {
     display: flex;
     flex-direction: row;
     
-    width: 25%;
-    height: 100%;
+    width: 5%;
+    min-width: 20px;
+    float: bottom;
+    margin-left: 2.25%;
+    border-radius: 0.75em;
 }
 
 .tab {
-    flex-basis: 0;
-    flex-grow: 1;
-    font-family: "proxima-nova", sans-serif;
-    font-weight: 100;
-    text-transform: uppercase;
-    margin-top: auto;
-    text-align: center;
-
     cursor: pointer;
-
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
+    float: bottom;
 }

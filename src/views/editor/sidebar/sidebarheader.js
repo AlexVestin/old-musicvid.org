@@ -5,6 +5,11 @@ import classes from './sidebarheader.css'
 import Button from 'material-ui/Button'
 
 
+import CollectionsIcon from '@material-ui/icons/Collections'
+import AudioTrack from '@material-ui/icons/Audiotrack'
+import Settings from '@material-ui/icons/Settings'
+
+
 
 
 class SidebarHeader extends Component {
@@ -25,9 +30,9 @@ class SidebarHeader extends Component {
         return(
            <div className={classes.container}>
                 <div className={classes.tab_container}>
-                    <Tab idx={0} selectedIdx={idx !== 5 ? idx : 0} label="Layers"></Tab>
-                    <Tab idx={1} selectedIdx={idx !== 5 ? idx : 0} label="Audio"></Tab>
-                    <Tab idx={2} selectedIdx={idx !== 5 ? idx : 0} label="Settings"></Tab>
+                    <Tab idx={0} selectedIdx={idx !== 5 ? idx : 0}><CollectionsIcon></CollectionsIcon></Tab>
+                    <Tab idx={1} selectedIdx={idx !== 5 ? idx : 0}><AudioTrack></AudioTrack></Tab>
+                    <Tab idx={2} selectedIdx={idx !== 5 ? idx : 0}><Settings></Settings></Tab>
                 </div>
            </div>
         )
@@ -36,14 +41,15 @@ class SidebarHeader extends Component {
 
 const Tab = (props) => {
     return (
-        <Button 
-            style={{backgroundColor: props.idx === props.selectedIdx ? "#999999" : ""}} 
+        <div 
+            style={{backgroundColor: props.idx === props.selectedIdx ? "#676767" : "", color: props.idx === props.selectedIdx ? "#ccc" : ""}} 
             disableRipple 
             onClick={() => setSidebarWindowIndex(props.idx)} 
             disabled={props.disabled}
             className={classes.tab}>
-            {props.label}
-        </Button>
+            {props.children}
+
+        </div>
     )
 }
 

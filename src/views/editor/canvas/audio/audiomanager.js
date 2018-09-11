@@ -196,7 +196,7 @@ export default class AudioManager {
                 audio_p = this.Module._malloc(windowSize*4);
                 this.Module.HEAPF32.set(data, audio_p >> 2)
                 
-                const buf_p = this.Module._fft_r(audio_p, windowSize, 0)
+                const buf_p = this.Module._fft_r(audio_p, windowSize, 1)
                 bins = new Float32Array(this.Module.HEAPU8.buffer, buf_p, windowSize / 2)  
             }finally {
                 this.Module._free(audio_p)

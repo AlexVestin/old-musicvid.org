@@ -60,10 +60,9 @@ export default class Register extends PureComponent {
             <div className={classes.container}>
                 <div className={classes.wrapper}>
                     <form className={classes.form} onSubmit={this.submit}>
-                        <h3 className={classes.title}>New account :)</h3>´
+                        <h3 className={classes.title}>New account</h3>´
                         {errorMessage !== "" && <div className={classes.errorMessage}>{errorMessage}</div>}
                         <TextInput ref={this.emailRef} className={classes.input} type="email" label="email"></TextInput>
-                        <TextInput ref={this.userNameRef} className={classes.input} label="username" ></TextInput>
                         <TextInput ref={this.passwordRef} className={classes.input} type="password" label="password" errorMsg={passwordError}></TextInput>
                         <TextInput ref={this.confirmPasswordRef} className={classes.input} type="password" label="password again" errorMsg={passwordError}></TextInput>
                         <input style={bootstrapButtonStyle} className={classes.button} value="Register" type="submit"></input>  

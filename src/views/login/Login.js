@@ -12,6 +12,7 @@ import { connect } from 'react-redux'
 const bootstrapButtonStyle = {
     marginLeft: 15,
     marginRight: 15,
+    marginTop: 10,
     boxShadow: 'none',
     color: "white",
     fontSize: 16,
@@ -97,18 +98,18 @@ class Login extends PureComponent {
                     <form className={classes.form} onSubmit={this.submit}>
                         <h3 className={classes.title}>Sign in</h3>
 
-                        <h3 className={classes.subheader}>Sign in with facebook or Google</h3>
-                        <div className={classes.authButtonGroup}>
-                            <Button style={{...bootstrapButtonStyle,textTransform:"none", backgroundColor: '#3B5998', borderColor: '#3B5998'}} className={classes.socbutton} onClick={this.authWithFacebook}>facebook</Button>
-                            <Button style={{...bootstrapButtonStyle,textTransform:"none", backgroundColor: '#F32E06', borderColor: '#F32E06'}} className={classes.socbutton} onClick={this.authWithGoogle}>Google</Button>
+                        <Button style={{...bootstrapButtonStyle,textTransform:"none", backgroundColor: '#3B5998', borderColor: '#3B5998'}} className={classes.socbutton} onClick={this.authWithFacebook}>Sign in with facebook</Button>
+                        <Button style={{...bootstrapButtonStyle,textTransform:"none", backgroundColor: '#F32E06', borderColor: '#F32E06'}} className={classes.socbutton} onClick={this.authWithGoogle}>Sign in with Google</Button>
+                        
+                        
+                        <div className={classes.userEmailLogin}>
+                            <h3 className={classes.subheader}>Sign in with email/username and password</h3>
+                            {this.state.emailError && <div className={classes.errorMessage}>{this.state.emailError}</div>}
+                            <TextInput fullWidth ref={this.emailRef} className={classes.input} type="email" label="email"></TextInput>
+                            <TextInput ref={this.passwordRef} className={classes.input} type="password" label="password"></TextInput>
+                            <input  style={bootstrapButtonStyle} className={classes.button} value="Sign in" type="submit"></input>  
+                            <div className={classes.loginText}> Don't have an account? <Link to="/register" className={classes.text} > Create one!</Link></div>
                         </div>
-
-                        <h3 className={classes.subheader}>Login with email/username and password</h3>
-                        {this.state.emailError && <div className={classes.errorMessage}>{this.state.emailError}</div>}
-                        <TextInput ref={this.emailRef} className={classes.input} type="email" label="email"></TextInput>
-                        <TextInput ref={this.passwordRef} className={classes.input} type="password" label="password"></TextInput>
-                        <input  style={bootstrapButtonStyle} className={classes.button} value="Login" type="submit"></input>  
-                        <div className={classes.loginText}> Don't have an account? <Link to="/register" className={classes.text} > Create one!</Link></div>
                     </form>
                 </div>
             </div>

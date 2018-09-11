@@ -10,10 +10,10 @@ export default class AudioreactiveItem extends MeshItem {
         this.group0 = {
             title: "Amplitude and size", 
             items: {
-                amplitude: { value: 9, type: "Number", tooltip: "Amplitude of the spectrum values" },
+                amplitude: { value: 100, type: "Number", tooltip: "Amplitude of the spectrum values" },
                 spectrumSize: { max: 1024, step: 1, min: 1, value: 32, type: "Number", tooltip: "number of bars in the spectrum" },
                 spectrumStart: { value: 0, type: "Number", tooltip: "the first bin rendered in the spectrum" },
-                spectrumEnd: { value: 1024, type: "Number", tooltip: "the last bin rendered in the spectrum" },
+                spectrumEnd: { value: 720, type: "Number", tooltip: "the last bin rendered in the spectrum" },
                 spectrumScale: { value: 2.5, type: "Number", tooltip: "the logarithmic scale to adjust spectrum values to" },
             }
         }
@@ -28,7 +28,7 @@ export default class AudioreactiveItem extends MeshItem {
                 enableAverageTransform:     {value: true,  type: "Boolean", tooltip: "Averages data using neighbours"},
                 enableTailtTransform:       {value: true,  type: "Boolean", tooltip: "Smooths tail and head of the data"},
                 enableSmoothing:            {value: true,  type: "Boolean", tooltip: "Smooths"},
-                enableExponentialTransform: {value: false,  type: "Boolean", tooltip: "Transforms the values exponentially"},
+                enableExponentialTransform: {value: true,  type: "Boolean", tooltip: "Transforms the values exponentially"},
                 enableDropOff: {value: true,  type: "Boolean", tooltip: "Dropoffs incrementally"},
             }
         }
@@ -38,7 +38,7 @@ export default class AudioreactiveItem extends MeshItem {
             items: {
                 spectrumMaxExponent: { value: 2, type: "Number", tooltip: "the max exponent to raise spectrum values to" },
                 spectrumMinExponent: { value: 1, type: "Number", tooltip: "the min exponent to raise spectrum values to" },
-                spectrumExponentScale: { value: 2.5, type: "Number", tooltip: "the scale for spectrum exponents" },
+                spectrumExponentScale: { value: 2, type: "Number", tooltip: "the scale for spectrum exponents" },
             }
         }
     
@@ -47,11 +47,11 @@ export default class AudioreactiveItem extends MeshItem {
             items: {
                 smoothingPoints: { value: 3, type: "Number", tooltip: "points to use for algorithmic smoothing. Must be an odd number." },
                 smoothingPasses: { value: 1, type: "Number", tooltip: "number of smoothing passes to execute" },
-                headMargin: { value: 7, type: "Number", tooltip: "the size of the head margin dropoff zone" },
-                tailMargin: { value: 3, type: "Number", tooltip: "the size of the tail margin dropoff zone" },
-                minMarginWeight: { value: 0.1, type: "Number", tooltip: "the minimum weight applied to bars in the dropoff zone" },
+                headMargin: { value: 4, type: "Number", tooltip: "the size of the head margin dropoff zone" },
+                tailMargin: { value: 2, type: "Number", tooltip: "the size of the tail margin dropoff zone" },
+                minMarginWeight: { value: 0.6, type: "Number", tooltip: "the minimum weight applied to bars in the dropoff zone" },
                 marginDecay: { value: 1.6, type: "Number", tooltip: "the minimum weight applied to bars in the dropoff zone" },
-                headMarginSlope: { value: 0.04333, type: "Number", tooltip: "" },
+                headMarginSlope: { value: 0.02333, type: "Number", tooltip: "" },
                 tailMarginSlope: { value: 0.01, type: "Number", tooltip: "" },
             }
         }
@@ -69,6 +69,9 @@ export default class AudioreactiveItem extends MeshItem {
         this.config.defaultConfig.push(this.group2)
         this.config.defaultConfig.push(this.group3)
         this.config.defaultConfig.push(this.group4)
+
+        this.config.tailMarginSlope = (1 - this.config.minMarginWeight) / Math.pow(this.config.tailMargin, this.config.marginDecay);
+        this.config.headMarginSlope = (1 - this.config.minMarginWeight) / Math.pow(this.config.headMargin, this.config.marginDecay);
         this.getConfig()
     }
 
@@ -131,7 +134,14 @@ export default class AudioreactiveItem extends MeshItem {
         return newArr;
     }
 
-    log = (arr) => arr.map(e => 20 * Math.log10(e*e*e))
+    log = (arr) =>  {
+        let newArr = Array(arr.length)
+        for(var i = 0; i <arr.length; i++) {
+            newArr[i] = 20 * Math.log(arr[i] * 2) 
+        }
+        return newArr;        
+    }
+
     dropOffTransform = (arr) => {
         if(!this.cachedArr) {
             this.cachedArr = arr;
@@ -153,7 +163,7 @@ export default class AudioreactiveItem extends MeshItem {
 
     transformToVisualBins = (array) => {
         const { spectrumSize, spectrumScale } = this.config; 
-        const spectrumStart = 0;
+        const spectrumStart = this.config.spectrumStart;
         const spectrumEnd = this.config.spectrumEnd;
 
         var newArray = new Float32Array(spectrumSize);
@@ -271,7 +281,9 @@ export default class AudioreactiveItem extends MeshItem {
             var value = array[i];
             if (i < headMargin) {
                 value *= headMarginSlope * Math.pow(i + 1, marginDecay) + minMarginWeight;
+                console.log(headMarginSlope * Math.pow(i + 1, marginDecay) + minMarginWeight)
             } else if (spectrumSize - i <= tailMargin) {
+               
                 value *= tailMarginSlope * Math.pow(spectrumSize - i, marginDecay) + minMarginWeight;
             }
             values[i] = value;
