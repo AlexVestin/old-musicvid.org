@@ -108,20 +108,27 @@ export default {
     
     items2D: {
         0: {
+            title: "Image",
+            type: "IMAGE",
+            description: "City generated from lines",
+            posterUrl: "/demos/missing.png",
+            fileType: "image"
+        },
+        1: {
             title: "Inception city",
             type: "INCEPTION CITY",
             description: "City generated from lines",
             posterUrl: "/demos/2d/inception.png",
             videoUrl: "/demos/2d/inception.mp4",
         },
-        1: {
+        2: {
             title: "Nebula",
             type: "NEBULOSA",
             description: "Watah",
             posterUrl: "/demos/2d/nebula.png",
             videoUrl: "/demos/2d/nebula.mp4",
         },
-        2: {
+        3: {
             title: "Circulating Rings",
             type: "CIRCLE RINGS",
             description: "Watah",
@@ -191,6 +198,13 @@ export default {
             description: "Watah",
             posterUrl: "/demos/2d/waveletcanvas.png",
             videoUrl: "/demos/2d/waveletcanvas.mp4" 
+        },
+        13: {
+            title: "Circle Spectrum",
+            type: "CIRCLE PLAYER",
+            description: "Watah",
+            posterUrl: "/demos/2d/circleplayer.png",
+            videoUrl: "/demos/2d/circleplayer.mp4" 
         }
         
     }

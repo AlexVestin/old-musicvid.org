@@ -70,6 +70,8 @@ class Previews extends PureComponent {
         }else {
             createItem({type: item.type.toUpperCase()})            
         }
+
+        console.log(item.fileType)
     }
 
     render() {
