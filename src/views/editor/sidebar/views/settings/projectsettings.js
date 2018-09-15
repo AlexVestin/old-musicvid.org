@@ -77,10 +77,10 @@ class ProjectSettings extends PureComponent {
                 </ConfigList>
 
                 <div className={classes.buttonContainer}>
-                <div className={classes.buttonWrapper}>
-                    <button onClick={this.saveAsTemplate} style={{...bootstrapButtonStyle, width: 180}} className={classes.button}>Save as template</button>
-                    <button onClick={this.exportVideo} style={bootstrapButtonStyle} className={classes.button}>Export video</button>
-                </div>
+                    <div className={classes.buttonWrapper}>
+                        <button onClick={this.saveAsTemplate} style={{...bootstrapButtonStyle, width: 180}} className={classes.button}>Save as template</button>
+                        <button onClick={this.exportVideo} style={bootstrapButtonStyle} className={classes.button}>Export video</button>
+                    </div>
                 </div>
             </div>
         )

@@ -10,6 +10,8 @@ import RoadMap from './roadmap/Roadmap'
 import Settings from './settings/Settings'
 import Projects from './projects/Projects'
 
+import Acknowledgements from './acknowledgements/Acknowledgements'
+
 import Profile from './profile/Profile'
 import { app } from '../firebase/firebase'
 import { setIsAuthenticated } from '@redux/actions/auth'
@@ -68,6 +70,7 @@ class App extends Component {
             <Route path="/profile" component={Profile}></Route>
             <Route path="/projects" component={Projects}></Route>
             <Route path="/settings" component={Settings}></Route>
+            <Route path="/acknowledgements" component={Acknowledgements}></Route>
             <Route path="/roadmap" component={RoadMap}></Route>
             <Route exact path="/" component={Landing}></Route>
             <Route component={MissingPage}></Route>   

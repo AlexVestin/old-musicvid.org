@@ -20,6 +20,9 @@
     overflow: hidden;
 }
 
+.badge {
+}
+
 .cardInfo {
     background-color: rgb(196, 196, 196);
     border-bottom-right-radius: 0.2em;
@@ -37,3 +40,5 @@
     margin-left: 15px;
     margin-right: 15px;
 }
+
+

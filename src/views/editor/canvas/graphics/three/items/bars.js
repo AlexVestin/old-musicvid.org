@@ -39,6 +39,7 @@ export default class Bars extends AudioReactiveItem {
     }
 
     createBars = (nrOfBars) => {
+        console.log(this.config)
         while (this.mesh.children.length){
             this.mesh.remove(this.mesh.children[0]);
         }
@@ -48,8 +49,7 @@ export default class Bars extends AudioReactiveItem {
             material.color.setHex("0x" + this.config.color || "FFFFFF")
             var cube = new THREE.Mesh( geometry, material );
 
-            cube.position.x = i - nrOfBars/2;
-
+            cube.position.x = this.config.x + (i * this.config.spacing) - (this.config.spacing*nrOfBars/2);
             cube.position.y = 0
             this.mesh.add(cube)
         }
@@ -82,8 +82,6 @@ export default class Bars extends AudioReactiveItem {
     _animate = (time, audioData) => {
         const { deltaRequired, decreaseSpeed, scale, y, shouldDropOff } = this.config
         const bins = this.getTransformedSpectrum(audioData.bins)
-
-        console.log("animate")
 
         this.mesh.children.forEach( (e,i) => {
             var newScale = bins[i] > 1 ? bins[i] : 1;

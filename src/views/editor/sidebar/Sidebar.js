@@ -12,8 +12,8 @@ class Sidebar extends PureComponent {
 
     constructor(props) {
         super(props)
-        this.minWidth = (300 / window.innerWidth) * 100
-        this.state = { width: 25, dx: 0 } 
+        this.minWidth = (400 / window.innerWidth) * 100
+        this.state = { width: 30, dx: 0 } 
     }
 
     componentWillUnmount() {
@@ -37,6 +37,7 @@ class Sidebar extends PureComponent {
         const { dx, width } = this.state
         this.mouseDown = false
         this.setState({width: dx + width > this.minWidth ? dx + width : this.minWidth, dx: 0})
+        this.minWidth = (400 / window.innerWidth) * 100
     }
 
     onMouseMove = (e) => {
