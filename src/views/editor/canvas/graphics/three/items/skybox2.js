@@ -42,6 +42,15 @@ export default class SkyBox2 extends BaseItem {
 
        
         if(!fileConfig) {
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    creator: {value: "Haroon Ghazni", type: "Text"},
+                    website: { value: "https://github.com/hghazni/Three.js-Skybox", type: "Link", disabled: false},
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+            this.getConfig()
             this.addItem()
         }else {
             this.config = {...fileConfig}

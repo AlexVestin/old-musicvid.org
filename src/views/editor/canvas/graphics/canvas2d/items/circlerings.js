@@ -87,8 +87,16 @@ export default class CircleRings extends AudioImpactItem {
                 }
             })
 
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "http://cssdeck.com/labs/zeaklousedit", type: "Link", disabled: false},
+                    note: {value: "This has been edited and might not represent the original work", type: "Text"}
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+
             this.getConfig()
-            
             this.addItem()
         }else {
             this.config = {...fileConfig}

@@ -49,6 +49,16 @@ export default class Nebula extends BaseItem {
                     height: {type: "Number", value: 480 }
                 }
             })
+
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "http://www.professorcloud.com", type: "Link", disabled: false},
+                    creator: {value: "R Cecco.", type: "Text"},
+                    note: {value: "This has been edited and might not represent the original work", type: "Text"}
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
     
             this.getConfig()
         }else {

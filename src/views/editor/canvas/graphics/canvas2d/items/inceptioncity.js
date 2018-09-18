@@ -137,7 +137,17 @@ export default class InceptionCity extends BaseItem {
                     strokeAlpha: {type: "Number", value: 1}
                 }
             })
-    
+
+
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "https://github.com/raphamorim/canvas-experiments", type: "Link", disabled: false},
+                    note: {value: "This has been edited and might not represent the original work", type: "Text"}
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+
             this.getConfig()
             this.addItem()
         }else {

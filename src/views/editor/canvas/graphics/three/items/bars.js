@@ -39,7 +39,6 @@ export default class Bars extends AudioReactiveItem {
     }
 
     createBars = (nrOfBars) => {
-        console.log(this.config)
         while (this.mesh.children.length){
             this.mesh.remove(this.mesh.children[0]);
         }

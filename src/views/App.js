@@ -52,12 +52,15 @@ class App extends Component {
 
   componentWillUnmount = () => {
     this.removeAuthListener();
+
+    
   }
 
   render() {
+    console.log(window.location.pathname.split("/")[1])
     return (
         <div className={classes.wrapper}>
-          <Header></Header>
+          {window.location.pathname.split("/")[1] !== "" && <Header></Header>}
           <Switch>
             <Route path="/editor" component={this.state.editor}></Route>
             <Route path="/showcase" component={this.state.showcase}></Route>

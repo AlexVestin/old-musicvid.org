@@ -39,7 +39,7 @@ addAudioFrame = (buffer) => {
 openAudio = (config) => {
     const { bitrate, samplerate } = config; 
     try {
-      Module._open_audio(samplerate, 2, bitrate, fileType)
+      Module._open_audio(samplerate, 2, bitrate, 2)
     }catch(err) {
       console.log(err)
     }

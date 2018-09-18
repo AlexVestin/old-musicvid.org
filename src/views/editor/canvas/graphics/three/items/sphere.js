@@ -82,6 +82,14 @@ export default class Sphere extends AudioImpactItem {
         this.lastDiff = 0
 
         if(!fileConfig) {
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "https://github.com/mrdoob/three.js/blob/master/examples/", type: "Link", disabled: false},
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+            this.getConfig()
             this.addItem()
         }else {
             this.config = {...fileConfig}

@@ -19,6 +19,13 @@ export default class RandomGeometry extends AudioImpactItem {
             }
     
             this.config.defaultConfig.push(rotationGroup)
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: { value: "https://threejs.org/examples/?q=memor#webgl_test_memory", type: "Link", disabled: false},
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
             this.getConfig()
             this.config.strength = 1
             this.addItem()

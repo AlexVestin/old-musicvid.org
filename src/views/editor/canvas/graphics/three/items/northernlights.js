@@ -6,7 +6,7 @@ import ThreeWater from "./waterclass"
 import BaseItem from '../../itemtemplates/item'
 
 export default class NorthernLights extends BaseItem{
-    constructor(config) {
+    constructor(config, fileConfig) {
         super(config)
         this.light = config.sceneConfig.light
         this.getConfig()
@@ -51,8 +51,21 @@ export default class NorthernLights extends BaseItem{
         this.mesh = this.water 
         
         this.mesh.name = String(this.config.id)
-        this.getConfig()
-        this.addItem()
+        if(!fileConfig) {
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "https://github.com/mrdoob/three.js/blob/master/examples/", type: "Link", disabled: false},
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+
+            this.getConfig()
+            this.addItem()
+        }else {
+            this.config = {...fileConfig}
+        }
+       
     }
 
     _updateConfig = (config) => {

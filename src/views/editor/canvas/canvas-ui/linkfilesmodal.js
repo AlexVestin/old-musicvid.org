@@ -119,7 +119,6 @@ class SimpleModal extends React.Component {
 
     render() {
         const { classes } = this.props
-        console.log(this.props.files)
         return (
             <React.Fragment>
                

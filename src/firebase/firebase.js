@@ -1,4 +1,3 @@
-import Rebase from 're-base'
 import firebase from 'firebase/app'
 import 'firebase/database'; // If using Firebase database
 import 'firebase/auth'; // If using Firebase database
@@ -14,7 +13,7 @@ var config = {
 
 
 const app = firebase.initializeApp(config);
-const base = Rebase.createClass(app.database());
+const base = app.database();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 

@@ -4,16 +4,7 @@ import {setDisabled} from '@redux/actions/globals'
 export default class BaseItem {
     constructor(config) {
         setDisabled(true)
-        const headerGroup = { 
-                title: "Author Information", 
-                hide: true,
-                items: {
-                    author: {value: "example", type: "String", disabled: false},
-                    website: {value: "http://example.org", type: "Link", disabled: false},
-                    github: {value: "https://github.com/example", type: "Link", disabled: false},
-            }
-        }
-
+       
         const timeGroup = {
             title: "Base Configurations", 
             items: {
@@ -24,7 +15,7 @@ export default class BaseItem {
         }
 
         this.config = {}
-        this.config.defaultConfig = [headerGroup, timeGroup]
+        this.config.defaultConfig = [timeGroup]
 
         //TODO UUID ?
         this.config.id          = Math.floor(Math.random() * 10000000)

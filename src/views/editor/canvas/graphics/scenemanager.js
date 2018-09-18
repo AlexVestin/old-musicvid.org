@@ -3,7 +3,7 @@ import SceneContainer2D from './canvas2d/scene'
 import RenderTarget from './three/postprocessing/rendertarget';
 
 import React, { Component } from 'react';
-
+import { base } from '@backend/firebase'
 import store from '@redux/store'
 import { OrthographicCamera, Scene, WebGLRenderer } from 'three' 
 import * as FileSaver from "file-saver";
@@ -380,6 +380,12 @@ class ThreeCanvas extends Component {
             this.audioManager.encodingFinished()
             this.encodedFrames = -1
             this.setTime(0)
+
+            const ref = base.ref("/counter")
+            ref.transaction((e) => {
+                return e = (e || 0) + 1; 
+            })
+
         }
     }
 

@@ -52,6 +52,7 @@ export default class CustomInput extends PureComponent {
                 }
 
                 {(type === "Link") && <LinkField value={value} keyVal={keyVal}></LinkField>}
+                {(type === "Text") && <TextField value={value} keyVal={keyVal}></TextField>}
                 
                 {type === "List" && <LabeledFieldWrapper {...this.props} >
                     
@@ -81,9 +82,20 @@ export default class CustomInput extends PureComponent {
 class LinkField extends PureComponent {
     render() {
         return(
-            <div key={this.props.keyVal} style={{display: "flex", flexDirection: "row", marginTop: 10, marginleft: 10}}>
-                <a href={String(this.props.value)}>{this.props.keyVal}</a>
-            </div>
+            <LabeledFieldWrapper {...this.props}>
+                <a href={String(this.props.value)}>Link</a>
+            </LabeledFieldWrapper>
+        )
+    }
+}
+
+
+class TextField extends PureComponent {
+    render() {
+        return(
+            <LabeledFieldWrapper {...this.props}>
+                <div style={{marginLeft: 20}}>{this.props.value}</div>
+            </LabeledFieldWrapper>
         )
     }
 }

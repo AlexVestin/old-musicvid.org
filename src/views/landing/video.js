@@ -13,16 +13,20 @@ export default class VideoCard extends PureComponent {
         this.videoRef = React.createRef();
     }
 
+
     render() {
         const { width, height } = this.props
+
+        const widthInPx = window.innerWidth * this.props.width;
+        const heightInPx = window.innerWidth * this.props.height;
         return(
             <div className={classes.cardWrapper} style={{marginTop: 25}}>
-                <div style={{ backgroundColor: "rgba(200, 200, 200, 0.3)", maxWidth: width, maxHeight: height, width, height}}>       
+                <div style={{ backgroundColor: "rgba(200, 200, 200, 0.3)", minWidth: 200, minHeight: 100, width: widthInPx, height: heightInPx}}>       
                     <Youtube 
                         videoId={ this.props.videoId}
                         opts={{
-                            width: this.props.width, 
-                            height: this.props.height,
+                            width: widthInPx, 
+                            height: heightInPx,
                             playerVars: { // https://developers.google.com/youtube/player_parameters
                                 autoplay: 0,
                                 showinfo: 0

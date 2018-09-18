@@ -21,8 +21,6 @@ export default class NavBar extends PureComponent{
 
     handleToggle = () => {
         this.setState(state => ({ open: !state.open }));
-
-        console.log("toggle")
     };
 
     handleClose = event => {
@@ -31,14 +29,12 @@ export default class NavBar extends PureComponent{
         }
     
         this.setState({ open: false });
-        console.log("close")
       };
 
     render() {
 
         const { open } = this.state;
 
-        console.log(open, this.anchorEl)
         return (
             <div className={classes.navgroup}>
                 <Button disableRipple style={{marginLeft: 50}}> <Link className={classes.link} to="/editor"> Editor </Link></Button>

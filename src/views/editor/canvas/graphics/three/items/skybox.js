@@ -39,6 +39,14 @@ export default class SkyBox extends BaseItem {
         this.mesh.name = String(this.config.id)
 
         if(!fileConfig) {
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: { value: "http://reije081.home.xs4all.nl/skyboxes/", type: "Link", disabled: false},
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+            this.getConfig()
             this.addItem()
         }else {
             this.config = {...fileConfig}

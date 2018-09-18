@@ -12,7 +12,7 @@ export default class Templates extends PureComponent {
 
     loadTemplate = () => {
         fetch(devPath + "templates/itsme.json")
-        .then(res => {console.log(res); return res.json()})
+        .then(res => res.json())
         .then( response => {
             dispatchAction({type: "SET_GLOBAL_SETTINGS", payload: response.globals})
             loadProjectFromFile(response.items)

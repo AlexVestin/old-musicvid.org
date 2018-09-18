@@ -54,11 +54,19 @@ export default class TessellatedText extends AudioImpactItem {
 
         this.getConfig()
         this.mesh = new THREE.Mesh()
-        loader.load('optimer_regular.typeface.json', (font) => {
+        loader.load('fonts/optimer_regular.typeface.json', (font) => {
             this.font = font; 
             this.createTextMesh()
             .then((mesh) =>  {
                     if(!fileConfig) {
+                        const attribution = { 
+                            title: "Author Information", 
+                            items: {
+                                website: { value: "https://github.com/mrdoob/three.js/blob/master/examples/webgl_modifier_tessellation.html", type: "Link", disabled: false},
+                            }
+                        }
+                        this.config.defaultConfig.unshift(attribution)
+                        this.getConfig()
                         this.addItem()
                     }else {
                         this.config = {...fileConfig}

@@ -228,6 +228,14 @@ export default  class Particles extends AudioImpactItem {
 
 
        if(!fileConfig) {
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "https://github.com/caseif/vis.js", type: "Link", disabled: false},
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+
             this.getConfig()
             this.addItem()
        }else {

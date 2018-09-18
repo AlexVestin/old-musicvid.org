@@ -1,0 +1,57 @@
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+
+.container {
+    width: 100%;
+    height: 20%;
+
+    background-color: #1e1e1e;
+}
+
+.number {
+    font-family: 'Montserrar', sans-serif;
+    font-size: 7vh;
+    color: #eee;
+    margin: 0;
+}
+
+.number1 {
+    font-family: 'Montserrar', sans-serif;
+    font-size: 4vh;
+    color: #eee;
+    margin: 0;
+}
+
+.text {
+    color: #eee;
+    font-family: 'Montserrar', sans-serif;
+    font-size: 2vh;
+}
+
+.groupWrapper {
+    text-align: center;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    width: 33%;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    width: 85%;
+    align-items: center;
+    height: 100%;
+    
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8%;
+
+}
+
+
+
+

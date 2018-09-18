@@ -87,7 +87,16 @@ export default class WaveletCanvas extends BaseItem {
             }
             this.config.defaultConfig.push(colorGroup)
             this.config.defaultConfig.push(glowGroup)
-            
+
+            const attribution = { 
+                title: "Author Information", 
+                items: {
+                    website: {value: "https://github.com/mattdesl/polartone", type: "Link", disabled: false},
+                    note: {value: "This has been edited and might not represent the original work", type: "Text"}
+                }
+            }
+            this.config.defaultConfig.unshift(attribution)
+
             this.getConfig()
             this.addItem()
         }else {

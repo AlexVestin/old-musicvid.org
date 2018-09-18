@@ -20,7 +20,13 @@ export default class JSNation extends BaseItem {
                     }
                 })
                 
-                
+                const attribution = { 
+                    title: "Author Information", 
+                    items: {
+                        website: {value: "https://github.com/caseif/js.nation", type: "Link", disabled: false},
+                    }
+                }
+                this.config.defaultConfig.unshift(attribution)
                 this.getConfig()
                 this.addItem()
             }else {

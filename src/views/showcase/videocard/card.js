@@ -24,7 +24,7 @@ export default class VideoCard extends PureComponent {
 
     openTemplate = () => {
         fetch(prodPath + this.props.demo.templateUrl)
-        .then(res => {console.log(res); return res.json()})
+        .then(res => res.json())
         .then( response => {
             dispatchAction({type: "SET_GLOBAL_SETTINGS", payload: response.globals})
             loadProjectFromFile(response.items)

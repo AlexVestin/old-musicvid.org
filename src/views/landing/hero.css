@@ -12,13 +12,20 @@
     font-family: 'Work Sans', sans-serif;
     color: #bbb;
     font-size: 14px;
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .wrapper {
     box-sizing: border-box;
-    margin-top: 5%;
     width: 100%;
-    height: 95vh;
+    padding-top: 8.25%;
 
     display: flex;
     flex-direction: column;
@@ -28,6 +35,10 @@
 .buttonWrapper {
     display: flex;
     margin-top: 50px;
+}
+
+.videoWrapper {
+    height: 75%;
 }
 
 .button:hover {
@@ -85,7 +96,3 @@
     background-repeat: no-repeat;
 }
 
-.container {
-    width: 100%;
-    height: 90%;
-}

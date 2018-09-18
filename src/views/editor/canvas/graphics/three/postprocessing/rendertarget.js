@@ -66,12 +66,10 @@ export default class RenderTarget {
     }
 
     addFromFile = (pass) => {
-        console.log(pass)
         this.createEffect(pass.type, pass)
     }
     createEffect = (type, fileConfig) =>  {
 
-        console.log("???", type)
         var fx;
         switch(type) {
             case "PIXEL":

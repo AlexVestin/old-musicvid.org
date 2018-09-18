@@ -8,7 +8,7 @@
     background-attachment: fixed;
     background-size: cover;
     width: 100%;
-    height: 95%;
     overflow-y: scroll;
     transition: 0.15s;
+    height: 100%;
 }

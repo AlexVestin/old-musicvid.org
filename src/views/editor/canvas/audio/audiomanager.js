@@ -233,12 +233,10 @@ export default class AudioManager {
         this.metronome.postMessage("start")
         this.schedule(0)
         this.schedule(1)
-        console.log("play")
     }
 
     stop = () => {
 
-        console.log("stop")
         //this.bufferSources.forEach(e => e.stop())
         if(this.audioCtx.state !== "closed")this.audioCtx.close()    
         this.playing = false
