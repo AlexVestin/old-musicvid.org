@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom'
 import classes from './itemcard.css'
 import { CSSTransitionGroup } from 'react-transition-group' // ES6
 import Badge from '@material-ui/core/Badge';
-import AudioTrack from '@material-ui/icons/Audiotrack'
 
 import './animations.css'
 export default class VideoCard extends PureComponent {
