@@ -150,6 +150,12 @@ class Canvas extends Component {
       incrementTime(time)
     }
 
+    cancelEncoding = () => {
+      this.stop()
+      setDisabled(false)
+      this.sceneManager.cancelEncoding()
+    }
+
     decrementFrame = () => {
       var time = this.props.time - (1 / this.sceneManager.fps)
       time = time > 0 ? time : 0
@@ -160,7 +166,6 @@ class Canvas extends Component {
     startEncoding = (config, useAudioDuration) => {
       this.stop()
       setDisabled(true)
-      dispatchAction({type:"SET_EXPORT", payload: false})
       this.sceneManager.initEncoder(config, useAudioDuration)
     }
 
@@ -181,7 +186,7 @@ class Canvas extends Component {
 
       return (
         <div className={classes.canvas_wrapper} >
-         <ExportModal open={exportVideo} startEncoding={this.startEncoding} onCancel={() => dispatchAction({type:"SET_EXPORT", payload: false})}></ExportModal>
+          <ExportModal open={exportVideo} cancelEncoding={this.cancelEncoding} startEncoding={this.startEncoding} onCancel={() => dispatchAction({type:"SET_EXPORT", payload: false})}></ExportModal>
           <LinkFilesModal onCancel={() => this.setState({openLinkFilesModal: false})} files={linkFiles} open={openLinkFilesModal}></LinkFilesModal>
         	 <div >
               <ThreeCanvas 

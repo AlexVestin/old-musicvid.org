@@ -57,7 +57,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(window.location.pathname.split("/")[1])
     return (
         <div className={classes.wrapper}>
           {window.location.pathname.split("/")[1] !== "" && <Header></Header>}

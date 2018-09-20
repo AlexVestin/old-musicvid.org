@@ -50,6 +50,7 @@ class ThreeCanvas extends Component {
             dispatchAction({type: "RESET_REDUCER"})
             this.setupScene()
             this.audioManager = new AudioManager()
+            console.log("RESET???")
         
         }else {
             this.setupScene()
@@ -197,6 +198,8 @@ class ThreeCanvas extends Component {
             this.encodeVideoFrame(this.time)
             this.videoEncoder.sendFrame()
         })
+
+        dispatchAction({type: "SET_TOTAL_FRAMES",  payload: this.duration * this.config.fps})
     }
 
 
@@ -320,10 +323,20 @@ class ThreeCanvas extends Component {
                 this.audioManager.sampleWindowSize = payload > 0.1 && !isNaN(payload) ? payload :  0.1
                 break;
             default:
-
         }
     }
 
+    cancelEncoding = () => {
+        this.encoding = false
+        setEncoding(false)
+        this.setSize(this.props.width, this.props.height, false)
+        this.setState( { width: this.props.width, height: this.props.height, hidden: false})
+        this.audioManager.encodingFinished()
+        this.encodedFrames = -1
+        this.setTime(0)
+        dispatchAction({type:"SET_EXPORT", payload: false})
+    }
+   
     addLayer = (layer) =>  {
         this.scenes.push(layer)
         this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
@@ -348,8 +361,6 @@ class ThreeCanvas extends Component {
             })
             this.playing = true
         }
-
-       
     }
 
     saveBlob = (vid) => {
@@ -367,7 +378,10 @@ class ThreeCanvas extends Component {
                 this.encodeVideoFrame()
             }
 
-            if(this.encodedFrames % 30 === 0) this.setState({framesEncoded: this.encodedFrames})
+            if(this.encodedFrames % 30 === 0) {
+                this.setState({framesEncoded: this.encodedFrames})
+                dispatchAction({type:"SET_FRAMES_ENCODED", payload: this.encodedFrames})
+            }
 
         }else if(this.encoding && this.encodedFrames >= this.duration * this.config.fps) {
             this.encoding = false
@@ -380,6 +394,7 @@ class ThreeCanvas extends Component {
             this.audioManager.encodingFinished()
             this.encodedFrames = -1
             this.setTime(0)
+            dispatchAction({type:"SET_EXPORT", payload: false})
 
             const ref = base.ref("/counter")
             ref.transaction((e) => {
@@ -457,7 +472,6 @@ class ThreeCanvas extends Component {
         return(
 
             <div style={{  width: this.props.width, height: this.props.height, backgroundColor: "black"} } >
-                {this.encoding && <div style={{color: "white"}}>Frames Encoded: {this.state.framesEncoded} / {Math.floor(this.duration * this.config.fps)}</div>}
                 <div
                     ref={ref => this.mountRef = ref } 
                     style={{ width: this.props.width,  height: this.props.height, display: hideCanvas ? "none" :  ""}}                

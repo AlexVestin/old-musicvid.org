@@ -152,8 +152,12 @@ export default class Clip extends PureComponent {
 
 
         
-        const HEADER_SIZE = 12
-     
+        const HEADER_SIZE = 12;
+
+        let borderLeft = "1px solid #555555";
+        if(l === 0)
+            borderLeft = "";
+    
         return (
             <div 
                 onClick={this.onClick}
@@ -176,6 +180,7 @@ export default class Clip extends PureComponent {
                         borderRadius: "0.12rem", 
                         borderWidth: 1,
                         borderColor: '#555555',
+                        borderLeft
                     }}
                     draggable="false"                    
                     >

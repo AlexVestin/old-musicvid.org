@@ -22,7 +22,7 @@ export default React.forwardRef((props, ref) => (
                     <div className={classes.subTitle}> 
                         Browse template projects, simply import media (background images, and audio) and you're good to go.
                     </div>
-                    <Link className={classes.link} to="/templates">Open templates</Link>
+                    <Link className={classes.link} to="/showcase">Open templates</Link>
                 </div>
 
             <div className={classes.itemTextWrapper}>
@@ -30,11 +30,11 @@ export default React.forwardRef((props, ref) => (
                     Roadmap
                 </div>
                 <div className={classes.subTitle}> 
-                    This site is still in its' infancy, and there are many exciting updates coming up. 
-                     
+                    This site is still in its' infancy, and there are many exciting updates coming up. Here is a list of animations 
+                    we're looking to add.
                 </div>
 
-                <Link className={classes.link} to="/roadmap">Browse showcase</Link>
+                <Link className={classes.link} to="/roadmap">Browse roadmap</Link>
             </div>
 
             <div className={classes.itemImageWrapper}>
@@ -49,8 +49,7 @@ export default React.forwardRef((props, ref) => (
                     Tutorial
                 </div>
                 <div className={classes.subTitle}> 
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce et convallis metus, 
-                    non ultricies justo. Praesent metus sapien
+                    Navigating the editor can be hard, so we have prepared some tutorials and answered some questions that you might have 
                 </div>
                 <Link className={classes.link} to="/tutorial">Browse tutorials</Link>
             </div>

@@ -12,13 +12,21 @@ export default function playbackReducer(state = {
     masterVolume: 100,
     exportVideo: false,
     fftSize: "2048",
+    framesEncoded: 0,
+    totalFrames: 0
 
     }, action){
         switch(action.type){
+            case "SET_TOTAL_FRAMES":
+                return  {...state, totalFrames: action.payload}
+            case "SET_FRAMES_ENCODED":
+                return  {...state, framesEncoded: action.payload}
             case "SET_GLOBAL_SETTINGS":
                 return {...state, ...action.payload, time: 0, playing: false}
             case "SET_EXPORT":
-                return {...state, exportVideo: action.payload}
+                let fe = action.payload ? state.framesEncoded : 0
+                let tf = action.payload ? state.totalFrames : 0
+                return {...state, exportVideo: action.payload, framesEncoded: fe, totalFrames: tf}
             case "EDIT_PROJECT_SETTINGS":
                 return {...state, [action.payload.key]: action.payload.value}
             case "SET_AUDIO_BUFFER_SIZE":

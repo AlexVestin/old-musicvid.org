@@ -19,7 +19,7 @@ const presetLookup = [
 
 
 const style= {
-    top: `30%`,
+    top: `20%`,
     left: `25%`,
 };
 
@@ -76,26 +76,34 @@ class SimpleModal extends React.Component {
 
     encode = () => {
         //Video config
-        let sp = this.res.split("x")
-        let [w,h] = [Number(sp[0]), Number(sp[1])]
-        this.frames = Number(this.fps)
-        let br = Number(this.br.slice(0, -1)) * 1000
-        let presetIdx = presetLookup.indexOf(this.pre)
-        const config = {
-            fps: this.frames,
-            width: w,
-            height: h, 
-            duration: 300,
-            bitrate: br,
-            presetIdx: presetIdx
+
+        if(!this.props.encoding) {
+            let sp = this.res.split("x")
+            let [w,h] = [Number(sp[0]), Number(sp[1])]
+            this.frames = Number(this.fps)
+            let br = Number(this.br.slice(0, -1)) * 1000
+            let presetIdx = presetLookup.indexOf(this.pre)
+            const config = {
+                fps: this.frames,
+                width: w,
+                height: h, 
+                duration: 300,
+                bitrate: br,
+                presetIdx: presetIdx
+            }
+    
+            this.props.startEncoding(config, Number(this.state.durationValue))
+        }else {
+            this.props.cancelEncoding()
         }
 
-        this.props.startEncoding(config, Number(this.state.durationValue))
+        
+    
     }
 
     stopEncoding = ()  => {
         cancelAnimationFrame(this.frameId)
-      }
+    }
 
     encoderInit = () => {
         this.startTime = performance.now()
@@ -111,26 +119,38 @@ class SimpleModal extends React.Component {
     render() {
         const { classes } = this.props;
         const { durationValue } = this.state
+
+        const tf = Number(this.props.totalFrames)
+        const fe = Number(this.props.framesEncoded)
         return (
             <Modal
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
                 open={this.props.open}
-                onClose={this.handleClose}
             >
                 <div style={style} className={classes.paper}>
                     <Typography variant="title" id="modal-title">
-                        Export video
+                        Exporting video
                     </Typography>
                     <Typography variant="subheading" id="simple-modal-description">
                         
+                        Some info on exporting!
+                        <ul>
+                            <li>You have to set a positive number for the duration duration to be able to start encoding.</li>
+                            <li>The FPS is currently locked to 60</li>
+                            <li>Exporting video uses mp4 video with mp3 320kbps, however there are plans to add support for other types of encoders. </li>
+                            <li>Staying in the tab will increase performance significantly, and shorten the time it takes to export.</li>
+                            <li>The export can be quite slow (~30 mins for a 5min export in 720p)</li>
+                            <li>Using ultrafast preset is recommended, however this will produce a larger file.</li>
+                            <li>A bitrate of above 4000k is recommended when using 720p.</li>
+                        </ul>
                     </Typography>
                         
-                    <div style={{display: "flex", flexDirection: "row"}}>
+                    <div style={{display: "flex", flexDirection: "row", marginTop: 50}}>
                         <Options onchange={format => this.format = format} name="format" labels={["mp4"]} disabled></Options>
-                        <Options onchange={v => this.res = v} name="resolution" labels={["720x480", "1280x720"]}></Options>
+                        <Options onchange={v => this.res = v} name="resolution" labels={["640x480", "1280x720"]}></Options>
                         <Options onchange={v => this.fps = v} name="fps" labels={["60"]} disabled></Options>
-                        <Options onchange={v => this.br = v} name="bitrate" labels={["600k", "1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
+                        <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
                         <Options onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
                         <div style={{display: "flex", flexDirection: "row", marginLeft: 30}}>
                             <TextField
@@ -146,15 +166,31 @@ class SimpleModal extends React.Component {
                     </div>
 
                     <div style={{display: "flex", flexDirection: "row"}}>
-                        <Options onchange={f => this.audioEncoding = f} name="Audio format" labels={["aac", "mp3"]} disabled></Options>
-                        <Options onchange={f => this.bitrate = f} name="Audio bitrate" labels={["64000", "86000", "128000", "320000"]} disabled></Options>
+                        <Options onchange={f => this.audioEncoding = f} name="Audio format" labels={["mp3"]} disabled></Options>
+                        <Options onchange={f => this.bitrate = f} name="Audio bitrate" labels={["320000"]} disabled></Options>
                     </div>
 
                     <Button 
                         variant="raised" 
                         color="primary" 
                         disabled={durationValue < 1 || isNaN(durationValue)} 
-                    onClick={this.encode}>Start encoding</Button>
+                        onClick={this.encode}>
+                        {this.props.encoding ? "Cancel" :  "Start encoding"}
+                     </Button>
+
+                     <Button 
+                        variant="raised" 
+                        color="primary" 
+                        onClick={this.handleClose}
+                        style={{marginLeft: 20}}
+                        disabled={this.props.encoding}
+                        >
+                        close
+                     </Button>
+
+                     {this.props.encoding && 
+                        <div style={{marginTop: 30}}>{fe} / {tf} frames encoded ({Math.floor((fe / tf)*100)}%)</div>
+                    }
                 </div>
             </Modal>
         );
@@ -170,7 +206,10 @@ const ModalS = withStyles(styles)(SimpleModal);
 
 const mapStateToProps = state => {
     return {
-        duration: state.globals.duration
+        duration: state.globals.duration,
+        framesEncoded: state.globals.framesEncoded,
+        totalFrames: state.globals.totalFrames,
+        encoding: state.globals.encoding,
     }
 }
 

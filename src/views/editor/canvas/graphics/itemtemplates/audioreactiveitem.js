@@ -281,7 +281,6 @@ export default class AudioreactiveItem extends MeshItem {
             var value = array[i];
             if (i < headMargin) {
                 value *= headMarginSlope * Math.pow(i + 1, marginDecay) + minMarginWeight;
-                console.log(headMarginSlope * Math.pow(i + 1, marginDecay) + minMarginWeight)
             } else if (spectrumSize - i <= tailMargin) {
                
                 value *= tailMarginSlope * Math.pow(spectrumSize - i, marginDecay) + minMarginWeight;

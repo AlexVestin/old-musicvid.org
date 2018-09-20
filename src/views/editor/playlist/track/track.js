@@ -9,7 +9,6 @@ import { connect } from 'react-redux'
 
 const pHeight = 35
 
-
 const clipStyle = {
     boxSizing: "border-box",
     display: "flex",
@@ -20,7 +19,6 @@ const clipStyle = {
     borderBottom: "1px solid gray",
     width: "100%"
 }
-
 
 class ClipItem extends PureComponent {
     state = {expanded: false}
@@ -33,8 +31,6 @@ class ClipItem extends PureComponent {
         let panelHeight = pHeight;
         let i = this.props.index;
         let shouldDrawClip = false, start = 0, left = 0, str = "", duration = 0;
-
-        console.log(item)
 
         if(item !== null && item !== undefined) {
             const layer = this.props.layers[this.props.item.sceneId]

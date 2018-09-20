@@ -16,7 +16,7 @@ class App extends Component {
     if(!this.props.isAuthenticated && !this.props.isFetching) {
       return <Redirect to="/login"></Redirect>
     }else if(this.props.isFetching) {
-      return <div></div>
+      return <div>loading...</div>
     }
       
     return (

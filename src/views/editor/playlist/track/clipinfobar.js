@@ -18,11 +18,9 @@ class ClipInfoBar extends PureComponent {
 
         allItems = [...allItems, ...this.props.audioItems].sort((a, b) => a.index - b.index )
         let tracks = []
-        for(var i = 0; i < 20; i++) 
+        for(var i = 0; i < 15; i++) 
             tracks.push(allItems[i] || null)
         
-        console.log(tracks)
-
         return (
             <div style={{width: "100%"}} draggable="false">
                 <div style={{position: "absolute", width: "20%", height: "100%", backgroundColor: "#434343"}}></div>

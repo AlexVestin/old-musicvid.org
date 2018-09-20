@@ -36,13 +36,12 @@ export default function itemsReducer(state = baseSettings, action){
                 return {...action.payload, loadFromFile: true}
             case "SET_LOAD_FROM_FILE":
                 return {...state, laodFromFile: action.payload}
-
             case "RESET_REDUCER":
                 if(state.loadFromFile){
                     return {...baseSettings}
                 }
                 
-                return {...state, loadFromFile: false}
+                return {...baseSettings, loadFromFile: false}
             case "EDIT_FOG": 
                 fog =  update(state.fog, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
                 return { ...state, fog }
