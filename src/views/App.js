@@ -9,7 +9,8 @@ import MissingPage from './missing/Missing'
 import RoadMap from './roadmap/Roadmap'
 import Settings from './settings/Settings'
 import Projects from './projects/Projects'
-
+import Logout from './login/Logout'
+import Register from './login/Register'
 import Acknowledgements from './acknowledgements/Acknowledgements'
 
 import Profile from './profile/Profile'
@@ -24,7 +25,6 @@ class App extends Component {
     register: null,
     privacy: null,
     login: null,
-    logout: null,
     templates: null
   }
 
@@ -32,12 +32,8 @@ class App extends Component {
     
     import("./editor/Editor").then((mod) => this.setState(() => ({ editor: mod.default })))
     import("./login/Login").then((mod) => this.setState(() => ({ login: mod.default })))
-    import("./login/Register").then((mod) => this.setState(() => ({ register: mod.default })))
     import("./info/Privacy").then((mod) => this.setState(() => ({ privacy: mod.default })))
     import("./showcase/Showcase").then((mod) => this.setState(() => ({ showcase: mod.default })))
-    import("./login/Logout").then((mod) => this.setState(() => ({ logout: mod.default })))
-    import("./templates/Templates").then((mod) => this.setState(() => ({ templates: mod.default })))
-
 
       this.removeAuthListener = app.auth().onAuthStateChanged((user) => {
           this.setState({loaded: false})
@@ -45,6 +41,7 @@ class App extends Component {
               setIsAuthenticated(true);
           }else {
               setIsAuthenticated(false);
+              console.log("?????")
           }
       }) 
     
@@ -52,8 +49,6 @@ class App extends Component {
 
   componentWillUnmount = () => {
     this.removeAuthListener();
-
-    
   }
 
   render() {
@@ -63,10 +58,9 @@ class App extends Component {
           <Switch>
             <Route path="/editor" component={this.state.editor}></Route>
             <Route path="/showcase" component={this.state.showcase}></Route>
-            <Route path="/templates" component={this.state.templates}></Route>
-            <Route path="/register" component={this.state.register}></Route>
+            <Route path="/register" component={Register}></Route>
             <Route path="/login" component={this.state.login}></Route>
-            <Route path="/logout" component={this.state.logout}></Route>
+            <Route path="/logout" component={Logout}></Route>
             <Route path="/info" component={Info}></Route>
             <Route path="/privacy" component={this.state.privacy}></Route>
             <Route path="/profile" component={Profile}></Route>

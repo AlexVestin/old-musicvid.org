@@ -45,11 +45,11 @@ export default class CirclePlayer extends CombinedAudioItem {
             })
     
             this.getConfig();
-            this.config.impactAmplitude = 3;
+            this.config.impactAmplitude = 12;
             this.config.spectrumSize = 64;
             this.config.easeAmplitude = true;
             this.config.easeAmount = 6.5;
-            this.config.amplitude = 5;
+            this.config.amplitude = 15;
             this.config.enableLogTransform = false;
             this.config.enableCombineBins = false;
             this.addItem();

@@ -18,7 +18,7 @@ const NameInput = (props) => {
             <div style={{height: "100%", marginTop: 2}}>{"Name:"}</div>
             
             <div style={{display: "flex", justifyContent: "row"}}>
-                <input style={{height: 18, padding:0, marginTop: 1}} onChange={props.edit} value={props.value} type="text"></input>
+                <input onKeyUp={(e) => e.stopPropagation()} style={{height: 18, padding:0, marginTop: 1}} onChange={props.edit} value={props.value} type="text"></input>
                 <div style={{color:"#F50057", minWidth: 10, minHeight: 10 }}>
                     <Delete onClick={props.onDelete}  style={{cursor: "pointer", marginRight: 10}}></Delete>
                 </div>

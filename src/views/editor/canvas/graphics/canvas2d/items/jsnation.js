@@ -24,6 +24,7 @@ export default class JSNation extends BaseItem {
                     title: "Author Information", 
                     items: {
                         website: {value: "https://github.com/caseif/js.nation", type: "Link", disabled: false},
+                        note: {value: "This has been edited and might not represent the original work", type: "Text"}
                     }
                 }
                 this.config.defaultConfig.unshift(attribution)

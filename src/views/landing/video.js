@@ -14,15 +14,16 @@ export default class VideoCard extends PureComponent {
 
 
     render() {
-        const { width, height } = this.props
 
         const widthInPx = window.innerWidth * this.props.width;
         const heightInPx = window.innerWidth * this.props.height;
         return(
             <div className={classes.cardWrapper} style={{marginTop: 25}}>
                 <div style={{ backgroundColor: "rgba(200, 200, 200, 0.3)", minWidth: 200, minHeight: 100, width: widthInPx, height: heightInPx}}>       
-                    <video src="/demos/landingdemo.mp4" style={{minWidth: 200, minHeight: 100, width: widthInPx, height: heightInPx}}
-                    controls
+                    <video 
+                        poster="/demos/landingposter.png"
+                        src="/demos/landingdemo.mp4" style={{minWidth: 200, minHeight: 100, width: widthInPx, height: heightInPx}}
+                        controls
                     >
 
                     </video>

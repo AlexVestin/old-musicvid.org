@@ -1,5 +1,4 @@
 
-import * as THREE from 'three'
 import AudioReactiveItem from '../../itemtemplates/audioreactiveitem'
 
 export default class Bars extends AudioReactiveItem {
@@ -29,49 +28,24 @@ export default class Bars extends AudioReactiveItem {
             this.config.defaultConfig.push(group1)
             this.config.defaultConfig.push(group2)
             this.getConfig()
-
-            this.config.spectrumSize = 64;
-            this.config.amplitude = 200;
-            this.config.spectrumMaxExponent = 3;
-            this.config.decreaseSpeed = 75;
             this.addItem()
         }else {
             this.config = {...fileConfig}
         }
         
-        this.mesh = new THREE.Group()
-        this.createBars(this.config.spectrumSize)
     }
 
-    createBars = (nrOfBars) => {
-        while (this.mesh.children.length){
-            this.mesh.remove(this.mesh.children[0]);
-        }
-        for(var i = 0; i < nrOfBars; i++) {
-            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshBasicMaterial();
-            material.color.setHex("0x" + this.config.color || "FFFFFF")
-            var cube = new THREE.Mesh( geometry, material );
-
-            cube.position.x = this.config.x + (i * this.config.spacing) - (this.config.spacing*nrOfBars/2);
-            cube.position.y = 0
-            this.mesh.add(cube)
-        }
+    setStyle = () => {
+        this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`
+        this.ctx.fillStyle = '#' + this.config.color;
+        this.ctx.textAlign = this.config.textAlign
+        this.ctx.textBaseline  = this.config.baseLine
     }
 
 
-    move = (x, y, z, spacing = 1) => {
-        this.mesh.children.forEach((e, i) => {
-            e.position.x = x + (i * spacing) - (spacing*this.config.spectrumSize/2);
-            e.translateZ(z);
-        })
-
-        this.centerY = y
-    }
 
     _updateConfig = (config) => {
         if(config.spectrumSize !== this.config.spectrumSize) {
-            this.createBars(config.spectrumSize)
         }else {
             this.mesh.children.forEach(e => {
                 e.material.color.setHex("0x" + config.color)

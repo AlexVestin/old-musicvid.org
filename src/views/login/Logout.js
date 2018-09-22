@@ -16,6 +16,8 @@ class Logout extends PureComponent {
     }
 
     render() {
+
+        console.log("LOG OUT????")
         if(this.state.redirect)
             return <Redirect to="/"></Redirect>
 

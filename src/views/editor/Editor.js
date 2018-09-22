@@ -13,7 +13,7 @@ import { connect } from 'react-redux'
 class App extends Component {
   render() {
 
-    if(!this.props.isAuthenticated && !this.props.isFetching) {
+    if(false && !this.props.isAuthenticated && !this.props.isFetching) {
       return <Redirect to="/login"></Redirect>
     }else if(this.props.isFetching) {
       return <div>loading...</div>
