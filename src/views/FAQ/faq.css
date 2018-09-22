@@ -19,12 +19,17 @@
 }
 
 .wrapper {
-    font-family: montserrat, sans-serif; 
+    font-family: "Montserrat", sans-serif; 
     box-sizing: border-box;
     width: 80%;
     margin-top: 2%;
     margin-left: auto;
     margin-right: auto;
+
+
+    display:flex; 
+    flex-direction: column;
+    align-items: center;
 }
 
 

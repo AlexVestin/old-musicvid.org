@@ -156,6 +156,23 @@ export default class InceptionCity extends BaseItem {
         
     }
 
+    setTime = (time) => {
+        this.trails = []
+        for(var i=0; i<8; i++){
+            this.trails.push(new Trail({x:Math.random()*50-25, y:Math.random()*50-25, z:i}, 0, i));
+        }
+        this.camera = {x: 0, y: 0, z:-2}; 
+        this.time_pre = time;
+    }
+
+    stop = () => {
+        this.trails = []
+        for(var i=0; i<8; i++){
+            this.trails.push(new Trail({x:Math.random()*50-25, y:Math.random()*50-25, z:i}, 0, i));
+        }
+        this.camera = {x: 0, y: 0, z:-2}; 
+    }
+
     setSize = (width, height) => {
         this.width = width
         this.height = height
@@ -164,6 +181,7 @@ export default class InceptionCity extends BaseItem {
     _updateConfig = (config) => {
         const { lineRed, lineGreen, lineBlue, strokeRed, strokeGreen, strokeBlue, strokeAlpha } = config
         this.trails.forEach(t => t.colors = { lineRed, lineGreen, lineBlue, strokeRed, strokeGreen, strokeBlue, strokeAlpha })
+        this.config = config
     }
 
     updateScene =  (time_now) => {

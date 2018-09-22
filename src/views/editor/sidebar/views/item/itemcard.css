@@ -16,15 +16,32 @@
     height: 20px;
 }
 
-.title {
-    overflow: hidden;
+
+.addButton:hover {
+    background-color: #0069d9 !important;
+    border-color: #0062cc !important;
 }
 
-.badge {
+.addButton:active{
+    box-shadow: none !important;
+    background-color: #0062cc !important;
+    border-color: #005cbf !important;
 }
+
+.title {
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    color: #282828;
+    margin-left: 5px;
+}
+.addButton {
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+}
+
 
 .cardInfo {
-    background-color: rgb(196, 196, 196);
+    background-color: rgb(212, 212, 212);
     border-bottom-right-radius: 0.2em;
     border-bottom-left-radius: 0.2em;
 }

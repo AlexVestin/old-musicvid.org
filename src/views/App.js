@@ -12,6 +12,7 @@ import Projects from './projects/Projects'
 import Logout from './login/Logout'
 import Register from './login/Register'
 import Acknowledgements from './acknowledgements/Acknowledgements'
+import Tutorial from './FAQ/Faq'
 
 import Profile from './profile/Profile'
 import { app } from '../firebase/firebase'
@@ -41,7 +42,6 @@ class App extends Component {
               setIsAuthenticated(true);
           }else {
               setIsAuthenticated(false);
-              console.log("?????")
           }
       }) 
     
@@ -57,6 +57,7 @@ class App extends Component {
           {window.location.pathname.split("/")[1] !== "" && <Header></Header>}
           <Switch>
             <Route path="/editor" component={this.state.editor}></Route>
+            <Route path="/tutorial" component={Tutorial}></Route>
             <Route path="/showcase" component={this.state.showcase}></Route>
             <Route path="/register" component={Register}></Route>
             <Route path="/login" component={this.state.login}></Route>

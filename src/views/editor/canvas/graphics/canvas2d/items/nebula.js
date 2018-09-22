@@ -106,6 +106,14 @@ export default class Nebula extends BaseItem {
         this.height = height
     }
 
+    stop = () => {
+        this.oldTime = 0;
+    }
+
+    setTime = (time) => {
+        this.oldTime = time;
+    }
+
     animate = (newTime, frequencyBins) => {
         var	sortPuff = function(p1,p2) { return p1.p - p2.p; };	        
         if(this.oldTime === 0 ) {
@@ -120,7 +128,6 @@ export default class Nebula extends BaseItem {
         this.puffs.forEach( p => p.move(timeFac) )
         this.ctx2.drawImage(this.canvas, 0, 0, this.width, this.height);				
     }
-
 }
 
 

@@ -1,38 +1,7 @@
 
 
 
-const items3D = [
-    "Bars", 
-    "Text3D", 
-    "Tesselated Text", 
-    "Sphere", 
-    "Random Geometry", 
-    "Particles", 
-    "Skybox", 
-    "Skybox2", 
-    "Northern Lights",
-    "Noise Blob",  
-]
-const items2D = [
-    "Inception City",
-    "Nebulosa",
-    "Circle Rings",
-    "Polartone",
-    "Square",
-    "jsnation",
-    "Text",
-    "Kinetic Text",
-    "Circle Player",
-    "Time Keeper",
-    "Time Text",
-    "Circle2",
-    "Wavelet Canvas"
-  ]  
-
   
-
-  
-
 export default {
     items3D: {
         0: {
@@ -205,7 +174,15 @@ export default {
             description: "Watah",
             posterUrl: "/demos/2d/circleplayer.png",
             videoUrl: "/demos/2d/circleplayer.mp4" 
-        }
+        },
+        14: {
+            title: "Spectrum Bars",
+            type: "BARS2D",
+            description: "Spectrum bars",
+            audioReactive: true,
+            posterUrl: "/demos/missing.png",
+            videoUrl: "",
+        },
         
     }
 }

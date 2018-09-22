@@ -28,6 +28,29 @@ export default class JSNation extends BaseItem {
                     }
                 }
                 this.config.defaultConfig.unshift(attribution)
+
+                const shakeGroup = {
+                    title: "Shake",
+                    items: {
+                        shakeMultiplier: {type: "Number", value: 10},
+                        minShakeScalar: {type: "Number", value: 0.9},
+                        maxShakeScalar: {type: "Number", value: 1.6},
+                        maxShakeIntensity: {type: "Number", value: Math.PI / 3},
+                        maxShakeDisplacement: {type: "Number", value: 8}
+                    }
+                }
+
+                const glowGroup = {
+                    title: "Glow",
+                    items: {
+                        glow: {type: "Boolean", value: false},
+                        shiftingGlowColors: {type: "Boolean", value: false},
+                        shadowBlur: {type: "Number", value: 20}
+                    }
+                }
+    
+                this.config.defaultConfig.push(glowGroup)
+
                 this.getConfig()
                 this.addItem()
             }else {
@@ -44,6 +67,15 @@ export default class JSNation extends BaseItem {
             this.spectrumHeightScalar =  0.4
 
             this.resolutionMultiplier = 1
+
+
+            this.WAVE_DURATION = Math.PI / 8;
+            this.waveFrameX = 0;
+            this.waveFrameY = 0;
+            this.waveSpeedX = 1;
+            this.waveSpeedY = 1;
+            this.waveAmplitudeX = 1;
+            this.waveAmplitudeY = 1;
 
         }
 
@@ -93,10 +125,22 @@ export default class JSNation extends BaseItem {
             }
             return newArr;
         }
+
+
+        setStyle = () => {
+            if(this.config.glow ===  true) {
+                this.ctx.shadowBlur = this.config.shadowBlur;
+                this.ctx.shadowOffsetX = 0;
+                this.ctx.shadowOffsetY = 0;
+            } else {
+                this.ctx.shadowBlur = 0;
+            }
+        }
         
         animate = (time, audioData) =>  {
             const spectrum = this.transform(audioData.bins)
 
+            this.setStyle()
             if(audioData.bins.length > 0) {
                 if (this.spectrumCache.length >= this.config.spectrumCount) {
                     this.spectrumCache.shift();
@@ -128,33 +172,38 @@ export default class JSNation extends BaseItem {
                 }
             }
         }
+    
+        random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+        
 
     shakeCallback = () => {
-        /*
-        let step = Config.maxShakeIntensity * multiplier;
-        waveFrameX += step * waveSpeedX;
-        if (waveFrameX > WAVE_DURATION) {
-            waveFrameX = 0;
-            waveAmplitudeX = Util.random(Config.minShakeScalar, Config.maxShakeScalar);
-            waveSpeedX = Util.random(Config.minShakeScalar, Config.maxShakeScalar) * (Math.random() < 0.5 ? -1 : 1);
-            trigX = Math.round(Math.random());
+        const {shakeMultiplier, minShakeScalar, maxShakeScalar, maxShakeIntensity, maxShakeDisplacement } = this.config
+
+        let step = maxShakeIntensity * shakeMultiplier;
+        this.waveFrameX += step * this.waveSpeedX;
+        if (this.waveFrameX > this.WAVE_DURATION) {
+            this.waveFrameX = 0;
+            this.waveAmplitudeX = this.random(minShakeScalar, maxShakeScalar);
+            this.waveSpeedX = this.random(minShakeScalar, maxShakeScalar) * (Math.random() < 0.5 ? -1 : 1);
+            this.trigX = Math.round(Math.random());
         }
-        waveFrameY += step * waveSpeedY;
-        if (waveFrameY > WAVE_DURATION) {
-            waveFrameY = 0;
-            waveAmplitudeY = Util.random(Config.minShakeScalar, Config.maxShakeScalar);
-            waveSpeedY = Util.random(Config.minShakeScalar, Config.maxShakeScalar) * (Math.random() < 0.5 ? -1 : 1);
-            trigY = Math.round(Math.random());
+        this.waveFrameY += step * this.waveSpeedY;
+        if (this.waveFrameY > this.WAVE_DURATION) {
+            this.waveFrameY = 0;
+            this.waveAmplitudeY = this.random(minShakeScalar, maxShakeScalar);
+            this.waveSpeedY = this.random(minShakeScalar, maxShakeScalar) * (Math.random() < 0.5 ? -1 : 1);
+            this.trigY = Math.round(Math.random());
         }
 
-        let trigFuncX = trigX == 0 ? Math.cos : Math.sin;
-        let trigFuncY = trigY == 0 ? Math.cos : Math.sin;
+        let trigFuncX = this.trigX === 0 ? Math.cos : Math.sin;
+        let trigFuncY = this.trigY === 0 ? Math.cos : Math.sin;
 
-        let dx = trigFuncX(waveFrameX) * Config.maxShakeDisplacement * waveAmplitudeX * multiplier;
-        let dy = trigFuncY(waveFrameY) * Config.maxShakeDisplacement * waveAmplitudeY * multiplier;
+        let dx = trigFuncX(this.waveFrameX) * maxShakeDisplacement * this.waveAmplitudeX * shakeMultiplier;
+        let dy = trigFuncY(this.waveFrameY) * maxShakeDisplacement * this.waveAmplitudeY * shakeMultiplier;
 
-        Canvas.context.translate(dx, dy);
-        */
+        this.ctx.translate(dx, dy);
     }
         
     drawPoints = (points) => {

@@ -5,6 +5,17 @@ import { CSSTransitionGroup } from 'react-transition-group' // ES6
 import Badge from '@material-ui/core/Badge';
 
 import './animations.css'
+
+
+const bootstrapButtonStyle = {
+    boxShadow: 'none',
+    color: "white",
+    fontSize: 11,
+    border: '1px solid',
+    backgroundColor: '#007bff',
+    borderColor: '#007bff'
+}
+
 export default class VideoCard extends PureComponent {
 
     constructor(props) {
@@ -109,7 +120,7 @@ export default class VideoCard extends PureComponent {
                 <div className={classes.cardInfo}>
                     <div className={classes.topGroupWrapper}>
                         <div className={classes.title}> {title} </div>
-                        <button onClick={() => this.props.onClick(this.props.item)} >add</button>
+                        <button style={bootstrapButtonStyle} className={classes.addButton} onClick={() => this.props.onClick(this.props.item)} >add</button>
                     </div>
                 </div>
             </div>

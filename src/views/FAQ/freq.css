@@ -1,0 +1,32 @@
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    min-width: 15px;
+    min-height: 15px;
+    width: 100%;
+
+    margin-top: 3;
+    color: black;
+}
+
+.card {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.icon:hover {
+    color: #444;
+}
+
+.container {
+    width: 60%;
+}
+
+.headerWrapper {
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #DDD;
+}

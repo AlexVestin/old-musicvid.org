@@ -15,6 +15,7 @@ import TimeText from './items/timetext';
 import Image from './items/image';
 import Circle2 from './items/nation2'
 import Polartone from './items/polartone'
+import Bars from './items/bars'
 
 
 export default class SceneContainer {
@@ -137,6 +138,9 @@ export default class SceneContainer {
         let item; 
     
         switch (info.type) {
+            case "BARS2D":
+                item = new Bars(info, config);
+                break;
             case "CIRCLE2":
                 item = new Circle2(info, config);
                 break;
