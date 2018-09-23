@@ -17,6 +17,8 @@ export default function playbackReducer(state = {
 
     }, action){
         switch(action.type){
+            case "SET_PLAYLIST_LENGTH":
+                return {...state, clipDuration: state.clipDuration > action.payload ? state.clipDuration : Math.floor(action.payload + action.payload * 0.05)}
             case "SET_TOTAL_FRAMES":
                 return  {...state, totalFrames: action.payload}
             case "SET_FRAMES_ENCODED":

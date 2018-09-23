@@ -232,11 +232,12 @@ class ThreeCanvas extends Component {
         var newLayer
 
         switch(type) {
+            case "UPDATE_ITEM_FILE":
+                scene.updateItemFile(state.items.items[this.selectedLayerId][this.selectedItemId], payload);
+                break;
             case "ADD_LINKED_FILE":
                 if(payload.config.type === "SOUND") {
                     this.audioManager.add(new Sound(payload.file, payload.config))
-                }else if(true){
-
                 }
                 break;
             case "EDIT_LAYER":

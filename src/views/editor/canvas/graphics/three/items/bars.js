@@ -49,7 +49,7 @@ export default class Bars extends AudioReactiveItem {
         }
         for(var i = 0; i < nrOfBars; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshBasicMaterial();
+            var material = new THREE.MeshPhongMaterial();
             material.color.setHex("0x" + this.config.color || "FFFFFF")
             var cube = new THREE.Mesh( geometry, material );
 

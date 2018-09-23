@@ -80,7 +80,7 @@ export default class Bars extends AudioReactiveItem {
             const xp = ( x * this.canvas.width)
             const offset = (i - (bins.length/2)) * (spacing + width)
 
-            let height = this.config.flip ? -bins[i] * 10 : bins[i] * 10;
+            let height = this.config.flip ? bins[i] * 10 : -bins[i] * 10;
 
             this.ctx.fillRect(xp+offset, y * this.canvas.height, width, height )
         }

@@ -120,6 +120,10 @@ export default class SceneContainer {
         this.items.forEach(item => item.setFFTSize(value))
     }
 
+    updateItemFile = (item) => {
+        
+    }
+
     addItem = (name, info, time, config) => {
         info = {
             ...info, 
@@ -133,6 +137,8 @@ export default class SceneContainer {
             height: this.height, 
             width: this.width
         }
+
+        
         
         if(config)info.type = config.itemType
         let item; 

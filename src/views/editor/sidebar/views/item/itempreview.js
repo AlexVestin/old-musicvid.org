@@ -71,6 +71,20 @@ export default {
             description: "Audio reactive eye looking thing",
             posterUrl: "/demos/missing.png",
             audioReactive: true,
+        },
+        10: {
+            title :"3D Models",
+            type: "3D MODEL",
+            description: "Audio reactive eye looking thing",
+            posterUrl: "/demos/missing.png",
+            audioReactive: false,
+        },
+        11: {
+            title :"Circulating Lights",
+            type: "CIRCULATING LIGHTS",
+            description: "Audio reactive eye looking thing",
+            posterUrl: "/demos/missing.png",
+            audioReactive: false,
         }
     },
 

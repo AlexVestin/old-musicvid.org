@@ -1,5 +1,5 @@
 import BaseItem from './template'
-import { addSound } from '@redux/actions/items'
+import { addSound, dispatchAction } from '@redux/actions/items'
 import { setDisabled } from '@redux/actions/globals'
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -51,7 +51,7 @@ export default class Sound extends BaseItem {
     }
 
     getAudioFrame = (time, first = false, sampleWindowSize) => {
-        if(!this.left || !this.right)return
+        if(!this.left && !this.right)return
         if(first) {
             this.offset = Math.floor( (time - this.config.start + this.config.offsetLeft) * this.sampleRate)
             this.windowSize = sampleWindowSize
@@ -60,8 +60,12 @@ export default class Sound extends BaseItem {
         const length = Math.floor(this.windowSize * this.sampleRate)
         if(this.offset >=  this.config.offsetLeft * this.sampleRate && this.offset < (this.config.duration + this.config.offsetLeft) * this.sampleRate) {
             const buffer = {}
-            buffer.left =  this.left.subarray(this.offset, this.offset + length)
-            buffer.right =  this.right.subarray(this.offset, this.offset + length)
+
+            buffer.left = new Float32Array()
+            buffer.right = new Float32Array()
+
+            if(this.left)buffer.left =  this.left.subarray(this.offset, this.offset + length)
+            if(this.right)buffer.right =  this.right.subarray(this.offset, this.offset + length)
 
             buffer.length = length
             this.offset += length
@@ -76,26 +80,26 @@ export default class Sound extends BaseItem {
     loadSound = (file, shouldAddNewItem) => {
         let that = this
         var reader = new FileReader();
-            reader.onload = function(ev) {
-                audioCtx.decodeAudioData(ev.target.result, function(buffer) {
-                    that.buffer = buffer; 
-                    that.left = new Float32Array(buffer.getChannelData(0))
-                    that.right = new Float32Array(buffer.getChannelData(1))
+        reader.onload = function(ev) {
+            audioCtx.decodeAudioData(ev.target.result, function(buffer) {
+                that.left = new Float32Array(buffer.getChannelData(0))
+                that.right = new Float32Array(buffer.getChannelData(1))
 
-                    that.config.sampleRate = buffer.sampleRate
-                    that.config.channels = buffer.numberOfChannels
-                    that.config.duration = buffer.duration
-                    that.config.maxDuration = buffer.duration
-                                        
-                    that.sampleRate = buffer.sampleRate
-                    that.channels = 2
-                    that.duration = buffer.duration;
-                
-                    if(true)addSound(that.config)
-                    setDisabled(false)
-                });
-            }
-        
+                that.config.sampleRate = buffer.sampleRate
+                that.config.channels = buffer.numberOfChannels
+                that.config.duration = buffer.duration
+                that.config.maxDuration = buffer.duration
+                                    
+                that.sampleRate = buffer.sampleRate
+                that.channels = 2
+                that.duration = buffer.duration;
+            
+                addSound(that.config)
+                dispatchAction({type: "SET_PLAYLIST_LENGTH", payload: buffer.duration})
+                setDisabled(false)
+            });
+        }
+    
         reader.onerror = (err) => { console.log(err) }
         //fix ability to get url files
         if(false) {

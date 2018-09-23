@@ -19,6 +19,8 @@ import SkyBox from './items/skybox';
 import SkyBox2 from './items/skybox2';
 import AudioCircle from './items/audiocircle';
 import NoiseBlob from './items/noiseblob/noiseblob';
+import Object3D from './items/model'
+import CirculatingLights from './items/circulatinglights';
 
 
 export default class SceneContainer {
@@ -194,7 +196,7 @@ export default class SceneContainer {
                 case "aspect":
                 case "near":
                 case "far":
-                this.camera[key] = value;
+                    this.camera[key] = value;
                 this.camera.updateProjectionMatrix();
                 break;
                 default:
@@ -209,6 +211,16 @@ export default class SceneContainer {
         let i2 = this.items.find(e => e.config.renderIndex === i1.config.renderIndex + delta)
         i1.config.renderIndex = i1.config.renderIndex + delta
         i2.config.renderIndex = i2.config.renderIndex - delta
+    }
+
+    updateItemFile = (config, newFile) => {
+        const item = this.items.find((e) => e.config.id === config.id)
+        if (item) {
+            item.updateFile(newFile)
+        } else {
+            console.log("[scene.js] can't find id", config, this.items)
+            return
+        }
     }
 
     addItem = (name, info, time, config) => {
@@ -229,6 +241,12 @@ export default class SceneContainer {
 
         let item;
         switch (info.type) {
+            case "CIRCULATING LIGHTS":
+                item = new CirculatingLights(info, config)
+                break;
+            case "3D MODEL":
+                item = new Object3D(info, config)
+                break;
             case "NOISE BLOB":
                 item = new NoiseBlob(info, config)
                 break;

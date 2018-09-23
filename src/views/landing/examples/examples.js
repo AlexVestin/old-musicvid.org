@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import classes from './examples.css'
 import img from './poster.png'
@@ -27,14 +27,16 @@ export default React.forwardRef((props, ref) => (
 
             <div className={classes.itemTextWrapper}>
                 <div className={classes.itemTitle}>
-                    Roadmap
+                    Join the community
                 </div>
                 <div className={classes.subTitle}> 
-                    This site is still in its' infancy, and there are many exciting updates coming up. Here is a list of animations 
-                    we're looking to add.
+                    Have suggestions or features you'd like to see implemented? Bugs or unexpected behaviour?  
+                    <br></br>
+                    Join the discord channel and help 
+                    move this site forward!
                 </div>
 
-                <Link className={classes.link} to="/roadmap">Browse roadmap</Link>
+                <a className={classes.link} href="https://discord.gg/CnfEeM">https://discord.gg/CnfEeM</a>
             </div>
 
             <div className={classes.itemImageWrapper}>

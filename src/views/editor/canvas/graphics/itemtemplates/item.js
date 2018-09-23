@@ -55,6 +55,8 @@ export default class BaseItem {
 
         this._updateConfig(c)
     } 
+
+    
     
     getConfig = () => {
         this.config.defaultConfig.forEach(group => {
@@ -117,6 +119,7 @@ export default class BaseItem {
     _animate = () => {}
     stop = () => {}
     play = () => {}
+    updateFile = () => {}
     setFFTSize = (value) => {}
     
     

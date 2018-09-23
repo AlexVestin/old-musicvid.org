@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
-
+import Model3D from './3DModels'
 import LabeledFieldWrapper from './labeledfieldwrapper'
+import {dispatchAction} from '@redux/actions/items'
 
 const inputStyles = {
     Number: {marginRight: 10, width: 50, minWidth: 50, marginLeft: 5},
@@ -13,6 +14,18 @@ const inputStyles = {
 
 export default class CustomInput extends PureComponent {
 
+
+    state = { modal3DOpen: false }
+
+    open3DModal = () => this.setState({modal3DOpen: true})
+    close3DModal = () =>  this.setState({modal3DOpen: true}) 
+    add3DModel = (item) =>  {
+        dispatchAction({type: "UPDATE_ITEM_FILE", payload: {...item, keyVal: this.props.keyVal}})
+        this.setState({modal3DOpen: false})
+
+        console.log({...item, keyVal: this.props.keyVal})
+    }
+
     render() {
         const {  keyVal, type, value, disabled, options, min, max, step } = this.props
         const key = keyVal
@@ -20,6 +33,14 @@ export default class CustomInput extends PureComponent {
         return (
     
             <div key={key} style={{width: "100%", borderBottom: "1px solid #e0e0e0"}}>
+               <Model3D addItem={this.add3DModel} open={this.state.modal3DOpen} handleClose={this.close3DModal}></Model3D>
+               {(type === "3DModel") && 
+                    <LabeledFieldWrapper {...this.props} >
+                        <button onClick={this.open3DModal}>{value}</button>
+                    </LabeledFieldWrapper>
+                }
+                
+                
                 {type === "Number" && 
                     <LabeledFieldWrapper {...this.props}>
                         <input 
@@ -53,6 +74,7 @@ export default class CustomInput extends PureComponent {
 
                 {(type === "Link") && <LinkField value={value} keyVal={keyVal}></LinkField>}
                 {(type === "Text") && <TextField value={value} keyVal={keyVal}></TextField>}
+               
                 
                 {type === "List" && <LabeledFieldWrapper {...this.props} >
                     
