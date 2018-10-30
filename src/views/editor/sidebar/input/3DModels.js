@@ -12,8 +12,6 @@ const style= {
 
 const models = [
     {title: "Head", posterUrl: "/demos/missing.png", url: "/models/obj/WaltHead/WaltHead.obj"},
-    {title: "Ninja", posterUrl: "/demos/missing.png", url: "/models/obj/ninja/ninjaHead_Low.obj"},
-
 ]
 
 

@@ -13,7 +13,6 @@ export default class Object3D extends BaseItem {
                 items: {
                     file: {type: "3DModel", value: "No file selected"} 
                 }
-
             }
             
             this.config.defaultConfig.push(meshGroup)
@@ -38,11 +37,11 @@ export default class Object3D extends BaseItem {
             this.loader.load(file.url, (obj) => {
                 this.scene.remove(this.mesh)
                 this.mesh = obj;
-                /*this.mesh.scale.multiplyScalar( 0.8 );
+                this.mesh.scale.multiplyScalar( 0.8 );
                 this.mesh.position.y = -10;
 
       
-
+                /*
                 var geometry = obj.children[ 0 ].geometry;
                 geometry.attributes.uv2 = geometry.attributes.uv;
                 //geometry.center();

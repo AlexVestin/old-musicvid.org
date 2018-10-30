@@ -9,9 +9,8 @@ export default class CirculatingLights extends BaseItem {
         
         if(!fileConfig) {
             const meshGroup = {
-                title: "Mesh",
+                title: "Movement",
                 items: {
-                    file: {type: "3DModel", value: "No file selected"},
                     speed: {type: "Number", value: 1},
                     radiusOne: {type: "Number", value: 30},
                     radiusTwo: {type: "Number", value: 40},

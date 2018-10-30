@@ -60,20 +60,19 @@ export default class SceneContainer {
         }
 
         
-        this.width = width
-        this.height = height
+        this.width = width;
+        this.height = height;
 
-        
         this.textureCanvas = document.createElement('canvas');
-        this.internalCanvas = document.createElement("canvas")
-        this.internalCtx = this.internalCanvas.getContext("2d")
+        this.internalCanvas = document.createElement("canvas");
+        this.internalCtx = this.internalCanvas.getContext("2d");
 
         this.textureCanvas.width = width;
         this.textureCanvas.height = height;
         this.textureCtx = this.textureCanvas.getContext("2d");
 
-        this.texture =  new THREE.CanvasTexture(this.textureCanvas)
-        this.texture.minFilter = THREE.LinearFilter
+        this.texture =  new THREE.CanvasTexture(this.textureCanvas);
+        this.texture.minFilter = THREE.LinearFilter;
 
         this.quad = new THREE.Mesh( 
             new THREE.PlaneBufferGeometry( 2, 2 ), 

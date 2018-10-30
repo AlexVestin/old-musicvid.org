@@ -43,6 +43,10 @@ export default class Bars extends AudioReactiveItem {
             this.config.defaultConfig.push(group2)
             this.config.defaultConfig.push(glowGroup)
             this.getConfig()
+            this.config.spectrumSize = 64;
+            this.config.amplitude = 200;
+            this.config.spectrumMaxExponent = 3;
+            this.config.decreaseSpeed = 75;
             this.addItem()
         }else {
             this.config = {...fileConfig}
