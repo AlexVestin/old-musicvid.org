@@ -2,7 +2,7 @@
 import React, { PureComponent } from 'react'
 import BrightnessAuto from '@material-ui/icons/BrightnessAuto'
 import Help from '@material-ui/icons/Help'
-import Tooltip from 'material-ui/Tooltip';
+import Tooltip from '@material-ui/core/Tooltip';
 import classes from './labeledfieldwrapper.css'
 
 const iconStyle = {

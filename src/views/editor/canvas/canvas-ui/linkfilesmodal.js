@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { dispatchAction } from '@redux/actions/items'
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import CheckCircleOutline from '@material-ui/icons/CheckCircle'
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 
 const style= {
     top: `30%`,

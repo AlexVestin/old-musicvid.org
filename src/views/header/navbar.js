@@ -1,7 +1,7 @@
 
 import React, { PureComponent } from 'react'
-import Button from 'material-ui/Button'
-import IconButton from 'material-ui/IconButton'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import { Link } from 'react-router-dom'
 import classes from './header.css'

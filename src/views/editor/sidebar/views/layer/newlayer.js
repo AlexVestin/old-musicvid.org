@@ -1,8 +1,7 @@
 import React from 'react';
 import withHeader from '../../HOC/withheader';
-import List, { ListItem, ListItemText } from 'material-ui/List';
-
-import Button from 'material-ui/Button'
+import List, { ListItem, ListItemText } from '@material-ui/core/List';
+import Button from '@material-ui/core/Button'
 
 class AddLayerOptions extends React.Component {
     back = () => {

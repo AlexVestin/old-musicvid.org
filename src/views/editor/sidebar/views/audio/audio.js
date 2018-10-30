@@ -1,12 +1,12 @@
 import React from 'react';
 
-import Button from 'material-ui/Button'
+import Button from '@material-ui/core/Button'
 import { connect } from 'react-redux'
 import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio, removeSound } from '@redux/actions/items'
 import Delete from '@material-ui/icons/Delete'
 import withHeader from '../../HOC/withheader'
 import AudioItem from './audioitem'
-import List, { ListItem, ListItemText, ListItemSecondaryAction } from 'material-ui/List';
+import List, { ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core/List';
 
 class Audio extends React.Component {
 
