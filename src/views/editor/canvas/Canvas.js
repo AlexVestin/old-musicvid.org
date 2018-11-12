@@ -27,6 +27,8 @@ class Canvas extends Component {
       this.frameId = 0
       this.lastTime = 0
       this.time = 0
+      this.sceneManagerRef = React.createRef()
+
     }
 
     setSize = (width, aspect) => {
@@ -54,10 +56,9 @@ class Canvas extends Component {
   
     componentDidMount() {
       this.encodedFrames = 0;
-      this.sceneManager = this.ThreeRenderer
       window.requestAnimationFrame(this.renderScene)
-
       window.onkeyup = this.handleKeys
+      this.sceneManager = this.sceneManagerRef.current;
       window.addEventListener('resize', () => this.resizeCanvas(this.props.playlistHeight), false);
       this.resizeCanvas(this.props.playlistHeight)
     }
@@ -124,6 +125,7 @@ class Canvas extends Component {
           }
         }
         
+        //console.log(this.sceneManager, this.sceneManagerRef)
         this.sceneManager.renderScene(time)
       }
       if(!this.state.encoding || !this.videoEncoder.isWorker)
@@ -190,7 +192,7 @@ class Canvas extends Component {
           <LinkFilesModal onCancel={() => this.setState({openLinkFilesModal: false})} files={linkFiles} open={openLinkFilesModal}></LinkFilesModal>
         	 <div >
               <ThreeCanvas 
-                ref={ref => this.ThreeRenderer= ref } 
+                ref={this.sceneManagerRef} 
                 width={width} 
                 height={height} 
                 loadFromFile={this.props.loadFromFile}

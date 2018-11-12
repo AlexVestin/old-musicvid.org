@@ -13,7 +13,8 @@ export default function playbackReducer(state = {
     exportVideo: false,
     fftSize: "2048",
     framesEncoded: 0,
-    totalFrames: 0
+    totalFrames: 0,
+    resolutions: ""
 
     }, action){
         switch(action.type){

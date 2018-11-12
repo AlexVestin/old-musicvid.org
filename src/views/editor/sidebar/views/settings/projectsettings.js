@@ -3,13 +3,13 @@ import { dispatchAction } from '@redux/actions/items'
 import { editProjectSettings } from '@redux/actions/globals'
 import ConfigList from '../../input/input';
 import { connect } from 'react-redux'
-import Button from '@material-ui/core/Button'
 import withHeader from '../../HOC/withheader'
 import * as FileSaver from 'file-saver'
 import store from '@redux/store'
 
 import classes from './projectsettings.css'
 const fftSizes = [ "2048", "4096", "8192" ]
+const resolutions = ["1920x0180"]
 
 const bootstrapButtonStyle = {
     marginLeft: 10,
@@ -45,7 +45,8 @@ class ProjectSettings extends PureComponent {
                     clipDuration: {type: "Number", value: 180},
                     postProcessingEnabled: {type: "Boolean", value: false},
                     masterVolume: {type: "Number", min: 0, max: 100, value: 100},
-                    fftSize: {type: "List", options: fftSizes, value: "2048"}
+                    fftSize: {type: "List", options: fftSizes, value: "2048"},
+                    resolution: { type: "List", options: resolutions}
                 }
             }]
         }
@@ -97,6 +98,7 @@ const mapStateToProps = state => {
         expanded: true,
         masterVolume: state.globals.masterVolume,
         fftSize: state.globals.fftSize,
+        resolution: state.globals.resolution
     }
 }
 

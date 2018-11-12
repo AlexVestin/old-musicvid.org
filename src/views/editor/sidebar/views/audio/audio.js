@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Button from '@material-ui/core/Button'
+import RaisedButton from '@material-ui/core/Button'
 import { connect } from 'react-redux'
 import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio, removeSound } from '@redux/actions/items'
 import Delete from '@material-ui/icons/Delete'
@@ -52,7 +52,7 @@ class Audio extends React.Component {
                         </ListItem>
                         ))}
                     </List>
-                    <Button fullWidth variant="raised" onClick={() => this.fileInputRef.click()}>load audio</Button>
+                    <RaisedButton fullWidth onClick={() => this.fileInputRef.click()}>load audio</RaisedButton>
                 </div>
             } 
             {this.props.audioItemView === 1  && <AudioItem item={item} onBack={this.itemBack}></AudioItem>} 

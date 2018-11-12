@@ -16,40 +16,55 @@ import Sound from "../audio/sound"
 
 class ThreeCanvas extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         
         this.state = {
             width: props.width,
             height: props.height,
             hidden: false,
             framesEncoded: 0,
-        }
+        };
 
-        this.encoding = false 
+        this.encoding = false;
+        this.mountRef = React.createRef();
     }
 
+    //TODO Fix width and height ( Resolution)
     componentDidMount() {    
+        this.width = this.mountRef.current.clientWidth;
+        this.height = this.mountRef.current.clientHeight;
 
-        this.mount = this.mountRef
-        this.width = this.mount.clientWidth
-        this.height = this.mount.clientHeight
+        // Set up internal canvas to display to user
+        this.externalCanvas = document.createElement("canvas");
+        this.externalCtx = this.externalCanvas.getContext("2d");
+        this.externalCanvas.width = this.mountRef.current.clientWidth;
+        this.externalCanvas.height = this.mountRef.current.clientHeight;
+
+        // Set up canvas for internals to render to
+        this.internalCanvas = document.createElement("canvas");
+        this.internalCanvas.width = this.props.width;
+        this.internalCanvas.height = this.props.height;
         
-        this.renderer = new WebGLRenderer({antialias: true, alpha: true})
-        this.renderer.setClearColor('#000000')
-        this.renderer.setSize(this.width, this.height)
+        // Threejs renderer set-up
+        this.renderer = new WebGLRenderer({antialias: true, alpha: true, canvas: this.internalCanvas});
+        this.renderer.setSize(this.props.width, this.props.height);
+        this.renderer.setClearColor('#000000');
         this.renderer.autoClear = false;
+        this.mountRef.current.appendChild(this.externalCanvas);
 
-        this.unsubscribe = store.subscribe(this.handleChange)
-        this.mount.appendChild(this.renderer.domElement)
+        console.log(this.width, this.height, this.props.height, this.props.width)
+        // Subscribe to redux store for that long-ass switch further down
+        this.unsubscribe = store.subscribe(this.handleChange);
+        this.encodedFrames = 0;
+
+        // To read from canvas 
+        // TODO set up read from internal canvas
         this.gl = this.renderer.getContext();
-        this.encodedFrames = 0
 
         if(!this.props.loadFromFile) {
             dispatchAction({type: "RESET_REDUCER"})
             this.setupScene()
-            this.audioManager = new AudioManager()
-            console.log("RESET???")
-        
+            this.audioManager = new AudioManager()        
         }else {
             this.setupScene()
             this.audioManager = new AudioManager()
@@ -67,7 +82,6 @@ class ThreeCanvas extends Component {
         if(layer.layerType === 1) {
             const camera = project.cameras[layer.id]
             const controls = project.controls[layer.id]
-
             loadedLayer = new SceneContainer3D(layer.name, this.width, this.height, this.renderer, layer, camera, controls)
         }else {
             loadedLayer = new SceneContainer2D(layer.name, this.width, this.height, this.renderer, layer)
@@ -438,7 +452,9 @@ class ThreeCanvas extends Component {
         if(this.postProcessingEnabled) {
             this.renderTarget.update(time, frequencyBins)
             this.renderTarget.render()
-        }        
+        }       
+        
+        this.externalCtx.drawImage(this.internalCanvas, 0, 0)
     }
 
     preProcess = (time, callback) => {
@@ -452,16 +468,15 @@ class ThreeCanvas extends Component {
     setTime = (time, playing) => {
         if(playing) {
             this.audioManager.setTime(time)
-            
             this.preProcess(time, () => {
                 this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
                 this.audioManager.play(time)
-        })  
-    }else {
-        this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
-        this.audioManager.setTime(time)
-    }
-      
+            })
+        }else {
+            this.scenes.forEach(e =>  e.setTime(time, playing, this.selectedItemId)  )
+            this.audioManager.setTime(time)
+        }
+        
     }
 
     render() {
@@ -472,7 +487,7 @@ class ThreeCanvas extends Component {
 
             <div style={{  width: this.props.width, height: this.props.height, backgroundColor: "black"} } >
                 <div
-                    ref={ref => this.mountRef = ref } 
+                    ref={this.mountRef} 
                     style={{ width: this.props.width,  height: this.props.height, display: hideCanvas ? "none" :  ""}}                
                 />
             </div>
