@@ -1,5 +1,5 @@
 import { addEffect } from '@redux/actions/items'
-import ItemSkeleton from '../../../itemtemplates/itemskeleton'
+import ItemSkeleton from '../../itemtemplates/itemskeleton'
 
 
 export default class Pass extends ItemSkeleton {

@@ -1,6 +1,6 @@
 import SceneContainer3D from './three/scene'
 import SceneContainer2D from './canvas2d/scene'
-import RenderTarget from './three/postprocessing/rendertarget';
+import RenderTarget from './postprocessing/rendertarget';
 
 import React, { Component } from 'react';
 import { base } from '@backend/firebase'
@@ -10,8 +10,6 @@ import * as FileSaver from "file-saver";
 import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
 import { setSidebarWindowIndex, dispatchAction } from '@redux/actions/items'
-
-
 
 import AudioManager from '../audio/audiomanager'
 import Sound from "../audio/sound"

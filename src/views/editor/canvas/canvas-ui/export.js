@@ -96,9 +96,6 @@ class SimpleModal extends React.Component {
         }else {
             this.props.cancelEncoding()
         }
-
-        
-    
     }
 
     stopEncoding = ()  => {
