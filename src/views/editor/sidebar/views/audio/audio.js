@@ -6,7 +6,10 @@ import { createSound, setAudioItemView, setSidebarWindowIndex, selectAudio, remo
 import Delete from '@material-ui/icons/Delete'
 import withHeader from '../../HOC/withheader'
 import AudioItem from './audioitem'
-import List, { ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core/List';
+import List from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItem from '@material-ui/core/ListItem';
 
 class Audio extends React.Component {
 
@@ -37,27 +40,28 @@ class Audio extends React.Component {
         const { audioItems } = this.props;
         const item = audioItems[this.props.audioIdx]
 
+        console.log(item, this.props.audioIdx, audioItems, this.props.audioItemView)
+
         return (
             <div>
-            <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
-            {this.props.audioItemView === 0 &&
-                <div>
-                    <List>
-                        {audioItems.map((item, i) => (
-                        <ListItem disableRipple key={item.name} dense button onClick={() => this.onClick(i)}>
-                            <ListItemText primary={item.name} />
-                            <ListItemSecondaryAction>
-                                <Delete style={{cursor: "pointer"}}color="secondary" onClick={() => removeSound(item.id)}></Delete>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                        ))}
-                    </List>
-                    <RaisedButton fullWidth onClick={() => this.fileInputRef.click()}>load audio</RaisedButton>
-                </div>
-            } 
-            {this.props.audioItemView === 1  && <AudioItem item={item} onBack={this.itemBack}></AudioItem>} 
+                <input accept="audio/*" type="file" ref={(ref) => this.fileInputRef = ref} style={{ display: 'none' }} />
+                {this.props.audioItemView === 0 &&
+                    <div>
+                        <List>
+                            {audioItems.map((item, i) => (
+                                <ListItem disableRipple key={item.name} dense button onClick={() => this.onClick(i)}>
+                                    <ListItemText primary={item.name} />
+                                    <ListItemSecondaryAction>
+                                        <Delete style={{cursor: "pointer"}}color="secondary" onClick={() => removeSound(item.id)}></Delete>
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            ))}
+                        </List>
+                        <RaisedButton fullWidth onClick={() => this.fileInputRef.click()}>load audio</RaisedButton>
+                    </div>
+                } 
+                {this.props.audioItemView === 1  && <AudioItem item={item} onBack={this.itemBack}></AudioItem>} 
             </div>
-            
         );
     }
 }

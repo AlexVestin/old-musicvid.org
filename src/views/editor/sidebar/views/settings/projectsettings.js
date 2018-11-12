@@ -9,7 +9,7 @@ import store from '@redux/store'
 
 import classes from './projectsettings.css'
 const fftSizes = [ "2048", "4096", "8192" ]
-const resolutions = ["1920x0180"]
+const resolutions = ["1920x1080", "1280x720"]
 
 const bootstrapButtonStyle = {
     marginLeft: 10,

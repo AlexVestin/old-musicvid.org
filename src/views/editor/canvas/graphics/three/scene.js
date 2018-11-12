@@ -307,10 +307,10 @@ export default class SceneContainer {
         let idx = this.items.findIndex((e) => e.config.id === id)
 
         if (idx !== -1) {
-            this.scene.remove(this.items[idx].mesh)
-            this.items = this.items.filter((_, i) => i !== idx)
-            this.toRender = this.toRender.filter(e => e.config.id !== id)
-            this.rendering = this.rendering.filter(e => e.config.id !== id)
+            this.scene.remove(this.items[idx].mesh);
+            this.items = this.items.filter((_, i) => i !== idx);
+            this.toRender = this.toRender.filter(e => e.config.id !== id);
+            this.rendering = this.rendering.filter(e => e.config.id !== id);
 
         } else {
             console.log("unable to remove item")
@@ -318,10 +318,10 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
-        this.width = width
-        this.height = height
+        this.width = width;
+        this.height = height;
         this.camera.aspect = width / height;
-        if (this.camera.isPerspectiveCamera)
+        if (this.camera.isPerspectiveCamera);
             this.camera.updateProjectionMatrix();
     }
 

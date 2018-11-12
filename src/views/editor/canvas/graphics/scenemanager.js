@@ -52,23 +52,18 @@ class ThreeCanvas extends Component {
         this.renderer.autoClear = false;
         this.mountRef.current.appendChild(this.externalCanvas);
 
-        console.log(this.width, this.height, this.props.height, this.props.width)
         // Subscribe to redux store for that long-ass switch further down
         this.unsubscribe = store.subscribe(this.handleChange);
         this.encodedFrames = 0;
 
-        // To read from canvas 
-        // TODO set up read from internal canvas
-        this.gl = this.renderer.getContext();
-
         if(!this.props.loadFromFile) {
-            dispatchAction({type: "RESET_REDUCER"})
-            this.setupScene()
-            this.audioManager = new AudioManager()        
+            dispatchAction({type: "RESET_REDUCER"});
+            this.setupScene();
+            this.audioManager = new AudioManager();      
         }else {
-            this.setupScene()
-            this.audioManager = new AudioManager()
-            this.loadFromFile()
+            this.setupScene();
+            this.audioManager = new AudioManager();
+            this.loadFromFile();
         }
     }
 
@@ -225,23 +220,23 @@ class ThreeCanvas extends Component {
     }
 
     handleChange = () => {
-        const state             = store.getState()
-        this.time               = state.globals.time
+        const state             = store.getState();
+        this.time               = state.globals.time;
         
-        const audioInfo         = state.items.audioInfo
-        const audioItems        = state.items.audioItems
-        const audioIdx          = state.items.audioIdx
-        const type              = state.lastAction.type
-        const payload           = {...state.lastAction.payload}
+        const audioInfo         = state.items.audioInfo;
+        const audioItems        = state.items.audioItems;
+        const audioIdx          = state.items.audioIdx;
+        const type              = state.lastAction.type;
+        const payload           = {...state.lastAction.payload};
 
-        this.fps                = state.globals.fps
-        this.playing            = state.globals.playing
-        this.selectedLayerId    = state.items.selectedLayerId
-        this.createEffectType   = state.items.createEffect
+        this.fps                = state.globals.fps;
+        this.playing            = state.globals.playing;
+        this.selectedLayerId    = state.items.selectedLayerId;
+        this.createEffectType   = state.items.createEffect;
 
-        const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null
-        this.selectedItemId = state.items.selectedItemId
-        var newLayer
+        const scene = this.scenes ? this.scenes.find(e => e.config.id === this.selectedLayerId) : null;
+        this.selectedItemId = state.items.selectedItemId;
+        var newLayer;
 
         switch(type) {
             case "UPDATE_ITEM_FILE":
@@ -249,11 +244,11 @@ class ThreeCanvas extends Component {
                 break;
             case "ADD_LINKED_FILE":
                 if(payload.config.type === "SOUND") {
-                    this.audioManager.add(new Sound(payload.file, payload.config))
+                    this.audioManager.add(new Sound(payload.file, payload.config));
                 }
                 break;
             case "EDIT_LAYER":
-                scene.editSettings(payload.key, payload.value)
+                scene.editSettings(payload.key, payload.value);
                 break;
             case "REMOVE_LAYER":
                 const sceneToRemove = this.scenes.find(e => e.config.id === payload.id)
@@ -290,6 +285,10 @@ class ThreeCanvas extends Component {
                     this.audioManager.masterVolume = payload.value
                 }else if(payload.key === "fftSize") {
                     this.setFFTSize(Number(payload.value))
+                }else if(payload.key === "resolution") {
+                    let width = Number(payload.value.split("x")[0])
+                    let height = Number(payload.value.split("x")[1])
+                    this.setSize(width, height)
                 }
                     
                 break;
@@ -451,10 +450,10 @@ class ThreeCanvas extends Component {
         
         if(this.postProcessingEnabled) {
             this.renderTarget.update(time, frequencyBins)
-            this.renderTarget.render()
+            this.renderTarget.render();
         }       
         
-        this.externalCtx.drawImage(this.internalCanvas, 0, 0)
+        this.externalCtx.drawImage(this.internalCanvas, 0, 0, this.externalCanvas.width, this.externalCanvas.height);
     }
 
     preProcess = (time, callback) => {

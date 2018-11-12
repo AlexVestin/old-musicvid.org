@@ -19,7 +19,7 @@ const baseSettings  = {
     audioItems: [],
     createEffect: null,
     itemIdx: 0,
-    audioIDx: 0,
+    audioIdx: 0,
     audioItemView: 0,
     effectId: 0,
     initialized: false,

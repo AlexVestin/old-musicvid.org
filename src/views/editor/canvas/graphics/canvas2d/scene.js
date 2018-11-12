@@ -43,8 +43,6 @@ export default class SceneContainer {
                         clearAlpha: {type: "Number", value: 1, tooltip: "Alpha of the background when clearing, not used when shouldUseClearRect is checked"},
                         shouldUseClearRect: {type: "Boolean", value: true, tooltip: "Clears the entire canvas, more performant than using a clear color"},
                         zIndex: {type: "Number", value: 1, tooltip: "Position of this layer relative to other layers"},
-                        pixelRatio: {type: "Number", value: 720, min: 1, max: 2048, tooltip: "resolution of the canvas the items are drawn to, uses an automatic aspect ratio"},
-                        scalePixelRatioOnExport: {type: "Boolean", value: true, tooltip: "Scales the pixelRatio on export in case it doesn't match the output value, this will make the video look different when exporting"}
                     }
                 }],
                 items: [],
@@ -63,10 +61,8 @@ export default class SceneContainer {
         this.width = width;
         this.height = height;
 
+        // Texturecanvas to draw to
         this.textureCanvas = document.createElement('canvas');
-        this.internalCanvas = document.createElement("canvas");
-        this.internalCtx = this.internalCanvas.getContext("2d");
-
         this.textureCanvas.width = width;
         this.textureCanvas.height = height;
         this.textureCtx = this.textureCanvas.getContext("2d");
@@ -221,17 +217,9 @@ export default class SceneContainer {
     setSize = (width, height) => {
         this.width = width;
         this.height = height;
-        const aspect = width / height
-
-        if(this.config.scalePixelRatioOnExport) {
-            this.textureCanvas.width =  aspect * height
-            this.textureCanvas.height = height
-        }else {
-            this.textureCanvas.width =  aspect * this.config.pixelRatio
-            this.textureCanvas.height = this.config.pixelRatio
-        }
-
-       this.items.forEach(item => item.setSize( this.textureCanvas.width,  this.textureCanvas.height))  
+        this.textureCanvas.width = width;
+        this.textureCanvas.height = height;
+        this.items.forEach(item => item.setSize( this.textureCanvas.width,  this.textureCanvas.height))  
     }
 
     updateItem = (config, time) => {
@@ -303,7 +291,6 @@ export default class SceneContainer {
     
         if(this.config.shouldUseClearRect) {
             this.textureCtx.clearRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
-            
         }else {
             this.textureCtx.save();
             this.textureCtx.fillStyle = this.config.clearColor;
@@ -315,7 +302,6 @@ export default class SceneContainer {
         
         this.addOrRemove(this.toRender, this.rendering, time)
         this.rendering = this.rendering.sort((a, b) => a.config.zIndex - b.config.zIndex)
-        
         this.rendering.forEach(item => {
             this.textureCtx.save();
             item.animate(time, frequencyBins);
@@ -326,7 +312,6 @@ export default class SceneContainer {
     }
 
     render = ( renderer, postProcessingEnabled ) => { 
-
         if(!postProcessingEnabled)
             renderer.render(this.mainScene, this.mainCamera)
 
