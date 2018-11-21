@@ -33,7 +33,7 @@ const fragmentShader = [
 
 
 export default class TessellatedText extends AudioImpactItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
 
         const group = {

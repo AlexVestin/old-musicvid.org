@@ -133,8 +133,6 @@ export default class SceneContainer {
             width: this.width
         }
 
-        
-        
         if(config)info.type = config.itemType
         let item; 
     
@@ -215,11 +213,12 @@ export default class SceneContainer {
     }
 
     setSize = (width, height) => {
+        console.log(width, height)
         this.width = width;
         this.height = height;
         this.textureCanvas.width = width;
         this.textureCanvas.height = height;
-        this.items.forEach(item => item.setSize( this.textureCanvas.width,  this.textureCanvas.height))  
+        this.items.forEach(item => item.setSize( width,  height))  
     }
 
     updateItem = (config, time) => {

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { loadProjectFromFile, dispatchAction } from '@redux/actions/items'
+import { dispatchAction } from '@redux/actions/items'
 import { Redirect } from 'react-router-dom'
 
 const devPath = "http://localhost:3000/"
@@ -11,11 +11,13 @@ export default class Templates extends PureComponent {
     state = { redirect: false }
 
     loadTemplate = () => {
-        fetch(devPath + "templates/itsme.json")
+        fetch(devPath + "templates/test3.json")
         .then(res => res.json())
         .then( response => {
+
             dispatchAction({type: "SET_GLOBAL_SETTINGS", payload: response.globals})
-            loadProjectFromFile(response.items)
+            dispatchAction({type: "LOAD_PROJECT_FROM_FILE", payload: response.items})
+            console.log(response.items)
             this.setState({redirect: true})
         }).catch(error => {
             console.log(error)
@@ -24,6 +26,7 @@ export default class Templates extends PureComponent {
 
     render() {
         if (this.state.redirect === true) {
+            console.log("REDIRECTING")
             return <Redirect to='/editor' />
         }
     

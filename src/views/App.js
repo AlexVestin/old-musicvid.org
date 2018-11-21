@@ -13,6 +13,7 @@ import Logout from './login/Logout'
 import Register from './login/Register'
 import Acknowledgements from './acknowledgements/Acknowledgements'
 import Tutorial from './FAQ/Faq'
+import Templates from './templates/Templates'
 
 import Profile from './profile/Profile'
 import { app } from '../firebase/firebase'
@@ -69,6 +70,7 @@ class App extends Component {
             <Route path="/settings" component={Settings}></Route>
             <Route path="/acknowledgements" component={Acknowledgements}></Route>
             <Route path="/roadmap" component={RoadMap}></Route>
+            <Route path="/templates" component={Templates}></Route>
             <Route exact path="/" component={Landing}></Route>
             <Route component={MissingPage}></Route>   
           </Switch>

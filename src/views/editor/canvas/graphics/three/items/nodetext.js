@@ -13,7 +13,7 @@ const shader5 = require("./shaders/nodetext/nodeTextWire.fs")
 const glslify = require("glslify")
 
 export default class NodeText extends BaseItem {
-  constructor(config, fileConfig) {
+  constructor(config, fileConfig, sceneConfig) {
     super(config)
 
 

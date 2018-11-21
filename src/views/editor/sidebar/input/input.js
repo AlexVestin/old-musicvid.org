@@ -17,16 +17,29 @@ class ConfigList extends Component {
     }
     
     render(){
-        const defaultConfig = this.props.defaultConfig
-        
+        const defaultConfig = this.props.defaultConfig;
+        console.log(this.props.item);
         return(
-            <div className={classes.root}>
-                {defaultConfig.map(group =>     
-                    <GroupContainer label={group.title} key={group.title} expanded={group.expanded}>
-                        <GroupContent item={this.props.item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
-                    </GroupContainer>
-                )}
-            </div> 
+                <div className={classes.root}>
+                    {defaultConfig.map(group =>     
+                        <React.Fragment>
+                            {group.isSuperGroup 
+                                ?
+                                <GroupContainer  level={1} label={group.title} key={group.title} expanded={group.expanded}>
+                                        {group.items.map(g => (
+                                            <GroupContainer level={2} label={g.title} key={g.title} expanded={g.expanded}>
+                                                <GroupContent item={this.props.item} group={g} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
+                                            </GroupContainer>
+                                        ))}
+                                </GroupContainer>
+                                :
+                                <GroupContainer level={1} label={group.title} key={group.title} expanded={group.expanded}>
+                                    <GroupContent item={this.props.item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
+                                </GroupContainer>
+                            }
+                        </React.Fragment>
+                    )}
+                </div> 
         )
     }
 }

@@ -10,7 +10,6 @@ import * as FileSaver from "file-saver";
 import VideoEncoder from '@/videoencoder/videoencoderworker'
 import { setEncoding } from '@redux/actions/globals';
 import { setSidebarWindowIndex, dispatchAction } from '@redux/actions/items'
-
 import AudioManager from '../audio/audiomanager'
 import Sound from "../audio/sound"
 
@@ -19,8 +18,6 @@ class ThreeCanvas extends Component {
         super(props);
         
         this.state = {
-            width: props.width,
-            height: props.height,
             hidden: false,
             framesEncoded: 0,
         };
@@ -31,6 +28,8 @@ class ThreeCanvas extends Component {
 
     //TODO Fix width and height ( Resolution)
     componentDidMount() {    
+
+        
         this.width = this.mountRef.current.clientWidth;
         this.height = this.mountRef.current.clientHeight;
 
@@ -42,12 +41,12 @@ class ThreeCanvas extends Component {
 
         // Set up canvas for internals to render to
         this.internalCanvas = document.createElement("canvas");
-        this.internalCanvas.width = this.props.width;
-        this.internalCanvas.height = this.props.height;
+        this.internalCanvas.width = 1920;
+        this.internalCanvas.height = 1080;
         
         // Threejs renderer set-up
         this.renderer = new WebGLRenderer({antialias: true, alpha: true, canvas: this.internalCanvas});
-        this.renderer.setSize(this.props.width, this.props.height);
+        this.renderer.setSize(this.internalCanvas.width, this.internalCanvas.height);
         this.renderer.setClearColor('#000000');
         this.renderer.autoClear = false;
         this.mountRef.current.appendChild(this.externalCanvas);
@@ -67,17 +66,22 @@ class ThreeCanvas extends Component {
         }
     }
 
+    setExternalSize = (width, height) => {
+        this.externalCanvas.width = width;
+        this.externalCanvas.height = height;
+    }
+
     addPassFromFile = (pass) => {
-        this.renderTarget.addFromFile(pass)
+        this.renderTarget.addFromFile(pass);
     }
 
     addLayerFromFile = (layer, project) => {
         let loadedLayer;
         
         if(layer.layerType === 1) {
-            const camera = project.cameras[layer.id]
-            const controls = project.controls[layer.id]
-            loadedLayer = new SceneContainer3D(layer.name, this.width, this.height, this.renderer, layer, camera, controls)
+            const camera = project.cameras[layer.id];
+            const controls = project.controls[layer.id];
+            loadedLayer = new SceneContainer3D(layer.name, this.width, this.height, this.renderer, layer, camera, controls, this.externalCanvas)
         }else {
             loadedLayer = new SceneContainer2D(layer.name, this.width, this.height, this.renderer, layer)
         }
@@ -87,7 +91,6 @@ class ThreeCanvas extends Component {
     }
 
     setFFTSize = (value) => {
-        
         this.audioManager.setFFTSize(value, true)
     }
 
@@ -98,7 +101,6 @@ class ThreeCanvas extends Component {
             if(item.itemType === "VIDEO" || item.itemType === "IMAGE"){
                 files.push(item)
             }else {
-                
                 layer.addItem(item.itemType, item, 0, item)
             }  
         })
@@ -107,12 +109,10 @@ class ThreeCanvas extends Component {
     }
 
     loadFromFile = () => {
-        const state = store.getState()
-        const project = state.items
-        const globals = state.globals
-
+        const state = store.getState();
+        const project = state.items;
+        const globals = state.globals;
         this.postProcessingEnabled = globals.postProcessingEnabled
-        
         
         let files = []
         for(var key in project.layers) {
@@ -129,7 +129,9 @@ class ThreeCanvas extends Component {
             const audioItem = project.audioItems[key]
             files.push(audioItem)
         }
-
+        const resWidth = Number(globals.resolution.split("x")[0]);
+        const resHeight = Number(globals.resolution.split("x")[1]);
+        this.setSize(resWidth, resHeight);
         this.scenes.forEach(scene => scene.setFFTSize(Number(globals.fftSize)))
         this.audioManager.fftSize = Number(globals.fftSize)
         dispatchAction({type: "RESET_AUDIO_FILES"})
@@ -177,6 +179,8 @@ class ThreeCanvas extends Component {
             this.scenes.forEach(e => e.setSize(width, height))
             this.renderer.setSize( width, height );     
         }
+
+        console.log(this.internalCanvas.width, this.internalCanvas.height)
     }
 
     shouldComponentUpdate(props, state) {
@@ -187,6 +191,10 @@ class ThreeCanvas extends Component {
         this.videoEncoder = new VideoEncoder(this.encoderLoaded)
         this.config = config
         this.duration = duration
+    }
+
+    setExternalState = (width, height) => {
+
     }
 
     encoderInitialized = () => {
@@ -259,11 +267,11 @@ class ThreeCanvas extends Component {
                 scene.editSettings(payload.key, payload.value)
                 break;
             case "CREATE_3D_LAYER":
-                newLayer   = new SceneContainer3D("new 3d graphics", this.width, this.height, this.renderer)
+                newLayer   = new SceneContainer3D("new 3d graphics", this.internalCanvas.width, this.internalCanvas.height, this.renderer)
                 this.addLayer(newLayer)
                 break;
             case "CREATE_2D_LAYER":
-                newLayer   = new SceneContainer2D("new 2d graphics", this.width, this.height, this.renderer)
+                newLayer   = new SceneContainer2D("new 2d graphics", this.internalCanvas.width, this.internalCanvas.height, this.renderer)
                 this.addLayer(newLayer)
                 break;
             case "EDIT_FOG":
@@ -400,14 +408,13 @@ class ThreeCanvas extends Component {
             setEncoding(false)
             const t =  (performance.now() - this.startTime) / 1000
             console.log("ENCODING FINISHED ----- ", t, " seconds and ",  this.encodedFrames / t , " fps" )
-            this.setSize(this.props.width, this.props.height, false)
             this.setState( { width: this.props.width, height: this.props.height, hidden: false})
             this.videoEncoder.close(this.saveBlob)
             this.audioManager.encodingFinished()
             this.encodedFrames = -1
             this.setTime(0)
             dispatchAction({type:"SET_EXPORT", payload: false})
-
+            this.props.resizeCanvas()
             const ref = base.ref("/counter")
             ref.transaction((e) => {
                 return e = (e || 0) + 1; 
@@ -424,8 +431,9 @@ class ThreeCanvas extends Component {
 
     encodeVideoFrame = () => {
         const { width, height} = this.state
-        const gl = this.renderer.getContext();
         this.pixels = new Uint8Array(width * height * 4)
+
+        const gl = this.renderer.getContext();
         gl.readPixels(0,0,width,height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels)
         this.videoEncoder.queueFrame( {type: "video", pixels: this.pixels} )
 

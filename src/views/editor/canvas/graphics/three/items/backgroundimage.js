@@ -2,7 +2,7 @@ import BaseItem from '../../itemtemplates/item'
 import * as THREE from 'three'
 
 export default class BackgroundImage extends BaseItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config) 
 
 

@@ -129,7 +129,7 @@ class SimpleModal extends React.Component {
                     <Typography variant="title" id="modal-title">
                         Exporting video
                     </Typography>
-                    <Typography variant="subheading" id="simple-modal-description">
+                    <Typography variant="subtitle" id="simple-modal-description">
                         
                         Some info on exporting!
                         <ul>
@@ -145,7 +145,7 @@ class SimpleModal extends React.Component {
                         
                     <div style={{display: "flex", flexDirection: "row", marginTop: 50}}>
                         <Options onchange={format => this.format = format} name="format" labels={["mp4"]} disabled></Options>
-                        <Options onchange={v => this.res = v} name="resolution" labels={["640x480", "1280x720"]}></Options>
+                        <Options onchange={v => this.res = v} name="resolution" labels={["640x480", "1280x720", "1920x1080"]}></Options>
                         <Options onchange={v => this.fps = v} name="fps" labels={["60"]} disabled></Options>
                         <Options onchange={v => this.br = v} name="bitrate" labels={["1000k", "2000k", "4000k", "6000k", "8000k", "12000k"]}></Options>
                         <Options onchange={v => this.pre = v} name="preset" labels={["ultrafast", "veryfast", "fast", "medium", "slow", "veryslow"]}></Options>
@@ -168,7 +168,7 @@ class SimpleModal extends React.Component {
                     </div>
 
                     <Button 
-                        variant="raised" 
+                        variant="contained" 
                         color="primary" 
                         disabled={durationValue < 1 || isNaN(durationValue)} 
                         onClick={this.encode}>
@@ -176,7 +176,7 @@ class SimpleModal extends React.Component {
                      </Button>
 
                      <Button 
-                        variant="raised" 
+                        variant="contained" 
                         color="primary" 
                         onClick={this.handleClose}
                         style={{marginLeft: 20}}

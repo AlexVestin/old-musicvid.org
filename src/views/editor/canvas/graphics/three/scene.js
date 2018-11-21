@@ -24,7 +24,7 @@ import CirculatingLights from './items/circulatinglights';
 
 
 export default class SceneContainer {
-    constructor(name, width, height, renderer, fileConfig, camera, controls) {
+    constructor(name, width, height, renderer, fileConfig, camera, controls, externalCanvas) {
 
         this.scene = new THREE.Scene()
         this.renderer = renderer
@@ -76,18 +76,19 @@ export default class SceneContainer {
                 layerType: 1
             }
 
-            add3DLayer(this.config)
+            add3DLayer(this.config);
         }else {
-            this.cameraConfig   = camera
-            this.controlConfig  = controls
-            this.config = {...fileConfig}
-        }
+            this.cameraConfig   = camera;
+            this.controlConfig  = controls;
+            this.config = {...fileConfig};
+        };
 
         this.sceneConfig = {
             scene: this.scene,
             camera: this.camera,
+            extCanvas: externalCanvas,
             renderer
-        }
+        };
         
         this.target = new THREE.WebGLRenderTarget(width, height)
         this.quad = new THREE.Mesh( 
@@ -95,8 +96,8 @@ export default class SceneContainer {
             new THREE.MeshBasicMaterial({transparent: true, map: this.target.texture})
         );
 
-        this.setCamera()
-        this.setControls()
+        this.setCamera();
+        this.setControls();
     }
 
     editFog = (key, value) => {
@@ -226,15 +227,15 @@ export default class SceneContainer {
     addItem = (name, info, time, config) => {
         info.name = name
         info.sceneId = this.config.id
-        info.renderer = this.renderer
         info.time = time
         info.renderIndex = this.items.length
         info.width = this.width
         info.height = this.height
-        info.sceneConfig = {
+        const sceneConfig = {
             light: this.light,
             camera: this.camera,
-            scene: this.scene
+            scene: this.scene,
+            renderer: this.renderer,
         }
 
         if(config)info.type = config.itemType
@@ -242,49 +243,49 @@ export default class SceneContainer {
         let item;
         switch (info.type) {
             case "CIRCULATING LIGHTS":
-                item = new CirculatingLights(info, config)
+                item = new CirculatingLights(info, config, sceneConfig)
                 break;
             case "3D MODEL":
-                item = new Object3D(info, config)
+                item = new Object3D(info, config, sceneConfig)
                 break;
             case "NOISE BLOB":
-                item = new NoiseBlob(info, config)
+                item = new NoiseBlob(info, config, sceneConfig)
                 break;
             case "AUDIO CIRCLE":
-                item = new AudioCircle(info, config)
+                item = new AudioCircle(info, config,sceneConfig)
                 break;
             case "NORTHERN LIGHTS":
-                item = new NorthernLights(info, config)
+                item = new NorthernLights(info, config, sceneConfig)
                 break;
             case "SKYBOX2":
-                item = new SkyBox2(info, config)
+                item = new SkyBox2(info, config, sceneConfig)
                 break;
             case "SKYBOX":
-                item = new SkyBox(info, config)
+                item = new SkyBox(info, config, sceneConfig)
                 break;
             case "PARTICLES":
-                item = new Particles(info, config)
+                item = new Particles(info, config, sceneConfig)
                 break;
             case "IMAGE":
-                item = new BackgroundImage(info, config)
+                item = new BackgroundImage(info, config, sceneConfig)
                 break;
             case "BARS":
-                item = new Bars(info, config)
+                item = new Bars(info, config, sceneConfig)
                 break;
             case "TEXT3D":
-                item = new Text3D(info, config)
+                item = new Text3D(info, config, sceneConfig)
                 break;
             case "VIDEO":
-                item = new Video(info, config)
+                item = new Video(info, config, sceneConfig)
                 break;
             case "TESSELATED TEXT":
-                item = new TessellatedText(info, config)
+                item = new TessellatedText(info, config, sceneConfig)
                 break;
             case "SPHERE":
-                item = new Sphere(info, config)
+                item = new Sphere(info, config, sceneConfig)
                 break;
             case "RANDOM GEOMETRY":
-                item = new RandomGeometry(info, config)
+                item = new RandomGeometry(info, config, sceneConfig)
                 break;
             default:
                 console.log("unkown config type while adding object", info.type)
@@ -338,13 +339,13 @@ export default class SceneContainer {
     }
 
     setControls = () => {
-        const { camera, renderer } = this
+        const { camera, sceneConfig } = this
         let controls;
         this.controls = {}
 
         if(this.cameraConfig.type !== "OrthographicCamera") {
             if(this.controlConfig.type === "OrbitControl") {
-                controls = new OrbitControls(camera, renderer.domElement);
+                controls = new OrbitControls(camera, sceneConfig.extCanvas);
                 const { maxPolarAngle, targetX, targetY, targetZ, panningMode, minDistance, maxDistance, enabled, autoRotateSpeedLeft, autoRotateSpeedRight, autoRotate } = this.controlConfig
                 controls.maxPolarAngle = maxPolarAngle;
                 controls.target.set(targetX, targetY, targetZ);

@@ -14,7 +14,7 @@ export default function playbackReducer(state = {
     fftSize: "2048",
     framesEncoded: 0,
     totalFrames: 0,
-    resolutions: ""
+    resolution: "1920x1080"
 
     }, action){
         switch(action.type){

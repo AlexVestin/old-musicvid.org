@@ -10,6 +10,19 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.canvas = config.canvas;
 
         if(!fileConfig) {
+            const quickConfig = {
+                title: "Quick Configs",
+                open: true,
+                items: {
+                    x: { type: "Number", value: 0.5},
+                    y: { type: "Number", value: 0.5},
+                    radius: {type: "Number", value: 150},
+                    lineWidth: {type: "Number", value: 4},
+                    amplitude: {type: "Number", value: config.amplitude}
+                }
+              
+            }
+
             const group = {
                 title: "Spectrum",
                 items: {
@@ -32,17 +45,22 @@ export default class CirclePlayer extends CombinedAudioItem {
                 }
             }
     
-            this.config.defaultConfig.push(group);
-            this.config.defaultConfig.push(emblemGroup);
-    
-            this.config.defaultConfig.push({
+            const glowGroup = {
                 title: "Glow",
                 items: {
                     glow: {type: "Boolean", value: true},
                     shadowColor: {type: "String", value: "FFFFFF"},
                     shadowBlur: {type: "Number", value: 20},
                 }
-            })
+            }
+
+            const visualGroup = {
+                isSuperGroup: true,
+                title: "Visual settings",
+                items: [group, emblemGroup, glowGroup]
+            };
+            this.config.defaultConfig.unshift(quickConfig);
+            this.config.defaultConfig.push(visualGroup);
     
             this.getConfig();
             this.config.impactAmplitude = 12;

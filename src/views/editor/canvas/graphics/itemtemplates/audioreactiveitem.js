@@ -64,11 +64,12 @@ export default class AudioreactiveItem extends MeshItem {
             }
         }
         
-        this.config.defaultConfig.push(this.group0)
-        this.config.defaultConfig.push(this.group1)
-        this.config.defaultConfig.push(this.group2)
-        this.config.defaultConfig.push(this.group3)
-        this.config.defaultConfig.push(this.group4)
+        const audioGroup = {
+            title: "Audio Reactive Settings",
+            isSuperGroup: true,
+            items: [this.group0, this.group1, this.group2, this.group3, this.group4]
+        }
+        this.config.defaultConfig.push(audioGroup)
 
         this.config.tailMarginSlope = (1 - this.config.minMarginWeight) / Math.pow(this.config.tailMargin, this.config.marginDecay);
         this.config.headMarginSlope = (1 - this.config.minMarginWeight) / Math.pow(this.config.headMargin, this.config.marginDecay);
@@ -82,16 +83,35 @@ export default class AudioreactiveItem extends MeshItem {
     }
 
 
-    editConfig = (config) => {
-        this.config = {...config}
-        this.config.defaultConfig.forEach(group => {
-            Object.keys(group.items).forEach(key => {
-                if( group.items[key].type === "Number") {
-                    this.config[key] = isNaN(this.config[key]) ? 0 :  Number(this.config[key])
-                }
-            })
+    _updateGroup = (group, config) => {
+        if(group.isSuperGroup) {
+            group.items.forEach(g => this._updateGroup(g, config));
+            return;
+        }
+
+        Object.keys(group.items).forEach(key => {
+            const { type, max, min } = group.items[key]
+
+            if( type === "Number") {
+                config[key] = this.checkNum(config[key])
+
+                if(config[key] > max)config[key] = max
+                if(config[key] < min)config[key] = min
+            }
         })
     }
+
+    checkNum = (nr) => isNaN(nr) ? 0 :  Number(nr)
+
+    editConfig = (config) => {
+        const c = {...config}
+
+        c.defaultConfig.forEach(group => {
+            this._updateGroup(group, config);
+        })
+
+        this._updateConfig(c)
+    } 
 
     setFFTSize = (value) => {
 

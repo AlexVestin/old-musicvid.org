@@ -26,7 +26,7 @@ export default class Model3D extends PureComponent {
                 onClose={this.props.handleClose}>
 
                 <div style={style}>
-                    <Typography variant="title" id="modal-title">
+                    <Typography variant="h1" id="modal-title">
                         Choose a 3D-model
                     </Typography>
                     

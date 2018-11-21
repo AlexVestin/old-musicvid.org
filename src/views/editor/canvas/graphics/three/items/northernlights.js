@@ -6,9 +6,9 @@ import ThreeWater from "./waterclass"
 import BaseItem from '../../itemtemplates/item'
 
 export default class NorthernLights extends BaseItem{
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
-        this.light = config.sceneConfig.light
+        this.light = sceneConfig.light
         this.getConfig()
         const parameters = {
             oceanSide: 2000,

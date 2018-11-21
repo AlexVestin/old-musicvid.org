@@ -54,9 +54,9 @@ var VIEW_ANGLE = 45, ASPECT = 680 / 480
 var fleckVelocity = maxParticleVelocity * fleckVelocityScalar;
 
 export default  class Particles extends AudioImpactItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config); 
-        this.camera = config.sceneConfig.camera
+        this.camera = sceneConfig.camera
         var particleCount =  baseParticleCount;
 
         //TODO: split main system into foreground and background particles
@@ -120,8 +120,8 @@ export default  class Particles extends AudioImpactItem {
 
         for (var p = 0; p < particleCount; p++) {
             var z = biasedRandom(zPosRange, zPosBias) + zModifier;
-            var xRange = Math.abs(config.sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE)) * 2; // maximum range on the x-axis at this z-value
-            var yRange = Math.abs(config.sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE / ASPECT)) * 2; // maximum range on the y-axis at this z-value
+            var xRange = Math.abs(sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE)) * 2; // maximum range on the x-axis at this z-value
+            var yRange = Math.abs(sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE / ASPECT)) * 2; // maximum range on the y-axis at this z-value
             var pX = Math.random() * xRange - xRange / 2,
                 pY = centerBiasedRandom(yRange, xPosBias),
                 pZ = z,
@@ -144,8 +144,8 @@ export default  class Particles extends AudioImpactItem {
 
         for (var p = 0; p < fleckCount; p++) {
             var z = fleckZ;
-            var xRange = Math.abs(config.sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE)) * 2; // maximum range on the x-axis at this z-value
-            var yRange = Math.abs(config.sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE / ASPECT)) * 2; // maximum range on the y-axis at this z-value
+            var xRange = Math.abs(sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE)) * 2; // maximum range on the x-axis at this z-value
+            var yRange = Math.abs(sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE / ASPECT)) * 2; // maximum range on the y-axis at this z-value
             var pX = Math.random() * xRange - xRange / 2,
                 pY = Math.floor(Math.random() * yRange) - yRange / 2,
                 pZ = z,
@@ -170,8 +170,8 @@ export default  class Particles extends AudioImpactItem {
         for (var p = 0; p < bokehCount; p++) {
             var z = bokehZ;
             //var z = Math.random() * zPosRange - (zPosRange / 2);
-            var xRange = Math.abs(config.sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE)) * 2; // maximum range on the x-axis at this z-value
-            var yRange = Math.abs(config.sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE / ASPECT)) * 2; // maximum range on the y-axis at this z-value
+            var xRange = Math.abs(sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE)) * 2; // maximum range on the x-axis at this z-value
+            var yRange = Math.abs(sceneConfig.camera.position.z - z) * Math.tan(toRads(VIEW_ANGLE / ASPECT)) * 2; // maximum range on the y-axis at this z-value
             var pX = Math.random() * xRange - xRange / 2,
                 pY = Math.random() * yRange - yRange / 2,
                 pZ = z,
@@ -225,8 +225,6 @@ export default  class Particles extends AudioImpactItem {
        this.fleckSystem = fleckSystem
        this.bokehSystem = bokehSystem
 
-
-
        if(!fileConfig) {
             const attribution = { 
                 title: "Author Information", 
@@ -242,8 +240,11 @@ export default  class Particles extends AudioImpactItem {
             this.config.easeAmplitude = true
             this.addItem()
        }else {
+           console.log("FILE CONFIG: ",fileConfig)
            this.config = {...fileConfig}
        }
+
+       console.log(this.config)
        
     }
 
@@ -361,6 +362,7 @@ export default  class Particles extends AudioImpactItem {
 
     _updateConfig = (config) => {
         this.config = config
+        console.log("==???", config)
     }
 
     

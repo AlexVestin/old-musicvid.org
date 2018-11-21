@@ -5,6 +5,7 @@ export default class AudioImpactItem extends MeshItem {
     constructor(config) {
         super(config)
 
+
         this.group0 = {
             title: "Audio Impact Settings",
             items: {
@@ -26,6 +27,7 @@ export default class AudioImpactItem extends MeshItem {
         this.prevTime = 0
         this.getConfig()
     }
+    
     setFFTSize = (value) => {
         this.fftSize = value / 2;
         this.group0.items.upperBinIndex.max = this.fftSize; 

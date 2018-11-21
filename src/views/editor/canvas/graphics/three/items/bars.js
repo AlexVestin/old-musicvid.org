@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import AudioReactiveItem from '../../itemtemplates/audioreactiveitem'
 
 export default class Bars extends AudioReactiveItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
         
 

@@ -16,20 +16,20 @@ export default class BaseItem {
 
         this.config = {}
         this.config.defaultConfig = [timeGroup]
-
         //TODO UUID ?
-        this.config.id          = Math.floor(Math.random() * 10000000)
-        this.config.offsetLeft  = 0
-        this.config.name        = config.name
-        this.config.movable     = true
-        this.config.sceneId     = config.sceneId
-        this.config.automations = []        
-        this.config.itemType    = config.type 
+        this.config._easyConfigs= false;
+        this.config.id          = Math.floor(Math.random() * 10000000);
+        this.config.offsetLeft  = 0;
+        this.config.name        = config.name;
+        this.config.movable     = true;
+        this.config.sceneId     = config.sceneId;
+        this.config.automations = [];        
+        this.config.itemType    = config.type; 
         
-        this.mesh = {}
-        this.automations = []
-        this.getConfig()
-        this._lastTime = -1
+        this.mesh = {};
+        this.automations = [];
+        this.getConfig();
+        this._lastTime = -1;
     }
 
     addItem = () => {
@@ -38,31 +38,48 @@ export default class BaseItem {
         this.mesh.name = String(this.config.id)
     }
 
+    _updateGroup = (group, config) => {
+        if(group.isSuperGroup) {
+            group.items.forEach(g => this._updateGroup(g, config));
+            return;
+        }
+
+        Object.keys(group.items).forEach(key => {
+            const { type, max, min } = group.items[key]
+
+            if( type === "Number") {
+                config[key] = this.checkNum(config[key])
+
+                if(config[key] > max)config[key] = max
+                if(config[key] < min)config[key] = min
+            }
+        })
+    }
+
     updateConfig = (config) => {
         const c = {...config}
+
         c.defaultConfig.forEach(group => {
-            Object.keys(group.items).forEach(key => {
-                const { type, max, min } = group.items[key]
-
-                if( type === "Number") {
-                    c[key] = this.checkNum(c[key])
-
-                    if(c[key] > max)c[key] = max
-                    if(c[key] < min)c[key] = min
-                }
-            })
+            this._updateGroup(group, config);
         })
 
         this._updateConfig(c)
     } 
 
-    
-    
+    _getConfigGroup = (group) => {
+        if(group.isSuperGroup) {
+            group.items.forEach(g => this._getConfigGroup(g))
+            return
+        }
+
+        Object.keys(group.items).forEach(key => {
+            this.config[key] = group.items[key].value
+        })
+    }
+
     getConfig = () => {
         this.config.defaultConfig.forEach(group => {
-            Object.keys(group.items).map((key, index) => {
-                this.config[key] = group.items[key].value
-            })
+            this._getConfigGroup(group)   
         })
     }
 

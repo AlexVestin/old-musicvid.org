@@ -22,8 +22,6 @@ export default class CustomInput extends PureComponent {
     add3DModel = (item) =>  {
         dispatchAction({type: "UPDATE_ITEM_FILE", payload: {...item, keyVal: this.props.keyVal}})
         this.setState({modal3DOpen: false})
-
-        console.log({...item, keyVal: this.props.keyVal})
     }
 
     render() {
@@ -31,7 +29,6 @@ export default class CustomInput extends PureComponent {
         const key = keyVal
 
         return (
-    
             <div key={key} style={{width: "100%", borderBottom: "1px solid #e0e0e0"}}>
                <Model3D addItem={this.add3DModel} open={this.state.modal3DOpen} handleClose={this.close3DModal}></Model3D>
                {(type === "3DModel") && 

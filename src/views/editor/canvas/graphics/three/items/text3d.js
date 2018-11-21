@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import MeshItem from '../../itemtemplates/meshitem'
 
 export default class Text3D extends MeshItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
 
         const group = {

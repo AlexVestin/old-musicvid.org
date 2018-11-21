@@ -28,11 +28,11 @@ const fragmentShader = [
 
 
 export default class Sphere extends AudioImpactItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
         this.bins = new THREE.Group()
 
-        this.camera = config.sceneConfig.camera 
+        this.camera = sceneConfig.camera 
 
         var radius = 30, segments = 68, rings = 38;
         var geometry1 = new THREE.SphereGeometry( radius, segments, rings );

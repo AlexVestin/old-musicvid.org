@@ -23,7 +23,6 @@ class App extends Component {
         <div className={classes.wrapper}>
           <Prompt message={location => location.pathname !== "/editor" ? "Are you sure you want to exit editor, all progress will be lost" : true}></Prompt>
           <div style={{width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
-            
             <SidebarHeader></SidebarHeader>
 
             <div className={classes.content_wrapper}>

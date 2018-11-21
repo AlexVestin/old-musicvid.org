@@ -35,8 +35,6 @@ const styles = theme => ({
   }
 });
 
-
-
 class InputButton extends PureComponent {
 
     constructor(props) {

@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import BaseItem from '../../itemtemplates/item'
 
 export default class AudioCircle extends BaseItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
         this.mesh = new THREE.Group()
 

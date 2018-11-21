@@ -11,9 +11,9 @@ export default class MeshItem extends BaseItem {
                 y: {value: 0, type: "Number", tooltip: "Y Position"},
                 z: {value: 0, type: "Number",  tooltip: "Z Position"},
             }
-        }
+        };
         
-        this.config.defaultConfig.push(positionGroup)
-        this.getConfig()
+        this.config.defaultConfig.push(positionGroup);
+        this.getConfig();
     }
 }

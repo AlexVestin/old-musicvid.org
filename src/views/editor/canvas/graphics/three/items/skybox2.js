@@ -7,7 +7,7 @@ import BaseItem from '../../itemtemplates/item'
 
 
 export default class SkyBox2 extends BaseItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
         var cubeTextureLoader = new THREE.CubeTextureLoader();
         cubeTextureLoader.setPath( 'img/skyboxes/three-skybox/' );

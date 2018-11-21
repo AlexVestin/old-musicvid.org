@@ -1,12 +1,10 @@
 
 import React, { Component } from 'react'
 import ThreeCanvas from './graphics/scenemanager';
-
 import classes from './canvas.css'
 import PlaybackPanel from './canvas-ui/playback'
 import ExportModal from './canvas-ui/export'
 import LinkFilesModal from './canvas-ui/linkfilesmodal'
-
 import { dispatchAction } from '@redux/actions/items' 
 import { setTime, togglePlaying, setPlaying, incrementTime, setDisabled } from '@redux/actions/globals' 
 import { connect } from 'react-redux';
@@ -16,42 +14,33 @@ class Canvas extends Component {
       super(props)
 
       this.state = {
-        width: 640,
+        width: 850,
         height: 480,
         info: "",
         linkFiles: [],
         openLinkFilesModal: false
       };
 
-      this.frames = 60
-      this.frameId = 0
-      this.lastTime = 0
-      this.time = 0
-      this.sceneManagerRef = React.createRef()
-
+      this.frames = 60;
+      this.frameId = 0;
+      this.lastTime = 0;
+      this.time = 0;
+      this.sceneManagerRef = React.createRef();
     }
 
-    setSize = (width, aspect) => {
-      if(this.state.width === width) return
-      this.setState({width: width, height: (width * aspect) >> 0})
-      this.sceneManager.setSize(width, (width * aspect) >> 0)
+    setSize = (width, height) => {
+      this.setState({width: width, height: height});
+      this.sceneManager.setExternalSize(width, height);
     }
 
-    resizeCanvas = (height) => {
-      const heightInPx =  (90 - height) * window.innerHeight / 100
-
-      if(heightInPx < 300) {
-        this.setSize(260, 3/4)
-      } else if(heightInPx < 420) {
-        this.setSize(400, 3/4)
-      }
-      else if(heightInPx < 530) {
-        this.setSize(510, 3/4)
-      }else if(heightInPx < 600) {
-        this.setSize(610, 3/4)
-      }else {
-        this.setSize(680, 3/4)
-      } 
+    resizeCanvas = (h = null) => {
+      const height = h || this.props.playlistHeight;
+      const heightInPx =  (90 - height) * window.innerHeight / 100;
+      const resWidth = Number(this.props.resolution.split("x")[0]);
+      const resHeight = Number(this.props.resolution.split("x")[1]);
+      const aspect = resHeight / resWidth;
+      const mult = 1.52;
+      this.setSize(Math.floor(heightInPx * mult), Math.floor(heightInPx * mult * aspect ));
     }
   
     componentDidMount() {
@@ -59,8 +48,7 @@ class Canvas extends Component {
       window.requestAnimationFrame(this.renderScene)
       window.onkeyup = this.handleKeys
       this.sceneManager = this.sceneManagerRef.current;
-      window.addEventListener('resize', () => this.resizeCanvas(this.props.playlistHeight), false);
-      this.resizeCanvas(this.props.playlistHeight)
+      window.addEventListener('resize', () => this.resizeCanvas(), false);
     }
 
     handleKeys = (e) => {
@@ -78,7 +66,6 @@ class Canvas extends Component {
         case 32:
           this.play()
           break
-        
           // .
         case 190:
           if(!this.props.playing)
@@ -118,14 +105,11 @@ class Canvas extends Component {
             let now = performance.now()
             time = (now - this.lastTime) / 1000 + this.props.time
           
-            
             incrementTime(time);
-            //incrementTime(time)
             this.lastTime = now
           }
         }
         
-        //console.log(this.sceneManager, this.sceneManagerRef)
         this.sceneManager.renderScene(time)
       }
       if(!this.state.encoding || !this.videoEncoder.isWorker)
@@ -197,6 +181,7 @@ class Canvas extends Component {
                 height={height} 
                 loadFromFile={this.props.loadFromFile}
                 linkFiles={this.linkFiles}
+                resizeCanvas={this.resizeCanvas}
                 >
               </ThreeCanvas>
               <PlaybackPanel 
@@ -225,7 +210,8 @@ const mapStateToProps = state => {
     audioInfo: state.items.audioInfo,
     playlistHeight: state.window.playlistHeight,
     loadFromFile: state.items.loadFromFile,
-    exportVideo: state.globals.exportVideo
+    exportVideo: state.globals.exportVideo,
+    resolution: state.globals.resolution
   }
 }
 

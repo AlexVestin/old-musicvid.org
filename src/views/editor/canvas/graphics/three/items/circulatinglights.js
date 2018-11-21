@@ -3,9 +3,9 @@ import * as THREE from 'three'
 import BaseItem from '../../itemtemplates/item'
 
 export default class CirculatingLights extends BaseItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
-        this.scene = config.sceneConfig.scene
+        this.scene = sceneConfig.scene
         
         if(!fileConfig) {
             const meshGroup = {

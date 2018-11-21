@@ -3,9 +3,9 @@ import * as THREE from 'three'
 import BaseItem from '../../itemtemplates/item'
 import OBJLoader from '../loaders/objloader'
 export default class Object3D extends BaseItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
-        this.scene = config.sceneConfig.scene
+        this.scene = sceneConfig.scene
         
         if(!fileConfig) {
             const meshGroup = {

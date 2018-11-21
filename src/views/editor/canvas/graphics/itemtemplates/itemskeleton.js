@@ -27,24 +27,50 @@ export default class ItemSkeleton {
 
     addItem = () => {}
 
-    updateConfig = (config) => {
+    _updateGroup = (group, config) => {
+        if(group.isSuperGroup) {
+            group.items.forEach(g => this._updateGroup(g, config));
+            return;
+        }
+
+        Object.keys(group.items).forEach(key => {
+            const { type, max, min } = group.items[key]
+
+            if( type === "Number") {
+                config[key] = this.checkNum(config[key])
+
+                if(config[key] > max)config[key] = max
+                if(config[key] < min)config[key] = min
+            }
+        })
+    }
+
+    checkNum = (nr) => isNaN(nr) ? 0 :  Number(nr)
+
+    editConfig = (config) => {
         const c = {...config}
+
         c.defaultConfig.forEach(group => {
-            Object.keys(group.items).forEach(key => {
-                if( group.items[key].type === "Number") {
-                    c[key] = this.checkNum(c[key])
-                }
-            })
+            this._updateGroup(group, config);
         })
 
         this._updateConfig(c)
     } 
     
+    _getConfigGroup = (group) => {
+        if(group.isSuperGroup) {
+            group.items.forEach(g => this._getConfigGroup(g))
+            return
+        }
+
+        Object.keys(group.items).forEach(key => {
+            this.config[key] = group.items[key].value
+        })
+    }
+
     getConfig = () => {
         this.config.defaultConfig.forEach(group => {
-            Object.keys(group.items).map((key, index) => {
-                this.config[key] = group.items[key].value
-            })
+            this._getConfigGroup(group)   
         })
     }
 

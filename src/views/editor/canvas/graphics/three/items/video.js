@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import Demuxer from '@/videoencoder/demuxer.js'
 
 export default class Video extends BaseItem {
-    constructor(config) {
+    constructor(config, sceneConfig) {
         super(config) 
         var fr = new FileReader()
         this.bytesLoaded = false
@@ -19,7 +19,7 @@ export default class Video extends BaseItem {
         this.ac = new AudioContext()
         this.decoder = new Demuxer(this.onDecoderReady)
 
-        this.scene = config.sceneConfig.scene
+        this.scene = sceneConfig.scene
         this.playAudio = config.keepAudio
         this.config.name = config.name
     }

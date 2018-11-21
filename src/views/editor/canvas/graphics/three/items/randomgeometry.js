@@ -4,7 +4,7 @@ import AudioImpactItem from '../../itemtemplates/audioimpactitem'
 
 
 export default class RandomGeometry extends AudioImpactItem {
-    constructor(config, fileConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config)
 
         

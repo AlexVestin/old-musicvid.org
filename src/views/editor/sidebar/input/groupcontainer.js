@@ -7,39 +7,39 @@ import classes from './groupcontainer.css'
 
 class GroupContainer extends PureComponent {
     constructor(props) {
-        super(props)
-        this.state = {expanded: props.expanded} 
+        super(props);
+        this.state = {expanded: props.expanded};
     } 
     
 
     toggleExpanded = () => this.setState({expanded: !this.state.expanded})
     
     addAction = (e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        this.props.addAction()
+        e.stopPropagation();
+        e.preventDefault();
+        this.props.addAction();
     }
 
     render() {
         const addAction = this.props.addAction ?  this.addAction : undefined
-
+        console.log( this.props.level * 10 + "px")
         return(
             <div key={this.props.label} className={classes.container}>
                 <div>
-                    <GroupHeader addAction={addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
-                    {(this.state.expanded  ) && this.props.children}
+                    <GroupHeader level={this.props.level} addAction={addAction} expanded={this.state.expanded} label={this.props.label} toggleExpanded={this.toggleExpanded}></GroupHeader>
+                    <div style={{left: this.props.level * 10 + "px" }}>
+                        {(this.state.expanded  ) && this.props.children}
+                    </div>
                  </div>
             </div>  
         )
     }
 }
 
-
 const GroupHeader = (props) => {
-
     return(
         <div className={classes.headerWrapper} onClick={props.toggleExpanded}>
-            <p style={{ height: 20, margin: 5, fontSize: 16}}>{props.label} </p>
+            <p style={{ height: 20, margin: 5, fontSize: 16, marginLeft: props.level * 10 + "px"}}>{props.label} </p>
             <div style={{display: "flex", flexDirection: "row"}}>
                 { props.addAction && 
                     <div className={classes.iconWrapper}>

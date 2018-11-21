@@ -34,7 +34,7 @@ class ProjectSettings extends PureComponent {
             clipDuration: 180,
             audioBufferSize: 0.1,
             postProcessingEnabled: false,
-            resolution: "680x480",
+            resolution: "1920x1080",
             masterVolume: 100,
             fftSize: "2048",
             defaultConfig: [{
@@ -62,6 +62,7 @@ class ProjectSettings extends PureComponent {
         dispatchAction({type: "SET_EXPORT", payload: true})
     }
     saveAsTemplate = () => {
+        console.log(store.getState().items)
         const projectSettings = JSON.stringify({items: store.getState().items, globals:store.getState().globals})
         var blob = new Blob([projectSettings], {type: "application/json"});
         FileSaver.saveAs(blob, "proj.json")
@@ -98,7 +99,6 @@ const mapStateToProps = state => {
         expanded: true,
         masterVolume: state.globals.masterVolume,
         fftSize: state.globals.fftSize,
-        resolution: state.globals.resolution
     }
 }
 
