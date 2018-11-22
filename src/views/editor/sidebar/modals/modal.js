@@ -39,7 +39,7 @@ class SimpleModal extends React.Component {
                     <Typography variant="h1" id="modal-title">
                         Keeping audio
                     </Typography>
-                    <Typography variant="subtitle" id="simple-modal-description">
+                    <Typography variant="subtitle1" id="simple-modal-description">
                         Currently importing audio along with the video is very slow. Longer videos
                         (5mins and up), can take several minutes or even crash the application
                     </Typography>

@@ -81,6 +81,7 @@ class ThreeCanvas extends Component {
         if(layer.layerType === 1) {
             const camera = project.cameras[layer.id];
             const controls = project.controls[layer.id];
+            
             loadedLayer = new SceneContainer3D(layer.name, this.width, this.height, this.renderer, layer, camera, controls, this.externalCanvas)
         }else {
             loadedLayer = new SceneContainer2D(layer.name, this.width, this.height, this.renderer, layer)
@@ -267,7 +268,7 @@ class ThreeCanvas extends Component {
                 scene.editSettings(payload.key, payload.value)
                 break;
             case "CREATE_3D_LAYER":
-                newLayer   = new SceneContainer3D("new 3d graphics", this.internalCanvas.width, this.internalCanvas.height, this.renderer)
+                newLayer   = new SceneContainer3D("new 3d graphics", this.internalCanvas.width, this.internalCanvas.height, this.renderer, null, null, null, this.externalCanvas)
                 this.addLayer(newLayer)
                 break;
             case "CREATE_2D_LAYER":

@@ -7,7 +7,6 @@ import EffectList from './effects'
 import GroupContainer from '../../input/groupcontainer'
 import classes from '../item/items.css'
 
-import ConfigList from '../../input/input'
 class LayerList  extends React.Component {
 
   onClick = (layer) => {
@@ -29,21 +28,9 @@ class LayerList  extends React.Component {
   render() {
     const { layers } = this.props;
     const sortedItems = Object.keys(layers).map(key => layers[key])
-    const quickConfigGroups = [{
-      title: "Quickconfigs",
-      items: this.props.quickConfigs.map(c=>c)
-    }]
 
     return (
       <div className={classes.root}>
-
-
-          <ConfigList label={"Quick Configs"} >
-                {this.props.quickConfigs.map(conf => (
-                  <div>conf.name</div>
-                ))}
-            </ConfigList> 
-
           <GroupContainer label={"Layers"} expanded>
             <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
                 <div style={{backgroundColor: "rgb(231, 231, 231)", height: 20, width: "100%", display:"flex", justifyContent: "flex-end"}}>

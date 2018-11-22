@@ -29,7 +29,6 @@ const baseSettings  = {
 export default function itemsReducer(state = baseSettings, action){
 
         var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem
-        console.log("-------------", action)
         switch(action.type){  
             case "RESET_AUDIO_FILES":
                 return {...state, audioItems: []}

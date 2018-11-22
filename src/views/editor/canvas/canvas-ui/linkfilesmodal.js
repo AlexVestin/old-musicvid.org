@@ -131,7 +131,7 @@ class SimpleModal extends React.Component {
                         <Typography variant="title" id="modal-title">
                             Link files
                         </Typography>
-                        <Typography variant="subheading" id="simple-modal-description">
+                        <Typography variant="subtitle1" id="simple-modal-description">
                             {this.props.files.map((file, i) => {
                                 return <div className={classes.wrapper}> 
                                     <div>{file.name}</div>

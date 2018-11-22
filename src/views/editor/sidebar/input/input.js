@@ -15,14 +15,13 @@ class ConfigList extends Component {
     
     render(){
         const defaultConfig = this.props.defaultConfig;
-
         return(
                 <div className={classes.root}>
                     {defaultConfig.map(group =>     
-                        <React.Fragment>
+                        <React.Fragment key={group.title}>
                             {group.isSuperGroup 
                                 ?
-                                <GroupContainer  level={1} label={group.title} key={group.title} expanded={group.expanded}>
+                                <GroupContainer  level={0} label={group.title} key={group.title} expanded={group.expanded}>
                                         {group.items.map(g => (
                                             <GroupContainer level={2} label={g.title} key={g.title} expanded={g.expanded}>
                                                 <GroupContent item={this.props.item} group={g} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
@@ -30,7 +29,7 @@ class ConfigList extends Component {
                                         ))}
                                 </GroupContainer>
                                 :
-                                <GroupContainer level={1} label={group.title} key={group.title} expanded={group.expanded}>
+                                <GroupContainer level={0} label={group.title} key={group.title} expanded={group.expanded}>
                                     <GroupContent item={this.props.item} group={group} addAutomation={this.props.addAutomation} handleChange={this.handleChange} ></GroupContent>
                                 </GroupContainer>
                             }

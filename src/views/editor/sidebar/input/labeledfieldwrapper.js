@@ -180,7 +180,7 @@ class LabeledFieldWrapper extends PureComponent {
         this.popperRef = React.createRef();
         this.inputRef = React.createRef();
     }
-
+    /*
     componentDidMount = () => {
         document.addEventListener("mousedown", this.handleMouseDown, false);
     }
@@ -198,6 +198,7 @@ class LabeledFieldWrapper extends PureComponent {
         }     
     }
 
+    
     state = {
         anchorEl: null,
         open: false,
@@ -218,27 +219,45 @@ class LabeledFieldWrapper extends PureComponent {
           arrowRef: node,
         });
     };
+    
 
     createQuickConfig = (event) => {
         const item = this.props.item;
         dispatchAction({type: "CREATE_QUICK_CONFIG", payload: {itemId: item.id, sceneId: item.sceneId, name: this.inputRef.current.value }})
         this.setState({open: false})
     }
+    */
 
     render() { 
-        const { arrow, arrowRef } = this.state;
         let { keyVal, disabled, tooltip, type, disableAutomations, min, max } = this.props
+        
+        /*const { arrow, arrowRef } = this.state;
+        
         const { anchorEl, open } = this.state;
         const id = open ? 'simple-popper' : null;
-        const iClasses = this.props.classes;
+        const iClasses = this.props.classes;*/
 
         return(
             <div key={keyVal} style={{width: "95%", display: "flex", flexDirection: "row", justifyContent:"space-between", marginBottom: 3, marginTop: 3}}>
                 <Title tooltip={tooltip} min={min} max={max} keyVal={keyVal}></Title>
                 
                 <div style={{display: "flex", flexDirection: "row"}}>
-                    <button className={iClasses.bootstrapButtonStyle} onClick={this.handleClick}>QC</button>
         
+
+                    {type === "Number" && disabled !== true && !disableAutomations &&
+                       <AutomationIcon></AutomationIcon>
+                    }
+                    {this.props.children}
+                </div>
+            </div> 
+        )
+    }
+}
+
+export default withStyles(styles)(LabeledFieldWrapper)
+
+/*
+
                     <Popper 
                         id={id} 
                         open={open} 
@@ -267,16 +286,4 @@ class LabeledFieldWrapper extends PureComponent {
                         )}
                         
                     </Popper>
-
-
-                    {type === "Number" && disabled !== true && !disableAutomations &&
-                       <AutomationIcon></AutomationIcon>
-                    }
-                    {this.props.children}
-                </div>
-            </div> 
-        )
-    }
-}
-
-export default withStyles(styles)(LabeledFieldWrapper)
+*/

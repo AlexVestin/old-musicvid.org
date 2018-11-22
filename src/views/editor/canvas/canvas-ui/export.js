@@ -125,10 +125,10 @@ class SimpleModal extends React.Component {
                 open={this.props.open}
             >
                 <div style={style} className={classes.paper}>
-                    <Typography variant="title" id="modal-title">
+                    <Typography variant="h6" id="modal-title">
                         Exporting video
                     </Typography>
-                    <Typography variant="subtitle" id="simple-modal-description">
+                    <Typography variant="subtitle1" id="simple-modal-description">
                         
                         Some info on exporting!
                         <ul>

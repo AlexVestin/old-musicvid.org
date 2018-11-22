@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react'
 import VideoCard from './itemcard'
 import classes from './previews.css'
 import { connect } from 'react-redux'
-import  withHeader from '../../HOC/withheader';
 
 import Input from '@material-ui/core/Input'
 import CollectionsIcon from '@material-ui/icons/Collections'
@@ -72,11 +71,4 @@ class Previews extends PureComponent {
         )
     }
 }
-
-const mapStateToProps = state => {
-    return {
-        layer: state.items.layers[state.items.selectedLayerId]
-    }
-}
-
-export default connect(mapStateToProps)(Previews)
+export default Previews

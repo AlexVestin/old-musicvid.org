@@ -20,12 +20,12 @@ import SkyBox2 from './items/skybox2';
 import AudioCircle from './items/audiocircle';
 import NoiseBlob from './items/noiseblob/noiseblob';
 import Object3D from './items/model'
-import CirculatingLights from './items/circulatinglights';
+import CirculatingLights from './items/circulatinglight';
 
 
 export default class SceneContainer {
     constructor(name, width, height, renderer, fileConfig, camera, controls, externalCanvas) {
-
+        console.log(arguments)
         this.scene = new THREE.Scene()
         this.renderer = renderer
 
@@ -35,6 +35,8 @@ export default class SceneContainer {
 
         this.width = width
         this.height = height
+
+
 
         if(!fileConfig) {
             this.cameraConfig   = cameraConfigs.perspectiveConfig
