@@ -25,7 +25,7 @@ export default class CustomInput extends PureComponent {
     }
 
     render() {
-        const {  keyVal, type, value, disabled, options, min, max, step } = this.props
+        const { keyVal, type, value, disabled, options, min, max, step } = this.props
         const key = keyVal
 
         return (

@@ -15,7 +15,7 @@ class ConfigList extends Component {
     
     render(){
         const defaultConfig = this.props.defaultConfig;
-        console.log(this.props.item);
+
         return(
                 <div className={classes.root}>
                     {defaultConfig.map(group =>     
