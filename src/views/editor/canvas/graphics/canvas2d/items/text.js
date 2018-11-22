@@ -19,42 +19,39 @@ export default class SimpleText extends BaseItem {
         super(config)   
 
         if(!fileConfig) {
-            this.config.defaultConfig.push({
-                title: "Text settings",
-                items: {
-                    text: { type: "String", value: "Text" },
-                    fontSize: {type:  "Number", value: 80},
-                    baseLine: {type: "List", options: ["middle", "bottom", "top"], value: "middle"},
-                    font: {type: "List", options: fontList, defaultIndex: 0, value: "Andele Mono"},
-                    textAlign: {type: "List", options: ["center", "left", "right"], value: "center", defaultIndex: 0},
-                    x: {type: "Number", value: 0.5},
-                    y: {type: "Number", value: 0.5},
-                    color: {type: "String", value: "FFFFFF"}
-                }
-            })
-            this.getConfig()
+            this.config._groups.push({name: "visuals"})
+            this.config.text = {label: "start time1", type: "String", value: "Text", group: "visuals" }
+            this.config.fontSize = {label: "start time2", type:  "Number", value: 80, group: "visuals"}
+            this.config.baseLine =  {label: "start time3", type: "List", options: ["middle", "bottom", "top"], value: "middle", group: "visuals"}
+            this.config.font = {label: "start time4", type: "List", options: fontList, defaultIndex: 0, value: "Andele Mono", group: "visuals"}
+            this.config.textAlign =  {label: "start time5", type: "List", options: ["center", "left", "right"], value: "center", defaultIndex: 0, group: "visuals"}
+            this.config.x = {label: "start time6", type: "Number", value: 0.5, group: "visuals"}
+            this.config.y = {label: "start time7", type: "Number", value: 0.5, group: "visuals"}
+            this.config.color = {label: "start time8", type: "String", value: "FFFFFF", group: "visuals"}
             this.addItem()
         }else {
             this.config = {...config}
         }
       
-
         this.ctx = config.ctx
         this.canvas = config.canvas
-        
-        
     }
 
     setStyle = () => {
-        this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`
-        this.ctx.fillStyle = '#' + this.config.color;
-        this.ctx.textAlign = this.config.textAlign
-        this.ctx.textBaseline  = this.config.baseLine
+        this.ctx.font =  `${this.config.fontSize.value}pt ${this.config.font.value}`
+        this.ctx.fillStyle = '#' + this.config.color.value;
+        this.ctx.textAlign = this.config.textAlign.value;
+        this.ctx.textBaseline  = this.config.baseLine.value;
     }
 
     animate = (time, audioData) => {
+        const text = this.config.text.value;
+        const x = this.config.text.value;
+        const y = this.config.text.value;
+
+
         this.setStyle();
-        this.ctx.fillText(this.config.text, this.config.x * this.canvas.width, this.config.y* this.canvas.height)
+        this.ctx.fillText(text, x * this.canvas.width, y* this.canvas.height)
     }
 
     setSize = (width, height) => {

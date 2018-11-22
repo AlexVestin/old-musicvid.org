@@ -140,7 +140,6 @@ export default function itemsReducer(state = baseSettings, action){
 
             case "ADD_ITEM":
                 id          = action.payload.id
-                
                 items       = update(state.items,  {[state.selectedLayerId]: {[id]: {$set: {...action.payload, index: state.itemIdx}}}})
                 layers      = update(state.layers, {[state.selectedLayerId]: {items: {$push: [id]}}})
                 automations = update(state.automations, {[id]: {$set: [] }}) 

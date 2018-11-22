@@ -17,13 +17,13 @@ class GroupContent extends PureComponent {
         
         return(
             <div style={inputContainer}>
-                {Object.keys(group.items).map((key, index) =>{
-                    const config = group.items[key]
+                {group.map((item, index) =>{
+                    const config = item
                     const itemProps = { 
                         tooltip: config.tooltip, 
-                        keyVal: key, 
+                        keyVal: item.label, 
                         type: config.type, 
-                        value: item[key], 
+                        value: item.value, 
                         disabled: config.disabled, 
                         options: config.options, 
                         min: config.min, 
@@ -33,7 +33,7 @@ class GroupContent extends PureComponent {
                     } 
  
                     return(
-                            <CustomInput key={key} name={item.type} {...props} {...itemProps}></CustomInput>
+                            <CustomInput key={item.id} name={item.type} {...props} {...itemProps}></CustomInput>
                         )
                     }
                 )}
@@ -44,12 +44,3 @@ class GroupContent extends PureComponent {
 
 
 export default GroupContent
-/*
-const mapStateToProps = (state, ownProps) => {
-    return {
-        item: state.items.items[ownProps.itemId]
-    }
-}
-
-export default connect (mapStateToProps(GroupContent))
-*/

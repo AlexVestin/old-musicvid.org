@@ -38,12 +38,6 @@ class LayerList  extends React.Component {
       <div className={classes.root}>
 
 
-          <ConfigList label={"Quick Configs"} >
-                {this.props.quickConfigs.map(conf => (
-                  <div>conf.name</div>
-                ))}
-            </ConfigList> 
-
           <GroupContainer label={"Layers"} expanded>
             <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
                 <div style={{backgroundColor: "rgb(231, 231, 231)", height: 20, width: "100%", display:"flex", justifyContent: "flex-end"}}>

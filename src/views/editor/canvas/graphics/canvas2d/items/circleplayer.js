@@ -113,7 +113,6 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.setStyle();
         this.ctx.moveTo(cx, cy);
         this.ctx.lineTo(cxOuter, cyOuter);
-        
     }
 
     _animate = (time, audioData) => {

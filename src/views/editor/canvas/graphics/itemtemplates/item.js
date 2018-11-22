@@ -1,24 +1,21 @@
 import { addItem, updateItemConfig } from '@redux/actions/items'
 import {setDisabled} from '@redux/actions/globals'
+import uuidv1 from 'uuid/v1';
+
 
 export default class BaseItem {
     constructor(config) {
         setDisabled(true)
        
-        const timeGroup = {
-            title: "Base Configurations", 
-            items: {
-                start: {value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", disableAutomations: true},
-                duration: {value: 20, type: "Number", tooltip: "Time in seconds when item won't be rendered anymore", disableAutomations: true},
-                zIndex: {value: config.renderIndex, type: "Number", tooltip: "Index of turn in renderloop",  disableAutomations: true}
-            }
-        }
-
         this.config = {}
-        this.config.defaultConfig = [timeGroup]
+        this.config._start = {label: "start time", value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", disableAutomations: true, group: "basics"}
+        this.config._duration = {label: "duration", value: 0, type: "Number", tooltip: "Time in seconds when item will be rendered", disableAutomations: true, group: "basics"}
+        this.config._zIndex = {label: "z-index", value: config.renderIndex, type: "Number", tooltip: "Index of turn in renderloop",  disableAutomations: true, group: "basics"}
+        this.config._groups = [{name: "basics"}]
+
         //TODO UUID ?
         this.config._easyConfigs= false;
-        this.config.id          = Math.floor(Math.random() * 10000000);
+        this.config.id          = uuidv1();
         this.config.offsetLeft  = 0;
         this.config.name        = config.name;
         this.config.movable     = true;
@@ -28,7 +25,6 @@ export default class BaseItem {
         
         this.mesh = {};
         this.automations = [];
-        this.getConfig();
         this._lastTime = -1;
     }
 
