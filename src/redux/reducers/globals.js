@@ -1,3 +1,5 @@
+import update from 'immutability-helper'
+
 export default function playbackReducer(state = {
     time: 0,
     clipDuration: 300,
@@ -11,6 +13,7 @@ export default function playbackReducer(state = {
     postProcessingEnabled: false,
     masterVolume: 100,
     exportVideo: false,
+    quickConfigs: [],
     fftSize: "2048",
     framesEncoded: 0,
     totalFrames: 0,
@@ -18,6 +21,8 @@ export default function playbackReducer(state = {
 
     }, action){
         switch(action.type){
+            case "CREATE_QUICK_CONFIG":
+                return {...state, quickConfigs: update(state.quickConfigs, {$push: [action.payload] })}
             case "SET_PLAYLIST_LENGTH":
                 return {...state, clipDuration: state.clipDuration > action.payload ? state.clipDuration : Math.floor(action.payload + action.payload * 0.05)}
             case "SET_TOTAL_FRAMES":

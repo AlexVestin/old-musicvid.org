@@ -1,10 +1,7 @@
 
 import React, { Component} from 'react'
 import GroupContent from './groupcontent'
-
 import GroupContainer from './groupcontainer'
-
-
 import classes from "./input.css"
 
 

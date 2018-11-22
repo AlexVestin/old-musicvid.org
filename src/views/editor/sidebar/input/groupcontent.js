@@ -28,7 +28,8 @@ class GroupContent extends PureComponent {
                         options: config.options, 
                         min: config.min, 
                         max:config.max, 
-                        step: config.step 
+                        step: config.step,
+                        item:item
                     } 
  
                     return(

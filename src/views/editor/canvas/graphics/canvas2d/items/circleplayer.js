@@ -20,7 +20,6 @@ export default class CirclePlayer extends CombinedAudioItem {
                     lineWidth: {type: "Number", value: 4},
                     amplitude: {type: "Number", value: config.amplitude}
                 }
-              
             }
 
             const group = {

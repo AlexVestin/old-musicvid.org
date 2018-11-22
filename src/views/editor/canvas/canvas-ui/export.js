@@ -17,7 +17,6 @@ const presetLookup = [
     "veryslow"
 ];
 
-
 const style= {
     top: `20%`,
     left: `25%`,

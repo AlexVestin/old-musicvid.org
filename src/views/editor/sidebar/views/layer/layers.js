@@ -6,6 +6,8 @@ import Delete from '@material-ui/icons/Delete'
 import EffectList from './effects'
 import GroupContainer from '../../input/groupcontainer'
 import classes from '../item/items.css'
+
+import ConfigList from '../../input/input'
 class LayerList  extends React.Component {
 
   onClick = (layer) => {
@@ -27,8 +29,21 @@ class LayerList  extends React.Component {
   render() {
     const { layers } = this.props;
     const sortedItems = Object.keys(layers).map(key => layers[key])
+    const quickConfigGroups = [{
+      title: "Quickconfigs",
+      items: this.props.quickConfigs.map(c=>c)
+    }]
+
     return (
       <div className={classes.root}>
+
+
+          <ConfigList label={"Quick Configs"} >
+                {this.props.quickConfigs.map(conf => (
+                  <div>conf.name</div>
+                ))}
+            </ConfigList> 
+
           <GroupContainer label={"Layers"} expanded>
             <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
                 <div style={{backgroundColor: "rgb(231, 231, 231)", height: 20, width: "100%", display:"flex", justifyContent: "flex-end"}}>
@@ -37,6 +52,8 @@ class LayerList  extends React.Component {
                       <div onClick={this.create3DLayer} className={classes.button} style={{width: 30, height:20, minWidth: 20, minHeight: 20, marginLeft: 5}}>+3D</div>
                     </div>
                 </div>
+
+                
 
                 {sortedItems.map((item, i) => {
                   return( 
@@ -57,6 +74,8 @@ class LayerList  extends React.Component {
             <GroupContainer label={"Effects"} addAction={() => setSidebarWindowIndex(this.props.idxs.NEWEFFECT)}>
                 <EffectList idxs={this.props.idxs}></EffectList>
             </GroupContainer> 
+
+             
        </div>
     );
   }
@@ -65,6 +84,7 @@ class LayerList  extends React.Component {
 const mapStateToProps = state => {
   return {
     layers: state.items.layers,
+    quickConfigs: state.globals.quickConfigs
   }
 }
 export default connect(mapStateToProps)(withHeader(LayerList))
