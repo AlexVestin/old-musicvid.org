@@ -16,6 +16,15 @@ export function selectAudio(item){
     );  
 }
 
+export function editMasterSettings(item) {
+    store.dispatch({
+        type: "EDIT_MASTER_SETTINGS",
+        payload: item
+        } 
+    );
+}
+
+
 export function editAutomationPoint(item) {
     store.dispatch({
         type: "EDIT_AUTOMATION_POINT",

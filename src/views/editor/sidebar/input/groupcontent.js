@@ -12,8 +12,8 @@ const inputContainer = {
 
 class GroupContent extends PureComponent {
     render() {
-        const {group, item} = this.props
-        const props = { handleChange: this.props.handleChange, addAutomation: this.props.addAutomation}
+        const {group, item, handleChange, handleCustomChange, addAutomation }  = this.props
+        const props = { handleChange, handleCustomChange, addAutomation }
         
         return(
             <div style={inputContainer}>

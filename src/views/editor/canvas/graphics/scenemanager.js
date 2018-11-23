@@ -22,14 +22,23 @@ class ThreeCanvas extends Component {
             framesEncoded: 0,
         };
 
+        this.config = { cameraShake:0, fadeInTime:0, fadeOutAtTime: 0, fadeOutTime:0 };
+        this.config.defaultConfig = [{
+            title: "  Master Layer Settings",
+            items: {
+                cameraShake: {type: "Number", value: 0},
+                fadeInTime: {type: "Number", value: 0},
+                fadeOutAtTime: {type: "Number", value: 0},
+                fadeOutTime: {type: "Number", value: 0},
+            }
+        }];
+
         this.encoding = false;
         this.mountRef = React.createRef();
     }
 
     //TODO Fix width and height ( Resolution)
     componentDidMount() {    
-
-        
         this.width = this.mountRef.current.clientWidth;
         this.height = this.mountRef.current.clientHeight;
 
@@ -59,6 +68,7 @@ class ThreeCanvas extends Component {
             dispatchAction({type: "RESET_REDUCER"});
             this.setupScene();
             this.audioManager = new AudioManager();      
+            dispatchAction({type: "ADD_MASTER_SETTINGS", payload: this.config});
         }else {
             this.setupScene();
             this.audioManager = new AudioManager();
@@ -455,7 +465,7 @@ class ThreeCanvas extends Component {
             scene.animate(this.time, frequencyBins)
             scene.render(this.renderer, this.postProcessingEnabled)
             this.renderer.clearDepth()
-        }))
+        }));
         
         if(this.postProcessingEnabled) {
             this.renderTarget.update(time, frequencyBins)

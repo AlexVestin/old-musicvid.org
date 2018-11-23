@@ -49,6 +49,7 @@
     "re-resizable": "^4.4.8",
     "react": "^16.6.0",
     "react-addons-css-transition-group": "^15.6.2",
+    "react-color": "^2.14.1",
     "react-dev-utils": "^5.0.0",
     "react-dom": "^16.6.0",
     "react-draggable": "^3.0.5",

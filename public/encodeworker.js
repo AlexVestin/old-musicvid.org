@@ -1,7 +1,7 @@
-importScripts("WasmEncoder10.js")
+importScripts("WasmEncoder1_t.js")
 
 let Module = {}
-WasmEncoder10(Module)
+WasmEncoder1(Module)
 
 let useAudio = false
 
@@ -11,8 +11,10 @@ Module["onRuntimeInitialized"] = () => {
 };
 
 openVideo = (config) => {
-    let { w, h, fps, bitrate, presetIdx } = config
+    let { w, h, fps, bitrate, presetIdx } = config 
+    console.log("?????????????");
     Module._open_video(w, h, fps, bitrate, presetIdx, fileType, fileType );
+    console.log("????-------------------------------------?????????");
     frameSize = w*h*4
 }
 

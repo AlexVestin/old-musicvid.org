@@ -25,22 +25,19 @@ import CirculatingLights from './items/circulatinglight';
 
 export default class SceneContainer {
     constructor(name, width, height, renderer, fileConfig, camera, controls, externalCanvas) {
-        console.log(arguments)
-        this.scene = new THREE.Scene()
-        this.renderer = renderer
+        this.scene = new THREE.Scene();
+        this.renderer = renderer;
 
-        this.items = []
-        this.toRender = []
-        this.rendering = []
+        this.items = [];
+        this.toRender = [];
+        this.rendering = [];
 
-        this.width = width
-        this.height = height
-
-
+        this.width = width;
+        this.height = height;
 
         if(!fileConfig) {
-            this.cameraConfig   = cameraConfigs.perspectiveConfig
-            this.controlConfig  = controlConfigs.orbitConfig
+            this.cameraConfig   = cameraConfigs.perspectiveConfig;
+            this.controlConfig  = controlConfigs.orbitConfig;
             this.fogConfig      = {
                 near: 500, 
                 far: 2000, 

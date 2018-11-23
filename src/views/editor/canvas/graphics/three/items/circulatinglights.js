@@ -11,12 +11,15 @@ export default class CirculatingLights extends BaseItem {
             const meshGroup = {
                 title: "Movement",
                 items: {
-                    speed: {type: "Number", value: 1},
-                    radiusOne: {type: "Number", value: 30},
-                    radiusTwo: {type: "Number", value: 40},
-                    ampOne: {type: "Number", value: 0.7},
-                    ampTwo: {type: "Number", value: 0.5},
-                    ampThree: {type: "Number", value: 0.3},
+                    speed: {type: "Number", value: 0.5 + Math.random() * 0.5},
+                    radiusOne: {type: "Number", value: 10 + Math.floor(Math.random() * 40)},
+                    radiusTwo: {type: "Number", value: 20 + Math.floor(Math.random() * 30)},
+                    ampOne: {type: "Number", value: 0.3 + Math.random() * 0.7},
+                    ampTwo: {type: "Number", value: 0.5 + Math.random() * 0.5},
+                    ampThree: {type: "Number", value: 0.3 + Math.random() * 0.7},
+                    cos1: {type: "Boolean", value: true},
+                    cos2: {type: "Boolean", value: true},
+                    cos3: {type: "Boolean", value: true},
                 }
 
             }
@@ -28,7 +31,7 @@ export default class CirculatingLights extends BaseItem {
             this.config = {...fileConfig}
         }
 
-        this.mesh = new THREE.Group()
+        this.mesh = new THREE.Group()<
         this.addLights()
     }
 

@@ -24,12 +24,18 @@ const baseSettings  = {
     effectId: 0,
     initialized: false,
     loadFromFile: false,
+    masterSettings: { defaultConfig: [] }
 }
 
 export default function itemsReducer(state = baseSettings, action){
 
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem, masterSettings
         switch(action.type){  
+            case "ADD_MASTER_SETTINGS":
+                return {...state, masterSettings: action.payload}
+            case "EDIT_MASTER_SETTINGS":
+                console.log(action)
+                return {...state, masterSettings: update(state.masterSettings, {[action.payload.key]: {$set: action.payload.value}})}
             case "RESET_AUDIO_FILES":
                 return {...state, audioItems: []}
             case "LOAD_PROJECT_FROM_FILE":

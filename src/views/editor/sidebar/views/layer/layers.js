@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux'
-import { selectLayer, dispatchAction, setSidebarWindowIndex } from '@redux/actions/items'
+import { selectLayer, dispatchAction, setSidebarWindowIndex, editMasterSettings } from '@redux/actions/items'
 import withHeader from '../../HOC/withheader'
 import Delete from '@material-ui/icons/Delete'
 import EffectList from './effects'
 import GroupContainer from '../../input/groupcontainer'
 import classes from '../item/items.css'
+import ConfigList from '../../input/input'
 
 class LayerList  extends React.Component {
 
@@ -31,6 +32,13 @@ class LayerList  extends React.Component {
 
     return (
       <div className={classes.root}>
+          <ConfigList 
+            edit={editMasterSettings} 
+            defaultConfig={this.props.masterSettings.defaultConfig} 
+            item={this.props.masterSettings} 
+            addAutomation={this.addAutomation}>
+          </ConfigList>
+                    
           <GroupContainer label={"Layers"} expanded>
             <div style={{display: "flex", flexFlow: "row wrap", flexDirection: "row"}}>
                 <div style={{backgroundColor: "rgb(231, 231, 231)", height: 20, width: "100%", display:"flex", justifyContent: "flex-end"}}>
@@ -39,8 +47,6 @@ class LayerList  extends React.Component {
                       <div onClick={this.create3DLayer} className={classes.button} style={{width: 30, height:20, minWidth: 20, minHeight: 20, marginLeft: 5}}>+3D</div>
                     </div>
                 </div>
-
-                
 
                 {sortedItems.map((item, i) => {
                   return( 
@@ -71,7 +77,8 @@ class LayerList  extends React.Component {
 const mapStateToProps = state => {
   return {
     layers: state.items.layers,
-    quickConfigs: state.globals.quickConfigs
+    quickConfigs: state.globals.quickConfigs,
+    masterSettings: state.items.masterSettings
   }
 }
 export default connect(mapStateToProps)(withHeader(LayerList))

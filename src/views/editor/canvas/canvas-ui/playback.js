@@ -4,6 +4,7 @@ import PauseIcon from '@material-ui/icons/PauseCircleFilled'
 import StopIcon from '@material-ui/icons/Stop'
 import classes from './playbackbuttons.css'
 import { connect } from 'react-redux'
+import { editProjectSettings } from '@redux/actions/globals'
 
 
 
@@ -38,7 +39,11 @@ Time = connect(state => { return {time: state.globals.time}})(Time)
 TimeLine = connect(state => { return {time: state.globals.time}})(TimeLine)
 
 class PlaybackPanel extends PureComponent {
+    state={volume:100}
 
+    volumeChange = (e) => {
+        editProjectSettings({key: "masterVolume", value: e.target.value})
+    }
     
     render() {
         // <Button disableRipple color="primary" type="raised" onClick={this.props.openFullScreen}>Fullscreen</Button>
@@ -47,19 +52,23 @@ class PlaybackPanel extends PureComponent {
 
                 <TimeLine clipDuration={this.props.clipDuration} width={this.props.width}></TimeLine>
                 
-                <div style={{display: "flex", flexDirection: "row"}}>
-                    <Time></Time>
-                    
-                    <div className={classes.buttonsWrapper} >
-
+                <div style={{display: "flex"}}>
+                    <div style={{flex: 1, display: "flex", marginRight: "auto"}}>
+                        <Time></Time>
+                    </div>
+                    <div style={{flex: 1, display: "flex", justifyContent:"center"}}>
                         {this.props.playing ? 
-                            <PauseIcon className={classes.icon} onClick={this.props.play}></PauseIcon>
+                            <PauseIcon  className={classes.icon} onClick={this.props.play}></PauseIcon>
                         :
                             <PlayIcon className={classes.icon} onClick={this.props.play}></PlayIcon>
                         }
                         
                         <StopIcon className={classes.icon} onClick={this.props.stop}></StopIcon>
                     </div>
+                    <div style={{flex: 1, display: "flex", width: 120, marginLeft: "auto", justifyContent:"flex-end"}}>
+                        <input  type="range" min="0" max="100" value={this.props.masterVolume} onChange={this.volumeChange}/>
+                    </div> 
+                    
 
                 </div>
             </div>
@@ -71,6 +80,7 @@ class PlaybackPanel extends PureComponent {
 const mapStateToProps = state => {
     return {
         clipDuration: state.globals.clipDuration,
+        masterVolume: state.globals.masterVolume
     }
 }
 

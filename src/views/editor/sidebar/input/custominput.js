@@ -3,6 +3,11 @@ import Model3D from './3DModels'
 import LabeledFieldWrapper from './labeledfieldwrapper'
 import {dispatchAction} from '@redux/actions/items'
 
+import ColorPicker from './colorpicker';
+
+
+
+
 const inputStyles = {
     Number: {marginRight: 10, width: 50, minWidth: 50, marginLeft: 5},
     String: { minWidth: "25%", marginRight: 10, marginLeft: 5},
@@ -13,9 +18,17 @@ const inputStyles = {
 
 
 export default class CustomInput extends PureComponent {
+    constructor(props) {
+        super(props);
 
+        this.state = { 
+            modal3DOpen: false, 
+            colorPickerOpen: false, 
+            colorAnchorEl: null 
+        }
+        this.colorPickerRef = React.createRef();
+    }
 
-    state = { modal3DOpen: false }
 
     open3DModal = () => this.setState({modal3DOpen: true})
     close3DModal = () =>  this.setState({modal3DOpen: true}) 
@@ -24,10 +37,13 @@ export default class CustomInput extends PureComponent {
         this.setState({modal3DOpen: false})
     }
 
+    
+
     render() {
         const { keyVal, type, value, disabled, options, min, max, step } = this.props
         const key = keyVal
 
+        
         return (
             <div key={key} style={{width: "100%", borderBottom: "1px solid #e0e0e0"}}>
                <Model3D addItem={this.add3DModel} open={this.state.modal3DOpen} handleClose={this.close3DModal}></Model3D>
@@ -37,6 +53,11 @@ export default class CustomInput extends PureComponent {
                     </LabeledFieldWrapper>
                 }
                 
+                {type=== "Color" && 
+                    <LabeledFieldWrapper {...this.props}>
+                        <ColorPicker type={type} keyVal={key} onChange={this.props.handleChange} onCustomChange={this.props.handleCustomChange} value={value}></ColorPicker>
+                    </LabeledFieldWrapper>
+                }
                 
                 {type === "Number" && 
                     <LabeledFieldWrapper {...this.props}>
