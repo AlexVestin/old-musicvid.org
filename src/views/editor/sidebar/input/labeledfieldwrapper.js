@@ -3,7 +3,6 @@ import React, { PureComponent } from 'react'
 import Help from '@material-ui/icons/Help'
 import Tooltip from '@material-ui/core/Tooltip';
 import classes from './labeledfieldwrapper.css'
-import { withStyles } from '@material-ui/core/styles';
 import AutomationPopper from './automationpopper'
 
 
@@ -56,11 +55,12 @@ const Title = (props) => {
 const AutomationIcon = (props) => {
     const autoIconWidth = 18
     
+    console.log("AUTOMATIONS", props)
 
     return(
         <Tooltip id="tooltip-top-start" title={"Add keyframe track (disabled)"} placement="right-end">
             <div style={{width: autoIconWidth, height: autoIconWidth}}>
-               <AutomationPopper item={props.item}></AutomationPopper>
+               <AutomationPopper  {...props}></AutomationPopper>
             </div>
         </Tooltip>
     )

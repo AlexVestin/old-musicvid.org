@@ -5,6 +5,8 @@ import Automation from './item'
 import classes from './automations.css'
 import uuid from 'uuid/v1'
 
+
+
 class Automations extends PureComponent {
 
     addAutomation = () => {
@@ -41,11 +43,11 @@ class Automations extends PureComponent {
                                 )
                             })}
                         </div>
+
+
                     </div>
                 :
-                <Automation item={item}>
-                   
-                </Automation>
+                <Automation item={item}></Automation>
                 }
             </div>
         )

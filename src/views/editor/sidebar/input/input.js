@@ -16,6 +16,7 @@ class ConfigList extends Component {
 
     handleCustomChange = input => {
         let value = input.value;
+        console.log(input.key, value)
         this.props.edit({key: input.key, value: value })
     }
     

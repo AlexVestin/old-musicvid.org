@@ -30,11 +30,12 @@ class GroupContent extends PureComponent {
                         max:config.max, 
                         step: config.step,
                         item:item,
-                        _automationEnabled: config._automationEnabled,
-                        _automationId: config._automationId,
-                        _automationType: config._automationType,
+                        _automationEnabled: item[key]._automationEnabled,
+                        _automationId: item[key]._automationId,
+                        _automationType: item[key]._automationType,
                     } 
- 
+                    
+                    console.log(itemProps, "sdfkomnsdfpiomsdfop", config);
                     return(
                             <CustomInput key={key} name={item.type} {...props} {...itemProps}></CustomInput>
                         )

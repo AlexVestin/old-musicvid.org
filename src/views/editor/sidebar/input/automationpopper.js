@@ -47,8 +47,11 @@ class AutomationPopper extends PureComponent {
       }
 
       onChange = (e) => {
-          const idx = e.target.selectedIdx;
-          const item = this.props.automations[Object.keys(this.props.automations)[idx]];
+          const idx = e.target.selectedIndex;
+          const key = Object.keys(this.props.automations)[idx];
+          const item = this.props.automations[key];
+
+          
           this.props.onChange({type: "Number", key:"_automationId", value: item.id});
           this.props.onChange({type: "Boolean", key:"_automationEnabled", value: true});
       }
@@ -85,6 +88,14 @@ class AutomationPopper extends PureComponent {
                             <div>
                                 enabled
                                 <input value={this.props._automationEnabed} type="checkbox"></input>
+                            </div>
+
+                            <div>
+                                <select>
+                                    <option value="*"></option>
+                                    <option value="+"></option>
+                                    <option value="="></option>
+                                </select>
                             </div>
                         </div>
                     </div>
