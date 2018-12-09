@@ -76,6 +76,7 @@ export default class CirclePlayer extends CombinedAudioItem {
     }
 
     _updateConfig = (config) => { 
+        console.log(config)
         this.config = config
     }
 
@@ -101,6 +102,7 @@ export default class CirclePlayer extends CombinedAudioItem {
 
         const cAmp = (1.001 + amp / 24) || 1.01;
 
+
         const startAngle = (staticRotation / 180) * Math.PI;
         const angle = (2 * Math.PI / totalSize) * index + startAngle;
         const cx = (x  * this.canvas.width) + (radius + totalAmp / 4) * Math.cos(angle);
@@ -108,20 +110,18 @@ export default class CirclePlayer extends CombinedAudioItem {
         
         const cxOuter = (x  * this.canvas.width) + (radius + totalAmp / 4) * Math.cos(angle) * cAmp;
         const cyOuter = (y * this.canvas.height) + (radius + totalAmp / 4) * Math.sin(angle) * cAmp;
-
         
-        this.setStyle();
         this.ctx.moveTo(cx, cy);
         this.ctx.lineTo(cxOuter, cyOuter);
-        
     }
 
-    _animate = (time, audioData) => {
+    _animate = (time, audioData, alpha) => {
         const { x, y, radius, emblemMargin } = this.config
-
+       
         const bins = this.getTransformedSpectrum(audioData.bins);
         const amp = this.getImpactAmplitude(audioData.bins);
         const size = bins.length;
+        this.ctx.globalAlpha = alpha;
 
         const rad = (radius + amp / 4) - emblemMargin
         if(this.config.fillEmblem && rad > 0) {
@@ -131,6 +131,7 @@ export default class CirclePlayer extends CombinedAudioItem {
             this.ctx.fill();
         }
 
+        this.setStyle();
         this.ctx.beginPath();
         if(this.config.mirror) {
             for(var i = 0; i < size; i++) {

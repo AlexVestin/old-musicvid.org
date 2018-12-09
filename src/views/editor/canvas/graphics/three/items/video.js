@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import Demuxer from '@/videoencoder/demuxer.js'
 
 export default class Video extends BaseItem {
-    constructor(config, sceneConfig) {
+    constructor(config, fileConfig, sceneConfig) {
         super(config) 
         var fr = new FileReader()
         this.bytesLoaded = false
@@ -31,7 +31,7 @@ export default class Video extends BaseItem {
         
         this.mesh = new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2),
-            new THREE.MeshBasicMaterial({map: this.tex})
+            new THREE.MeshBasicMaterial({map: this.tex, transparent: true})
         );
     }   
 

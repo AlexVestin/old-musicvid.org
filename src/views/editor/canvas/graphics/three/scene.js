@@ -410,27 +410,14 @@ export default class SceneContainer {
         }
     }
 
-    addAutomation = (automation, itemId) => {
-        const item = this.items.find(e=>e.id = itemId)
-        item.automations.push(automation)  
+    applyAutomations = (values) => {
+        //console.log("values", values[0])
     }
 
-    editAutomationPoint = ( pointId, value, key, itemId ) => {
-        const item = this.items.find(e=>e.id = itemId)
-        const aIdx =  item.automations.findIndex(e => e.name === key)
-        const pointIdx = item.automations[aIdx].points.findIndex(e => e.id === pointId)
-        item.automations[aIdx].points[pointIdx].value = value
-    }
 
-    addAutomationPoint = ( point, key, itemId, automationId ) => {
-        const item = this.items.find(e => e.id === itemId)
-        const aIdx =  item.automations.findIndex(e => e.name === key)
-        item.automations[aIdx].points.push(point)
-    }
-
-    animate = (time, frequencyBins) => {
+    animate = (time, frequencyBins, alpha) => {
         this.addOrRemove(this.toRender, this.rendering, this.scene, time)
-        this.rendering.forEach(e =>  e.animate(time, frequencyBins))
+        this.rendering.forEach(e =>  e.animate(time, frequencyBins, alpha))
         if(this.controls)this.controls.update()
     }
 

@@ -137,8 +137,8 @@ export default class WaveletCanvas extends BaseItem {
 
     }
 
-    setStyle = (dt) => {
-        const alpha = this.config.alpha || 0.25
+    setStyle = (dt, a) => {
+        const alpha = this.config.alpha * a || 0.25 * a;
         
         if(this.config.shiftingColors) {
             const cs =  128 - this.config.shiftingDarkness
@@ -172,7 +172,7 @@ export default class WaveletCanvas extends BaseItem {
     //const node = Analyser(audio, audiothis.ctx, { audible: true, stereo: false })
     //loop.on('tick', render).start()
 
-    animate = (dt, data) => {
+    animate = (dt, data, alpha) => {
         let  audioData, amp
         if(this.config.useFFTBins) {
             audioData = data.bins
@@ -186,7 +186,7 @@ export default class WaveletCanvas extends BaseItem {
         const dur = this.time / this.config.songDuration
         const bufferLength = audioData.length
 
-        this.setStyle(dt)
+        this.setStyle(dt, alpha)
 
         // set up our this.camera
         // with WebGL (persistent lines) could be

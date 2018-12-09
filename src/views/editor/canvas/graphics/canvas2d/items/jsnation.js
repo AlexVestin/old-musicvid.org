@@ -1,4 +1,5 @@
 import BaseItem from '../../itemtemplates/item'
+import { runInThisContext } from 'vm';
 
 
 export default class JSNation extends BaseItem {
@@ -127,7 +128,8 @@ export default class JSNation extends BaseItem {
         }
 
 
-        setStyle = () => {
+        setStyle = (alpha) => {
+            this.ctx.globalAlpha = alpha;
             if(this.config.glow ===  true) {
                 this.ctx.shadowBlur = this.config.shadowBlur;
                 this.ctx.shadowOffsetX = 0;

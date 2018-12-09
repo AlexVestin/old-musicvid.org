@@ -63,10 +63,11 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.config = config
     }
 
-    setStyle = () => {
+    setStyle = (alpha) => {
         this.ctx.strokeStyle = "#" + this.config.lineColor;
         this.ctx.fillStyle = "#" + this.config.fillColor;
         this.ctx.lineWidth = this.config.lineWidth; 
+        this.ctx.globalAlpha = alpha;
         if(this.config.glow) {
             this.ctx.shadowColor = '#' +  this.config.shadowColor;
             this.ctx.shadowBlur = this.config.shadowBlur;
@@ -97,7 +98,7 @@ export default class CirclePlayer extends CombinedAudioItem {
         this.ctx.lineTo(cxOuter, cyOuter);
     }
 
-    _animate = (time, audioData) => {
+    _animate = (time, audioData, alpha) => {
         const { x, y, radius, emblemMargin, startAngle } = this.config
 
         const bins = this.getTransformedSpectrum(audioData.bins);
@@ -115,7 +116,7 @@ export default class CirclePlayer extends CombinedAudioItem {
             this.ctx.fill();
         }
 
-        this.setStyle()
+        this.setStyle(alpha);
 
         
         this.ctx.beginPath();

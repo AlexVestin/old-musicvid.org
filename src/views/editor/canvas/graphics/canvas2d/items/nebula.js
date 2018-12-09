@@ -14,8 +14,10 @@ class Puff {
     constructor(p, ctx, canvas, w, h) {
         var	opacity, sy = ( Math.random()*285 ) >> 0, sx = (Math.random()*285)>>0;
         this.p = p;
+
+        this.globalAlpha = 1;
         
-        this.move = function(timeFac) {	            
+        this.move = function(timeFac, alpha) {	            
             let p = this.p + 0.3 * timeFac;				
             opacity = ( Math.sin ( p * 0.05 )*0.5);						
             
@@ -26,7 +28,7 @@ class Puff {
             }												
             this.p = p;																			
             
-            ctx.globalAlpha = opacity;
+            ctx.globalAlpha = opacity * alpha;
             ctx.drawImage(canvas, sy+p, sy+p, 285-(p*2), 285-(p*2), 0, 0, w, h);	
         };
     }
@@ -114,7 +116,7 @@ export default class Nebula extends BaseItem {
         this.oldTime = time;
     }
 
-    animate = (newTime, frequencyBins) => {
+    animate = (newTime, frequencyBins, alpha) => {
         var	sortPuff = function(p1,p2) { return p1.p - p2.p; };	        
         if(this.oldTime === 0 ) {
             this.oldTime = newTime;
@@ -125,7 +127,7 @@ export default class Nebula extends BaseItem {
         this.oldTime = newTime;						
         
         this.puffs.sort(sortPuff);							
-        this.puffs.forEach( p => p.move(timeFac) )
+        this.puffs.forEach( p => p.move(timeFac, alpha) )
         this.ctx2.drawImage(this.canvas, 0, 0, this.width, this.height);				
     }
 }

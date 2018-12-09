@@ -198,8 +198,9 @@ export default class InceptionCity extends BaseItem {
     };
     
 
-    animate = (newTime, frequencyBins) => {
+    animate = (newTime, frequencyBins, alpha) => {
         this.ctx.translate(this.canvas.width/2, this.canvas.height/2); 
+        this.ctx.globalAlpha = alpha;
         this.updateScene(newTime)
         this.drawScene()
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);

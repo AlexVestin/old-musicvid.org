@@ -27,7 +27,7 @@ export default class AudioCircle extends BaseItem {
 
         var geometry = new THREE.CircleGeometry( 32, 32 );
         geometry.center()
-        var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+        var material = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true } );
         this.mesh = new THREE.Mesh( geometry, material );
     }
 

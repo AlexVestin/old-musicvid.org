@@ -39,6 +39,7 @@ export default class Object3D extends BaseItem {
                 this.mesh = obj;
                 this.mesh.scale.multiplyScalar( 0.8 );
                 this.mesh.position.y = -10;
+                this.mesh.material.transparent = true
 
       
                 /*

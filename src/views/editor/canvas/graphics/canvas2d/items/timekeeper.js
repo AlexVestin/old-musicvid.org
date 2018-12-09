@@ -43,7 +43,8 @@ export default class TimeKeeper extends BaseItem {
         this.config = config
     }
 
-    setStyle = () => {
+    setStyle = (alpha) => {
+        this.ctx.globalAlpha = alpha;
         this.ctx.shadowColor = '#' +  this.config.shadowColor;
         this.ctx.shadowBlur = this.config.shadowBlur;
 

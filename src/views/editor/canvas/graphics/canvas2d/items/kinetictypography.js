@@ -555,7 +555,7 @@ export default class KineticText extends AudioImpactItem {
 		camera.display.y = height/2;
 	}
 	
-	_animate = (time, audioData) => {
+	_animate = (time, audioData, alpha) => {
 		const amp = this.getImpactAmplitude(audioData.bins);
 
 		if(this.initialized) {
@@ -578,6 +578,7 @@ export default class KineticText extends AudioImpactItem {
 			this.ctx.fillStyle = backgroundColor;
 			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 			this.ctx.strokeStyle = strokeColor;
+			this.ctx.globalAlpha = alpha;
 			this.update();
 			this.draw();
 		}	

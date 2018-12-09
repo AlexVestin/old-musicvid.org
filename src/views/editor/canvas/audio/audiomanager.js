@@ -40,7 +40,6 @@ export default class AudioManager {
         this.Module["onRuntimeInitialized"] = () => { 
             this.onModuleLoaded()
         };
-        
     }
 
     merge = (arr1, arr2) => arr1.map((e,i) => e + arr2[i])
@@ -73,15 +72,14 @@ export default class AudioManager {
                         
                         const bufferSource = that.offlineCtx.createBufferSource();
                         bufferSource.buffer = buf;
-                        if(frame.volume !== 100 || that.masterVolume !== 100) {
+                        if(frame.volume !== 100) {
                             const gainNode = that.offlineCtx.createGain();
-                            gainNode.gain.value = ((frame.volume) / 100) * that.masterVolume / 100;
+                            gainNode.gain.value = frame.volume / 100;
 
                             bufferSource.connect(gainNode);
                             gainNode.connect(that.offlineCtx.destination)
                         }else {
                             bufferSource.connect(that.offlineCtx.destination)
-                            
                         }
                         buffersToSchedule.push(bufferSource)
    
@@ -125,10 +123,13 @@ export default class AudioManager {
         if(this.playing) {
             const buffer = this.buffers.pop()
             if(buffer !== EMPTY_BUFFER && buffer !== undefined) {
-                this.bufferSources[index] = this.audioCtx.createBufferSource()
-                this.bufferSources[index].buffer = buffer
-                this.bufferSources[index].connect(this.audioCtx.destination)
-                if(this.frameIdx === 0) this.startTime = this.audioCtx.currentTime
+                this.bufferSources[index] = this.audioCtx.createBufferSource();
+                this.bufferSources[index].buffer = buffer;
+                const gainNode = this.audioCtx.createGain();
+                gainNode.gain.value = this.masterVolume / 100;
+                this.bufferSources[index].connect(gainNode);
+                gainNode.connect(this.audioCtx.destination);
+                if(this.frameIdx === 0) this.startTime = this.audioCtx.currentTime;
                 this.bufferSources[index].start(this.startTime + this.sampleWindowSize * this.frameIdx)
             }
             

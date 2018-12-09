@@ -36,6 +36,11 @@ export default class SceneContainer {
                 shouldUseClearRect: true,
                 zIndex: 1,
                 pixelRatio: 720,
+                ameraShake: 0,
+                fadeInDuration: 0,
+                fadeInAtTime: 0,
+                fadeOutAtTime: 0,
+                fadeOutTime: 0,
                 defaultConfig: [ {
                     title: "Settings", 
                     items: {
@@ -43,6 +48,11 @@ export default class SceneContainer {
                         clearAlpha: {type: "Number", value: 1, tooltip: "Alpha of the background when clearing, not used when shouldUseClearRect is checked"},
                         shouldUseClearRect: {type: "Boolean", value: true, tooltip: "Clears the entire canvas, more performant than using a clear color"},
                         zIndex: {type: "Number", value: 1, tooltip: "Position of this layer relative to other layers"},
+                        cameraShake: {type: "Number", value: 0, disabled: true},
+                        fadeInDuration: {type: "Number", value: 0},
+                        fadeInAtTime: {type: "Number", value: 0},
+                        fadeOutAtTime: {type: "Number", value: 0},
+                        fadeOutTime: {type: "Number", value: 0},
                     }
                 }],
                 items: [],
@@ -268,25 +278,16 @@ export default class SceneContainer {
         }
     }
 
-    addAutomation = (automation, itemId) => {
-        const item = this.items.find(e=>e.id = itemId)
-        item.automations.push(automation)  
+    applyAutomations = (values) => {
+        //console.log("values", values[0])
     }
 
-    editAutomationPoint = ( pointId, value, key, itemId ) => {
-        const item = this.items.find(e=>e.id = itemId)
-        const aIdx =  item.automations.findIndex(e => e.name === key)
-        const pointIdx = item.automations[aIdx].points.findIndex(e => e.id === pointId)
-        item.automations[aIdx].points[pointIdx].value = value
-    }
-
-    addAutomationPoint = ( point, key, itemId, automationId ) => {
-        const item = this.items.find(e => e.id === itemId)
-        const aIdx =  item.automations.findIndex(e => e.name === key)
-        item.automations[aIdx].points.push(point)
-    }
-
-    animate = (time, frequencyBins) => {
+    animate = (time, frequencyBins, alpha) => {
+        let internalAlpha = 0;
+        if(time > this.config.fadeInAtTime) {
+            let dt = time - this.config.fadeInAtTime;
+            internalAlpha = dt / this.config.fadeInDuration;
+        }
     
         if(this.config.shouldUseClearRect) {
             this.textureCtx.clearRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
@@ -303,7 +304,7 @@ export default class SceneContainer {
         this.rendering = this.rendering.sort((a, b) => a.config.zIndex - b.config.zIndex)
         this.rendering.forEach(item => {
             this.textureCtx.save();
-            item.animate(time, frequencyBins);
+            item.animate(time, frequencyBins, 1);
             this.textureCtx.restore();
         } )
         //this.textureCtx.drawImage(this.canvas, 0, 0, this.textureCanvas.width, this.textureCanvas.height)

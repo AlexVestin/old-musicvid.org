@@ -81,6 +81,7 @@ export default class Demuxer {
                 this.setFrame(0)
                 this.oninit({videoInfo: this.videoInfo, audio: {bitrate: this.bitrate, left: this.audioLeft, right: data}})
                 this.extractAudio--;
+                console.log("DONE DECODING AUDIO")
             }else {
                 this.frames.push({frameId:  this.awaitedFrameId, data: data })
                 if(!this.cacheDone) {

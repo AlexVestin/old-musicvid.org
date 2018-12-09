@@ -41,7 +41,7 @@ export default class CirculatingLights extends AudioImpactItem {
     addLights = () => {
         this.sphere = new THREE.SphereBufferGeometry( 0.5, 16, 8 );
         this.light1 = new THREE.PointLight( 0x550040, 2, 50 );
-        this.sphereMesh = new THREE.Mesh(this.sphere, new THREE.MeshBasicMaterial( { color: 0x550040 } ) ); 
+        this.sphereMesh = new THREE.Mesh(this.sphere, new THREE.MeshBasicMaterial( { color: 0x550040, transparent: true} ) ); 
         this.light1.add( this.sphereMesh );
         
         this.mesh.add( this.light1 );

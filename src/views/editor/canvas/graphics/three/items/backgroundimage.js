@@ -41,7 +41,7 @@ export default class BackgroundImage extends BaseItem {
         
         this.mesh = new THREE.Mesh(
             new THREE.PlaneGeometry(2, 2, 0),
-            new THREE.MeshBasicMaterial()
+            new THREE.MeshBasicMaterial({transparent: true})
         );
 
         fr.readAsDataURL(config.file) 

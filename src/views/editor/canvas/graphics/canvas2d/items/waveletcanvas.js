@@ -135,8 +135,8 @@ export default class WaveletCanvas extends BaseItem {
 
     }
 
-    setStyle = (dt) => {
-        const alpha = this.config.alpha || 0.25
+    setStyle = (dt, a) => {
+        const alpha = (this.config.alpha || 0.25) * a;
         
         if(this.config.shiftingColors) {
             const cs =  128 - this.config.shiftingDarkness

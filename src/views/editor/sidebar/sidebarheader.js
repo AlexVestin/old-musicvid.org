@@ -5,6 +5,7 @@ import classes from './sidebarheader.css'
 import CollectionsIcon from '@material-ui/icons/Collections'
 import AudioTrack from '@material-ui/icons/Audiotrack'
 import Settings from '@material-ui/icons/Settings'
+import BrightnessAuto from '@material-ui/icons/BrightnessAuto'
 
 
 class SidebarHeader extends Component {
@@ -14,8 +15,7 @@ class SidebarHeader extends Component {
     };
 
     shouldComponentUpdate(props) {
-
-        return props.idx <= 2 || props.idx === 5
+        return props.idx <= 3 || props.idx === 5
     }
 
     render() {
@@ -28,6 +28,7 @@ class SidebarHeader extends Component {
                     <Tab idx={0} selectedIdx={idx !== 5 ? idx : 0}><CollectionsIcon></CollectionsIcon></Tab>
                     <Tab idx={1} selectedIdx={idx !== 5 ? idx : 0}><AudioTrack></AudioTrack></Tab>
                     <Tab idx={2} selectedIdx={idx !== 5 ? idx : 0}><Settings></Settings></Tab>
+                    <Tab idx={3} selectedIdx={idx !== 5 ? idx : 0}><BrightnessAuto></BrightnessAuto></Tab>
                 </div>
            </div>
         )

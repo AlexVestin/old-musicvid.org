@@ -37,6 +37,10 @@ class Previews extends PureComponent {
         this.imageRef.current.onchange = () => {
             add("IMAGE", this.imageRef.current)
         }
+
+        this.videoRef.current.onchange = () => {
+            add("VIDEO", this.videoRef.current)
+        }
     }
 
     loadVideo = (keepAudio) => {
@@ -55,6 +59,7 @@ class Previews extends PureComponent {
 
     closeModal = () => {
         this.setState({modalOpen: false})
+        
     }
 
     addItem = (item) => {

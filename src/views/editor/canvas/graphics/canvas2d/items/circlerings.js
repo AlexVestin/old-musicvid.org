@@ -18,13 +18,14 @@ class SpaceShip {
     }
 
 
-    draw = (ctx, config, amp) => {	
+    draw = (ctx, config, amp, alpha) => {	
         if (this.angle > Math.PI * 2) this.angle -= Math.PI * 2;
 
         this.hue += (this.hue_target - this.hue) * 0.05;
         this.color = 'hsl(' + this.hue + ', 100%, 50%)';	
         ctx.strokeStyle = this.color;	
-        
+
+        ctx.globalAlpha = alpha;
         if(config.glow ===  true) {
             ctx.shadowColor = '#' +  config.shadowColor;
             ctx.shadowBlur = config.shadowBlur;
@@ -123,6 +124,7 @@ export default class CircleRings extends AudioImpactItem {
 
     }
 
+
     _updateConfig = (config) => {
         this.config = config 
         this.updateShips()
@@ -163,10 +165,10 @@ export default class CircleRings extends AudioImpactItem {
         this.updateShips()
     }
 
-    animate = (time, frequencyBins) => {
+    animate = (time, frequencyBins, alpha) => {
         //this.innerCircle.draw(this.ctx, true);
         
         let sum  = this.getImpactAmplitude(frequencyBins.bins)
-        this.ships.forEach(ship => ship.draw(this.ctx, this.config, sum));
+        this.ships.forEach(ship => ship.draw(this.ctx, this.config, sum, alpha));
     }
 }

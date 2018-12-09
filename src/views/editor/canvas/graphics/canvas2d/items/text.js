@@ -45,15 +45,16 @@ export default class SimpleText extends BaseItem {
         
     }
 
-    setStyle = () => {
+    setStyle = (alpha) => {
+        this.ctx.globalAlpha = alpha;
         this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`
         this.ctx.fillStyle = '#' + this.config.color;
         this.ctx.textAlign = this.config.textAlign
         this.ctx.textBaseline  = this.config.baseLine
     }
 
-    animate = (time, audioData) => {
-        this.setStyle();
+    animate = (time, audioData, alpha) => {
+        this.setStyle(alpha);
         this.ctx.fillText(this.config.text, this.config.x * this.canvas.width, this.config.y* this.canvas.height)
     }
 

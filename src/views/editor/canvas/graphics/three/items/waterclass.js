@@ -11,7 +11,6 @@
 
 import * as THREE from 'three'
 
-
 class Water extends THREE.Mesh {
 	constructor(geometry, options, sceneConfig) {
 		super(geometry)

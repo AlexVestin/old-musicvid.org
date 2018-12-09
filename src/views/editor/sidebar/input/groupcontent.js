@@ -29,7 +29,10 @@ class GroupContent extends PureComponent {
                         min: config.min, 
                         max:config.max, 
                         step: config.step,
-                        item:item
+                        item:item,
+                        _automationEnabled: config._automationEnabled,
+                        _automationId: config._automationId,
+                        _automationType: config._automationType,
                     } 
  
                     return(

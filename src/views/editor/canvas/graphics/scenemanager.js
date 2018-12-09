@@ -12,6 +12,7 @@ import { setEncoding } from '@redux/actions/globals';
 import { setSidebarWindowIndex, dispatchAction } from '@redux/actions/items'
 import AudioManager from '../audio/audiomanager'
 import Sound from "../audio/sound"
+import AutomationManager from './automationmanager'
 
 class ThreeCanvas extends Component {
     constructor(props) {
@@ -52,7 +53,7 @@ class ThreeCanvas extends Component {
         this.internalCanvas = document.createElement("canvas");
         this.internalCanvas.width = 1920;
         this.internalCanvas.height = 1080;
-        
+
         // Threejs renderer set-up
         this.renderer = new WebGLRenderer({antialias: true, alpha: true, canvas: this.internalCanvas});
         this.renderer.setSize(this.internalCanvas.width, this.internalCanvas.height);
@@ -63,6 +64,8 @@ class ThreeCanvas extends Component {
         // Subscribe to redux store for that long-ass switch further down
         this.unsubscribe = store.subscribe(this.handleChange);
         this.encodedFrames = 0;
+
+        this.automationManager = new AutomationManager();
 
         if(!this.props.loadFromFile) {
             dispatchAction({type: "RESET_REDUCER"});
@@ -320,15 +323,27 @@ class ThreeCanvas extends Component {
             case "CREATE_EFFECT":
                 this.createEffect(state.lastAction.payload)
                 break;
+
             case "ADD_AUTOMATION_POINT":
-                scene.addAutomationPoint(payload.point, payload.key, this.selectedItemId)
+                this.automationManager.addPoint(payload);
                 break;
             case "EDIT_AUTOMATION_POINT":
-                scene.editAutomationPoint(payload.id, payload.value, payload.key, this.selectedItemId)
+                this.automationManager.editPoint(payload);
+                break;
+            case "REMOVE_AUTOMATION_POINT":
+                this.automationManager.removeAutomationPoint(payload);
                 break;
             case "ADD_AUTOMATION":
-                scene.addAutomation(payload.automation, this.selectedItemId)
+                this.automationManager.addAutomation(payload);
                 break;
+            case "EDIT_AUTOMATION":
+                this.automationManager.editAutomation(payload);
+                break;
+           
+            case "REMOVE_AUTOMATION":
+                this.automationManager.removeAutomation(payload)
+                break;
+
             case "MOVE_ITEM":
                 scene.moveItem(payload.item, payload.up)
                 break;
@@ -366,7 +381,7 @@ class ThreeCanvas extends Component {
         this.encodedFrames = -1
         this.setTime(0)
         dispatchAction({type:"SET_EXPORT", payload: false})
-    }
+    } 
    
     addLayer = (layer) =>  {
         this.scenes.push(layer)
@@ -456,20 +471,23 @@ class ThreeCanvas extends Component {
     
 
     renderScene = (time, stepping) => { 
-        this.time = time
-        const frequencyBins = this.audioManager.getBins(this.time, stepping)
-        this.renderer.clear()
-        this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex)
+        this.time = time;
+        const frequencyBins = this.audioManager.getBins(this.time, stepping);
+        this.renderer.clear();
+        this.scenes = this.scenes.sort((a,b) => a.config.zIndex - b.config.zIndex);
         
+        const alpha = 1;
         this.scenes.forEach((scene => {
-            scene.animate(this.time, frequencyBins)
-            scene.render(this.renderer, this.postProcessingEnabled)
-            this.renderer.clearDepth()
+            scene.applyAutomations(this.automationManager.getAutomationValues(this.time));
+            scene.animate(this.time, frequencyBins, alpha);
+            scene.render(this.renderer, this.postProcessingEnabled);
+            this.renderer.clearDepth();
         }));
         
         if(this.postProcessingEnabled) {
-            this.renderTarget.update(time, frequencyBins)
+            this.renderTarget.update(time, frequencyBins);
             this.renderTarget.render();
+            this.renderer.clearDepth();
         }       
         
         this.externalCtx.drawImage(this.internalCanvas, 0, 0, this.externalCanvas.width, this.externalCanvas.height);

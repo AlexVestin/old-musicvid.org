@@ -17,19 +17,24 @@ export default class BaseItem {
         this.config = {}
         this.config.defaultConfig = [timeGroup]
         //TODO UUID ?
-        this.config._easyConfigs= false;
-        this.config.id          = Math.floor(Math.random() * 10000000);
-        this.config.offsetLeft  = 0;
-        this.config.name        = config.name;
-        this.config.movable     = true;
-        this.config.sceneId     = config.sceneId;
-        this.config.automations = [];        
-        this.config.itemType    = config.type; 
+        this.config._easyConfigs        = false;
+        this.config.id                  = Math.floor(Math.random() * 10000000);
+        this.config.offsetLeft          = 0;
+        this.config.name                = config.name;
+        this.config.movable             = true;
+        this.config.sceneId             = config.sceneId;
+        this.config.itemType            = config.type; 
+        this.config._automationId       = null;
+        this.config._automationEnabled  = false;
+        this.config._automationType     = "*";
         
         this.mesh = {};
-        this.automations = [];
         this.getConfig();
         this._lastTime = -1;
+    }
+
+    applyAutomations = (values) => {
+        
     }
 
     addItem = () => {
@@ -38,15 +43,14 @@ export default class BaseItem {
         this.mesh.name = String(this.config.id)
     }
 
-    _updateGroup = (group, config) => {
+    __updateGroup = (group, config) => {
         if(group.isSuperGroup) {
-            group.items.forEach(g => this._updateGroup(g, config));
+            group.items.forEach(g => this.__updateGroup(g, config));
             return;
         }
 
         Object.keys(group.items).forEach(key => {
             const { type, max, min } = group.items[key]
-
             if( type === "Number") {
                 config[key] = this.checkNum(config[key])
 
@@ -60,7 +64,7 @@ export default class BaseItem {
         const c = {...config}
 
         c.defaultConfig.forEach(group => {
-            this._updateGroup(group, config);
+            this.__updateGroup(group, c);
         })
 
         this._updateConfig(c)
@@ -83,54 +87,20 @@ export default class BaseItem {
         })
     }
 
-    animate = (time, frequencyBins) => {
+    animate = (time, frequencyBins, alpha) => {
         if(time !== this._lastTime) {
-            this.updateAutomations(time)
-            this._animate(time, frequencyBins)
+            this._animate(time, frequencyBins, alpha)
         }
       
         this._lastTime = time
     }
     checkNum = (nr) => isNaN(nr) ? 0 :  Number(nr)
 
-    updateAutomations = (time) => {
-        const automations = this.automations
-        let changed = false
-        let config = {...this.config}
-        if(automations.length > 0) {
-            automations.forEach(e => {
-                const index = e.points.findIndex(p => p.time >= time) 
-                var newVal = 0
-                if(index > 0 ) {
-                    const tx = (time - e.points[index - 1].time) / (e.points[index].time - e.points[index-1].time)
-                    const valueRange = this.checkNum(e.points[index].value) - this.checkNum(e.points[index-1].value)
-                    newVal = this.checkNum(e.points[index - 1].value) + (tx * valueRange)
-                }else {
-                    newVal = this.checkNum(e.points[e.points.length -1].value)
-                }
-
-                if(config[e.name] !== newVal)changed = true
-                config[e.name] = newVal
-               
-            })
-
-            if(changed) {
-                this._updateConfig(config)
-            }
-        }
-        
-        return {...config}
-    }
+    
 
     incrementTime = (time) => {}
 
-    setTime = (time, _, itemId) => {
-        const config = this.updateAutomations(time)
-        delete config["automations"]
-        if(itemId === config.id && this.automations.length > 0)updateItemConfig(config)
-    }
-
-    setSize = (width, height) => {}
+    setTime = (width, height) => {}
     //TODO remove // find better use
     _updateConfig = (config) => { this.config = config }
     _animate = () => {}

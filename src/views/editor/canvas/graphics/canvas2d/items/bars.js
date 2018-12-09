@@ -24,7 +24,7 @@ export default class Bars extends AudioReactiveItem {
                     color : {value: "FFFFFF", type: "String", tooltip: ""},
                     flip: {value: false, type: "Boolean", tooltip: ""},
                     scale : {value: 0.8, type: "Number", tooltip: ""},
-                    width: {value: 5, type: "Number", tooltip: ""},
+                    width: {value: 14, type: "Number", tooltip: ""},
                     spacing : {value: 2, type: "Number", tooltip: ""},
                 }
             }
@@ -57,7 +57,9 @@ export default class Bars extends AudioReactiveItem {
         
     }
 
-    setStyle = () => {
+    setStyle = (alpha) => {
+        
+        this.ctx.globalAlpha = alpha;
         this.ctx.fillStyle = '#' + this.config.color;
         if(this.config.glow ===  true) {
             this.ctx.shadowColor = this.config.shadowColor
@@ -75,11 +77,13 @@ export default class Bars extends AudioReactiveItem {
         this.config = config
     }
 
-    _animate = (time, audioData) => {
+    _animate = (time, audioData, alpha) => {
         const { width, x, y, spacing } = this.config
         const bins = this.getTransformedSpectrum(audioData.bins)
 
-        this.setStyle();
+        this.setStyle(alpha);
+        console.log(bins);
+        bins[0] = 0;
         for(var i = 0; i < bins.length; i++) {
             const xp = ( x * this.canvas.width)
             const offset = (i - (bins.length/2)) * (spacing + width)

@@ -49,7 +49,7 @@ export default class Bars extends AudioReactiveItem {
         }
         for(var i = 0; i < nrOfBars; i++) {
             var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshPhongMaterial();
+            var material = new THREE.MeshBasicMaterial({transparent: true});
             material.color.setHex("0x" + this.config.color || "FFFFFF")
             var cube = new THREE.Mesh( geometry, material );
 
@@ -83,11 +83,13 @@ export default class Bars extends AudioReactiveItem {
         this.config = config
     }
 
-    _animate = (time, audioData) => {
+    _animate = (time, audioData, alpha) => {
         const { deltaRequired, decreaseSpeed, scale, y, shouldDropOff } = this.config
         const bins = this.getTransformedSpectrum(audioData.bins)
-
+        console.log(alpha)
         this.mesh.children.forEach( (e,i) => {
+            
+            e.material.opacity = alpha;
             var newScale = bins[i] > 1 ? bins[i] : 1;
             if(shouldDropOff && (newScale < e.scale.y || Math.abs(newScale - e.scale.y) < deltaRequired)) {
                 newScale = e.scale.y - decreaseSpeed * (time - this._lastTime)  > 1 ? e.scale.y - decreaseSpeed * (time - this._lastTime) : 1

@@ -33,12 +33,11 @@ export default class Imagh extends BaseItem {
 
         
         this.getConfig()
-        
-        
     }
 
     mirrorImage = (ctx, image, x1 = 0, y1 = 0, x2, y2, horizontal = false, vertical = false) => {
         ctx.save();  // save the current canvas state
+        
         ctx.setTransform(
             horizontal ? -1 : 1, 0, // set the direction of x axis
             0, vertical ? -1 : 1,   // set the direction of y axis
@@ -49,9 +48,9 @@ export default class Imagh extends BaseItem {
         ctx.restore(); // restore the state as it was when this function was called
     }
 
-    animate = (time, audioData) => {
+    animate = (time, audioData, alpha) => {
         const { width, height } = this.canvas
-
+        this.ctx.globalAlpha = alpha;
         
         if(this.loaded) {
             const x1 = this.config.x * width;

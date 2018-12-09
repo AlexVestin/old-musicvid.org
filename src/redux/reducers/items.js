@@ -8,6 +8,8 @@ const baseSettings  = {
     passes: [],
     items: {},
     automations: {},
+    automationIdx: 0,
+    selectedAutomation: null,
     cameras: {},
     controls: {},
     fog: {},
@@ -28,18 +30,47 @@ const baseSettings  = {
 }
 
 export default function itemsReducer(state = baseSettings, action){
-
-        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem, masterSettings
+        var items, passes, layers, automations, id, idx, key, cameras, audioItems, controls, fog, settings, newItem, pointId
         switch(action.type){  
+
+            case "REMOVE_AUTOMATION_POINT":
+                id = action.payload.id;
+                key= action.payload.key;
+                idx = state.automations[id].points.findIndex(e => e.id === action.payload.pointId)
+                state.automations[id].points.forEach(e =>{if(e.id === action.payload.pointId) console.log("FOUND")})
+                automations = update(state.automations, {[id]: {points: {$splice: [[idx, 1]]}}})
+                return {...state, automations}
+            case "ADD_AUTOMATION_POINT":
+                id = action.payload.id;
+                key= action.payload.key;
+                automations = update(state.automations, {[id]: {points: {$push: [{time: action.payload.time, value: 0, id: action.payload.pointId}]}}})
+                return {...state, automations}
+            case "EDIT_AUTOMATION_POINT":
+                id = action.payload.id;
+                key= action.payload.key;
+                pointId = action.payload.pointId;
+                idx = state.automations[id].points.findIndex(e => e.id === action.payload.pointId)
+                automations = update(state.automations, {[id]: {points: {[idx]: {[key]: {$set: action.payload.value}} }}})
+                return {...state, automations}
+            case "EDIT_AUTOMATION":
+                id = action.payload.id;
+                key= action.payload.key;
+                automations = update(state.automations, {[id]: {[key]: {$set: action.payload.value}}})
+                return {...state, automations}
+            case "SET_SELECTED_AUTOMATION":
+                return {...state, selectedAutomation: action.payload, automationIdx: 1}
+            case "SET_AUTOMATION_IDX":
+                return {...state, automationIdx: action.payload}
+            case "ADD_AUTOMATION":
+                let au = {type: "Points", points: [], name: "New automation", id: action.payload.id, amplitude: 1, speed: 1, constant: 0,  offset: 0}
+                return {...state, automationIdx: 1, automations: update(state.automations, {[action.payload.id]: {$set: au}}), selectedAutomation: action.payload.id}
             case "ADD_MASTER_SETTINGS":
                 return {...state, masterSettings: action.payload}
             case "EDIT_MASTER_SETTINGS":
-                console.log(action)
                 return {...state, masterSettings: update(state.masterSettings, {[action.payload.key]: {$set: action.payload.value}})}
             case "RESET_AUDIO_FILES":
                 return {...state, audioItems: []}
             case "LOAD_PROJECT_FROM_FILE":
-                console.log(action.payload)
                 return {...action.payload, loadFromFile: true}
             case "SET_LOAD_FROM_FILE":
                 return {...state, laodFromFile: action.payload}
@@ -47,7 +78,7 @@ export default function itemsReducer(state = baseSettings, action){
                 if(state.loadFromFile){
                     return {...baseSettings}
                 }
-                
+            
                 return {...baseSettings, loadFromFile: false}
             case "EDIT_FOG": 
                 fog =  update(state.fog, {[state.selectedLayerId]: {[action.payload.key]: {$set: action.payload.value}}})
@@ -68,24 +99,7 @@ export default function itemsReducer(state = baseSettings, action){
             case "REPLACE_CAMERA":
                 cameras =  update(state.cameras, {[state.selectedLayerId]: { $set: action.payload }})
                 return {...state, cameras}
-            case "EDIT_AUTOMATION_POINT":
-                key = action.payload.key
-                idx =  state.automations[state.selectedItemId].findIndex(e => e.name === key)
-                const pointIdx  = state.automations[state.selectedItemId][idx].points.findIndex(e => e.id === action.payload.id)
-                const newPoint = {time: action.payload.time, id: action.payload.id, value: action.payload.value}
-                //TODO fix nesting
-                automations = update(state.automations, {[state.selectedItemId]: {[idx]: {points: {[pointIdx]: {$set: newPoint }}}}})
-                return {...state, automations}
-            case "ADD_AUTOMATION_POINT":
-                key = action.payload.key
-                idx =  state.automations[state.selectedItemId].findIndex(e => e.name === key)
-                automations = update(state.automations, {[state.selectedItemId]:  {[idx]: {points: {$push: [action.payload.point] }}}})
-                return {...state, automations}
-            case "ADD_AUTOMATION":
-                id = action.payload.automation.id
-                automations = update(state.automations, {[state.selectedItemId]:  {$push: [action.payload.automation] }})
-                items       = update(state.items,       {[state.selectedLayerId]: {[state.selectedItemId]: {automations: {$push: [id]}}}})
-                return {...state, automations, items}
+    
             case "REMOVE_EFFECT":
 
                 idx = state.passes.findIndex(e => e.id === action.payload.id)

@@ -85,6 +85,14 @@ export default {
             description: "Audio reactive eye looking thing",
             posterUrl: "/demos/missing.png",
             audioReactive: false,
+        },
+        12: {
+            title :"Video",
+            type: "video",
+            fileType: "video",
+            description: "Audio reactive eye looking thing",
+            posterUrl: "/demos/missing.png",
+            audioReactive: false,
         }
     },
 

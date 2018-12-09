@@ -45,7 +45,8 @@ export default class TimeText extends BaseItem {
         
     }
 
-    setStyle = () => {
+    setStyle = (alpha) => {
+        this.ctx.globalAlpha = alpha;
         this.ctx.font =  `${this.config.fontSize}pt ${this.config.font}`;
         this.ctx.fillStyle = '#' + this.config.color;
         this.ctx.textAlign = this.config.textAlign;
@@ -75,8 +76,8 @@ export default class TimeText extends BaseItem {
         return formatted; 
       }
 
-    animate = (time, audioData) => {
-        this.setStyle();
+    animate = (time, audioData, alpha) => {
+        this.setStyle(alpha);
         const t = this.formatTime(time.toFixed(this.config.decimals));
         this.ctx.fillText(t, this.config.x * this.canvas.width, this.config.y * this.canvas.height);
     }
